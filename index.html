@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>매출 현황 & 전략 리포트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700;900&family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#101E36;
+    --navy-2:#182A4B;
+    --brass:#B08D57;
+    --brass-light:#D8C39A;
+    --paper:#F6F4EF;
+    --card:#FFFFFF;
+    --ink:#20242E;
+    --muted:#6B7080;
+    --line:#E4E0D6;
+    --green:#3C7A5C;
+    --green-bg:#EAF3EE;
+    --blue:#3A5A8C;
+    --blue-bg:#EAF0F8;
+    --gray:#7C7C7C;
+    --gray-bg:#F0EFEC;
+    --red:#A6473A;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;
+    color:var(--ink);
+    line-height:1.6;
+  }
+  .toolbar{
+    position:sticky; top:0; z-index:50;
+    display:flex; justify-content:flex-end; gap:8px;
+    padding:10px 24px;
+    background:rgba(246,244,239,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .toolbar button{
+    font-family:'Pretendard',sans-serif;
+    font-size:12.5px; font-weight:600;
+    padding:8px 14px; border-radius:20px;
+    border:1px solid var(--navy);
+    background:var(--navy); color:#fff;
+    cursor:pointer; letter-spacing:.02em;
+  }
+  .toolbar button.ghost{
+    background:transparent; color:var(--navy);
+  }
+  .toolbar button:hover{ opacity:.85; }
+  @media print{ .toolbar{display:none;} body{background:#fff;} }
+
+  header.hero{
+    background:linear-gradient(160deg,var(--navy) 0%, var(--navy-2) 60%, #0C1830 100%);
+    color:#EDEEF3;
+    padding:56px 8vw 40px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.hero::after{
+    content:"";
+    position:absolute; right:-10%; top:-30%;
+    width:520px; height:520px; border-radius:50%;
+    background:radial-gradient(circle, rgba(176,141,87,0.18) 0%, rgba(176,141,87,0) 70%);
+  }
+  .eyebrow{
+    font-size:12.5px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--brass-light); font-weight:600; margin-bottom:14px;
+  }
+  h1.title{
+    font-family:'Noto Serif KR',serif; font-weight:900;
+    font-size:clamp(28px,4vw,42px); margin:0 0 10px; line-height:1.3;
+    outline:none;
+  }
+  .subtitle{
+    color:#B9BFCF; font-size:15px; max-width:640px; outline:none;
+  }
+
+  .gauge-wrap{ margin-top:38px; }
+  .gauge-labels{
+    display:flex; justify-content:space-between; align-items:baseline;
+    margin-bottom:10px; flex-wrap:wrap; gap:8px;
+  }
+  .gauge-labels .goal-text{ font-size:13px; color:#B9BFCF; }
+  .gauge-labels .goal-num{ color:var(--brass-light); font-weight:700; }
+  .gauge-labels .current-num{
+    font-family:'Noto Serif KR',serif; font-weight:900; font-size:30px; color:#fff;
+  }
+  .gauge-track{
+    width:100%; height:16px; border-radius:10px; background:rgba(255,255,255,0.12);
+    overflow:hidden; display:flex;
+  }
+  .gauge-seg{ height:100%; }
+  .seg-star{ background:var(--green); }
+  .seg-javia{ background:var(--blue); }
+  .seg-installment{ background:var(--brass); }
+  .gauge-legend{
+    display:flex; gap:22px; margin-top:12px; flex-wrap:wrap; font-size:12.5px; color:#C7CCDA;
+  }
+  .gauge-legend span.dot{
+    display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px;
+  }
+  .gap-note{
+    margin-top:14px; font-size:13px; color:#DCC79A;
+  }
+
+  main{ padding:48px 8vw 90px; max-width:1180px; margin:0 auto; }
+
+  .section-head{
+    display:flex; align-items:baseline; gap:14px; margin:56px 0 22px;
+  }
+  .section-head:first-child{ margin-top:0; }
+  .section-num{
+    font-family:'Noto Serif KR',serif; font-size:13px; color:var(--brass);
+    letter-spacing:.1em; font-weight:700; border-bottom:2px solid var(--brass);
+    padding-bottom:2px;
+  }
+  h2.section-title{
+    font-family:'Noto Serif KR',serif; font-size:22px; font-weight:700; margin:0;
+    outline:none;
+  }
+  .section-desc{ color:var(--muted); font-size:13.5px; margin:-8px 0 22px; outline:none; }
+
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:26px 28px; box-shadow:0 1px 2px rgba(20,20,30,0.03);
+  }
+
+  .program-card{ margin-bottom:18px; }
+  .program-top{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:18px; flex-wrap:wrap; gap:10px;
+  }
+  .program-tag{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'Noto Serif KR',serif; font-weight:700; font-size:18px;
+  }
+  .program-tag .star{ color:var(--brass); }
+  .amount-box{
+    font-family:'Noto Serif KR',serif; font-weight:900; font-size:24px;
+    padding:6px 16px; border-radius:8px; outline:none; min-width:90px; text-align:right;
+  }
+  .amount-box.star{ color:var(--green); background:var(--green-bg); }
+  .amount-box.javia{ color:var(--blue); background:var(--blue-bg); }
+  .amount-box.inst{ color:var(--brass); background:#F7EFDF; }
+  .unit{ font-size:13px; font-weight:500; margin-left:2px; }
+
+  table.roster{
+    width:100%; border-collapse:collapse; font-size:14px;
+  }
+  table.roster th{
+    text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.06em;
+    color:var(--muted); font-weight:600; padding:6px 10px; border-bottom:1px solid var(--line);
+  }
+  table.roster td{
+    padding:9px 10px; border-bottom:1px solid #F0EEE7; outline:none;
+  }
+  table.roster tr:last-child td{ border-bottom:none; }
+  table.roster td.name{ font-weight:600; }
+  table.roster td.amt{ text-align:right; font-variant-numeric:tabular-nums; color:var(--green); font-weight:600; }
+  .add-row{
+    margin-top:10px; font-size:12.5px; color:var(--brass); background:none; border:1px dashed var(--brass-light);
+    padding:6px 12px; border-radius:8px; cursor:pointer; font-family:'Pretendard',sans-serif;
+  }
+  .add-row:hover{ background:#FBF6EC; }
+
+  .pending-note{
+    margin-top:16px; padding:14px 16px; background:#FBF9F4; border-left:3px solid var(--brass);
+    border-radius:0 8px 8px 0; font-size:13.5px; color:#5A5445; outline:none;
+  }
+
+  .referral-grid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+    gap:10px;
+  }
+  .referral-chip{
+    display:flex; flex-direction:column; gap:2px;
+    padding:11px 14px; background:var(--gray-bg); border-radius:9px; border:1px solid #E7E4DD;
+  }
+  .referral-chip .rname{ font-weight:700; font-size:14px; outline:none; }
+  .referral-chip .rnote{ font-size:12px; color:var(--muted); outline:none; }
+
+  .strategy-list{ display:flex; flex-direction:column; gap:12px; }
+  .strategy-item{
+    display:flex; gap:16px; padding:16px 18px; background:var(--card);
+    border:1px solid var(--line); border-radius:12px; align-items:flex-start;
+  }
+  .strategy-num{
+    flex:none; width:30px; height:30px; border-radius:50%;
+    background:var(--navy); color:var(--brass-light); font-family:'Noto Serif KR',serif;
+    font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;
+  }
+  .strategy-text{ font-size:14.5px; outline:none; flex:1; }
+  .strategy-text b{ color:var(--navy); }
+
+  .footer-summary{
+    margin-top:60px; padding:30px 32px; border-radius:16px;
+    background:var(--navy); color:#EDEEF3;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;
+  }
+  .footer-summary .fs-label{ font-size:12.5px; color:#B9BFCF; letter-spacing:.06em; text-transform:uppercase; }
+  .footer-summary .fs-num{ font-family:'Noto Serif KR',serif; font-weight:900; font-size:26px; }
+  .fs-goal .fs-num{ color:var(--brass-light); }
+  .fs-gap .fs-num{ color:#E6A88B; }
+
+  [contenteditable="true"]{
+    cursor:text; border-radius:5px; transition:background .15s;
+  }
+  [contenteditable="true"]:hover{ background:rgba(176,141,87,0.09); }
+  [contenteditable="true"]:focus{
+    background:#fff; outline:2px solid var(--brass); outline-offset:2px;
+    box-shadow:0 0 0 4px rgba(176,141,87,0.15);
+  }
+  .del-x{
+    background:none;border:none;color:#C4BFB4;cursor:pointer;font-size:13px;padding:0 4px;
+  }
+  .del-x:hover{ color:var(--red); }
+
+  @media (max-width:640px){
+    header.hero{ padding:40px 6vw 32px; }
+    main{ padding:36px 6vw 70px; }
+    .card{ padding:20px; }
+    .footer-summary{ flex-direction:column; align-items:flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <button class="ghost" onclick="printReport()">🖨 인쇄 / PDF저장</button>
+  <button id="lockBtn" onclick="toggleLock()">🔒 편집 잠금</button>
+</div>
+
+<header class="hero">
+  <div class="eyebrow">Sales Report · Weekly Tracker</div>
+  <h1 class="title" contenteditable="true">8월 매출 현황 및 목표 달성 전략</h1>
+  <div class="subtitle" contenteditable="true">스타(★) · 자비아 · 분납 3개 트랙 진행 현황과, 2,000만원 목표 달성을 위한 실행 전략을 정리합니다. 모든 항목은 클릭하여 바로 수정할 수 있습니다.</div>
+
+  <div class="gauge-wrap">
+    <div class="gauge-labels">
+      <div class="goal-text">현재 누적 매출 <span style="color:#fff">→</span> <span class="goal-num">목표 2,000만원</span></div>
+      <div class="current-num"><span id="curTotal">670</span>만원 <span style="font-size:14px;color:#B9BFCF;font-weight:500;">/ 2,000만원</span></div>
+    </div>
+    <div class="gauge-track">
+      <div class="gauge-seg seg-star" id="segStar" style="width:21%"></div>
+      <div class="gauge-seg seg-javia" id="segJavia" style="width:10%"></div>
+      <div class="gauge-seg seg-installment" id="segInst" style="width:2.5%"></div>
+    </div>
+    <div class="gauge-legend">
+      <div><span class="dot" style="background:var(--green)"></span>스타 <span id="legStar">420</span>만</div>
+      <div><span class="dot" style="background:var(--blue)"></span>자비아 <span id="legJavia">200</span>만</div>
+      <div><span class="dot" style="background:var(--brass)"></span>분납 <span id="legInst">50</span>만</div>
+    </div>
+    <div class="gap-note">현재 670만원 확보 · 목표까지 <b id="gapNum">1,330</b>만원 남음 — 아래 전략으로 격차를 채웁니다.</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ★ 스타 -->
+  <div class="section-head">
+    <span class="section-num" contenteditable="true">01</span>
+    <h2 class="section-title" contenteditable="true">★ 스타 트랙</h2>
+  </div>
+  <div class="card program-card">
+    <div class="program-top">
+      <div class="program-tag"><span class="star">★</span><span contenteditable="true">스타 누적 매출</span></div>
+      <div class="amount-box star" contenteditable="true" oninput="updateProgram('star', this)">420<span class="unit">만원</span></div>
+    </div>
+
+    <table class="roster" id="starRoster">
+      <thead><tr><th>신청자</th><th style="text-align:right">금액(만원)</th><th></th></tr></thead>
+      <tbody>
+        <tr><td class="name" contenteditable="true">이경이</td><td class="amt" contenteditable="true">100</td><td><button class="del-x" onclick="this.closest('tr').remove()">✕</button></td></tr>
+        <tr><td class="name" contenteditable="true">장희인</td><td class="amt" contenteditable="true">100</td><td><button class="del-x" onclick="this.closest('tr').remove()">✕</button></td></tr>
+        <tr><td class="name" contenteditable="true">정인용</td><td class="amt" contenteditable="true">120</td><td><button class="del-x" onclick="this.closest('tr').remove()">✕</button></td></tr>
+        <tr><td class="name" contenteditable="true">조연수</td><td class="amt" contenteditable="true">120</td><td><button class="del-x" onclick="this.closest('tr').remove()">✕</button></td></tr>
+      </tbody>
+    </table>
+    <button class="add-row" onclick="addRosterRow('starRoster')">+ 신청자 추가</button>
+
+    <div class="pending-note" contenteditable="true">
+      <b>진행중 · 동료/팀원 추천 연계</b><br>
+      • 이기선 — 동료 김유영 신청 진행중<br>
+      • 이나경 — 팀원 한수경 신청 진행중
+    </div>
+  </div>
+
+  <div class="section-head" style="margin-top:34px;">
+    <span class="section-num" contenteditable="true">01-1</span>
+    <h2 class="section-title" contenteditable="true">추천 현황 리스트</h2>
+  </div>
+  <div class="section-desc" contenteditable="true">개별 추천인 및 진행 메모입니다. 칸을 클릭해 상태를 바로 업데이트하세요.</div>
+  <div class="card">
+    <div class="referral-grid" id="referralGrid">
+      <div class="referral-chip"><div class="rname" contenteditable="true">임효정 추천</div><div class="rnote" contenteditable="true">직원_지원</div></div>
+      <div class="referral-chip"><div class="rname" contenteditable="true">박연숙 추천</div><div class="rnote" contenteditable="true">직원_지원</div></div>
+      <div class="referral-chip"><div class="rname" contenteditable="true">김지근 추천</div><div class="rnote" contenteditable="true">6강_강의장</div></div>
+      <div class="referral-chip"><div class="rname" contenteditable="true">남기현 추천</div><div class="rnote" contenteditable="true">7월강의_2명_줌 수강 추가할인</div></div>
+      <div class="referral-chip"><div class="rname" contenteditable="true">김재훈 추천</div><div class="rnote" contenteditable="true">명단 수령</div></div>
+      <div class="referral-chip"><div class="rname" contenteditable="true">김규민 추천</div><div class="rnote" contenteditable="true">지사 내 2명_18기 일정 맞지 않아 신청못함</div></div>
+      <div class="referral-chip"><div class="rname" contenteditable="true">손관우 추천</div><div class="rnote" contenteditable="true">1명</div></div>
+      <div class="referral-chip"><div class="rname" contenteditable="true">조기열 추천</div><div class="rnote" contenteditable="true">애즈금융_17기 이예지 추천</div></div>
+      <div class="referral-chip"><div class="rname" contenteditable="true">김소영 추천</div><div class="rnote" contenteditable="true">강의장</div></div>
+      <div class="referral-chip"><div class="rname" contenteditable="true">김선종 추천</div><div class="rnote" contenteditable="true">프라임에셋</div></div>
+      <div class="referral-chip"><div class="rname" contenteditable="true">은효상 추천</div><div class="rnote" contenteditable="true">&nbsp;</div></div>
+      <div class="referral-chip"><div class="rname" contenteditable="true">임승연 추천</div><div class="rnote" contenteditable="true">&nbsp;</div></div>
+      <div class="referral-chip"><div class="rname" contenteditable="true">강은주 추천</div><div class="rnote" contenteditable="true">박미라 추천으로 19기 신청</div></div>
+      <div class="referral-chip"><div class="rname" contenteditable="true">김동선 추천</div><div class="rnote" contenteditable="true">&nbsp;</div></div>
+      <div class="referral-chip"><div class="rname" contenteditable="true">이웅산 추천</div><div class="rnote" contenteditable="true">&nbsp;</div></div>
+      <div class="referral-chip"><div class="rname" contenteditable="true">홍영민 추천</div><div class="rnote" contenteditable="true">&nbsp;</div></div>
+      <div class="referral-chip"><div class="rname" contenteditable="true">이명일 추천</div><div class="rnote" contenteditable="true">&nbsp;</div></div>
+      <div class="referral-chip"><div class="rname" contenteditable="true">김승복 추천</div><div class="rnote" contenteditable="true">&nbsp;</div></div>
+      <div class="referral-chip"><div class="rname" contenteditable="true">최정원 추천</div><div class="rnote" contenteditable="true">윤채원</div></div>
+      <div class="referral-chip"><div class="rname" contenteditable="true">오진아 추천</div><div class="rnote" contenteditable="true">인카 원탑</div></div>
+    </div>
+    <button class="add-row" onclick="addReferralChip()">+ 추천인 추가</button>
+  </div>
+
+  <!-- 추가전략 -->
+  <div class="section-head">
+    <span class="section-num" contenteditable="true">02</span>
+    <h2 class="section-title" contenteditable="true">추가 전략 8가지</h2>
+  </div>
+  <div class="section-desc" contenteditable="true">부족액을 채우기 위한 실행 전략입니다. 순서는 우선순위가 아닌 실행 트랙 구분입니다.</div>
+  <div class="strategy-list" id="strategyList">
+    <div class="strategy-item"><div class="strategy-num" contenteditable="true">1</div><div class="strategy-text" contenteditable="true">이세희(피플) 소속 중 설명회 완료 사업단 — <b>천안아산, 부천</b></div></div>
+    <div class="strategy-item"><div class="strategy-num" contenteditable="true">2</div><div class="strategy-text" contenteditable="true">지방 수강신청자 <b>100만원</b> (줌 수강 선택 시 할인) — 남기현 단체, 김응진, 나동열, 설태순(임완성 추천)</div></div>
+    <div class="strategy-item"><div class="strategy-num" contenteditable="true">3</div><div class="strategy-text" contenteditable="true">19기 신청자 동료 추천 전략 (<b>자비아 멤버십</b> 활용)</div></div>
+    <div class="strategy-item"><div class="strategy-num" contenteditable="true">4</div><div class="strategy-text" contenteditable="true">재수강 <b>100만원</b> — 장희인 등</div></div>
+    <div class="strategy-item"><div class="strategy-num" contenteditable="true">5</div><div class="strategy-text" contenteditable="true">스타19 신청 시 <b>이너 1년</b> 제공 (M&A세션 초청, 전문위원 홈페이지, 명함, M&A수수료)</div></div>
+    <div class="strategy-item"><div class="strategy-num" contenteditable="true">6</div><div class="strategy-text" contenteditable="true">스타19 신청 시 <b>자비아 1년 무상</b> 제공</div></div>
+    <div class="strategy-item"><div class="strategy-num" contenteditable="true">7</div><div class="strategy-text" contenteditable="true">스타리치 수강생 개별 접촉 (강의장) — 개별 소개 <b>120만원</b></div></div>
+    <div class="strategy-item"><div class="strategy-num" contenteditable="true">8</div><div class="strategy-text" contenteditable="true">기 수료자 추천 — 본인 재수강 문의가 종종 발생하는 채널 활용</div></div>
+  </div>
+  <button class="add-row" style="margin-top:12px;" onclick="addStrategy()">+ 전략 추가</button>
+
+  <!-- ★ 자비아 -->
+  <div class="section-head">
+    <span class="section-num" contenteditable="true">03</span>
+    <h2 class="section-title" contenteditable="true">★ 자비아 트랙</h2>
+  </div>
+  <div class="card program-card">
+    <div class="program-top">
+      <div class="program-tag"><span class="star">★</span><span contenteditable="true">자비아 누적 매출</span></div>
+      <div class="amount-box javia" contenteditable="true" oninput="updateProgram('javia', this)">200<span class="unit">만원</span></div>
+    </div>
+    <div class="pending-note" contenteditable="true">
+      • 유양숙 단장 (부천) — 2~3명 예정<br>
+      • KB HO&F — 공지 진행<br>
+      • 전략: 자비아 추천 시 <b>5만 포인트</b> 제공 (활용도 높은 대상 우선)
+    </div>
+  </div>
+
+  <!-- ★ 분납 -->
+  <div class="section-head">
+    <span class="section-num" contenteditable="true">04</span>
+    <h2 class="section-title" contenteditable="true">★ 분납 트랙</h2>
+  </div>
+  <div class="card program-card">
+    <div class="program-top">
+      <div class="program-tag"><span class="star">★</span><span contenteditable="true">분납 누적 매출</span></div>
+      <div class="amount-box inst" contenteditable="true" oninput="updateProgram('inst', this)">50<span class="unit">만원</span></div>
+    </div>
+    <div class="pending-note" contenteditable="true">
+      • 백준호 — 이너 분납 50만원
+    </div>
+  </div>
+
+  <div class="footer-summary">
+    <div class="fs-current">
+      <div class="fs-label">현재 확보 매출</div>
+      <div class="fs-num"><span id="fsCur">670</span>만원</div>
+    </div>
+    <div class="fs-goal">
+      <div class="fs-label">목표 매출</div>
+      <div class="fs-num">2,000만원</div>
+    </div>
+    <div class="fs-gap">
+      <div class="fs-label">달성 필요 잔여액</div>
+      <div class="fs-num"><span id="fsGap">1,330</span>만원</div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  const GOAL = 2000;
+  let amounts = { star: 420, javia: 200, inst: 50 };
+
+  function parseAmt(el){
+    const n = parseInt((el.textContent || '').replace(/[^0-9]/g,''), 10);
+    return isNaN(n) ? 0 : n;
+  }
+
+  function render(){
+    const total = amounts.star + amounts.javia + amounts.inst;
+    const gap = Math.max(GOAL - total, 0);
+    document.getElementById('curTotal').textContent = total.toLocaleString();
+    document.getElementById('fsCur').textContent = total.toLocaleString();
+    document.getElementById('fsGap').textContent = gap.toLocaleString();
+    document.getElementById('gapNum').textContent = gap.toLocaleString();
+    document.getElementById('legStar').textContent = amounts.star.toLocaleString();
+    document.getElementById('legJavia').textContent = amounts.javia.toLocaleString();
+    document.getElementById('legInst').textContent = amounts.inst.toLocaleString();
+    document.getElementById('segStar').style.width = (amounts.star/GOAL*100) + '%';
+    document.getElementById('segJavia').style.width = (amounts.javia/GOAL*100) + '%';
+    document.getElementById('segInst').style.width = (amounts.inst/GOAL*100) + '%';
+  }
+
+  function updateProgram(key, el){
+    amounts[key] = parseAmt(el);
+    render();
+  }
+
+  function addRosterRow(tableId){
+    const tbody = document.querySelector('#'+tableId+' tbody');
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td class="name" contenteditable="true">신청자명</td><td class="amt" contenteditable="true">0</td><td><button class="del-x" onclick="this.closest(\'tr\').remove()">✕</button></td>';
+    tbody.appendChild(tr);
+    tr.querySelector('.name').focus();
+  }
+
+  function addReferralChip(){
+    const grid = document.getElementById('referralGrid');
+    const div = document.createElement('div');
+    div.className = 'referral-chip';
+    div.innerHTML = '<div class="rname" contenteditable="true">추천인 이름</div><div class="rnote" contenteditable="true">메모</div>';
+    grid.appendChild(div);
+    div.querySelector('.rname').focus();
+  }
+
+  let strategyCount = 8;
+  function addStrategy(){
+    strategyCount++;
+    const list = document.getElementById('strategyList');
+    const div = document.createElement('div');
+    div.className = 'strategy-item';
+    div.innerHTML = '<div class="strategy-num" contenteditable="true">'+strategyCount+'</div><div class="strategy-text" contenteditable="true">새 전략을 입력하세요</div>';
+    list.appendChild(div);
+    div.querySelector('.strategy-text').focus();
+  }
+
+  render();
+
+  let locked = false;
+  function toggleLock(){
+    locked = !locked;
+    document.querySelectorAll('[contenteditable]').forEach(function(el){
+      el.setAttribute('contenteditable', locked ? 'false' : 'true');
+    });
+    document.querySelectorAll('.add-row, .del-x').forEach(function(el){
+      el.style.display = locked ? 'none' : '';
+    });
+    const btn = document.getElementById('lockBtn');
+    btn.textContent = locked ? '🔓 편집 잠금 해제' : '🔒 편집 잠금';
+  }
+
+  function printReport(){
+    // 미리보기(iframe) 안에서는 브라우저가 print()를 막는 경우가 많아
+    // 현재 문서를 새 탭으로 복사해 연 뒤 그 창에서 인쇄를 실행합니다.
+    try {
+      const html = '<!DOCTYPE html>' + document.documentElement.outerHTML;
+      const win = window.open('', '_blank');
+      if (!win) {
+        alert('팝업이 차단되었습니다. 브라우저 주소창의 팝업 차단 아이콘을 눌러 허용한 뒤 다시 시도해주세요.\n\n또는: 이 HTML 파일을 다운로드하여 브라우저에서 직접 연 뒤 Ctrl/Cmd+P로 인쇄하세요.');
+        return;
+      }
+      win.document.open();
+      win.document.write(html);
+      win.document.close();
+      // 폰트/스타일 로딩을 기다린 뒤 인쇄 다이얼로그 실행
+      win.onload = function(){
+        setTimeout(function(){ win.focus(); win.print(); }, 400);
+      };
+    } catch (e) {
+      alert('인쇄 창을 열지 못했습니다. 이 HTML 파일을 다운로드해서 브라우저에서 직접 열고 Ctrl/Cmd+P로 인쇄해주세요.');
+    }
+  }
+</script>
+
+</body>
+</html>
