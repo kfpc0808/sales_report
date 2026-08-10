@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>매출 현황 & 전략 리포트</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700;900&family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -25,17 +25,20 @@
     --gray-bg:#F0EFEC;
     --red:#A6473A;
   }
-  *{box-sizing:border-box;}
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   body{
     margin:0;
     background:var(--paper);
     font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;
     color:var(--ink);
     line-height:1.6;
+    overflow-x:hidden;
+    padding-top:env(safe-area-inset-top);
   }
   .toolbar{
     position:sticky; top:0; z-index:50;
-    display:flex; justify-content:flex-end; gap:8px;
+    display:flex; justify-content:flex-end; gap:8px; flex-wrap:wrap;
     padding:10px 24px;
     background:rgba(246,244,239,0.92);
     backdrop-filter:blur(6px);
@@ -48,6 +51,7 @@
     border:1px solid var(--navy);
     background:var(--navy); color:#fff;
     cursor:pointer; letter-spacing:.02em;
+    touch-action:manipulation; min-height:38px;
   }
   .toolbar button.ghost{
     background:transparent; color:var(--navy);
@@ -150,8 +154,11 @@
   .amount-box.inst{ color:var(--brass); background:#F7EFDF; }
   .unit{ font-size:13px; font-weight:500; margin-left:2px; }
 
+  .roster-scroll{
+    width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch;
+  }
   table.roster{
-    width:100%; border-collapse:collapse; font-size:14px;
+    width:100%; min-width:340px; border-collapse:collapse; font-size:14px;
   }
   table.roster th{
     text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.06em;
@@ -165,7 +172,8 @@
   table.roster td.amt{ text-align:right; font-variant-numeric:tabular-nums; color:var(--green); font-weight:600; }
   .add-row{
     margin-top:10px; font-size:12.5px; color:var(--brass); background:none; border:1px dashed var(--brass-light);
-    padding:6px 12px; border-radius:8px; cursor:pointer; font-family:'Pretendard',sans-serif;
+    padding:9px 14px; border-radius:8px; cursor:pointer; font-family:'Pretendard',sans-serif;
+    touch-action:manipulation; min-height:38px;
   }
   .add-row:hover{ background:#FBF6EC; }
 
@@ -217,15 +225,58 @@
     box-shadow:0 0 0 4px rgba(176,141,87,0.15);
   }
   .del-x{
-    background:none;border:none;color:#C4BFB4;cursor:pointer;font-size:13px;padding:0 4px;
+    background:none;border:none;color:#C4BFB4;cursor:pointer;font-size:16px;
+    padding:8px; min-width:32px; min-height:32px; touch-action:manipulation;
   }
   .del-x:hover{ color:var(--red); }
 
-  @media (max-width:640px){
-    header.hero{ padding:40px 6vw 32px; }
-    main{ padding:36px 6vw 70px; }
-    .card{ padding:20px; }
-    .footer-summary{ flex-direction:column; align-items:flex-start; }
+  @media (max-width:768px){
+    .toolbar{ padding:8px 16px; justify-content:center; }
+    .toolbar button{ flex:1 1 auto; text-align:center; }
+
+    header.hero{ padding:32px 6vw 28px; }
+    .eyebrow{ font-size:11px; margin-bottom:10px; }
+    h1.title{ font-size:24px; line-height:1.35; }
+    .subtitle{ font-size:13.5px; }
+
+    .gauge-wrap{ margin-top:26px; }
+    .gauge-labels{ flex-direction:column; align-items:flex-start; gap:4px; }
+    .gauge-labels .current-num{ font-size:26px; }
+    .gauge-legend{ gap:14px; font-size:12px; }
+    .gap-note{ font-size:12.5px; }
+
+    main{ padding:32px 5.5vw 60px; }
+    .section-head{ margin:40px 0 16px; gap:10px; }
+    h2.section-title{ font-size:19px; }
+    .section-desc{ font-size:13px; }
+
+    .card{ padding:18px 16px; border-radius:12px; }
+    .program-top{ gap:8px; }
+    .program-tag{ font-size:16px; }
+    .amount-box{ font-size:20px; padding:5px 12px; min-width:76px; }
+
+    table.roster{ font-size:13px; min-width:300px; }
+    table.roster th, table.roster td{ padding:8px 6px; }
+
+    .referral-grid{ grid-template-columns:1fr 1fr; gap:8px; }
+    .referral-chip{ padding:10px 11px; }
+    .referral-chip .rname{ font-size:13px; }
+    .referral-chip .rnote{ font-size:11.5px; }
+
+    .strategy-item{ padding:13px 14px; gap:12px; }
+    .strategy-num{ width:26px; height:26px; font-size:12px; }
+    .strategy-text{ font-size:13.5px; }
+
+    .footer-summary{ flex-direction:column; align-items:flex-start; gap:16px; padding:22px 20px; margin-top:44px; }
+    .footer-summary .fs-num{ font-size:22px; }
+  }
+
+  @media (max-width:420px){
+    h1.title{ font-size:21px; }
+    .gauge-labels .current-num{ font-size:22px; }
+    .referral-grid{ grid-template-columns:1fr; }
+    .program-top{ flex-direction:column; align-items:flex-start; }
+    .amount-box{ align-self:flex-end; }
   }
 </style>
 </head>
@@ -273,6 +324,7 @@
       <div class="amount-box star" contenteditable="true" oninput="updateProgram('star', this)">420<span class="unit">만원</span></div>
     </div>
 
+    <div class="roster-scroll">
     <table class="roster" id="starRoster">
       <thead><tr><th>신청자</th><th style="text-align:right">금액(만원)</th><th></th></tr></thead>
       <tbody>
@@ -282,6 +334,7 @@
         <tr><td class="name" contenteditable="true">조연수</td><td class="amt" contenteditable="true">120</td><td><button class="del-x" onclick="this.closest('tr').remove()">✕</button></td></tr>
       </tbody>
     </table>
+    </div>
     <button class="add-row" onclick="addRosterRow('starRoster')">+ 신청자 추가</button>
 
     <div class="pending-note" contenteditable="true">
