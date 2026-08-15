@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>매출 진행 & 목표 달성률</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700;900&family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#101E36; --navy-2:#182A4B; --brass:#B08D57; --brass-light:#D8C39A;
+    --paper:#F6F4EF; --card:#FFFFFF; --ink:#20242E; --muted:#6B7080; --line:#E4E0D6;
+    --green:#3C7A5C; --green-bg:#EAF3EE; --red:#A6473A; --red-bg:#F8EAEA;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html{ -webkit-text-size-adjust:100%; }
+  body{ margin:0; background:var(--paper); font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif; color:var(--ink); line-height:1.6; overflow-x:hidden; }
+
+  .toolbar{
+    position:sticky; top:0; z-index:60; display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;
+    padding:10px 24px; background:rgba(246,244,239,0.94); backdrop-filter:blur(6px); border-bottom:1px solid var(--line);
+  }
+  .save-status{ font-size:12px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+  .save-dot{ width:8px; height:8px; border-radius:50%; background:var(--green); }
+  .save-dot.saving{ background:var(--brass); animation:pulse 1s infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.3;} }
+  .toolbar-right{ display:flex; gap:8px; flex-wrap:wrap; }
+  .toolbar button{
+    font-family:'Pretendard',sans-serif; font-size:12.5px; font-weight:600; padding:8px 14px; border-radius:20px;
+    border:1px solid var(--navy); background:var(--navy); color:#fff; cursor:pointer; letter-spacing:.02em;
+    touch-action:manipulation; min-height:38px;
+  }
+  .toolbar button.ghost{ background:transparent; color:var(--navy); }
+  .toolbar button:hover{ opacity:.85; }
+  @media print{ .toolbar,.add-row,.del-x{display:none !important;} body{background:#fff;} }
+
+  header.hero{
+    background:linear-gradient(160deg,var(--navy) 0%, var(--navy-2) 60%, #0C1830 100%);
+    color:#EDEEF3; padding:48px 8vw 36px; position:relative; overflow:hidden;
+  }
+  header.hero::after{
+    content:""; position:absolute; right:-10%; top:-30%; width:520px; height:520px; border-radius:50%;
+    background:radial-gradient(circle, rgba(176,141,87,0.18) 0%, rgba(176,141,87,0) 70%);
+  }
+  .eyebrow{ font-size:12.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--brass-light); font-weight:600; margin-bottom:12px; }
+  h1.title{ font-family:'Noto Serif KR',serif; font-weight:900; font-size:clamp(22px,4vw,36px); margin:0 0 8px; line-height:1.3; outline:none; }
+  .subtitle{ color:#B9BFCF; font-size:14px; max-width:680px; outline:none; }
+
+  .goal-row{ margin-top:26px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .goal-row label{ font-size:12.5px; color:#B9BFCF; }
+  .goal-input{
+    font-family:'Noto Serif KR',serif; font-weight:900; font-size:20px; color:#fff;
+    background:rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.28); border-radius:8px;
+    padding:7px 12px; width:160px; text-align:right;
+  }
+  .goal-row .unit{ color:#B9BFCF; font-size:13px; }
+
+  .gauge-wrap{ margin-top:20px; }
+  .gauge-top{ display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px; margin-bottom:8px;}
+  .gauge-top .pct{ font-family:'Noto Serif KR',serif; font-weight:900; font-size:34px; }
+  .gauge-top .cur{ font-size:13px; color:#B9BFCF; }
+  .gauge-track{ width:100%; height:16px; border-radius:10px; background:rgba(255,255,255,0.12); overflow:hidden; }
+  .gauge-fill{ height:100%; background:linear-gradient(90deg,var(--brass),var(--brass-light)); transition:width .3s; }
+
+  .pace-box{
+    margin-top:20px; padding:16px 18px; border-radius:12px; background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.15); font-size:13.5px; color:#EDEEF3;
+  }
+  .pace-box b{ color:var(--brass-light); }
+  .pace-box .pace-line{ margin-top:6px; }
+  .pace-good{ color:#9FD8B8; }
+  .pace-bad{ color:#E6A88B; }
+
+  main{ padding:40px 8vw 90px; max-width:1080px; margin:0 auto; }
+
+  .section-head{ display:flex; align-items:baseline; gap:14px; margin:50px 0 18px; }
+  .section-head:first-child{ margin-top:0; }
+  .section-num{ font-family:'Noto Serif KR',serif; font-size:13px; color:var(--brass); letter-spacing:.1em; font-weight:700; border-bottom:2px solid var(--brass); padding-bottom:2px; }
+  h2.section-title{ font-family:'Noto Serif KR',serif; font-size:20px; font-weight:700; margin:0; outline:none; }
+  .section-desc{ color:var(--muted); font-size:13.5px; margin:-6px 0 18px; outline:none; }
+
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px 24px; box-shadow:0 1px 2px rgba(20,20,30,0.03); }
+
+  /* log table */
+  .log-scroll{ width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--line); border-radius:12px; }
+  table.log{ border-collapse:collapse; width:100%; min-width:680px; font-size:13.5px; }
+  table.log th{ text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; padding:9px 10px; border-bottom:1px solid var(--line); background:#F8F6F1; white-space:nowrap; }
+  table.log td{ padding:7px 8px; border-bottom:1px solid #F0EEE7; vertical-align:middle; }
+  table.log input[type="date"]{ border:1px solid transparent; background:transparent; border-radius:5px; padding:5px 4px; font-size:13px; width:130px; }
+  table.log input[type="text"]{ border:1px solid transparent; background:transparent; border-radius:5px; padding:5px 6px; font-size:13.5px; width:100%; min-width:110px; }
+  table.log input.amt{ text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--green); min-width:100px; }
+  table.log input:hover{ border-color:var(--line); background:#FBFAF7; }
+  table.log input:focus{ border-color:var(--brass); background:#fff; outline:none; }
+  .week-badge{ display:inline-block; font-size:11px; font-weight:700; padding:3px 9px; border-radius:20px; background:#EFEAE0; color:var(--brass); white-space:nowrap; }
+  tr.log-total td{ font-weight:800; background:#F8F6F1; color:var(--navy); border-top:2px solid var(--line); }
+
+  .add-row{
+    margin-top:12px; font-size:12.5px; color:var(--brass); background:none; border:1px dashed var(--brass-light);
+    padding:9px 14px; border-radius:8px; cursor:pointer; font-family:'Pretendard',sans-serif; touch-action:manipulation; min-height:38px;
+  }
+  .add-row:hover{ background:#FBF6EC; }
+  .del-x{ background:none;border:none;color:#C4BFB4;cursor:pointer;font-size:15px;padding:6px; min-width:28px; min-height:28px; touch-action:manipulation; }
+  .del-x:hover{ color:var(--red); }
+
+  /* weekly summary */
+  .week-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; }
+  .week-card{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; text-align:center; }
+  .week-card .wk-name{ font-size:12px; color:var(--muted); margin-bottom:6px; }
+  .week-card .wk-amt{ font-family:'Noto Serif KR',serif; font-weight:900; font-size:18px; color:var(--navy); }
+  .week-card .wk-cnt{ font-size:11px; color:var(--muted); margin-top:4px; }
+
+  .memo-body{ font-size:13.5px; outline:none; min-height:100px; }
+
+  /* storage info */
+  .storage-card{ border:1px dashed var(--brass-light); background:#FBF9F4; }
+  .storage-card h3{ font-family:'Noto Serif KR',serif; font-size:15px; margin:0 0 10px; color:var(--navy); }
+  .storage-card p{ font-size:13px; color:#5A5445; margin:6px 0; }
+  .storage-card code{ background:#F0EBDD; padding:1px 5px; border-radius:4px; font-size:12px; }
+
+  .footer-summary{
+    margin-top:56px; padding:26px 28px; border-radius:16px; background:var(--navy); color:#EDEEF3;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
+  }
+  .footer-summary .fs-label{ font-size:12px; color:#B9BFCF; letter-spacing:.05em; text-transform:uppercase; }
+  .footer-summary .fs-num{ font-family:'Noto Serif KR',serif; font-weight:900; font-size:22px; }
+  .fs-gap .fs-num{ color:#E6A88B; }
+
+  [contenteditable="true"]{ cursor:text; border-radius:5px; transition:background .15s; }
+  [contenteditable="true"]:hover{ background:rgba(176,141,87,0.09); }
+  [contenteditable="true"]:focus{ background:#fff; outline:2px solid var(--brass); outline-offset:2px; box-shadow:0 0 0 4px rgba(176,141,87,0.15); }
+
+  @media (max-width:768px){
+    .toolbar{ padding:8px 16px; }
+    .toolbar button{ font-size:12px; padding:7px 11px; }
+    header.hero{ padding:30px 6vw 24px; }
+    h1.title{ font-size:20px; }
+    .gauge-top .pct{ font-size:26px; }
+    main{ padding:30px 5.5vw 60px; }
+    .card{ padding:16px 14px; border-radius:12px; }
+    .footer-summary{ flex-direction:column; align-items:flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="save-status"><span class="save-dot" id="saveDot"></span><span id="saveText">저장 준비됨</span></div>
+  <div class="toolbar-right">
+    <button class="ghost" onclick="manualSave()">💾 지금 저장</button>
+    <button class="ghost" onclick="exportSnapshot()">⬇ 최신본 다운로드</button>
+    <button class="ghost" onclick="printReport()">🖨 인쇄</button>
+    <button id="lockBtn" onclick="toggleLock()">🔒 편집 잠금</button>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="eyebrow">Sales Progress Tracker</div>
+  <h1 class="title" contenteditable="true" id="titleEl">8월 매출 진행 현황</h1>
+  <div class="subtitle" contenteditable="true" id="subtitleEl">목표 대비 진행률과, 남은 기간 동안 달성에 필요한 페이스를 실시간으로 확인합니다.</div>
+
+  <div class="goal-row">
+    <label>이번달 목표 매출</label>
+    <input type="text" id="goalInput" class="goal-input" value="0" inputmode="numeric" oninput="onAmountInput(this)">
+    <span class="unit">원</span>
+  </div>
+
+  <div class="gauge-wrap">
+    <div class="gauge-top">
+      <div class="pct" id="pctText">0%</div>
+      <div class="cur"><span id="curTotalText">0</span>원 / <span id="goalText">0</span>원</div>
+    </div>
+    <div class="gauge-track"><div class="gauge-fill" id="gaugeFill" style="width:0%"></div></div>
+  </div>
+
+  <div class="pace-box" id="paceBox">
+    항목을 입력하면 진행 상황과 필요한 페이스가 여기 표시됩니다.
+  </div>
+</header>
+
+<main>
+
+  <!-- 매출 기록 -->
+  <div class="section-head">
+    <span class="section-num" contenteditable="true">01</span>
+    <h2 class="section-title" contenteditable="true">매출 기록 (일자별 · 아이템별)</h2>
+  </div>
+  <div class="section-desc" contenteditable="true">날짜와 판매 아이템, 금액을 입력하세요. 주차는 날짜를 기준으로 자동 계산됩니다.</div>
+
+  <div class="log-scroll">
+    <table class="log" id="logTable">
+      <thead>
+        <tr><th>날짜</th><th>주차</th><th>판매 아이템 / 대상</th><th>금액(원)</th><th>메모</th><th></th></tr>
+      </thead>
+      <tbody id="logBody"></tbody>
+      <tfoot>
+        <tr class="log-total"><td colspan="3">합계</td><td id="logTotalCell" style="text-align:right;">0</td><td colspan="2"></td></tr>
+      </tfoot>
+    </table>
+  </div>
+  <button class="add-row" onclick="addLogRow()">+ 매출 기록 추가</button>
+
+  <!-- 주별 요약 -->
+  <div class="section-head">
+    <span class="section-num" contenteditable="true">02</span>
+    <h2 class="section-title" contenteditable="true">주별 요약</h2>
+  </div>
+  <div class="section-desc" contenteditable="true">위 기록의 날짜를 기준으로 자동 집계됩니다.</div>
+  <div class="week-grid" id="weekGrid"></div>
+
+  <!-- 메모 -->
+  <div class="section-head">
+    <span class="section-num" contenteditable="true">03</span>
+    <h2 class="section-title" contenteditable="true">전략 & 메모</h2>
+  </div>
+  <div class="card">
+    <div class="memo-body" contenteditable="true" id="memoEl">부족 자금을 채우기 위한 전략과 대표님 보고용 메모를 자유롭게 기록하세요.</div>
+  </div>
+
+  <!-- 저장 안내 -->
+  <div class="section-head">
+    <span class="section-num" contenteditable="true">04</span>
+    <h2 class="section-title" contenteditable="true">저장 & 업데이트 방식</h2>
+  </div>
+  <div class="card storage-card">
+    <h3>이 리포트는 이렇게 저장되고 업데이트됩니다</h3>
+    <p id="storageStatusLine">확인 중...</p>
+    <p><b>Claude 안에서 열었을 때:</b> 숫자나 메모를 입력하면 약 1초 뒤 자동으로 저장됩니다 (우측 상단 <code>저장 준비됨 / 저장 중</code> 표시로 확인). 다음에 같은 대화를 다시 열면 입력한 내용이 그대로 남아 있습니다. 별도로 파일을 다시 받거나 올릴 필요가 없습니다.</p>
+    <p><b>대표님께 링크로 공유했을 때 (GitHub Pages, Netlify 등):</b> 그 링크는 저장 당시의 스냅샷이라 자동으로는 갱신되지 않습니다. 최신 상태를 반영하려면, 우측 상단 <b>"⬇ 최신본 다운로드"</b> 버튼으로 지금까지 입력한 내용이 그대로 담긴 새 HTML 파일을 받아, 기존에 올렸던 자리에 다시 업로드(덮어쓰기)하면 됩니다.</p>
+  </div>
+
+  <div class="footer-summary">
+    <div><div class="fs-label">현재 확보 매출</div><div class="fs-num"><span id="fsCur">0</span>원</div></div>
+    <div><div class="fs-label">목표 매출</div><div class="fs-num" id="fsGoal">0원</div></div>
+    <div class="fs-gap"><div class="fs-label">부족 금액</div><div class="fs-num"><span id="fsGap">0</span>원</div></div>
+  </div>
+
+</main>
+
+<script>
+  var STORAGE_KEY = 'sales_progress_report_v1';
+  var rowSeq = 0;
+  var saveTimer = null;
+  var storageAvailable = (typeof window.storage !== 'undefined' && window.storage !== null);
+
+  // ---------- number formatting ----------
+  function toNum(str){
+    var digits = String(str || '').replace(/[^0-9-]/g,'');
+    if(digits === '' || digits === '-') return 0;
+    return parseInt(digits, 10);
+  }
+  function fmt(n){ return Math.round(n || 0).toLocaleString('ko-KR'); }
+
+  function onAmountInput(el){
+    var start = el.selectionStart;
+    var digitsBefore = el.value.slice(0, start).replace(/[^0-9-]/g,'').length;
+    var num = toNum(el.value);
+    var formatted = (num === 0 && toNum(el.value) === 0 && el.value.replace(/[^0-9-]/g,'') === '') ? '' : fmt(num);
+    el.value = formatted;
+    var count = 0, pos = formatted.length;
+    for(var i=0;i<formatted.length;i++){
+      if(/[0-9]/.test(formatted[i])) count++;
+      if(count === digitsBefore){ pos = i+1; break; }
+    }
+    try{ el.setSelectionRange(pos,pos); }catch(e){}
+    recalcAll();
+    scheduleSave();
+  }
+
+  // ---------- week bucketing ----------
+  function weekLabelForDate(dateStr){
+    if(!dateStr) return '-';
+    var day = parseInt(dateStr.split('-')[2], 10);
+    if(day <= 7) return '1주차';
+    if(day <= 14) return '2주차';
+    if(day <= 21) return '3주차';
+    if(day <= 28) return '4주차';
+    return '5주차';
+  }
+
+  // ---------- log rows ----------
+  function buildLogRow(data){
+    data = data || {};
+    rowSeq++;
+    var tr = document.createElement('tr');
+    tr.className = 'log-row';
+    tr.innerHTML =
+      '<td><input type="date" class="log-date" value="'+(data.date||'')+'" oninput="onRowChange(this)"></td>' +
+      '<td><span class="week-badge">-</span></td>' +
+      '<td><input type="text" class="log-item" placeholder="예: 스타19 / 자비아 / 총판 등" value="'+escapeAttr(data.item||'')+'" oninput="onRowChange(this)"></td>' +
+      '<td><input type="text" inputmode="numeric" class="log-amt amt" placeholder="0" value="'+(data.amount?fmt(data.amount):'')+'" oninput="onAmountInput(this)"></td>' +
+      '<td><input type="text" class="log-memo" placeholder="메모" value="'+escapeAttr(data.memo||'')+'" oninput="onRowChange(this)"></td>' +
+      '<td><button class="del-x" onclick="removeLogRow(this)">✕</button></td>';
+    return tr;
+  }
+  function escapeAttr(s){ return String(s).replace(/"/g,'&quot;'); }
+
+  function addLogRow(data){
+    var tbody = document.getElementById('logBody');
+    var row = buildLogRow(data);
+    tbody.appendChild(row);
+    recalcAll();
+    scheduleSave();
+    return row;
+  }
+
+  function removeLogRow(btn){
+    btn.closest('tr').remove();
+    recalcAll();
+    scheduleSave();
+  }
+
+  function onRowChange(){
+    recalcAll();
+    scheduleSave();
+  }
+
+  // ---------- recalculation ----------
+  function recalcAll(){
+    var goal = toNum(document.getElementById('goalInput').value);
+    var rows = document.querySelectorAll('#logBody tr.log-row');
+    var total = 0;
+    var weekTotals = {'1주차':0,'2주차':0,'3주차':0,'4주차':0,'5주차':0};
+    var weekCounts = {'1주차':0,'2주차':0,'3주차':0,'4주차':0,'5주차':0};
+
+    rows.forEach(function(row){
+      var dateVal = row.querySelector('.log-date').value;
+      var amt = toNum(row.querySelector('.log-amt').value);
+      total += amt;
+      var wk = weekLabelForDate(dateVal);
+      row.querySelector('.week-badge').textContent = wk;
+      if(weekTotals.hasOwnProperty(wk)){ weekTotals[wk] += amt; weekCounts[wk] += 1; }
+    });
+
+    document.getElementById('logTotalCell').textContent = fmt(total);
+    document.getElementById('curTotalText').textContent = fmt(total);
+    document.getElementById('goalText').textContent = fmt(goal);
+    document.getElementById('fsCur').textContent = fmt(total);
+    document.getElementById('fsGoal').textContent = fmt(goal)+'원';
+
+    var gap = Math.max(goal - total, 0);
+    document.getElementById('fsGap').textContent = fmt(gap);
+
+    var pct = goal > 0 ? Math.min(100, (total/goal*100)) : 0;
+    document.getElementById('pctText').textContent = pct.toFixed(1)+'%';
+    document.getElementById('gaugeFill').style.width = pct+'%';
+
+    // weekly summary cards
+    var weekGrid = document.getElementById('weekGrid');
+    weekGrid.innerHTML = '';
+    ['1주차','2주차','3주차','4주차','5주차'].forEach(function(wk){
+      var div = document.createElement('div');
+      div.className = 'week-card';
+      div.innerHTML = '<div class="wk-name">'+wk+'</div><div class="wk-amt">'+fmt(weekTotals[wk])+'원</div><div class="wk-cnt">'+weekCounts[wk]+'건</div>';
+      weekGrid.appendChild(div);
+    });
+
+    // pace calculator
+    updatePace(goal, total, gap);
+  }
+
+  function updatePace(goal, total, gap){
+    var box = document.getElementById('paceBox');
+    if(goal <= 0){
+      box.innerHTML = '목표 매출을 입력하면 필요한 페이스가 계산됩니다.';
+      return;
+    }
+    var today = new Date();
+    var endOfMonth = new Date(today.getFullYear(), today.getMonth()+1, 0);
+    var elapsedDays = today.getDate();
+    var remainingDays = endOfMonth.getDate() - today.getDate() + 1;
+    if(remainingDays < 1) remainingDays = 1;
+
+    var currentDailyAvg = elapsedDays > 0 ? (total/elapsedDays) : 0;
+    var neededDailyAvg = gap > 0 ? (gap/remainingDays) : 0;
+
+    var todayStr = today.getFullYear()+'.'+(today.getMonth()+1)+'.'+today.getDate();
+    var html = '진행 현황: <b>'+fmt(total)+'원</b> / 목표 <b>'+fmt(goal)+'원</b> 확보 (오늘 '+todayStr+' 기준)';
+    html += '<div class="pace-line">이번 달 남은 <b>'+remainingDays+'일</b> 동안, 부족한 <b>'+fmt(gap)+'원</b>을 채우려면 하루 평균 <b>'+fmt(neededDailyAvg)+'원</b>이 필요합니다.</div>';
+
+    if(gap <= 0){
+      html += '<div class="pace-line pace-good">✓ 이미 목표를 달성했습니다.</div>';
+    } else if(neededDailyAvg <= currentDailyAvg){
+      html += '<div class="pace-line pace-good">✓ 지금까지의 페이스(하루 평균 '+fmt(currentDailyAvg)+'원)를 유지하면 목표 달성이 가능한 속도입니다.</div>';
+    } else {
+      var diff = neededDailyAvg - currentDailyAvg;
+      html += '<div class="pace-line pace-bad">▲ 지금까지 페이스(하루 평균 '+fmt(currentDailyAvg)+'원)보다 하루 평균 '+fmt(diff)+'원 더 필요합니다. 남은 기간 추가 설명회·추천 전환에 집중이 필요합니다.</div>';
+    }
+    box.innerHTML = html;
+  }
+
+  // ---------- save / load ----------
+  function collectState(){
+    var rows = [];
+    document.querySelectorAll('#logBody tr.log-row').forEach(function(row){
+      rows.push({
+        date: row.querySelector('.log-date').value,
+        item: row.querySelector('.log-item').value,
+        amount: toNum(row.querySelector('.log-amt').value),
+        memo: row.querySelector('.log-memo').value
+      });
+    });
+    return {
+      title: document.getElementById('titleEl').innerHTML,
+      subtitle: document.getElementById('subtitleEl').innerHTML,
+      memo: document.getElementById('memoEl').innerHTML,
+      goal: toNum(document.getElementById('goalInput').value),
+      rows: rows,
+      savedAt: new Date().toISOString()
+    };
+  }
+
+  function applyState(state){
+    if(!state) return;
+    if(state.title) document.getElementById('titleEl').innerHTML = state.title;
+    if(state.subtitle) document.getElementById('subtitleEl').innerHTML = state.subtitle;
+    if(state.memo) document.getElementById('memoEl').innerHTML = state.memo;
+    document.getElementById('goalInput').value = state.goal ? fmt(state.goal) : '';
+    var tbody = document.getElementById('logBody');
+    tbody.innerHTML = '';
+    (state.rows || []).forEach(function(r){ tbody.appendChild(buildLogRow(r)); });
+    recalcAll();
+  }
+
+  function scheduleSave(){
+    setSaveStatus('editing');
+    if(saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(function(){ manualSave(); }, 900);
+  }
+
+  function setSaveStatus(mode){
+    var dot = document.getElementById('saveDot');
+    var text = document.getElementById('saveText');
+    if(mode === 'editing'){ dot.className='save-dot saving'; text.textContent='입력 중...'; }
+    else if(mode === 'saving'){ dot.className='save-dot saving'; text.textContent='저장 중...'; }
+    else if(mode === 'saved'){
+      dot.className='save-dot';
+      var t = new Date();
+      var hh = String(t.getHours()).padStart(2,'0');
+      var mm = String(t.getMinutes()).padStart(2,'0');
+      text.textContent = '자동 저장됨 · '+hh+':'+mm;
+    } else if(mode === 'unavailable'){
+      dot.className='save-dot'; dot.style.background = '#B0A98F';
+      text.textContent = '이 화면에서는 자동 저장이 지원되지 않습니다 (아래 저장 안내 참고)';
+    }
+  }
+
+  function manualSave(){
+    if(!storageAvailable){ setSaveStatus('unavailable'); return; }
+    setSaveStatus('saving');
+    var state = collectState();
+    try{
+      window.storage.set(STORAGE_KEY, JSON.stringify(state), false)
+        .then(function(res){
+          if(res){ setSaveStatus('saved'); }
+          else { setSaveStatus('unavailable'); }
+        })
+        .catch(function(){ setSaveStatus('unavailable'); });
+    }catch(e){ setSaveStatus('unavailable'); }
+  }
+
+  function loadInitial(){
+    var statusLine = document.getElementById('storageStatusLine');
+    if(!storageAvailable){
+      statusLine.textContent = '현재 이 화면은 Claude의 자동 저장 기능 없이 열려 있습니다 (예: 다운로드한 파일을 직접 열었거나 외부 호스팅). 아래 안내를 참고해 최신본을 관리해주세요.';
+      setSaveStatus('unavailable');
+      seedExampleIfEmpty();
+      recalcAll();
+      return;
+    }
+    statusLine.textContent = '자동 저장이 활성화되어 있습니다. 입력하는 즉시 저장되며, 다음에 이 대화를 다시 열면 그대로 이어집니다.';
+    try{
+      window.storage.get(STORAGE_KEY, false)
+        .then(function(res){
+          if(res && res.value){
+            try{ applyState(JSON.parse(res.value)); }catch(e){ seedExampleIfEmpty(); }
+          } else {
+            seedExampleIfEmpty();
+          }
+          setSaveStatus('saved');
+          recalcAll();
+        })
+        .catch(function(){ seedExampleIfEmpty(); recalcAll(); });
+    }catch(e){ seedExampleIfEmpty(); recalcAll(); }
+  }
+
+  function seedExampleIfEmpty(){
+    var tbody = document.getElementById('logBody');
+    if(tbody.children.length === 0){
+      var today = new Date();
+      var iso = today.toISOString().slice(0,10);
+      tbody.appendChild(buildLogRow({date: iso, item:'(예시) 스타19 - 홍길동', amount:1200000, memo:'직접 입력으로 교체/삭제하세요'}));
+    }
+  }
+
+  // ---------- export snapshot ----------
+  function exportSnapshot(){
+    var clone = document.documentElement.cloneNode(true);
+
+    // bake current goal value
+    var goalClone = clone.querySelector('#goalInput');
+    if(goalClone) goalClone.setAttribute('value', document.getElementById('goalInput').value);
+
+    // bake title/subtitle/memo
+    ['titleEl','subtitleEl','memoEl'].forEach(function(id){
+      var src = document.getElementById(id);
+      var dst = clone.querySelector('#'+id);
+      if(src && dst) dst.innerHTML = src.innerHTML;
+    });
+
+    // bake log rows
+    var srcBody = document.getElementById('logBody');
+    var dstBody = clone.querySelector('#logBody');
+    if(srcBody && dstBody){
+      dstBody.innerHTML = '';
+      srcBody.querySelectorAll('tr.log-row').forEach(function(row){
+        var date = row.querySelector('.log-date').value;
+        var item = row.querySelector('.log-item').value;
+        var amt = row.querySelector('.log-amt').value;
+        var memo = row.querySelector('.log-memo').value;
+        var wk = row.querySelector('.week-badge').textContent;
+        var tr = document.createElement('tr');
+        tr.className = 'log-row';
+        tr.innerHTML =
+          '<td><input type="date" class="log-date" value="'+date+'" oninput="onRowChange(this)"></td>' +
+          '<td><span class="week-badge">'+wk+'</span></td>' +
+          '<td><input type="text" class="log-item" value="'+escapeAttr(item)+'" oninput="onRowChange(this)"></td>' +
+          '<td><input type="text" inputmode="numeric" class="log-amt amt" value="'+escapeAttr(amt)+'" oninput="onAmountInput(this)"></td>' +
+          '<td><input type="text" class="log-memo" value="'+escapeAttr(memo)+'" oninput="onRowChange(this)"></td>' +
+          '<td><button class="del-x" onclick="removeLogRow(this)">✕</button></td>';
+        dstBody.appendChild(tr);
+      });
+    }
+
+    var html = '<!DOCTYPE html>\n' + clone.outerHTML;
+    var blob = new Blob([html], {type:'text/html'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    var stamp = new Date().toISOString().slice(0,16).replace(/[:T]/g,'-');
+    a.href = url;
+    a.download = '매출진행리포트_'+stamp+'.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // ---------- lock / print ----------
+  var locked = false;
+  function toggleLock(){
+    locked = !locked;
+    document.querySelectorAll('[contenteditable]').forEach(function(el){ el.setAttribute('contenteditable', locked ? 'false' : 'true'); });
+    document.querySelectorAll('input, select').forEach(function(el){ el.disabled = locked; });
+    document.querySelectorAll('.add-row, .del-x').forEach(function(el){ el.style.display = locked ? 'none' : ''; });
+    document.getElementById('lockBtn').textContent = locked ? '🔓 편집 잠금 해제' : '🔒 편집 잠금';
+  }
+
+  function printReport(){
+    try{
+      var html = '<!DOCTYPE html>' + document.documentElement.outerHTML;
+      var win = window.open('', '_blank');
+      if(!win){ alert('팝업이 차단되었습니다. 팝업 차단 아이콘을 눌러 허용한 뒤 다시 시도해주세요.'); return; }
+      win.document.open(); win.document.write(html); win.document.close();
+      win.onload = function(){ setTimeout(function(){ win.focus(); win.print(); }, 500); };
+    }catch(e){
+      alert('인쇄 창을 열지 못했습니다. 최신본을 다운로드해서 브라우저에서 열고 Ctrl/Cmd+P로 인쇄해주세요.');
+    }
+  }
+
+  loadInitial();
+
+</script>
+
+</body>
+</html>
