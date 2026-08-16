@@ -244,6 +244,13 @@
   .goal-note.warn b{ color:#7C382E; }
   .undated-note{ margin-top:8px; font-size:12.5px; color:var(--red); }
 
+  .sub-title{ margin:20px 0 10px; font-family:'Noto Serif KR',serif; font-size:14.5px; font-weight:700; color:var(--navy); }
+  .wk-line{ font-size:11.5px; color:var(--muted); margin-top:3px; }
+  .wk-line b{ color:var(--green); }
+  .wk-rate{ font-weight:800; }
+  .wk-rate.reached{ color:var(--green); }
+  .wk-rate.short{ color:var(--red); }
+
   /* weekly summary */
   .week-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; }
   .week-card{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; text-align:center; }
@@ -513,6 +520,9 @@
     <button class="add-row" onclick="genMonthGoals()">📅 이번 달 1일~말일 자동 생성</button>
     <button class="add-row" onclick="applyGoalSumToMonth()">↑ 합계를 월 목표로 반영</button>
   </div>
+
+  <div class="sub-title">주별 목표 합계</div>
+  <div class="week-grid" id="goalWeekGrid"></div>
   <div class="goal-note" id="goalNote"></div>
   <div class="undated-note" id="undatedNote"></div>
 
@@ -778,6 +788,24 @@
     }
   }
 
+  function renderGoalWeeks(wkGoal, wkAct){
+    var box = document.getElementById('goalWeekGrid');
+    box.innerHTML = '';
+    ['1주차','2주차','3주차','4주차','5주차'].forEach(function(wk){
+      var g = wkGoal[wk], a = wkAct[wk];
+      var rate = g > 0 ? (a / g * 100) : null;
+      var rateHtml = rate === null ? '-' :
+        '<span class="wk-rate ' + (rate >= 100 ? 'reached' : 'short') + '">' + rate.toFixed(0) + '%</span>';
+      var div = document.createElement('div');
+      div.className = 'week-card';
+      div.innerHTML =
+        '<div class="wk-name">' + wk + ' 목표</div>' +
+        '<div class="wk-amt">' + fmt(g) + '원</div>' +
+        '<div class="wk-line">실적 <b>' + fmt(a) + '원</b> · ' + rateHtml + '</div>';
+      box.appendChild(div);
+    });
+  }
+
   function renderChart(data, sumGoal, sumDone){
     var box = document.getElementById('itemChart');
     box.innerHTML = '';
@@ -890,12 +918,19 @@
     var rows = document.querySelectorAll('#goalBody .goal-row');
     var sum = 0, act = 0, cum = 0;
 
+    var wkGoal = {'1주차':0,'2주차':0,'3주차':0,'4주차':0,'5주차':0};
+    var wkAct  = {'1주차':0,'2주차':0,'3주차':0,'4주차':0,'5주차':0};
+
     rows.forEach(function(row){
       var d = row.querySelector('.g-date').value;
       var g = toNum(row.querySelector('.g-amt').value);
       var a = (d && actualByDate.hasOwnProperty(d)) ? actualByDate[d] : 0;
       sum += g; act += a;
       if(d && d <= todayISO) cum += g;
+      if(d){
+        var wk = weekLabelForDate(d);
+        if(wkGoal.hasOwnProperty(wk)){ wkGoal[wk] += g; wkAct[wk] += a; }
+      }
 
       row.className = 'grow goal-row' + (d === todayISO ? ' today' : '');
       row.querySelector('.g-dow').textContent = dowLabel(d);
@@ -916,6 +951,8 @@
         rateCell.className = 'g-num g-rate';
       }
     });
+
+    renderGoalWeeks(wkGoal, wkAct);
 
     var totalDiff = act - sum;
     document.getElementById('gSumCell').textContent = fmt(sum);
