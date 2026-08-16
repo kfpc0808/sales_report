@@ -83,12 +83,18 @@
 
   /* log table */
   .log-scroll{ width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--line); border-radius:12px; }
-  table.log{ border-collapse:collapse; width:100%; min-width:680px; font-size:13.5px; }
+  table.log{ border-collapse:collapse; width:100%; min-width:680px; font-size:13.5px; table-layout:fixed; }
+  table.log th:nth-child(1), table.log td:nth-child(1){ width:142px; }
+  table.log th:nth-child(2){ width:72px; }
+  table.log th:nth-child(4){ width:150px; text-align:right; padding-right:14px; }
+  table.log th:nth-child(5){ width:230px; }
+  table.log th:nth-child(6){ width:46px; }
+  table.log #logTotalCell{ padding-right:14px; }
   table.log th{ text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; padding:9px 10px; border-bottom:1px solid var(--line); background:#F8F6F1; white-space:nowrap; }
   table.log td{ padding:7px 8px; border-bottom:1px solid #F0EEE7; vertical-align:middle; }
-  table.log input[type="date"]{ border:1px solid transparent; background:transparent; border-radius:5px; padding:5px 4px; font-size:13px; width:130px; }
-  table.log input[type="text"]{ border:1px solid transparent; background:transparent; border-radius:5px; padding:5px 6px; font-size:13.5px; width:100%; min-width:110px; }
-  table.log input.amt{ text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--green); min-width:100px; }
+  table.log input[type="date"]{ border:1px solid transparent; background:transparent; border-radius:5px; padding:5px 4px; font-size:13px; width:100%; min-width:0; }
+  table.log input[type="text"]{ border:1px solid transparent; background:transparent; border-radius:5px; padding:5px 6px; font-size:13.5px; width:100%; min-width:0; }
+  table.log input.amt{ text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--green); min-width:0; }
   table.log input:hover{ border-color:var(--line); background:#FBFAF7; }
   table.log input:focus{ border-color:var(--brass); background:#fff; outline:none; }
   /* 잠금(읽기 전용) 상태에서도 글자가 흐려지지 않도록 */
@@ -275,10 +281,13 @@
     /* 04 매출 기록 — 메모만 접고 나머지는 넉넉하게 */
     table.log{ min-width:520px; }
     table.log th, table.log td{ padding:7px 6px; }
+    table.log th:nth-child(1), table.log td:nth-child(1){ width:112px; }
+    table.log th:nth-child(2){ width:58px; }
+    table.log th:nth-child(4){ width:126px; padding-right:12px; }
+    table.log th:nth-child(6){ width:36px; }
     table.log th:nth-child(5), table.log tbody td:nth-child(5){ display:none; }
-    table.log input[type="date"]{ width:104px; min-width:104px; font-size:13px; padding:5px 3px; }
+    table.log input[type="date"]{ width:100%; min-width:0; font-size:13px; padding:5px 3px; }
     table.log input[type="text"]{ min-width:0; font-size:13px; }
-    table.log input.amt{ min-width:96px; }
 
     /* 05 일자별 목표 — 차이·달성률·메모 접기 */
     .gtable{ min-width:470px; grid-template-columns:106px 44px minmax(96px,1fr) 104px 104px 26px; }
