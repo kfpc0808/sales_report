@@ -123,16 +123,15 @@
   .btn-go{ border:1px solid var(--navy); background:var(--navy); color:#fff; }
 
   /* item goal board */
-  .itable{ min-width:660px; font-size:13.5px; }
-  .irow{
+  .itable{
     display:grid; grid-template-columns:minmax(150px,200px) 130px 130px 80px 130px minmax(36px,1fr);
-    align-items:center; border-bottom:1px solid #F0EEE7;
+    align-items:stretch; min-width:660px; font-size:13.5px;
   }
-  .irow > div{ min-width:0; padding:7px 8px; }
-  .irow > div:last-child{ text-align:left; }
-  .ihead{ background:#F8F6F1; border-bottom:1px solid var(--line); }
-  .ihead > div{ font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .ifoot{ background:#F8F6F1; border-top:2px solid var(--line); border-bottom:none; font-weight:800; color:var(--navy); }
+  .irow, #itemBody{ display:contents; }
+  .irow > div{ min-width:0; padding:7px 8px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
+  .irow > div:last-child{ justify-content:flex-start; }
+  .ihead > div{ background:#F8F6F1; border-bottom:1px solid var(--line); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ifoot > div{ background:#F8F6F1; border-top:2px solid var(--line); border-bottom:none; font-weight:800; color:var(--navy); }
   .itable input[type="text"]{
     width:100%; min-width:0; border:1px solid transparent; background:transparent; border-radius:5px;
     padding:5px 6px; font-size:13.5px; font-family:'Pretendard',sans-serif; color:var(--ink);
@@ -157,15 +156,14 @@
   .lead-comment:hover{ background:rgba(255,255,255,0.07); }
   .lead-comment:focus{ background:rgba(255,255,255,0.12); color:#fff; box-shadow:none; outline:2px solid var(--brass); outline-offset:3px; }
 
-  .stable{ min-width:790px; font-size:13.5px; margin-top:16px; }
-  .srow{
+  .stable{
     display:grid; grid-template-columns:minmax(130px,180px) minmax(170px,1fr) 132px 130px 96px minmax(34px,44px);
-    align-items:center; border-bottom:1px solid #F0EEE7;
+    align-items:stretch; min-width:790px; font-size:13.5px; margin-top:16px;
   }
-  .srow > div{ min-width:0; padding:7px 8px; }
-  .shead{ background:#F8F6F1; border-bottom:1px solid var(--line); }
-  .shead > div{ font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .sfoot{ background:#F8F6F1; border-top:2px solid var(--line); border-bottom:none; font-weight:800; color:var(--navy); }
+  .srow, #stratBody{ display:contents; }
+  .srow > div{ min-width:0; padding:7px 8px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
+  .shead > div{ background:#F8F6F1; border-bottom:1px solid var(--line); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .sfoot > div{ background:#F8F6F1; border-top:2px solid var(--line); border-bottom:none; font-weight:800; color:var(--navy); }
   .stable input[type="text"]{
     width:100%; min-width:0; border:1px solid transparent; background:transparent; border-radius:5px;
     padding:5px 6px; font-size:13.5px; font-family:'Pretendard',sans-serif; color:var(--ink);
@@ -200,20 +198,20 @@
   .cross-note.warn b{ color:#7C382E; }
 
   /* daily goal board (grid layout) */
-  .gtable{ min-width:850px; font-size:13.5px; }
-  .grow{
+  .gtable{
     display:grid;
     grid-template-columns:125px 50px minmax(140px,1fr) 105px 105px 95px 70px minmax(120px,1fr) 40px;
-    align-items:center; border-bottom:1px solid #F0EEE7;
+    align-items:stretch; min-width:850px; font-size:13.5px;
   }
-  .grow > div{ min-width:0; padding:7px 8px; }
-  .ghead{ background:#F8F6F1; border-bottom:1px solid var(--line); }
-  .ghead > div{ font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .gfoot{ background:#F8F6F1; border-top:2px solid var(--line); border-bottom:none; font-weight:800; color:var(--navy); }
-  .grow.today{ background:#FBF6EC; }
-  .g-num{ text-align:right; font-variant-numeric:tabular-nums; font-weight:600; white-space:nowrap; }
+  .grow, #goalBody{ display:contents; }
+  .grow > div{ min-width:0; padding:7px 8px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
+  .ghead > div{ background:#F8F6F1; border-bottom:1px solid var(--line); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .gfoot > div{ background:#F8F6F1; border-top:2px solid var(--line); border-bottom:none; font-weight:800; color:var(--navy); }
+  .grow.today > div{ background:#FBF6EC; }
+  .g-num{ text-align:right; font-variant-numeric:tabular-nums; font-weight:600; white-space:nowrap; justify-content:flex-end; }
   .grow > div.g-num, .irow > div.g-num, .srow > div.g-num{ padding-right:14px; }
-  .g-mid{ text-align:center; }
+  .g-mid{ text-align:center; justify-content:center; }
+  .grow > div > input, .irow > div > input, .srow > div > input, .srow > div > select{ width:100%; min-width:0; flex:1 1 auto; }
   .gtable .week-badge{ padding:2px 7px; }
   .gtable input[type="text"], .gtable input[type="date"]{
     width:100%; min-width:0; border:1px solid transparent; background:transparent; border-radius:5px;
@@ -264,11 +262,11 @@
 
   @media (max-width:768px){
     .itable{ min-width:0; }
-    .irow{ grid-template-columns:minmax(84px,1fr) 98px 98px 28px; }
+    .itable{ grid-template-columns:minmax(84px,1fr) 98px 98px 28px; }
     .irow > div{ padding:7px 4px; }
     .irow > div:nth-child(4), .irow > div:nth-child(5){ display:none; }
     .stable{ min-width:0; }
-    .srow{ grid-template-columns:minmax(76px,0.9fr) minmax(86px,1.1fr) 92px 72px 24px; }
+    .stable{ grid-template-columns:minmax(76px,0.9fr) minmax(86px,1.1fr) 92px 72px 24px; }
     .srow > div{ padding:7px 4px; }
     .srow > div:nth-child(3){ display:none; }
     .shead > div{ font-size:10px; letter-spacing:0; }
