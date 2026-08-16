@@ -123,12 +123,13 @@
   .btn-go{ border:1px solid var(--navy); background:var(--navy); color:#fff; }
 
   /* item goal board */
-  .itable{ min-width:700px; font-size:13.5px; }
+  .itable{ min-width:660px; font-size:13.5px; }
   .irow{
-    display:grid; grid-template-columns:minmax(160px,1.6fr) 130px 130px 84px 130px 44px;
+    display:grid; grid-template-columns:minmax(150px,200px) 130px 130px 80px 130px minmax(36px,1fr);
     align-items:center; border-bottom:1px solid #F0EEE7;
   }
   .irow > div{ min-width:0; padding:7px 8px; }
+  .irow > div:last-child{ text-align:left; }
   .ihead{ background:#F8F6F1; border-bottom:1px solid var(--line); }
   .ihead > div{ font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .ifoot{ background:#F8F6F1; border-top:2px solid var(--line); border-bottom:none; font-weight:800; color:var(--navy); }
@@ -224,6 +225,15 @@
   [contenteditable="true"]:focus{ background:#fff; outline:2px solid var(--brass); outline-offset:2px; box-shadow:0 0 0 4px rgba(176,141,87,0.15); }
 
   @media (max-width:768px){
+    .itable{ min-width:0; }
+    .irow{ grid-template-columns:minmax(84px,1fr) 98px 98px 28px; }
+    .irow > div{ padding:7px 4px; }
+    .irow > div:nth-child(4), .irow > div:nth-child(5){ display:none; }
+    .ihead > div{ font-size:10px; letter-spacing:0; }
+    .itable input[type="text"]{ font-size:12.5px; padding:5px 4px; }
+    .chart-name{ font-size:12.5px; }
+    .chart-val{ font-size:11px; }
+
     .toolbar{ padding:8px 16px; }
     .toolbar button{ font-size:12px; padding:7px 11px; }
     header.hero{ padding:30px 6vw 24px; }
