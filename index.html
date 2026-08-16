@@ -261,12 +261,37 @@
   [contenteditable="true"]:focus{ background:#fff; outline:2px solid var(--brass); outline-offset:2px; box-shadow:0 0 0 4px rgba(176,141,87,0.15); }
 
   @media (max-width:768px){
+    /* 공통: 스크롤 없이 화면 폭에 맞춤 */
+    .log-scroll{ overflow-x:visible; }
+    .grow > div.g-num, .irow > div.g-num, .srow > div.g-num{ padding-right:8px; }
+    .week-badge{ font-size:10px; padding:2px 5px; }
+
+    /* 04 매출 기록 — 메모 칸 접기 */
+    table.log{ min-width:0; }
+    table.log th, table.log td{ padding:6px 4px; }
+    table.log th:nth-child(5), table.log tbody td:nth-child(5){ display:none; }
+    table.log th{ font-size:10px; letter-spacing:0; }
+    table.log input[type="date"]{ width:100%; min-width:0; font-size:11.5px; padding:5px 1px; }
+    table.log input[type="text"]{ min-width:0; font-size:12px; padding:5px 4px; }
+    table.log input.amt{ min-width:0; }
+    table.log .del-x{ min-width:22px; padding:4px; }
+
+    /* 05 일자별 목표 — 요일·차이·달성률·메모 접기 */
+    .gtable{ min-width:0; grid-template-columns:82px minmax(44px,1fr) 68px 68px 18px; }
+    .grow > div{ padding:6px 4px; }
+    .grow > div:nth-child(2), .grow > div:nth-child(6),
+    .grow > div:nth-child(7), .grow > div:nth-child(8){ display:none; }
+    .gtable input[type="date"]{ font-size:11.5px; padding:5px 1px; }
+    .gtable input[type="text"]{ font-size:12px; padding:5px 4px; }
+    .ghead > div{ font-size:10px; letter-spacing:0; }
+    .gtable .del-x{ min-width:20px; padding:4px 0; font-size:13px; }
+
     .itable{ min-width:0; }
-    .itable{ grid-template-columns:minmax(84px,1fr) 98px 98px 28px; }
+    .itable{ grid-template-columns:minmax(72px,1fr) 90px 90px 24px; }
     .irow > div{ padding:7px 4px; }
     .irow > div:nth-child(4), .irow > div:nth-child(5){ display:none; }
     .stable{ min-width:0; }
-    .stable{ grid-template-columns:minmax(76px,0.9fr) minmax(86px,1.1fr) 92px 72px 24px; }
+    .stable{ grid-template-columns:minmax(52px,0.9fr) minmax(56px,1.1fr) 82px 62px 20px; }
     .srow > div{ padding:7px 4px; }
     .srow > div:nth-child(3){ display:none; }
     .shead > div{ font-size:10px; letter-spacing:0; }
