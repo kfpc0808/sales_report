@@ -1002,6 +1002,16 @@
     updatePace(goal, total, gap, goalStats);
   }
 
+  // 해당 월의 from~to일 사이 영업일 수 (토·일 제외, 공휴일 미반영)
+  function bizDays(year, monthIndex, from, to){
+    var cnt = 0;
+    for(var d = from; d <= to; d++){
+      var w = new Date(year, monthIndex, d).getDay();
+      if(w !== 0 && w !== 6) cnt++;
+    }
+    return cnt;
+  }
+
   function updatePace(goal, total, gap, stats){
     var box = document.getElementById('paceBox');
     var cumLine = '';
@@ -1015,8 +1025,11 @@
     }
     var today = new Date();
     var endOfMonth = new Date(today.getFullYear(), today.getMonth()+1, 0);
-    var elapsedDays = today.getDate();
-    var remainingDays = endOfMonth.getDate() - today.getDate() + 1;
+    var lastDay = endOfMonth.getDate();
+
+    // 영업일(주말 제외) 기준 계산 — 공휴일은 반영하지 않음
+    var elapsedDays = bizDays(today.getFullYear(), today.getMonth(), 1, today.getDate());
+    var remainingDays = bizDays(today.getFullYear(), today.getMonth(), today.getDate(), lastDay);
     if(remainingDays < 1) remainingDays = 1;
 
     var currentDailyAvg = elapsedDays > 0 ? (total/elapsedDays) : 0;
@@ -1024,15 +1037,15 @@
 
     var todayStr = today.getFullYear()+'.'+(today.getMonth()+1)+'.'+today.getDate();
     var html = '진행 현황: <b>'+fmt(total)+'원</b> / 목표 <b>'+fmt(goal)+'원</b> 확보 (오늘 '+todayStr+' 기준)';
-    html += '<div class="pace-line">이번 달 남은 <b>'+remainingDays+'일</b> 동안, 부족한 <b>'+fmt(gap)+'원</b>을 채우려면 하루 평균 <b>'+fmt(neededDailyAvg)+'원</b>이 필요합니다.</div>';
+    html += '<div class="pace-line">이번 달 남은 <b>영업일 '+remainingDays+'일</b>(주말 제외) 동안, 부족한 <b>'+fmt(gap)+'원</b>을 채우려면 영업일 하루 평균 <b>'+fmt(neededDailyAvg)+'원</b>이 필요합니다. <span style="opacity:.7">※ 공휴일은 반영되지 않았습니다.</span></div>';
 
     if(gap <= 0){
       html += '<div class="pace-line pace-good">✓ 이미 목표를 달성했습니다.</div>';
     } else if(neededDailyAvg <= currentDailyAvg){
-      html += '<div class="pace-line pace-good">✓ 지금까지의 페이스(하루 평균 '+fmt(currentDailyAvg)+'원)를 유지하면 목표 달성이 가능한 속도입니다.</div>';
+      html += '<div class="pace-line pace-good">✓ 지금까지의 페이스(영업일 하루 평균 '+fmt(currentDailyAvg)+'원)를 유지하면 목표 달성이 가능한 속도입니다.</div>';
     } else {
       var diff = neededDailyAvg - currentDailyAvg;
-      html += '<div class="pace-line pace-bad">▲ 지금까지 페이스(하루 평균 '+fmt(currentDailyAvg)+'원)보다 하루 평균 '+fmt(diff)+'원 더 필요합니다. 남은 기간 추가 설명회·추천 전환에 집중이 필요합니다.</div>';
+      html += '<div class="pace-line pace-bad">▲ 지금까지 페이스(영업일 하루 평균 '+fmt(currentDailyAvg)+'원)보다 영업일 하루 평균 '+fmt(diff)+'원 더 필요합니다. 남은 기간 추가 설명회·추천 전환에 집중이 필요합니다.</div>';
     }
     html += cumLine;
     box.innerHTML = html;
