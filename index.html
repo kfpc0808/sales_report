@@ -245,6 +245,7 @@
   .undated-note{ margin-top:8px; font-size:12.5px; color:var(--red); }
 
   .sub-title{ margin:20px 0 10px; font-family:'Noto Serif KR',serif; font-size:14.5px; font-weight:700; color:var(--navy); }
+  .wk-range{ font-weight:600; color:var(--brass); }
   .wk-line{ font-size:11.5px; color:var(--muted); margin-top:3px; }
   .wk-line b{ color:var(--green); }
   .wk-rate{ font-weight:800; }
@@ -383,7 +384,7 @@
     <span class="section-num" contenteditable="true">01</span>
     <h2 class="section-title" contenteditable="true">주별 요약</h2>
   </div>
-  <div class="section-desc" contenteditable="true">아래 매출 기록의 날짜를 기준으로 자동 집계됩니다.</div>
+  <div class="section-desc" contenteditable="true">아래 매출 기록의 날짜를 달력 주(월~일) 단위로 자동 집계합니다.</div>
   <div class="week-grid" id="weekGrid"></div>
 
   <!-- 아이템별 목표 & 달성 -->
@@ -613,15 +614,39 @@
     scheduleSave();
   }
 
-  // ---------- week bucketing ----------
-  function weekLabelForDate(dateStr){
-    if(!dateStr) return '-';
-    var day = parseInt(dateStr.split('-')[2], 10);
-    if(day <= 7) return '1주차';
-    if(day <= 14) return '2주차';
-    if(day <= 21) return '3주차';
-    if(day <= 28) return '4주차';
-    return '5주차';
+  // ---------- week bucketing (달력 기준: 월요일 시작) ----------
+  function mondayOfYMD(y, m, d){
+    var dt = new Date(y, m, d);
+    var w = dt.getDay();                       // 0=일 … 6=토
+    dt.setDate(dt.getDate() + (w === 0 ? -6 : 1 - w));
+    return dt;
+  }
+  function weekKeyForDate(dateStr){
+    if(!dateStr) return '';
+    var p = String(dateStr).split('-');
+    if(p.length !== 3) return '';
+    return localISO(mondayOfYMD(Number(p[0]), Number(p[1]) - 1, Number(p[2])));
+  }
+  // 해당 월을 달력 주 단위로 쪼갠 목록 (달마다 5~6주)
+  function monthWeeks(monthKey){
+    var p = (monthKey || monthKeyNow()).split('-');
+    var y = Number(p[0]), m = Number(p[1]) - 1;
+    var last = new Date(y, m + 1, 0).getDate();
+    var weeks = [], map = {};
+    for(var d = 1; d <= last; d++){
+      var key = localISO(mondayOfYMD(y, m, d));
+      if(!map[key]){
+        map[key] = { key:key, first:d, last:d, total:0, count:0, goal:0, actual:0 };
+        weeks.push(map[key]);
+      } else {
+        map[key].last = d;
+      }
+    }
+    weeks.forEach(function(w, i){
+      w.label = (i + 1) + '주차';
+      w.range = (m + 1) + '/' + w.first + (w.first === w.last ? '' : '~' + w.last);
+    });
+    return weeks;
   }
 
   // ---------- date helpers ----------
@@ -788,20 +813,19 @@
     }
   }
 
-  function renderGoalWeeks(wkGoal, wkAct){
+  function renderGoalWeeks(weeks){
     var box = document.getElementById('goalWeekGrid');
     box.innerHTML = '';
-    ['1주차','2주차','3주차','4주차','5주차'].forEach(function(wk){
-      var g = wkGoal[wk], a = wkAct[wk];
-      var rate = g > 0 ? (a / g * 100) : null;
+    weeks.forEach(function(w){
+      var rate = w.goal > 0 ? (w.actual / w.goal * 100) : null;
       var rateHtml = rate === null ? '-' :
         '<span class="wk-rate ' + (rate >= 100 ? 'reached' : 'short') + '">' + rate.toFixed(0) + '%</span>';
       var div = document.createElement('div');
       div.className = 'week-card';
       div.innerHTML =
-        '<div class="wk-name">' + wk + ' 목표</div>' +
-        '<div class="wk-amt">' + fmt(g) + '원</div>' +
-        '<div class="wk-line">실적 <b>' + fmt(a) + '원</b> · ' + rateHtml + '</div>';
+        '<div class="wk-name">' + w.label + ' 목표 <span class="wk-range">' + w.range + '</span></div>' +
+        '<div class="wk-amt">' + fmt(w.goal) + '원</div>' +
+        '<div class="wk-line">실적 <b>' + fmt(w.actual) + '원</b> · ' + rateHtml + '</div>';
       box.appendChild(div);
     });
   }
@@ -913,13 +937,10 @@
     scheduleSave();
   }
 
-  function recalcGoalTable(actualByDate){
+  function recalcGoalTable(actualByDate, weeks, weekMap){
     var todayISO = localISO(new Date());
     var rows = document.querySelectorAll('#goalBody .goal-row');
     var sum = 0, act = 0, cum = 0;
-
-    var wkGoal = {'1주차':0,'2주차':0,'3주차':0,'4주차':0,'5주차':0};
-    var wkAct  = {'1주차':0,'2주차':0,'3주차':0,'4주차':0,'5주차':0};
 
     rows.forEach(function(row){
       var d = row.querySelector('.g-date').value;
@@ -928,8 +949,8 @@
       sum += g; act += a;
       if(d && d <= todayISO) cum += g;
       if(d){
-        var wk = weekLabelForDate(d);
-        if(wkGoal.hasOwnProperty(wk)){ wkGoal[wk] += g; wkAct[wk] += a; }
+        var wo = weekMap[weekKeyForDate(d)];
+        if(wo){ wo.goal += g; wo.actual += a; }
       }
 
       row.className = 'grow goal-row' + (d === todayISO ? ' today' : '');
@@ -952,7 +973,7 @@
       }
     });
 
-    renderGoalWeeks(wkGoal, wkAct);
+    renderGoalWeeks(weeks);
 
     var totalDiff = act - sum;
     document.getElementById('gSumCell').textContent = fmt(sum);
@@ -1018,8 +1039,9 @@
     var goal = toNum(document.getElementById('goalInput').value);
     var rows = document.querySelectorAll('#logBody tr.log-row');
     var total = 0;
-    var weekTotals = {'1주차':0,'2주차':0,'3주차':0,'4주차':0,'5주차':0};
-    var weekCounts = {'1주차':0,'2주차':0,'3주차':0,'4주차':0,'5주차':0};
+    var weeks = monthWeeks(currentMonth);
+    var weekMap = {};
+    weeks.forEach(function(w){ weekMap[w.key] = w; });
     var actualByDate = {};
     var undatedAmt = 0, undatedCnt = 0;
 
@@ -1029,9 +1051,9 @@
       total += amt;
       if(dateVal){ actualByDate[dateVal] = (actualByDate[dateVal] || 0) + amt; }
       else if(amt !== 0){ undatedAmt += amt; undatedCnt += 1; }
-      var wk = weekLabelForDate(dateVal);
-      row.querySelector('.week-badge').textContent = wk;
-      if(weekTotals.hasOwnProperty(wk)){ weekTotals[wk] += amt; weekCounts[wk] += 1; }
+      var wkObj = weekMap[weekKeyForDate(dateVal)];
+      row.querySelector('.week-badge').textContent = wkObj ? wkObj.label : '-';
+      if(wkObj){ wkObj.total += amt; wkObj.count += 1; }
     });
 
     document.getElementById('logTotalCell').textContent = fmt(total);
@@ -1050,10 +1072,12 @@
     // weekly summary cards
     var weekGrid = document.getElementById('weekGrid');
     weekGrid.innerHTML = '';
-    ['1주차','2주차','3주차','4주차','5주차'].forEach(function(wk){
+    weeks.forEach(function(w){
       var div = document.createElement('div');
       div.className = 'week-card';
-      div.innerHTML = '<div class="wk-name">'+wk+'</div><div class="wk-amt">'+fmt(weekTotals[wk])+'원</div><div class="wk-cnt">'+weekCounts[wk]+'건</div>';
+      div.innerHTML = '<div class="wk-name">'+w.label+' <span class="wk-range">'+w.range+'</span></div>' +
+                      '<div class="wk-amt">'+fmt(w.total)+'원</div>' +
+                      '<div class="wk-cnt">'+w.count+'건</div>';
       weekGrid.appendChild(div);
     });
 
@@ -1064,7 +1088,7 @@
     recalcItems(total);
 
     // daily goal table
-    var goalStats = recalcGoalTable(actualByDate);
+    var goalStats = recalcGoalTable(actualByDate, weeks, weekMap);
     var undated = document.getElementById('undatedNote');
     if(undatedCnt > 0){
       undated.textContent = '⚠ 날짜가 비어 있는 매출 기록 '+undatedCnt+'건 ('+fmt(undatedAmt)+'원)은 일자별 실적에 반영되지 않았습니다. 01 매출 기록에서 날짜를 지정해주세요.';
