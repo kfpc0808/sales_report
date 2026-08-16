@@ -1,409 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko" data-snapshot="1"><head>
-    <script>
-      (function() {
-        // Capture host references before any artifact code runs: Window.parent
-        // is [Replaceable] (a top-level `var parent` in artifact code would
-        // replace the accessor with a data property), and a top-level
-        // `const crypto` would shadow the global — either would otherwise
-        // silently break the bridge for artifacts that worked before.
-        const realParent = window.parent;
-        const cryptoObj = window.crypto;
-        // html-to-image is only used by takeScreenshot: fetched on first use, not as a
-        // parser-blocking tag. Native fetch, captured before the proxy override below.
-        const realFetch = typeof window.fetch === 'function' ? window.fetch.bind(window) : null;
-        const HTML_TO_IMAGE_SRC = "https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.13/html-to-image.min.js";
-        const HTML_TO_IMAGE_INTEGRITY = "sha512-iZ2ORl595Wx6miw+GuadDet4WQbdSWS3JLMoNfY8cRGoEFy6oT3G9IbcrBeL6AfkgpA51ETt/faX6yLV+/gFJg==";
-        let htmlToImageLoad = null;
-        const loadHtmlToImage = () => {
-          if (!htmlToImageLoad) {
-            htmlToImageLoad = (realFetch
-              ? realFetch(HTML_TO_IMAGE_SRC, { integrity: HTML_TO_IMAGE_INTEGRITY, credentials: 'omit', referrerPolicy: 'no-referrer' })
-              : Promise.reject(new Error('fetch unavailable'))
-            )
-              .then((res) => {
-                if (!res.ok) throw new Error('html-to-image failed to load (' + res.status + ')');
-                return res.text();
-              })
-              .then((source) => {
-                // UMD bundle: hide the artifact's AMD/CommonJS globals so it takes the
-                // window-global branch; inline script text runs synchronously on insert.
-                const hidden = ['define', 'module', 'exports'].map((k) => {
-                  const entry = { k, own: Object.prototype.hasOwnProperty.call(window, k), v: window[k] };
-                  try { window[k] = undefined; } catch (e) {}
-                  return entry;
-                });
-                try {
-                  const el = document.createElement('script');
-                  el.text = source;
-                  (document.head || document.documentElement).appendChild(el);
-                } finally {
-                  hidden.forEach(({ k, own, v }) => {
-                    try { if (own) { window[k] = v; } else { delete window[k]; } } catch (e) {}
-                  });
-                }
-                if (!window.htmlToImage) throw new Error('html-to-image unavailable after load');
-                return window.htmlToImage;
-              });
-            // A failed load may be transient; let the next screenshot retry.
-            htmlToImageLoad.catch(() => { htmlToImageLoad = null; });
-          }
-          return htmlToImageLoad;
-        };
-        // crypto.randomUUID exists only in Secure Contexts; fall back to a
-        // unique non-crypto id elsewhere (http://LAN-IP dev flows) —
-        // uniqueness is what the bridge needs, unpredictability is
-        // defense-in-depth on top of the source guards.
-        const newRequestId =
-          cryptoObj && typeof cryptoObj.randomUUID === "function"
-            ? function () { return cryptoObj.randomUUID(); }
-            : function () { return Date.now() + "-" + Math.random(); };
-        const originalConsole = window.console;
-        window.console = {
-          log: (...args) => {
-            originalConsole.log(...args);
-            realParent.postMessage({ type: 'console', message: args.join(' ') }, '*');
-          },
-          error: (...args) => {
-            originalConsole.error(...args);
-            realParent.postMessage({ type: 'console', message: 'Error: ' + args.join(' ') }, '*');
-          },
-          warn: (...args) => {
-            originalConsole.warn(...args);
-            realParent.postMessage({ type: 'console', message: 'Warning: ' + args.join(' ') }, '*');
-          }
-        };
-
-        // Bridge request ids are crypto-random (not sequential) so they
-        // cannot be predicted by other frames in the tab.
-        let callbacksMap = new Map();
-        let streamControllers = new Map();
-        
-        window.claude = {
-          complete: (prompt) => {
-            return new Promise((resolve, reject) => {
-              const id = newRequestId();
-              callbacksMap.set(id, { resolve, reject });
-              realParent.postMessage({ type: 'claudeComplete', id, prompt }, '*');
-            });
-          }
-        };
-
-        window.storage = {
-          get: (key, shared = false) => {
-            return new Promise((resolve, reject) => {
-              const id = newRequestId();
-              callbacksMap.set(id, { resolve, reject });
-              realParent.postMessage({ type: 'storageGet', id, key, shared }, '*');
-            });
-          },
-          set: (key, value, shared = false) => {
-            return new Promise((resolve, reject) => {
-              const id = newRequestId();
-              callbacksMap.set(id, { resolve, reject });
-              realParent.postMessage({ type: 'storageSet', id, key, value, shared }, '*');
-            });
-          },
-          delete: (key, shared = false) => {
-            return new Promise((resolve, reject) => {
-              const id = newRequestId();
-              callbacksMap.set(id, { resolve, reject });
-              realParent.postMessage({ type: 'storageDelete', id, key, shared }, '*');
-            });
-          },
-          list: (prefix, shared = false) => {
-            return new Promise((resolve, reject) => {
-              const id = newRequestId();
-              callbacksMap.set(id, { resolve, reject });
-              realParent.postMessage({ type: 'storageList', id, prefix, shared }, '*');
-            });
-          }
-        };
-
-        let pendingBlobs = new Map();
-        URL.createObjectURL = (blob) => {
-          // Store the blob and create an ID and URL for it
-          const blobId = `blob-${Date.now()}-${Math.random()}`;
-          pendingBlobs.set(blobId, blob);
-          return `blob-request://${blobId}`;
-        };
-
-        URL.revokeObjectURL = (url) => {
-          // Remove the blob from our store
-          const blobId = url.replace("blob-request://", "");
-          pendingBlobs.delete(blobId);
-        };
-
-        const getBlobFromURL = (url) => {
-          const blobId = url.replace("blob-request://", "");
-          return pendingBlobs.get(blobId);
-        };
-
-        // Override global fetch with streaming support
-        window.fetch = (url, init = {}) => {
-          return new Promise((resolve, reject) => {
-            const id = newRequestId();
-            const channelId = `fetch-${id}-${Date.now()}`;
-            
-            callbacksMap.set(id, { 
-              resolve: (response) => {
-                // Null-body statuses: Response(stream, {status: 204}) throws
-                // per the Fetch spec, which would escape this resolver and
-                // hang the artifact's await forever.
-                if (response.status === 204 || response.status === 205 || response.status === 304) {
-                  try {
-                    resolve(new Response(null, {
-                      status: response.status,
-                      statusText: response.statusText,
-                      headers: response.headers
-                    }));
-                  } catch (err) {
-                    // Invalid statusText/header bytes can throw here too.
-                    reject(new TypeError(
-                      'Bridge fetch: unconstructable response (status ' + response.status + ')'
-                    ));
-                  }
-                  return;
-                }
-                // Create a ReadableStream for the response body
-                const stream = new ReadableStream({
-                  start(controller) {
-                    streamControllers.set(channelId, controller);
-                  },
-                  cancel() {
-                    streamControllers.delete(channelId);
-                  }
-                });
-                
-                // Create and return the Response with the stream. Response()
-                // requires status in [200, 599]; an opaque/no-cors fetch
-                // forwards status 0, which would throw here and escape the
-                // resolver, hanging the artifact's await. Surface it as a
-                // network-error-shaped rejection instead.
-                try {
-                  resolve(new Response(stream, {
-                    status: response.status,
-                    statusText: response.statusText,
-                    headers: response.headers
-                  }));
-                } catch (err) {
-                  streamControllers.delete(channelId);
-                  reject(new TypeError(
-                    'Bridge fetch: unconstructable response (status ' + response.status + ')'
-                  ));
-                }
-              },
-              reject,
-              channelId
-            });
-            
-            realParent.postMessage({
-              type: 'proxyFetch',
-              id,
-              url,
-              init,
-              channelId
-            }, '*');
-          });
-        };
-
-        window.addEventListener('message', async (event) => {
-          // Only the embedding parent may drive the bridge — sibling and
-          // nested frames can also postMessage into this window.
-          if (event.source !== realParent) return;
-          if (event.data.type === 'takeScreenshot') {
-            // Echo the request's nonce so the requester can correlate the
-            // reply to ITS request — a reply without the expected nonce
-            // (e.g. from a stale pre-remount artifact) is ignored upstream.
-            const screenshotNonce = event.data.nonce;
-            const rootElement = document.getElementById('artifacts-component-root-html');
-            if (!rootElement) {
-              realParent.postMessage({
-                type: 'screenshotError',
-                nonce: screenshotNonce,
-                error: new Error('Root element not found'),
-              }, '*');
-              return;
-            }
-            // Catch CDN load failures and toPng errors so the parent always
-            // gets a response instead of hanging forever.
-            try {
-              const htmlToImage = await loadHtmlToImage();
-              const screenshot = await htmlToImage.toPng(rootElement, {
-                imagePlaceholder:
-                  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdjePDgwX8ACOQDoNsk0PMAAAAASUVORK5CYII=",
-              });
-              realParent.postMessage({
-                type: 'screenshotData',
-                nonce: screenshotNonce,
-                data: screenshot,
-              }, '*');
-            } catch (err) {
-              realParent.postMessage({
-                type: 'screenshotError',
-                nonce: screenshotNonce,
-                error: err instanceof Error ? err : new Error(String(err)),
-              }, '*');
-            }
-          } else if (event.data.type === 'claudeComplete') {
-            const callback = callbacksMap.get(event.data.id);
-            if (!callback) return;
-            if (event.data.error) {
-              callback.reject(new Error(event.data.error));
-            } else {
-              callback.resolve(event.data.completion);
-            }
-            callbacksMap.delete(event.data.id);
-          } else if (event.data.type === 'proxyFetchResponse') {
-            const callback = callbacksMap.get(event.data.id);
-            if (!callback) return;
-            if (event.data.error) {
-              callback.reject(new Error(event.data.error));
-              callbacksMap.delete(event.data.id);
-            } else {
-              // Initial response with headers, status, etc.
-              callback.resolve({
-                status: event.data.status,
-                statusText: event.data.statusText,
-                headers: event.data.headers
-              });
-              // Don't delete the callback yet if streaming
-              if (!event.data.body) {
-                callbacksMap.delete(event.data.id);
-              }
-            }
-          } else if (event.data.type === 'proxyFetchStream') {
-            // Handle streaming data chunks
-            const controller = streamControllers.get(event.data.channelId);
-            if (controller) {
-              if (event.data.error) {
-                controller.error(new Error(event.data.error));
-                streamControllers.delete(event.data.channelId);
-              } else if (event.data.done) {
-                controller.close();
-                streamControllers.delete(event.data.channelId);
-                // Clean up the callback
-                const callback = Array.from(callbacksMap.entries()).find(
-                  ([_, value]) => value.channelId === event.data.channelId
-                );
-                if (callback) {
-                  callbacksMap.delete(callback[0]);
-                }
-              } else if (event.data.chunk) {
-                controller.enqueue(new Uint8Array(event.data.chunk));
-              }
-            }
-          } else if (event.data.type === 'storageGet') {
-            const callback = callbacksMap.get(event.data.id);
-            if (!callback) return;
-            if (event.data.error) {
-              callback.reject(new Error(event.data.error));
-            } else {
-              callback.resolve(event.data.result);
-            }
-            callbacksMap.delete(event.data.id);
-          } else if (event.data.type === 'storageSet') {
-            const callback = callbacksMap.get(event.data.id);
-            if (!callback) return;
-            if (event.data.error) {
-              callback.reject(new Error(event.data.error));
-            } else {
-              callback.resolve(event.data.result);
-            }
-            callbacksMap.delete(event.data.id);
-          } else if (event.data.type === 'storageDelete') {
-            const callback = callbacksMap.get(event.data.id);
-            if (!callback) return;
-            if (event.data.error) {
-              callback.reject(new Error(event.data.error));
-            } else {
-              callback.resolve(event.data.result);
-            }
-            callbacksMap.delete(event.data.id);
-          } else if (event.data.type === 'storageList') {
-            const callback = callbacksMap.get(event.data.id);
-            if (!callback) return;
-            if (event.data.error) {
-              callback.reject(new Error(event.data.error));
-            } else {
-              callback.resolve(event.data.result);
-            }
-            callbacksMap.delete(event.data.id);
-          }
-        });
-
-        window.addEventListener('click', (event) => {
-          const isEl = event.target instanceof HTMLElement;
-          if (!isEl) return;
-    
-          // find ancestor links
-          const linkEl = event.target.closest("a");
-          if (!linkEl || !linkEl.href) return;
-    
-          event.preventDefault();
-          event.stopImmediatePropagation();
-    
-          if (linkEl.href.startsWith("blob-request:")) {
-            const blob = getBlobFromURL(linkEl.href);
-            if (!blob) return;
-            void blob.arrayBuffer().then((data) => {
-              realParent.postMessage({
-                type: "downloadFile",
-                filename: linkEl.download,
-                data,
-                mimeType: blob.type || "application/octet-stream",
-              });
-            });
-          } else if (linkEl.href.startsWith("data:")) {
-            const [header, base64Data] = linkEl.href.split(",");
-            const mimeMatch = header.match(/data:([^;]+)/);
-            const mimeType = mimeMatch ? mimeMatch[1] : "application/octet-stream";
-            const binaryString = atob(base64Data);
-            const data = Uint8Array.from(binaryString, (c) =>
-              c.charCodeAt(0),
-            ).buffer;
-            realParent.postMessage({
-              type: "downloadFile",
-              filename: linkEl.download,
-              data,
-              mimeType,
-            });
-          } else {
-            let linkUrl;
-            try {
-              linkUrl = new URL(linkEl.href);
-            } catch (error) {
-              return;
-            }
-    
-            if (linkUrl.hostname === window.location.hostname) return;
-      
-            realParent.postMessage({
-              type: 'openExternal',
-              href: linkEl.href,
-            }, '*');
-          }
-      });
-
-        const originalOpen = window.open;
-        window.open = function (url) {
-          realParent.postMessage({
-            type: "openExternal",
-            href: url,
-          }, "*");
-        };
-
-        window.addEventListener('error', (event) => {
-          realParent.postMessage({ type: 'console', message: 'Uncaught Error: ' + event.message }, '*');
-        });
-      })();
-    </script>
-  
+<html lang="ko">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<title>매출 진행 &amp; 목표 달성률</title>
+<title>매출 진행 & 목표 달성률</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700;900&amp;family=Pretendard:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700;900&family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --navy:#101E36; --navy-2:#182A4B; --brass:#B08D57; --brass-light:#D8C39A;
@@ -595,12 +197,12 @@
   }
 </style>
 </head>
-<body id="artifacts-component-root-html">
+<body>
 
 <div class="toolbar">
-  <div class="save-status"><span class="save-dot" id="saveDot" style="background: rgb(166, 71, 58);"></span><span id="saveText">저장 실패 · 서버 미연결</span></div>
+  <div class="save-status"><span class="save-dot" id="saveDot"></span><span id="saveText">저장 준비됨</span></div>
   <div class="toolbar-right">
-    <input type="month" id="monthPicker" class="month-picker" onchange="onMonthChange()" value="2026-08">
+    <input type="month" id="monthPicker" class="month-picker" onchange="onMonthChange()">
     <button class="ghost" onclick="manualSave()">💾 지금 저장</button>
     <button class="ghost" onclick="exportSnapshot()">⬇ 최신본 다운로드</button>
     <button class="ghost" onclick="printReport()">🖨 인쇄</button>
@@ -610,34 +212,36 @@
 
 <header class="hero">
   <div class="eyebrow">Sales Progress Tracker</div>
-  <h1 class="title" contenteditable="false" id="titleEl">8월 매출 진행 현황</h1>
-  <div class="subtitle" contenteditable="false" id="subtitleEl">목표 대비 진행률과, 남은 기간 동안 달성에 필요한 페이스를 실시간으로 확인합니다.</div>
+  <h1 class="title" contenteditable="true" id="titleEl">8월 매출 진행 현황</h1>
+  <div class="subtitle" contenteditable="true" id="subtitleEl">목표 대비 진행률과, 남은 기간 동안 달성에 필요한 페이스를 실시간으로 확인합니다.</div>
 
   <div class="goal-row">
     <label>이번달 목표 매출</label>
-    <input type="text" id="goalInput" class="goal-input" value="" inputmode="numeric" oninput="onAmountInput(this)" disabled="">
+    <input type="text" id="goalInput" class="goal-input" value="0" inputmode="numeric" oninput="onAmountInput(this)">
     <span class="unit">원</span>
   </div>
 
   <div class="gauge-wrap">
     <div class="gauge-top">
-      <div class="pct" id="pctText">0.0%</div>
+      <div class="pct" id="pctText">0%</div>
       <div class="cur"><span id="curTotalText">0</span>원 / <span id="goalText">0</span>원</div>
     </div>
     <div class="gauge-track"><div class="gauge-fill" id="gaugeFill" style="width:0%"></div></div>
   </div>
 
-  <div class="pace-box" id="paceBox">목표 매출을 입력하면 필요한 페이스가 계산됩니다.</div>
+  <div class="pace-box" id="paceBox">
+    항목을 입력하면 진행 상황과 필요한 페이스가 여기 표시됩니다.
+  </div>
 </header>
 
 <main>
 
   <!-- 매출 기록 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="false">01</span>
-    <h2 class="section-title" contenteditable="false">매출 기록 (일자별 · 아이템별)</h2>
+    <span class="section-num" contenteditable="true">01</span>
+    <h2 class="section-title" contenteditable="true">매출 기록 (일자별 · 아이템별)</h2>
   </div>
-  <div class="section-desc" contenteditable="false">날짜와 판매 아이템, 금액을 입력하세요. 주차는 날짜를 기준으로 자동 계산됩니다.</div>
+  <div class="section-desc" contenteditable="true">날짜와 판매 아이템, 금액을 입력하세요. 주차는 날짜를 기준으로 자동 계산됩니다.</div>
 
   <div class="log-scroll">
     <table class="log" id="logTable">
@@ -650,14 +254,14 @@
       </tfoot>
     </table>
   </div>
-  <button class="add-row" onclick="addLogRow()" style="display: none;">+ 매출 기록 추가</button>
+  <button class="add-row" onclick="addLogRow()">+ 매출 기록 추가</button>
 
   <!-- 일자별 매출 목표 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="false">02</span>
-    <h2 class="section-title" contenteditable="false">일자별 매출 목표</h2>
+    <span class="section-num" contenteditable="true">02</span>
+    <h2 class="section-title" contenteditable="true">일자별 매출 목표</h2>
   </div>
-  <div class="section-desc" contenteditable="false">날짜와 목표 금액만 입력하세요. 실적 · 차이 · 달성률은 위 매출 기록에서 같은 날짜끼리 자동 집계됩니다.</div>
+  <div class="section-desc" contenteditable="true">날짜와 목표 금액만 입력하세요. 실적 · 차이 · 달성률은 위 매출 기록에서 같은 날짜끼리 자동 집계됩니다.</div>
 
   <div class="log-scroll">
     <div class="gtable" id="goalTable">
@@ -685,38 +289,38 @@
     </div>
   </div>
   <div class="goal-tools">
-    <button class="add-row" onclick="addGoalRow()" style="display: none;">+ 목표 행 추가</button>
-    <button class="add-row" onclick="genMonthGoals()" style="display: none;">📅 이번 달 1일~말일 자동 생성</button>
-    <button class="add-row" onclick="applyGoalSumToMonth()" style="display: none;">↑ 합계를 월 목표로 반영</button>
+    <button class="add-row" onclick="addGoalRow()">+ 목표 행 추가</button>
+    <button class="add-row" onclick="genMonthGoals()">📅 이번 달 1일~말일 자동 생성</button>
+    <button class="add-row" onclick="applyGoalSumToMonth()">↑ 합계를 월 목표로 반영</button>
   </div>
-  <div class="goal-note" id="goalNote">아직 일자별 목표가 없습니다. <b>📅 이번 달 1일~말일 자동 생성</b>으로 날짜를 한 번에 만든 뒤, 금액만 채워 넣으세요.</div>
+  <div class="goal-note" id="goalNote"></div>
   <div class="undated-note" id="undatedNote"></div>
 
   <!-- 주별 요약 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="false">03</span>
-    <h2 class="section-title" contenteditable="false">주별 요약</h2>
+    <span class="section-num" contenteditable="true">03</span>
+    <h2 class="section-title" contenteditable="true">주별 요약</h2>
   </div>
-  <div class="section-desc" contenteditable="false">위 기록의 날짜를 기준으로 자동 집계됩니다.</div>
-  <div class="week-grid" id="weekGrid"><div class="week-card"><div class="wk-name">1주차</div><div class="wk-amt">0원</div><div class="wk-cnt">0건</div></div><div class="week-card"><div class="wk-name">2주차</div><div class="wk-amt">0원</div><div class="wk-cnt">0건</div></div><div class="week-card"><div class="wk-name">3주차</div><div class="wk-amt">0원</div><div class="wk-cnt">0건</div></div><div class="week-card"><div class="wk-name">4주차</div><div class="wk-amt">0원</div><div class="wk-cnt">0건</div></div><div class="week-card"><div class="wk-name">5주차</div><div class="wk-amt">0원</div><div class="wk-cnt">0건</div></div></div>
+  <div class="section-desc" contenteditable="true">위 기록의 날짜를 기준으로 자동 집계됩니다.</div>
+  <div class="week-grid" id="weekGrid"></div>
 
   <!-- 메모 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="false">04</span>
-    <h2 class="section-title" contenteditable="false">전략 &amp; 메모</h2>
+    <span class="section-num" contenteditable="true">04</span>
+    <h2 class="section-title" contenteditable="true">전략 & 메모</h2>
   </div>
   <div class="card">
-    <div class="memo-body" contenteditable="false" id="memoEl">부족 자금을 채우기 위한 전략과 대표님 보고용 메모를 자유롭게 기록하세요.</div>
+    <div class="memo-body" contenteditable="true" id="memoEl">부족 자금을 채우기 위한 전략과 대표님 보고용 메모를 자유롭게 기록하세요.</div>
   </div>
 
   <!-- 저장 안내 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="false">05</span>
-    <h2 class="section-title" contenteditable="false">저장 &amp; 업데이트 방식</h2>
+    <span class="section-num" contenteditable="true">05</span>
+    <h2 class="section-title" contenteditable="true">저장 & 업데이트 방식</h2>
   </div>
   <div class="card storage-card">
     <h3>이 리포트는 이렇게 저장되고 공유됩니다</h3>
-    <p id="storageStatusLine">Firebase 접속 프로그램(SDK)을 불러오지 못했습니다. 외부 스크립트가 차단되는 환경(예: 미리보기 창, 사내 방화벽, 광고 차단 확장 프로그램)에서 열면 이렇게 표시됩니다. 실제 공유 링크(GitHub Pages)에서 열어보세요.</p>
+    <p id="storageStatusLine">확인 중...</p>
     <p><b>편집하려면:</b> 우측 상단 <code>🔑 편집 로그인</code>을 눌러 등록된 계정으로 로그인하세요. 로그인해야만 입력칸이 열립니다. 값을 고치면 약 1초 뒤 자동으로 저장되고, 상태 표시가 <code>저장됨</code>으로 바뀝니다.</p>
     <p><b>공유받은 분이 볼 때:</b> 로그인 없이 링크만 열면 읽기 전용으로 보입니다. 편집 중인 내용이 저장되면 <b>새로고침 없이 몇 초 안에 화면이 자동으로 갱신</b>됩니다. 더 이상 파일을 다시 올릴 필요가 없습니다.</p>
     <p><b>월별 관리:</b> 우측 상단 월 선택 칸으로 달을 바꾸면 그 달의 리포트가 열립니다. 달마다 데이터가 따로 보관됩니다. 주소 뒤에 <code>?m=2026-08</code>을 붙이면 특정 달을 바로 여는 링크가 됩니다.</p>
@@ -731,11 +335,23 @@
 
 </main>
 
+<div class="modal-back" id="loginModal">
+  <div class="modal">
+    <h3>편집 로그인</h3>
+    <p>등록된 계정으로 로그인하면 편집할 수 있습니다.</p>
+    <input type="email" id="loginEmail" placeholder="이메일" autocomplete="username">
+    <input type="password" id="loginPw" placeholder="비밀번호" autocomplete="current-password">
+    <div class="modal-err" id="loginErr"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeLogin()">취소</button>
+      <button class="btn-go" onclick="doLogin()">로그인</button>
+    </div>
+  </div>
+</div>
 
-
-
-
-
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 
 <script>
   var FIREBASE_CONFIG = {
@@ -1411,6 +1027,5 @@
 
 </script>
 
-
-
-</body></html>
+</body>
+</html>
