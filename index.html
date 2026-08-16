@@ -252,7 +252,7 @@
   .storage-card code{ background:#F0EBDD; padding:1px 5px; border-radius:4px; font-size:12px; }
 
   .footer-summary{
-    margin-top:56px; padding:26px 28px; border-radius:16px; background:var(--navy); color:#EDEEF3;
+    margin:0 0 42px; padding:26px 28px; border-radius:16px; background:var(--navy); color:#EDEEF3;
     display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
   }
   .footer-summary .fs-label{ font-size:12px; color:#B9BFCF; letter-spacing:.05em; text-transform:uppercase; }
@@ -332,9 +332,23 @@
 
 <main>
 
-  <!-- 아이템별 목표 & 달성 -->
+  <div class="footer-summary">
+    <div><div class="fs-label">현재 확보 매출</div><div class="fs-num"><span id="fsCur">0</span>원</div></div>
+    <div><div class="fs-label">목표 매출</div><div class="fs-num" id="fsGoal">0원</div></div>
+    <div class="fs-gap"><div class="fs-label">부족 금액</div><div class="fs-num"><span id="fsGap">0</span>원</div></div>
+  </div>
+
+  <!-- 주별 요약 -->
   <div class="section-head">
     <span class="section-num" contenteditable="true">01</span>
+    <h2 class="section-title" contenteditable="true">주별 요약</h2>
+  </div>
+  <div class="section-desc" contenteditable="true">아래 매출 기록의 날짜를 기준으로 자동 집계됩니다.</div>
+  <div class="week-grid" id="weekGrid"></div>
+
+  <!-- 아이템별 목표 & 달성 -->
+  <div class="section-head">
+    <span class="section-num" contenteditable="true">02</span>
     <h2 class="section-title" contenteditable="true">아이템별 목표 &amp; 달성</h2>
   </div>
   <div class="section-desc" contenteditable="true">주력 아이템별로 이번 달 목표와 현재까지 달성한 금액을 직접 기록합니다. 아래 그래프에 즉시 반영됩니다.</div>
@@ -371,7 +385,7 @@
 
   <!-- 목표 달성 전략 & 대상 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">02</span>
+    <span class="section-num" contenteditable="true">03</span>
     <h2 class="section-title" contenteditable="true">목표 달성 전략 &amp; 대상</h2>
   </div>
   <div class="section-desc" contenteditable="true">부족 금액을 무엇으로, 누구를 대상으로 메울 것인지 먼저 정리합니다.</div>
@@ -407,7 +421,7 @@
 
   <!-- 매출 기록 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">03</span>
+    <span class="section-num" contenteditable="true">04</span>
     <h2 class="section-title" contenteditable="true">매출 기록 (일자별 · 아이템별)</h2>
   </div>
   <div class="section-desc" contenteditable="true">날짜와 판매 아이템, 금액을 입력하세요. 주차는 날짜를 기준으로 자동 계산됩니다.</div>
@@ -427,7 +441,7 @@
 
   <!-- 일자별 매출 목표 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">04</span>
+    <span class="section-num" contenteditable="true">05</span>
     <h2 class="section-title" contenteditable="true">일자별 매출 목표</h2>
   </div>
   <div class="section-desc" contenteditable="true">날짜와 목표 금액만 입력하세요. 실적 · 차이 · 달성률은 위 매출 기록에서 같은 날짜끼리 자동 집계됩니다.</div>
@@ -465,14 +479,6 @@
   <div class="goal-note" id="goalNote"></div>
   <div class="undated-note" id="undatedNote"></div>
 
-  <!-- 주별 요약 -->
-  <div class="section-head">
-    <span class="section-num" contenteditable="true">05</span>
-    <h2 class="section-title" contenteditable="true">주별 요약</h2>
-  </div>
-  <div class="section-desc" contenteditable="true">위 기록의 날짜를 기준으로 자동 집계됩니다.</div>
-  <div class="week-grid" id="weekGrid"></div>
-
   <!-- 메모 -->
   <div class="section-head">
     <span class="section-num" contenteditable="true">06</span>
@@ -494,12 +500,6 @@
     <p><b>공유받은 분이 볼 때:</b> 로그인 없이 링크만 열면 읽기 전용으로 보입니다. 편집 중인 내용이 저장되면 <b>새로고침 없이 몇 초 안에 화면이 자동으로 갱신</b>됩니다. 더 이상 파일을 다시 올릴 필요가 없습니다.</p>
     <p><b>월별 관리:</b> 우측 상단 월 선택 칸으로 달을 바꾸면 그 달의 리포트가 열립니다. 달마다 데이터가 따로 보관됩니다. 주소 뒤에 <code>?m=2026-08</code>을 붙이면 특정 달을 바로 여는 링크가 됩니다.</p>
     <p><b>⬇ 최신본 다운로드:</b> 지금 화면 그대로를 담은 보관용 HTML 파일을 받습니다. 이 파일은 서버와 연결되지 않는 고정 사본이라, 월말 결산본을 따로 남겨둘 때 쓰시면 됩니다.</p>
-  </div>
-
-  <div class="footer-summary">
-    <div><div class="fs-label">현재 확보 매출</div><div class="fs-num"><span id="fsCur">0</span>원</div></div>
-    <div><div class="fs-label">목표 매출</div><div class="fs-num" id="fsGoal">0원</div></div>
-    <div class="fs-gap"><div class="fs-label">부족 금액</div><div class="fs-num"><span id="fsGap">0</span>원</div></div>
   </div>
 
 </main>
