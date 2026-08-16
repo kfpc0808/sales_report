@@ -817,7 +817,7 @@
     if(!canEdit){ setSaveStatus('readonly'); return; }
     setSaveStatus('saving');
     db.collection(COLLECTION).doc(currentMonth).set(collectState())
-      .then(function(){ setSaveStatus('saved'); })
+      .then(function(){ pendingRemote = null; setSaveStatus('saved'); })
       .catch(function(e){ setSaveStatus('error', e.code || e.message); });
   }
 
@@ -916,6 +916,11 @@
           setSaveStatus(canEdit ? 'saved' : 'readonly');
         }
       }, 150);
+    });
+
+    // 제목·부제·메모 등 직접 입력 영역도 저장되도록 연결
+    document.querySelectorAll('[contenteditable]').forEach(function(el){
+      el.addEventListener('input', function(){ scheduleSave(); });
     });
 
     document.getElementById('loginPw').addEventListener('keydown', function(e){ if(e.key === 'Enter') doLogin(); });
