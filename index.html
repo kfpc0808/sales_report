@@ -166,7 +166,6 @@
   .shead{ background:#F8F6F1; border-bottom:1px solid var(--line); }
   .shead > div{ font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .sfoot{ background:#F8F6F1; border-top:2px solid var(--line); border-bottom:none; font-weight:800; color:var(--navy); }
-  .sfoot .sspan{ grid-column:span 3; }
   .stable input[type="text"]{
     width:100%; min-width:0; border:1px solid transparent; background:transparent; border-radius:5px;
     padding:5px 6px; font-size:13.5px; font-family:'Pretendard',sans-serif; color:var(--ink);
@@ -211,9 +210,9 @@
   .ghead{ background:#F8F6F1; border-bottom:1px solid var(--line); }
   .ghead > div{ font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .gfoot{ background:#F8F6F1; border-top:2px solid var(--line); border-bottom:none; font-weight:800; color:var(--navy); }
-  .gfoot .gspan{ grid-column:span 3; }
   .grow.today{ background:#FBF6EC; }
   .g-num{ text-align:right; font-variant-numeric:tabular-nums; font-weight:600; white-space:nowrap; }
+  .grow > div.g-num, .irow > div.g-num, .srow > div.g-num{ padding-right:14px; }
   .g-mid{ text-align:center; }
   .gtable .week-badge{ padding:2px 7px; }
   .gtable input[type="text"], .gtable input[type="date"]{
@@ -272,7 +271,6 @@
     .srow{ grid-template-columns:minmax(76px,0.9fr) minmax(86px,1.1fr) 92px 72px 24px; }
     .srow > div{ padding:7px 4px; }
     .srow > div:nth-child(3){ display:none; }
-    .sfoot .sspan{ grid-column:span 2; }
     .shead > div{ font-size:10px; letter-spacing:0; }
     .stable input[type="text"]{ font-size:12.5px; padding:5px 4px; }
     .stable select{ font-size:11px; padding:5px 2px; }
@@ -408,7 +406,9 @@
       </div>
       <div id="stratBody"></div>
       <div class="srow sfoot">
-        <div class="sspan">합계</div>
+        <div>합계</div>
+        <div></div>
+        <div></div>
         <div class="g-num" id="sAmtCell">0</div>
         <div></div>
         <div></div>
@@ -461,7 +461,9 @@
       </div>
       <div id="goalBody"></div>
       <div class="grow gfoot">
-        <div class="gspan">합계</div>
+        <div>합계</div>
+        <div></div>
+        <div></div>
         <div class="g-num" id="gSumCell">0</div>
         <div class="g-num" id="gActualCell">0</div>
         <div class="g-num" id="gDiffCell">0</div>
