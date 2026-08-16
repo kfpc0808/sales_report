@@ -91,7 +91,12 @@
   table.log input.amt{ text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--green); min-width:100px; }
   table.log input:hover{ border-color:var(--line); background:#FBFAF7; }
   table.log input:focus{ border-color:var(--brass); background:#fff; outline:none; }
-  .week-badge{ display:inline-block; font-size:11px; font-weight:700; padding:3px 9px; border-radius:20px; background:#EFEAE0; color:var(--brass); white-space:nowrap; }
+  /* 잠금(읽기 전용) 상태에서도 글자가 흐려지지 않도록 */
+  input:disabled, select:disabled{ opacity:1; -webkit-text-fill-color:currentColor; -webkit-opacity:1; }
+  input::placeholder{ color:#A8A294; opacity:1; }
+  input[type="date"]{ color:var(--ink); }
+
+  .week-badge{ display:inline-block; font-size:11px; font-weight:800; padding:3px 9px; border-radius:20px; background:#E6D9BE; color:#6B5122; white-space:nowrap; letter-spacing:-.01em; }
   tr.log-total td{ font-weight:800; background:#F8F6F1; color:var(--navy); border-top:2px solid var(--line); }
 
   .add-row{
@@ -263,6 +268,9 @@
   @media (max-width:768px){
     /* 공통: 스크롤 없이 화면 폭에 맞춤 */
     .log-scroll{ overflow-x:visible; }
+    /* 날짜칸이 폭을 많이 먹는 원인인 달력 아이콘 숨김 (탭하면 그대로 열림) */
+    input[type="date"]::-webkit-calendar-picker-indicator{ display:none; -webkit-appearance:none; }
+    input[type="date"]{ -webkit-appearance:none; appearance:none; }
     .grow > div.g-num, .irow > div.g-num, .srow > div.g-num{ padding-right:8px; }
     .week-badge{ font-size:10px; padding:2px 5px; }
 
@@ -271,18 +279,20 @@
     table.log th, table.log td{ padding:6px 4px; }
     table.log th:nth-child(5), table.log tbody td:nth-child(5){ display:none; }
     table.log th{ font-size:10px; letter-spacing:0; }
-    table.log input[type="date"]{ width:100%; min-width:0; font-size:11.5px; padding:5px 1px; }
-    table.log input[type="text"]{ min-width:0; font-size:12px; padding:5px 4px; }
+    table.log input[type="date"]{ width:100%; min-width:0; font-size:12px; padding:5px 1px; letter-spacing:-.03em; }
+    table.log input[type="text"]{ min-width:0; font-size:12.5px; padding:5px 4px; }
+    table.log th:nth-child(1), table.log tbody td:nth-child(1){ width:78px; }
+    table.log th:nth-child(2), table.log tbody td:nth-child(2){ width:46px; }
     table.log input.amt{ min-width:0; }
     table.log .del-x{ min-width:22px; padding:4px; }
 
     /* 05 일자별 목표 — 요일·차이·달성률·메모 접기 */
-    .gtable{ min-width:0; grid-template-columns:82px minmax(44px,1fr) 68px 68px 18px; }
+    .gtable{ min-width:0; grid-template-columns:76px minmax(50px,1fr) 68px 68px 18px; }
     .grow > div{ padding:6px 4px; }
     .grow > div:nth-child(2), .grow > div:nth-child(6),
     .grow > div:nth-child(7), .grow > div:nth-child(8){ display:none; }
-    .gtable input[type="date"]{ font-size:11.5px; padding:5px 1px; }
-    .gtable input[type="text"]{ font-size:12px; padding:5px 4px; }
+    .gtable input[type="date"]{ font-size:12px; padding:5px 1px; letter-spacing:-.03em; }
+    .gtable input[type="text"]{ font-size:12.5px; padding:5px 4px; }
     .ghead > div{ font-size:10px; letter-spacing:0; }
     .gtable .del-x{ min-width:20px; padding:4px 0; font-size:13px; }
 
@@ -300,8 +310,12 @@
     .lead-main{ font-size:15px; }
     .ihead > div{ font-size:10px; letter-spacing:0; }
     .itable input[type="text"]{ font-size:12.5px; padding:5px 4px; }
+    .week-badge{ font-size:10.5px; padding:2px 6px; }
     .chart-name{ font-size:12.5px; }
-    .chart-val{ font-size:11px; }
+    .chart-val{ font-size:11.5px; color:#5A5F6E; }
+    .section-desc{ font-size:12.5px; color:#5A5F6E; }
+    .ghead > div, .ihead > div, .shead > div, table.log th{ color:#5A5F6E; }
+    .goal-note, .cross-note, .undated-note{ font-size:12.5px; }
 
     .toolbar{ padding:8px 16px; }
     .toolbar button{ font-size:12px; padding:7px 11px; }
