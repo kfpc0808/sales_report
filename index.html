@@ -122,6 +122,44 @@
   .btn-cancel{ border:1px solid var(--line); background:#fff; color:var(--muted); }
   .btn-go{ border:1px solid var(--navy); background:var(--navy); color:#fff; }
 
+  /* item goal board */
+  .itable{ min-width:700px; font-size:13.5px; }
+  .irow{
+    display:grid; grid-template-columns:minmax(160px,1.6fr) 130px 130px 84px 130px 44px;
+    align-items:center; border-bottom:1px solid #F0EEE7;
+  }
+  .irow > div{ min-width:0; padding:7px 8px; }
+  .ihead{ background:#F8F6F1; border-bottom:1px solid var(--line); }
+  .ihead > div{ font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ifoot{ background:#F8F6F1; border-top:2px solid var(--line); border-bottom:none; font-weight:800; color:var(--navy); }
+  .itable input[type="text"]{
+    width:100%; min-width:0; border:1px solid transparent; background:transparent; border-radius:5px;
+    padding:5px 6px; font-size:13.5px; font-family:'Pretendard',sans-serif; color:var(--ink);
+  }
+  .itable input.amt{ text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--navy); }
+  .itable input.done-amt{ color:var(--green); }
+  .itable input:hover{ border-color:var(--line); background:#FBFAF7; }
+  .itable input:focus{ border-color:var(--brass); background:#fff; outline:none; }
+
+  /* bar chart */
+  .chart-card{ margin-top:16px; }
+  .chart{ display:flex; flex-direction:column; gap:15px; }
+  .chart-row .chart-top{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:5px; }
+  .chart-name{ font-size:13px; font-weight:700; color:var(--navy); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .chart-val{ font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .chart-val b{ color:var(--green); }
+  .chart-track{ height:15px; border-radius:8px; background:#EFEAE0; overflow:hidden; }
+  .chart-fill{ height:100%; border-radius:8px; background:linear-gradient(90deg,var(--brass),var(--brass-light)); transition:width .35s; }
+  .chart-fill.reached{ background:linear-gradient(90deg,#3C7A5C,#7FB79A); }
+  .chart-pct{ font-size:12px; font-weight:800; color:var(--brass); font-variant-numeric:tabular-nums; }
+  .chart-pct.reached{ color:var(--green); }
+  .chart-total{ margin-top:6px; padding-top:16px; border-top:1px solid var(--line); }
+  .chart-empty{ text-align:center; color:var(--muted); font-size:13px; padding:16px 0; }
+  .cross-note{ margin-top:12px; font-size:12.5px; color:var(--muted); background:#FBF9F4; border:1px solid var(--line); border-radius:10px; padding:11px 14px; }
+  .cross-note b{ color:var(--navy); }
+  .cross-note.warn{ background:var(--red-bg); border-color:#E8CFCB; color:#7C382E; }
+  .cross-note.warn b{ color:#7C382E; }
+
   /* daily goal board (grid layout) */
   .gtable{ min-width:850px; font-size:13.5px; }
   .grow{
@@ -236,9 +274,46 @@
 
 <main>
 
-  <!-- 매출 기록 -->
+  <!-- 아이템별 목표 & 달성 -->
   <div class="section-head">
     <span class="section-num" contenteditable="true">01</span>
+    <h2 class="section-title" contenteditable="true">아이템별 목표 &amp; 달성</h2>
+  </div>
+  <div class="section-desc" contenteditable="true">주력 아이템별로 이번 달 목표와 현재까지 달성한 금액을 직접 기록합니다. 아래 그래프에 즉시 반영됩니다.</div>
+
+  <div class="log-scroll">
+    <div class="itable" id="itemTable">
+      <div class="irow ihead">
+        <div>메인 아이템</div>
+        <div class="g-num">목표(원)</div>
+        <div class="g-num">달성(원)</div>
+        <div class="g-num">달성률</div>
+        <div class="g-num">잔여(원)</div>
+        <div></div>
+      </div>
+      <div id="itemBody"></div>
+      <div class="irow ifoot">
+        <div>합계</div>
+        <div class="g-num" id="iGoalCell">0</div>
+        <div class="g-num" id="iDoneCell">0</div>
+        <div class="g-num" id="iRateCell">-</div>
+        <div class="g-num" id="iLeftCell">0</div>
+        <div></div>
+      </div>
+    </div>
+  </div>
+  <div class="goal-tools">
+    <button class="add-row" onclick="addItemRow()">+ 아이템 추가</button>
+  </div>
+  <div class="cross-note" id="crossNote"></div>
+
+  <div class="card chart-card">
+    <div class="chart" id="itemChart"></div>
+  </div>
+
+  <!-- 매출 기록 -->
+  <div class="section-head">
+    <span class="section-num" contenteditable="true">02</span>
     <h2 class="section-title" contenteditable="true">매출 기록 (일자별 · 아이템별)</h2>
   </div>
   <div class="section-desc" contenteditable="true">날짜와 판매 아이템, 금액을 입력하세요. 주차는 날짜를 기준으로 자동 계산됩니다.</div>
@@ -258,7 +333,7 @@
 
   <!-- 일자별 매출 목표 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">02</span>
+    <span class="section-num" contenteditable="true">03</span>
     <h2 class="section-title" contenteditable="true">일자별 매출 목표</h2>
   </div>
   <div class="section-desc" contenteditable="true">날짜와 목표 금액만 입력하세요. 실적 · 차이 · 달성률은 위 매출 기록에서 같은 날짜끼리 자동 집계됩니다.</div>
@@ -298,7 +373,7 @@
 
   <!-- 주별 요약 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">03</span>
+    <span class="section-num" contenteditable="true">04</span>
     <h2 class="section-title" contenteditable="true">주별 요약</h2>
   </div>
   <div class="section-desc" contenteditable="true">위 기록의 날짜를 기준으로 자동 집계됩니다.</div>
@@ -306,7 +381,7 @@
 
   <!-- 메모 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">04</span>
+    <span class="section-num" contenteditable="true">05</span>
     <h2 class="section-title" contenteditable="true">전략 & 메모</h2>
   </div>
   <div class="card">
@@ -315,7 +390,7 @@
 
   <!-- 저장 안내 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">05</span>
+    <span class="section-num" contenteditable="true">06</span>
     <h2 class="section-title" contenteditable="true">저장 & 업데이트 방식</h2>
   </div>
   <div class="card storage-card">
@@ -423,6 +498,112 @@
     var d = new Date(Number(p[0]), Number(p[1])-1, Number(p[2]));
     if(isNaN(d.getTime())) return '-';
     return DOW_KO[d.getDay()];
+  }
+
+  // ---------- item rows & chart ----------
+  function buildItemRow(data){
+    data = data || {};
+    var row = document.createElement('div');
+    row.className = 'irow item-row';
+    row.innerHTML =
+      '<div><input type="text" class="i-name" placeholder="예: 스타19 / 자비아 / 총판" value="'+escapeAttr(data.name||'')+'" oninput="onRowChange(this)"></div>' +
+      '<div><input type="text" inputmode="numeric" class="i-goal amt" placeholder="0" value="'+(data.goal?fmt(data.goal):'')+'" oninput="onAmountInput(this)"></div>' +
+      '<div><input type="text" inputmode="numeric" class="i-done amt done-amt" placeholder="0" value="'+(data.done?fmt(data.done):'')+'" oninput="onAmountInput(this)"></div>' +
+      '<div class="g-num i-rate">-</div>' +
+      '<div class="g-num i-left">0</div>' +
+      '<div class="g-mid"><button class="del-x" onclick="removeItemRow(this)">✕</button></div>';
+    return row;
+  }
+
+  function addItemRow(data){
+    document.getElementById('itemBody').appendChild(buildItemRow(data));
+    recalcAll();
+    scheduleSave();
+  }
+
+  function removeItemRow(btn){
+    btn.closest('.item-row').remove();
+    recalcAll();
+    scheduleSave();
+  }
+
+  function recalcItems(logTotal){
+    var rows = document.querySelectorAll('#itemBody .item-row');
+    var sumGoal = 0, sumDone = 0;
+    var chartData = [];
+
+    rows.forEach(function(row){
+      var name = row.querySelector('.i-name').value;
+      var g = toNum(row.querySelector('.i-goal').value);
+      var dn = toNum(row.querySelector('.i-done').value);
+      sumGoal += g; sumDone += dn;
+
+      var rateCell = row.querySelector('.i-rate');
+      var leftCell = row.querySelector('.i-left');
+      if(g > 0){
+        var r = dn / g * 100;
+        rateCell.textContent = r.toFixed(0)+'%';
+        rateCell.className = 'g-num i-rate ' + (r >= 100 ? 'rate-good' : 'rate-bad');
+      } else {
+        rateCell.textContent = '-';
+        rateCell.className = 'g-num i-rate';
+      }
+      var left = g - dn;
+      leftCell.textContent = (left < 0 ? '+' : '') + fmt(Math.abs(left));
+      leftCell.className = 'g-num i-left ' + (left <= 0 ? 'rate-good' : '');
+
+      if(name || g > 0 || dn > 0){ chartData.push({ name: name || '(이름 없음)', goal: g, done: dn }); }
+    });
+
+    document.getElementById('iGoalCell').textContent = fmt(sumGoal);
+    document.getElementById('iDoneCell').textContent = fmt(sumDone);
+    document.getElementById('iRateCell').textContent = sumGoal > 0 ? (sumDone/sumGoal*100).toFixed(0)+'%' : '-';
+    document.getElementById('iLeftCell').textContent = fmt(Math.max(sumGoal - sumDone, 0));
+
+    renderChart(chartData, sumGoal, sumDone);
+
+    // 02 매출 기록 합계와 대조
+    var note = document.getElementById('crossNote');
+    if(rows.length === 0){
+      note.className = 'cross-note';
+      note.innerHTML = '<b>+ 아이템 추가</b>를 눌러 주력 아이템을 등록하세요. 목표와 달성 금액을 넣으면 아래 그래프가 그려집니다.';
+    } else if(sumDone !== logTotal){
+      note.className = 'cross-note warn';
+      note.innerHTML = '아이템 달성 합계 <b>'+fmt(sumDone)+'원</b>이 02 매출 기록 합계 <b>'+fmt(logTotal)+'원</b>과 '+fmt(Math.abs(sumDone-logTotal))+'원 차이 납니다. (이 칸은 수기 입력이라 자동으로 맞춰지지 않습니다)';
+    } else {
+      note.className = 'cross-note';
+      note.innerHTML = '아이템 달성 합계 <b>'+fmt(sumDone)+'원</b> · 02 매출 기록 합계와 일치합니다.';
+    }
+  }
+
+  function renderChart(data, sumGoal, sumDone){
+    var box = document.getElementById('itemChart');
+    box.innerHTML = '';
+    if(data.length === 0){
+      box.innerHTML = '<div class="chart-empty">아이템을 등록하면 목표 대비 달성 그래프가 여기 표시됩니다.</div>';
+      return;
+    }
+    data.forEach(function(d){ box.appendChild(chartRow(d.name, d.goal, d.done, false)); });
+    if(data.length > 1){ box.appendChild(chartRow('전체 합계', sumGoal, sumDone, true)); }
+  }
+
+  function chartRow(name, goal, done, isTotal){
+    var pct = goal > 0 ? (done / goal * 100) : 0;
+    var width = Math.min(100, Math.max(0, pct));
+    var reached = pct >= 100 ? ' reached' : '';
+    var div = document.createElement('div');
+    div.className = 'chart-row' + (isTotal ? ' chart-total' : '');
+    div.innerHTML =
+      '<div class="chart-top">' +
+        '<span class="chart-name">'+escapeHtml(name)+'</span>' +
+        '<span class="chart-val"><b>'+fmt(done)+'</b> / '+fmt(goal)+'원 &nbsp;<span class="chart-pct'+reached+'">'+(goal>0?pct.toFixed(0)+'%':'-')+'</span></span>' +
+      '</div>' +
+      '<div class="chart-track"><div class="chart-fill'+reached+'" style="width:'+width+'%"></div></div>';
+    return div;
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
   // ---------- daily goal rows ----------
@@ -637,6 +818,9 @@
       weekGrid.appendChild(div);
     });
 
+    // item goals & chart
+    recalcItems(total);
+
     // daily goal table
     var goalStats = recalcGoalTable(actualByDate);
     var undated = document.getElementById('undatedNote');
@@ -697,6 +881,14 @@
         memo: row.querySelector('.log-memo').value
       });
     });
+    var items = [];
+    document.querySelectorAll('#itemBody .item-row').forEach(function(row){
+      items.push({
+        name: row.querySelector('.i-name').value,
+        goal: toNum(row.querySelector('.i-goal').value),
+        done: toNum(row.querySelector('.i-done').value)
+      });
+    });
     var goals = [];
     document.querySelectorAll('#goalBody .goal-row').forEach(function(row){
       goals.push({
@@ -712,6 +904,7 @@
       memo: document.getElementById('memoEl').innerHTML,
       goal: toNum(document.getElementById('goalInput').value),
       month: currentMonth,
+      items: items,
       rows: rows,
       goals: goals,
       savedAt: new Date().toISOString()
@@ -728,6 +921,9 @@
     var tbody = document.getElementById('logBody');
     tbody.innerHTML = '';
     (state.rows || []).forEach(function(r){ tbody.appendChild(buildLogRow(r)); });
+    var ibody = document.getElementById('itemBody');
+    ibody.innerHTML = '';
+    (state.items || []).forEach(function(it){ ibody.appendChild(buildItemRow(it)); });
     var gbody = document.getElementById('goalBody');
     gbody.innerHTML = '';
     (state.goals || []).forEach(function(g){ gbody.appendChild(buildGoalRow(g)); });
@@ -776,7 +972,7 @@
       title: mm+'월 매출 진행 현황',
       subtitle: '목표 대비 진행률과, 남은 기간 동안 달성에 필요한 페이스를 실시간으로 확인합니다.',
       memo: '부족 자금을 채우기 위한 전략과 대표님 보고용 메모를 자유롭게 기록하세요.',
-      goal: 0, rows: [], goals: []
+      goal: 0, items: [], rows: [], goals: []
     };
   }
   function onMonthChange(){
@@ -856,7 +1052,7 @@
   function applyEditMode(){
     var editable = canEdit && !isSnapshotFile;
     document.querySelectorAll('[contenteditable]').forEach(function(el){ el.setAttribute('contenteditable', editable ? 'true' : 'false'); });
-    document.querySelectorAll('#goalInput, #logBody input, #goalBody input').forEach(function(el){ el.disabled = !editable; });
+    document.querySelectorAll('#goalInput, #itemBody input, #logBody input, #goalBody input').forEach(function(el){ el.disabled = !editable; });
     document.querySelectorAll('.add-row, .del-x').forEach(function(el){ el.style.display = editable ? '' : 'none'; });
     var btn = document.getElementById('authBtn');
     if(isSnapshotFile){ btn.style.display = 'none'; }
@@ -947,6 +1143,28 @@
       var dst = clone.querySelector('#'+id);
       if(src && dst) dst.innerHTML = src.innerHTML;
     });
+
+    // bake item rows
+    var srcItem = document.getElementById('itemBody');
+    var dstItem = clone.querySelector('#itemBody');
+    if(srcItem && dstItem){
+      dstItem.innerHTML = '';
+      srcItem.querySelectorAll('.item-row').forEach(function(row){
+        var nm = row.querySelector('.i-name').value;
+        var gl = row.querySelector('.i-goal').value;
+        var dn = row.querySelector('.i-done').value;
+        var r = document.createElement('div');
+        r.className = 'irow item-row';
+        r.innerHTML =
+          '<div><input type="text" class="i-name" value="'+escapeAttr(nm)+'" oninput="onRowChange(this)"></div>' +
+          '<div><input type="text" inputmode="numeric" class="i-goal amt" value="'+escapeAttr(gl)+'" oninput="onAmountInput(this)"></div>' +
+          '<div><input type="text" inputmode="numeric" class="i-done amt done-amt" value="'+escapeAttr(dn)+'" oninput="onAmountInput(this)"></div>' +
+          '<div class="g-num i-rate">-</div>' +
+          '<div class="g-num i-left">0</div>' +
+          '<div class="g-mid"><button class="del-x" onclick="removeItemRow(this)">✕</button></div>';
+        dstItem.appendChild(r);
+      });
+    }
 
     // bake log rows
     var srcBody = document.getElementById('logBody');
