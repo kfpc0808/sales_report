@@ -211,14 +211,23 @@
   /* daily goal board (grid layout) */
   .gtable{
     display:grid;
-    grid-template-columns:125px 50px minmax(140px,1fr) 105px 105px 95px 70px minmax(120px,1fr) 40px;
-    align-items:stretch; min-width:850px; font-size:13.5px;
+    grid-template-columns:132px 52px minmax(180px,1fr) 112px 112px 100px 74px 40px;
+    align-items:stretch; min-width:760px; font-size:13.5px;
   }
   .grow, #goalBody{ display:contents; }
   .grow > div{ min-width:0; padding:7px 8px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
   .ghead > div{ background:#F8F6F1; border-bottom:1px solid var(--line); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .gfoot > div{ background:#F8F6F1; border-top:2px solid var(--line); border-bottom:none; font-weight:800; color:var(--navy); }
   .grow.today > div{ background:#FBF6EC; }
+  /* 날짜 행 아래 전체 폭 메모 줄 */
+  .goal-row > div{ border-bottom:none; }
+  .g-memoline{
+    grid-column:1 / -1; display:flex; align-items:center; gap:8px;
+    padding:0 10px 9px 10px; border-bottom:1px solid #E7E3D8;
+  }
+  .memo-tag{ font-size:10.5px; font-weight:800; color:var(--brass); background:#F3ECDD; border-radius:20px; padding:2px 9px; white-space:nowrap; }
+  .gtable input.g-memo{ width:100%; min-width:0; font-size:12.5px; color:#4A4E5A; }
+  .gtable input.g-memo:hover{ border-color:var(--line); background:#FBFAF7; }
   .g-num{ text-align:right; font-variant-numeric:tabular-nums; font-weight:600; white-space:nowrap; justify-content:flex-end; }
   .grow > div.g-num, .irow > div.g-num, .srow > div.g-num{ padding-right:14px; }
   .g-mid{ text-align:center; justify-content:center; }
@@ -299,8 +308,8 @@
 
     /* 05 일자별 목표 — 차이·달성률·메모 접기 */
     .gtable{ min-width:470px; grid-template-columns:106px 44px minmax(96px,1fr) 104px 104px 26px; }
-    .grow > div:nth-child(6), .grow > div:nth-child(7),
-    .grow > div:nth-child(8){ display:none; }
+    .grow > div:nth-child(6), .grow > div:nth-child(7){ display:none; }
+    .g-memoline{ padding:0 8px 8px 8px; }
     .gtable input[type="date"]{ font-size:13px; padding:5px 3px; }
     .gtable input[type="text"]{ font-size:13px; }
 
@@ -487,7 +496,7 @@
     <span class="section-num" contenteditable="true">05</span>
     <h2 class="section-title" contenteditable="true">일자별 매출 목표</h2>
   </div>
-  <div class="section-desc" contenteditable="true">날짜와 목표 금액만 입력하세요. 실적 · 차이 · 달성률은 위 매출 기록에서 같은 날짜끼리 자동 집계됩니다.</div>
+  <div class="section-desc" contenteditable="true">날짜와 목표 금액만 입력하세요. 실적 · 차이 · 달성률은 매출 기록에서 같은 날짜끼리 자동 집계됩니다. 메모는 각 날짜 아래 한 줄에 길게 적으실 수 있습니다.</div>
 
   <div class="log-scroll">
     <div class="gtable" id="goalTable">
@@ -499,7 +508,6 @@
         <div class="g-num">실적(원)</div>
         <div class="g-num">차이</div>
         <div class="g-num">달성률</div>
-        <div>메모</div>
         <div></div>
       </div>
       <div id="goalBody"></div>
@@ -511,7 +519,6 @@
         <div class="g-num" id="gActualCell">0</div>
         <div class="g-num" id="gDiffCell">0</div>
         <div class="g-num" id="gRateCell">-</div>
-        <div></div>
         <div></div>
       </div>
     </div>
@@ -873,8 +880,9 @@
       '<div class="g-num g-actual">0</div>' +
       '<div class="g-num g-diff">0</div>' +
       '<div class="g-num g-rate">-</div>' +
-      '<div><input type="text" class="g-memo" placeholder="메모" value="'+escapeAttr(data.memo||'')+'" oninput="onRowChange(this)"></div>' +
-      '<div class="g-mid"><button class="del-x" onclick="removeGoalRow(this)">✕</button></div>';
+      '<div class="g-mid"><button class="del-x" onclick="removeGoalRow(this)">✕</button></div>' +
+      '<div class="g-memoline"><span class="memo-tag">메모</span>' +
+        '<input type="text" class="g-memo" placeholder="이 날의 활동 · 대상 · 특이사항을 자유롭게 기록하세요" value="'+escapeAttr(data.memo||'')+'" oninput="onRowChange(this)"></div>';
     return row;
   }
 
@@ -1527,8 +1535,9 @@
           '<div class="g-num g-actual">0</div>' +
           '<div class="g-num g-diff">0</div>' +
           '<div class="g-num g-rate">-</div>' +
-          '<div><input type="text" class="g-memo" value="'+escapeAttr(memo)+'" oninput="onRowChange(this)"></div>' +
-          '<div class="g-mid"><button class="del-x" onclick="removeGoalRow(this)">✕</button></div>';
+          '<div class="g-mid"><button class="del-x" onclick="removeGoalRow(this)">✕</button></div>' +
+          '<div class="g-memoline"><span class="memo-tag">메모</span>' +
+            '<input type="text" class="g-memo" value="'+escapeAttr(memo)+'" oninput="onRowChange(this)"></div>';
         dstGoal.appendChild(tr);
       });
     }
