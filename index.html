@@ -178,8 +178,8 @@
   .lead-comment:focus{ background:rgba(255,255,255,0.12); color:#fff; box-shadow:none; outline:2px solid var(--brass); outline-offset:3px; }
 
   .stable{
-    display:grid; grid-template-columns:minmax(130px,180px) minmax(170px,1fr) 132px 130px 96px minmax(34px,44px);
-    align-items:stretch; min-width:790px; font-size:13.5px; margin-top:16px;
+    display:grid; grid-template-columns:minmax(130px,180px) minmax(150px,1fr) minmax(220px,1.5fr) 130px 44px;
+    align-items:stretch; min-width:720px; font-size:13.5px; margin-top:16px;
   }
   .srow, #stratBody{ display:contents; }
   .srow > div{ min-width:0; padding:7px 8px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
@@ -192,12 +192,15 @@
   .stable input.amt{ text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--navy); }
   .stable input:hover{ border-color:var(--line); background:#FBFAF7; }
   .stable input:focus{ border-color:var(--brass); background:#fff; outline:none; }
-  .stable select{
-    width:100%; font-family:'Pretendard',sans-serif; font-size:12px; font-weight:700; padding:5px 4px;
-    border:1px solid var(--line); border-radius:20px; background:#fff; color:var(--muted); cursor:pointer; text-align:center;
+  .stable textarea.s-memo{
+    width:100%; min-width:0; display:block; box-sizing:border-box;
+    font-family:'Pretendard',sans-serif; font-size:12.5px; line-height:1.55; color:#4A4E5A;
+    border:1px solid transparent; background:transparent; border-radius:5px; padding:5px 7px;
+    resize:none; overflow:hidden; height:28px; white-space:pre-wrap;
   }
-  .srow.state-doing select{ background:#FBF6EC; color:var(--brass); border-color:var(--brass-light); }
-  .srow.state-done select{ background:var(--green-bg); color:var(--green); border-color:#BFD9CB; }
+  .stable textarea.s-memo:hover{ border-color:var(--line); background:#FBFAF7; }
+  .stable textarea.s-memo:focus{ border-color:var(--brass); background:#fff; outline:none; box-shadow:0 2px 10px rgba(20,20,30,0.06); }
+  .stable textarea.s-memo[readonly]{ cursor:pointer; }
 
   /* bar chart */
   .chart-card{ margin-top:16px; }
@@ -370,8 +373,7 @@
     .itable input[type="text"]{ font-size:13px; }
 
     /* 03 전략 — 건수 접기 */
-    .stable{ min-width:520px; grid-template-columns:minmax(112px,0.9fr) minmax(130px,1.1fr) 112px 82px 28px; }
-    .srow > div:nth-child(3){ display:none; }
+    .stable{ min-width:560px; grid-template-columns:minmax(96px,0.8fr) minmax(108px,1fr) minmax(130px,1.2fr) 106px 26px; }
     .stable input[type="text"]{ font-size:13px; }
     .stable select{ font-size:12px; padding:5px 4px; }
 
@@ -503,9 +505,8 @@
       <div class="srow shead">
         <div>전략 / 활동</div>
         <div>대상</div>
-        <div class="g-mid">건수 / 인원</div>
+        <div>메모</div>
         <div class="g-num">예상 금액(원)</div>
-        <div class="g-mid">상태</div>
         <div></div>
       </div>
       <div id="stratBody"></div>
@@ -514,7 +515,6 @@
         <div></div>
         <div></div>
         <div class="g-num" id="sAmtCell">0</div>
-        <div></div>
         <div></div>
       </div>
     </div>
@@ -730,26 +730,18 @@
   }
 
   // ---------- strategy rows ----------
-  var STRAT_STATES = ['예정','진행중','완료'];
-  var STATE_CLASS = { '예정':'plan', '진행중':'doing', '완료':'done' };
-
-  function stateOptions(sel){
-    return STRAT_STATES.map(function(o){
-      return '<option value="'+o+'"'+(o === sel ? ' selected' : '')+'>'+o+'</option>';
-    }).join('');
-  }
-
   function buildStratRow(data){
     data = data || {};
-    var st = STRAT_STATES.indexOf(data.state) > -1 ? data.state : '예정';
+    // 기존에 「건수/인원」으로 넣어둔 값은 메모로 이어받습니다
+    var memoVal = (data.memo !== undefined && data.memo !== null && data.memo !== '') ? data.memo : (data.count || '');
     var row = document.createElement('div');
-    row.className = 'srow strat-row state-' + STATE_CLASS[st];
+    row.className = 'srow strat-row';
     row.innerHTML =
       '<div><input type="text" class="s-name" placeholder="예: 외부설명회 5회" value="'+escapeAttr(data.name||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><input type="text" class="s-target" placeholder="대상 이름을 쉼표로 나열" value="'+escapeAttr(data.target||'')+'" oninput="onRowChange(this)"></div>' +
-      '<div><input type="text" class="s-count" placeholder="예: 4명×5회" value="'+escapeAttr(data.count||'')+'" oninput="onRowChange(this)"></div>' +
+      '<div><textarea class="s-memo" rows="1" placeholder="인원·회차·특이사항 (클릭하면 전체가 펼쳐집니다)" ' +
+        'onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(memoVal)+'</textarea></div>' +
       '<div><input type="text" inputmode="numeric" class="s-amt amt" placeholder="0" value="'+(data.amount?fmt(data.amount):'')+'" oninput="onAmountInput(this)"></div>' +
-      '<div><select class="s-state" onchange="onRowChange(this)">'+stateOptions(st)+'</select></div>' +
       '<div class="g-mid"><button class="del-x" onclick="removeStratRow(this)">✕</button></div>';
     return row;
   }
@@ -768,14 +760,10 @@
 
   function recalcStrategy(gap){
     var rows = document.querySelectorAll('#stratBody .strat-row');
-    var sum = 0, doneSum = 0;
+    var sum = 0;
 
     rows.forEach(function(row){
-      var amt = toNum(row.querySelector('.s-amt').value);
-      var st = row.querySelector('.s-state').value;
-      sum += amt;
-      if(st === '완료') doneSum += amt;
-      row.className = 'srow strat-row state-' + (STATE_CLASS[st] || 'plan');
+      sum += toNum(row.querySelector('.s-amt').value);
     });
 
     document.getElementById('sAmtCell').textContent = fmt(sum);
@@ -786,8 +774,7 @@
       return;
     }
     if(gap <= 0){
-      lead.innerHTML = '<span class="ok">이번 달 목표를 이미 달성했습니다.</span> 등록된 전략 예상 금액은 <b>'+fmt(sum)+'원</b>입니다.' +
-        '<div class="lead-sub">이 중 완료 '+fmt(doneSum)+'원 · 진행/예정 '+fmt(sum-doneSum)+'원</div>';
+      lead.innerHTML = '<span class="ok">이번 달 목표를 이미 달성했습니다.</span> 등록된 전략 예상 금액은 <b>'+fmt(sum)+'원</b>입니다.';
       return;
     }
     var cover = sum / gap * 100;
@@ -795,7 +782,7 @@
     lead.innerHTML =
       '부족 <b>'+fmt(gap)+'원</b> → 등록된 전략으로 <b>'+fmt(sum)+'원</b> 확보 예정 ' +
       '<span class="'+cls+'">(커버율 '+cover.toFixed(0)+'%)</span>' +
-      '<div class="lead-sub">완료 '+fmt(doneSum)+'원 · 진행/예정 '+fmt(sum-doneSum)+'원' +
+      '<div class="lead-sub">전략 '+rows.length+'건' +
       (cover < 100 ? ' · 아직 <b>'+fmt(gap-sum)+'원</b>에 대한 전략이 없습니다.' : ' · 부족액을 넘어서는 계획이 잡혀 있습니다.') +
       '</div>';
   }
@@ -1291,9 +1278,8 @@
       strategies.push({
         name: row.querySelector('.s-name').value,
         target: row.querySelector('.s-target').value,
-        count: row.querySelector('.s-count').value,
-        amount: toNum(row.querySelector('.s-amt').value),
-        state: row.querySelector('.s-state').value
+        memo: row.querySelector('.s-memo').value,
+        amount: toNum(row.querySelector('.s-amt').value)
       });
     });
     var items = [];
@@ -1475,9 +1461,9 @@
   function applyEditMode(){
     var editable = canEdit && !isSnapshotFile;
     document.querySelectorAll('[contenteditable]').forEach(function(el){ el.setAttribute('contenteditable', editable ? 'true' : 'false'); });
-    document.querySelectorAll('#goalInput, #stratBody input, #stratBody select, #itemBody input, #logBody input, #goalBody input').forEach(function(el){ el.disabled = !editable; });
+    document.querySelectorAll('#goalInput, #stratBody input, #itemBody input, #logBody input, #goalBody input').forEach(function(el){ el.disabled = !editable; });
     // 메모는 잠그지 않고 '수정 불가'로 둠 — 읽기 전용으로 보는 사람도 눌러서 전체를 볼 수 있어야 함
-    document.querySelectorAll('#goalBody textarea.g-memo').forEach(function(el){
+    document.querySelectorAll('#goalBody textarea.g-memo, #stratBody textarea.s-memo').forEach(function(el){
       el.disabled = false;
       el.readOnly = !editable;
     });
@@ -1583,15 +1569,13 @@
     if(srcStrat && dstStrat){
       dstStrat.innerHTML = '';
       srcStrat.querySelectorAll('.strat-row').forEach(function(row){
-        var st = row.querySelector('.s-state').value;
         var r = document.createElement('div');
-        r.className = 'srow strat-row state-' + (STATE_CLASS[st] || 'plan');
+        r.className = 'srow strat-row';
         r.innerHTML =
           '<div><input type="text" class="s-name" value="'+escapeAttr(row.querySelector('.s-name').value)+'" oninput="onRowChange(this)"></div>' +
           '<div><input type="text" class="s-target" value="'+escapeAttr(row.querySelector('.s-target').value)+'" oninput="onRowChange(this)"></div>' +
-          '<div><input type="text" class="s-count" value="'+escapeAttr(row.querySelector('.s-count').value)+'" oninput="onRowChange(this)"></div>' +
+          '<div><textarea class="s-memo" rows="1" onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(row.querySelector('.s-memo').value)+'</textarea></div>' +
           '<div><input type="text" inputmode="numeric" class="s-amt amt" value="'+escapeAttr(row.querySelector('.s-amt').value)+'" oninput="onAmountInput(this)"></div>' +
-          '<div><select class="s-state" onchange="onRowChange(this)">'+stateOptions(st)+'</select></div>' +
           '<div class="g-mid"><button class="del-x" onclick="removeStratRow(this)">✕</button></div>';
         dstStrat.appendChild(r);
       });
