@@ -38,6 +38,7 @@
     .scroll-y{ max-height:none !important; overflow:visible !important; }
     .gtable .ghead > div, .gtable .gfoot > div{ position:static !important; }
     .gtable textarea.g-memo{ height:auto !important; overflow:visible !important; border-color:transparent !important; }
+    table.log thead th, table.log tfoot td{ position:static !important; box-shadow:none !important; }
   }
 
   header.hero{
@@ -225,6 +226,10 @@
   .ghead > div{ background:#F8F6F1; border-bottom:1px solid var(--line); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .gfoot > div{ background:#F8F6F1; border-top:2px solid var(--line); border-bottom:none; font-weight:800; color:var(--navy); }
   .grow.today > div{ background:#FBF6EC; }
+  /* 04 매출 기록: 헤더·합계 고정 */
+  table.log thead th{ position:sticky; top:0; z-index:3; box-shadow:inset 0 -1px 0 var(--line); }
+  table.log tfoot td{ position:sticky; bottom:0; z-index:3; box-shadow:inset 0 2px 0 var(--line); }
+
   /* 표 안에서 세로 스크롤 + 헤더·합계 고정 */
   .scroll-y{ max-height:62vh; overflow-y:auto; overscroll-behavior:contain; }
   .gtable .ghead > div{ position:sticky; top:0; z-index:3; }
@@ -500,7 +505,7 @@
   </div>
   <div class="section-desc" contenteditable="true">날짜와 판매 아이템, 금액을 입력하세요. 주차는 날짜를 기준으로 자동 계산됩니다.</div>
 
-  <div class="log-scroll">
+  <div class="log-scroll scroll-y">
     <table class="log" id="logTable">
       <thead>
         <tr><th>날짜</th><th>주차</th><th>판매 아이템 / 대상</th><th>금액(원)</th><th>메모</th><th></th></tr>
