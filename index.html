@@ -40,6 +40,8 @@
     .gtable textarea.g-memo{ height:auto !important; overflow:visible !important; border-color:transparent !important; }
     table.log thead th, table.log tfoot td{ position:static !important; box-shadow:none !important; }
     .stable .shead > div, .stable .sfoot > div{ position:static !important; box-shadow:none !important; }
+    .memo-body{ max-height:none !important; overflow:visible !important; }
+    .mini-toggle, .memo-hint{ display:none !important; }
   }
 
   header.hero{
@@ -259,6 +261,11 @@
   .g-memoline .memo-tag{ margin-top:5px; }
   .g-memoline.has-more .memo-tag::after{ content:' ⋯'; }
   .g-memoline.has-more .memo-tag{ background:#EADFC6; }
+  .memo-tag{ cursor:pointer; user-select:none; transition:background .15s; }
+  .memo-tag:hover{ background:#E3D5B6; }
+  .g-memoline.open .memo-tag{ background:var(--brass); color:#fff; }
+  .g-memoline.open .memo-tag::after{ content:' ▾'; }
+  .gtable textarea.g-memo[readonly]{ cursor:pointer; }
   .g-num{ text-align:right; font-variant-numeric:tabular-nums; font-weight:600; white-space:nowrap; justify-content:flex-end; }
   .grow > div.g-num, .irow > div.g-num, .srow > div.g-num{ padding-right:14px; }
   .g-mid{ text-align:center; justify-content:center; }
@@ -299,7 +306,19 @@
   .week-card .wk-amt{ font-family:'Noto Serif KR',serif; font-weight:900; font-size:18px; color:var(--navy); }
   .week-card .wk-cnt{ font-size:11px; color:var(--muted); margin-top:4px; }
 
-  .memo-body{ font-size:13.5px; outline:none; min-height:100px; }
+  .memo-body{
+    font-size:13.5px; outline:none; min-height:100px;
+    max-height:42vh; overflow-y:auto; overscroll-behavior:contain; padding-right:6px;
+  }
+  .memo-body.expanded{ max-height:none; overflow:visible; }
+  .memo-tools{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+  .mini-toggle{
+    font-family:'Pretendard',sans-serif; font-size:12.5px; font-weight:600; color:var(--brass);
+    background:none; border:1px dashed var(--brass-light); padding:7px 13px; border-radius:8px;
+    cursor:pointer; min-height:34px; touch-action:manipulation;
+  }
+  .mini-toggle:hover{ background:#FBF6EC; }
+  .memo-hint{ font-size:12px; color:var(--muted); }
 
   /* storage info */
   .storage-card{ border:1px dashed var(--brass-light); background:#FBF9F4; }
@@ -572,6 +591,10 @@
     <h2 class="section-title" contenteditable="true">전략 & 메모</h2>
   </div>
   <div class="card">
+    <div class="memo-tools">
+      <button class="mini-toggle" id="memoToggleBtn" onclick="toggleMemoBox()">⤢ 전체 펼치기</button>
+      <span class="memo-hint" id="memoHint"></span>
+    </div>
     <div class="memo-body" contenteditable="true" id="memoEl">부족 자금을 채우기 위한 전략과 대표님 보고용 메모를 자유롭게 기록하세요.</div>
   </div>
 
@@ -913,10 +936,28 @@
       '<div class="g-num g-diff">0</div>' +
       '<div class="g-num g-rate">-</div>' +
       '<div class="g-mid"><button class="del-x" onclick="removeGoalRow(this)">✕</button></div>' +
-      '<div class="g-memoline"><span class="memo-tag">메모</span>' +
+      '<div class="g-memoline"><span class="memo-tag" onclick="toggleMemoLine(this)" title="눌러서 전체 보기 / 접기">메모</span>' +
         '<textarea class="g-memo" rows="1" placeholder="이 날의 활동 · 대상 · 특이사항을 자유롭게 기록하세요 (클릭하면 전체가 펼쳐집니다)" ' +
         'onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(data.memo||'')+'</textarea></div>';
     return row;
+  }
+
+  // 06 전략 & 메모: 상자 높이 제한 ↔ 전체 펼치기
+  function toggleMemoBox(){
+    var el = document.getElementById('memoEl');
+    var btn = document.getElementById('memoToggleBtn');
+    var on = el.classList.toggle('expanded');
+    btn.textContent = on ? '⤡ 접기' : '⤢ 전체 펼치기';
+    updateMemoHint();
+  }
+  function updateMemoHint(){
+    var el = document.getElementById('memoEl');
+    var hint = document.getElementById('memoHint');
+    if(!el || !hint) return;
+    if(el.classList.contains('expanded')){ hint.textContent = '전체가 펼쳐진 상태입니다.'; return; }
+    hint.textContent = (el.scrollHeight > el.clientHeight + 4)
+      ? '내용이 더 있습니다 · 상자 안에서 스크롤하거나 전체 펼치기를 누르세요'
+      : '';
   }
 
   // 메모: 클릭하면 내용 전체 높이로 펼치고, 벗어나면 한 줄로 접음
@@ -926,8 +967,25 @@
   }
   function expandMemo(el){ autoGrowMemo(el); }
   function collapseMemo(el){
+    var line = el.closest('.g-memoline');
+    if(line && line.classList.contains('open')) return;   // 태그로 펼쳐둔 상태는 유지
     el.style.height = '';
     markMemoOverflow(el);
+  }
+  // 메모 태그 클릭 → 펼침 상태 고정 / 해제
+  function toggleMemoLine(tagEl){
+    var line = tagEl.closest('.g-memoline');
+    if(!line) return;
+    var ta = line.querySelector('.g-memo');
+    if(!ta) return;
+    if(line.classList.contains('open')){
+      line.classList.remove('open');
+      ta.style.height = '';
+      markMemoOverflow(ta);
+    } else {
+      line.classList.add('open');
+      autoGrowMemo(ta);
+    }
   }
   function onMemoInput(el){
     autoGrowMemo(el);
@@ -1292,6 +1350,7 @@
     recalcAll();
     applyEditMode();
     refreshMemoMarks();
+    updateMemoHint();
   }
 
   function scheduleSave(){
@@ -1415,7 +1474,12 @@
   function applyEditMode(){
     var editable = canEdit && !isSnapshotFile;
     document.querySelectorAll('[contenteditable]').forEach(function(el){ el.setAttribute('contenteditable', editable ? 'true' : 'false'); });
-    document.querySelectorAll('#goalInput, #stratBody input, #stratBody select, #itemBody input, #logBody input, #goalBody input, #goalBody textarea').forEach(function(el){ el.disabled = !editable; });
+    document.querySelectorAll('#goalInput, #stratBody input, #stratBody select, #itemBody input, #logBody input, #goalBody input').forEach(function(el){ el.disabled = !editable; });
+    // 메모는 잠그지 않고 '수정 불가'로 둠 — 읽기 전용으로 보는 사람도 눌러서 전체를 볼 수 있어야 함
+    document.querySelectorAll('#goalBody textarea.g-memo').forEach(function(el){
+      el.disabled = false;
+      el.readOnly = !editable;
+    });
     document.querySelectorAll('.add-row, .del-x').forEach(function(el){ el.style.display = editable ? '' : 'none'; });
     var btn = document.getElementById('authBtn');
     if(isSnapshotFile){ btn.style.display = 'none'; }
@@ -1481,6 +1545,7 @@
     document.querySelectorAll('[contenteditable]').forEach(function(el){
       el.addEventListener('input', function(){ scheduleSave(); });
     });
+    document.getElementById('memoEl').addEventListener('input', updateMemoHint);
 
     document.getElementById('loginPw').addEventListener('keydown', function(e){ if(e.key === 'Enter') doLogin(); });
     document.getElementById('loginEmail').addEventListener('keydown', function(e){ if(e.key === 'Enter') document.getElementById('loginPw').focus(); });
@@ -1596,7 +1661,7 @@
           '<div class="g-num g-diff">0</div>' +
           '<div class="g-num g-rate">-</div>' +
           '<div class="g-mid"><button class="del-x" onclick="removeGoalRow(this)">✕</button></div>' +
-          '<div class="g-memoline"><span class="memo-tag">메모</span>' +
+          '<div class="g-memoline"><span class="memo-tag" onclick="toggleMemoLine(this)" title="눌러서 전체 보기 / 접기">메모</span>' +
             '<textarea class="g-memo" rows="1" onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(memo)+'</textarea></div>';
         dstGoal.appendChild(tr);
       });
