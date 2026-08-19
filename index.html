@@ -39,6 +39,7 @@
     .gtable .ghead > div, .gtable .gfoot > div{ position:static !important; }
     .gtable textarea.g-memo{ height:auto !important; overflow:visible !important; border-color:transparent !important; }
     table.log thead th, table.log tfoot td{ position:static !important; box-shadow:none !important; }
+    .stable .shead > div, .stable .sfoot > div{ position:static !important; box-shadow:none !important; }
   }
 
   header.hero{
@@ -226,6 +227,10 @@
   .ghead > div{ background:#F8F6F1; border-bottom:1px solid var(--line); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .gfoot > div{ background:#F8F6F1; border-top:2px solid var(--line); border-bottom:none; font-weight:800; color:var(--navy); }
   .grow.today > div{ background:#FBF6EC; }
+  /* 03 전략: 헤더·합계 고정 */
+  .stable .shead > div{ position:sticky; top:0; z-index:3; }
+  .stable .sfoot > div{ position:sticky; bottom:0; z-index:3; box-shadow:0 -1px 0 var(--line); }
+
   /* 04 매출 기록: 헤더·합계 고정 */
   table.log thead th{ position:sticky; top:0; z-index:3; box-shadow:inset 0 -1px 0 var(--line); }
   table.log tfoot td{ position:sticky; bottom:0; z-index:3; box-shadow:inset 0 2px 0 var(--line); }
@@ -473,7 +478,7 @@
     <div class="lead-comment" contenteditable="true" id="stratComment">핵심 코멘트를 한 줄로 적어주세요. (예: 8월 넷째 주 외부설명회 집중, 자비아 추천 전환이 관건)</div>
   </div>
 
-  <div class="log-scroll">
+  <div class="log-scroll scroll-y">
     <div class="stable" id="stratTable">
       <div class="srow shead">
         <div>전략 / 활동</div>
