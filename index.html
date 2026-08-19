@@ -174,7 +174,7 @@
   .drow.blank-row > div{ background:#FCFBF8; }
   .dtable input.d-item{ font-weight:700; color:var(--navy); }
   .dtable{
-    display:grid; grid-template-columns:minmax(110px,160px) minmax(110px,180px) 130px minmax(200px,1fr) 44px;
+    display:grid; grid-template-columns:minmax(110px,160px) minmax(110px,180px) minmax(220px,1fr) 130px 44px;
     align-items:stretch; min-width:660px; font-size:13.5px;
   }
   .drow, #dbBody{ display:contents; }
@@ -413,7 +413,7 @@
     .itable input[type="text"]{ font-size:13px; }
 
     /* 03 전략 — 건수 접기 */
-    .dtable{ min-width:520px; grid-template-columns:minmax(80px,0.9fr) minmax(84px,1fr) 104px minmax(120px,1.3fr) 26px; }
+    .dtable{ min-width:520px; grid-template-columns:minmax(80px,0.9fr) minmax(84px,1fr) minmax(120px,1.3fr) 104px 26px; }
     .stable{ min-width:560px; grid-template-columns:minmax(96px,0.8fr) minmax(108px,1fr) minmax(130px,1.2fr) 106px 26px; }
     .stable input[type="text"]{ font-size:13px; }
     .stable select{ font-size:12px; padding:5px 4px; }
@@ -642,16 +642,16 @@
       <div class="drow dhead">
         <div>아이템</div>
         <div>대상</div>
-        <div class="g-num">예상 금액(원)</div>
         <div>메모</div>
+        <div class="g-num">예상 금액(원)</div>
         <div></div>
       </div>
       <div id="dbBody"></div>
       <div class="drow dfoot">
         <div>합계</div>
         <div></div>
-        <div class="g-num" id="dbSumCell">0</div>
         <div></div>
+        <div class="g-num" id="dbSumCell">0</div>
         <div></div>
       </div>
     </div>
@@ -811,9 +811,9 @@
     row.innerHTML =
       '<div><input type="text" class="d-item" list="dbItemSuggest" placeholder="아이템" value="'+escapeAttr(data.item||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><input type="text" class="d-name" placeholder="대상 이름" value="'+escapeAttr(data.name||'')+'" oninput="onRowChange(this)"></div>' +
-      '<div><input type="text" inputmode="numeric" class="d-amt amt" placeholder="0" value="'+(data.amount?fmt(data.amount):'')+'" oninput="onAmountInput(this)"></div>' +
       '<div><textarea class="d-memo" rows="1" placeholder="진행 상황 · 특이사항" ' +
         'onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(data.memo||'')+'</textarea></div>' +
+      '<div><input type="text" inputmode="numeric" class="d-amt amt" placeholder="0" value="'+(data.amount?fmt(data.amount):'')+'" oninput="onAmountInput(this)"></div>' +
       '<div class="g-mid"><button class="del-x" onclick="removeTargetRow(this)">✕</button></div>';
     return row;
   }
@@ -1803,8 +1803,8 @@
         r.innerHTML =
           '<div><input type="text" class="d-item" list="dbItemSuggest" value="'+escapeAttr(rowItem(row))+'" oninput="onRowChange(this)"></div>' +
           '<div><input type="text" class="d-name" value="'+escapeAttr(row.querySelector('.d-name').value)+'" oninput="onRowChange(this)"></div>' +
-          '<div><input type="text" inputmode="numeric" class="d-amt amt" value="'+escapeAttr(row.querySelector('.d-amt').value)+'" oninput="onAmountInput(this)"></div>' +
           '<div><textarea class="d-memo" rows="1" onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(row.querySelector('.d-memo').value)+'</textarea></div>' +
+          '<div><input type="text" inputmode="numeric" class="d-amt amt" value="'+escapeAttr(row.querySelector('.d-amt').value)+'" oninput="onAmountInput(this)"></div>' +
           '<div class="g-mid"><button class="del-x" onclick="removeTargetRow(this)">✕</button></div>';
         dstDb.appendChild(r);
       });
