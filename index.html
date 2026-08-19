@@ -162,6 +162,42 @@
   .itable input:hover{ border-color:var(--line); background:#FBFAF7; }
   .itable input:focus{ border-color:var(--brass); background:#fff; outline:none; }
 
+  /* item target DB */
+  .db-tabs{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+  .db-tab{ font-size:12.5px; font-weight:700; padding:7px 14px; border-radius:20px; cursor:pointer;
+           border:1px solid var(--line); background:#fff; color:var(--muted); white-space:nowrap; }
+  .db-tab:hover{ border-color:var(--brass-light); color:var(--brass); }
+  .db-tab.on{ background:var(--navy); border-color:var(--navy); color:#fff; }
+  .db-tab .cnt{ font-size:11px; opacity:.75; margin-left:4px; }
+  .dtable{
+    display:grid; grid-template-columns:minmax(120px,190px) 130px minmax(220px,1fr) 44px;
+    align-items:stretch; min-width:560px; font-size:13.5px;
+  }
+  .drow, #dbBody{ display:contents; }
+  .drow > div{ min-width:0; padding:7px 8px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
+  .dhead > div{ background:#F8F6F1; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:3;
+                font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:#5A5F6E; font-weight:600; white-space:nowrap; }
+  .dfoot > div{ background:#F8F6F1; border-top:2px solid var(--line); border-bottom:none; font-weight:800; color:var(--navy);
+                position:sticky; bottom:0; z-index:3; box-shadow:0 -1px 0 var(--line); }
+  .dtable input[type="text"]{ width:100%; min-width:0; border:1px solid transparent; background:transparent; border-radius:5px;
+        padding:5px 6px; font-size:13.5px; font-family:'Pretendard',sans-serif; color:var(--ink); }
+  .dtable input.amt{ text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--navy); }
+  .dtable input:hover{ border-color:var(--line); background:#FBFAF7; }
+  .dtable input:focus{ border-color:var(--brass); background:#fff; outline:none; }
+  .dtable textarea.d-memo{
+    width:100%; min-width:0; display:block; box-sizing:border-box;
+    font-family:'Pretendard',sans-serif; font-size:12.5px; line-height:1.55; color:#4A4E5A;
+    border:1px solid transparent; background:transparent; border-radius:5px; padding:5px 7px;
+    resize:none; overflow:hidden; height:28px; white-space:pre-wrap;
+  }
+  .dtable textarea.d-memo:hover{ border-color:var(--line); background:#FBFAF7; }
+  .dtable textarea.d-memo:focus{ border-color:var(--brass); background:#fff; outline:none; box-shadow:0 2px 10px rgba(20,20,30,0.06); }
+  .dtable textarea.d-memo[readonly]{ cursor:pointer; }
+  .db-note{ margin-top:12px; font-size:12.5px; color:var(--muted); background:#FBF9F4; border:1px solid var(--line); border-radius:10px; padding:11px 14px; }
+  .db-note b{ color:var(--navy); }
+  .db-note.warn{ background:var(--red-bg); border-color:#E8CFCB; color:#7C382E; }
+  .db-note.warn b{ color:#7C382E; }
+
   /* strategy board */
   .lead-box{
     background:linear-gradient(160deg,#16294A 0%, #101E36 100%); color:#EDEEF3;
@@ -373,6 +409,7 @@
     .itable input[type="text"]{ font-size:13px; }
 
     /* 03 전략 — 건수 접기 */
+    .dtable{ min-width:440px; grid-template-columns:minmax(88px,1fr) 104px minmax(130px,1.4fr) 26px; }
     .stable{ min-width:560px; grid-template-columns:minmax(96px,0.8fr) minmax(108px,1fr) minmax(130px,1.2fr) 106px 26px; }
     .stable input[type="text"]{ font-size:13px; }
     .stable select{ font-size:12px; padding:5px 4px; }
@@ -487,9 +524,40 @@
     <div class="chart" id="itemChart"></div>
   </div>
 
-  <!-- 목표 달성 전략 & 대상 -->
+  <!-- 아이템별 대상 DB -->
   <div class="section-head">
     <span class="section-num" contenteditable="true">03</span>
+    <h2 class="section-title" contenteditable="true">아이템별 대상 DB</h2>
+  </div>
+  <div class="section-desc" contenteditable="true">이번 달 목표를 채울 대상을 아이템별로 적어둡니다. 아이템 단추를 눌러 전환하세요.</div>
+
+  <div class="db-tabs" id="dbTabs"></div>
+
+  <div class="log-scroll scroll-y">
+    <div class="dtable" id="dbTable">
+      <div class="drow dhead">
+        <div>대상</div>
+        <div class="g-num">예상 금액(원)</div>
+        <div>메모</div>
+        <div></div>
+      </div>
+      <div id="dbBody"></div>
+      <div class="drow dfoot">
+        <div>합계</div>
+        <div class="g-num" id="dbSumCell">0</div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+  </div>
+  <div class="goal-tools">
+    <button class="add-row" onclick="addTargetRow()">+ 대상 추가</button>
+  </div>
+  <div class="db-note" id="dbNote"></div>
+
+  <!-- 목표 달성 전략 & 대상 -->
+  <div class="section-head">
+    <span class="section-num" contenteditable="true">04</span>
     <h2 class="section-title" contenteditable="true">목표 달성 전략 &amp; 대상</h2>
   </div>
   <div class="section-desc" contenteditable="true">부족 금액을 무엇으로, 누구를 대상으로 메울 것인지 먼저 정리합니다.</div>
@@ -525,7 +593,7 @@
 
   <!-- 매출 기록 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">04</span>
+    <span class="section-num" contenteditable="true">05</span>
     <h2 class="section-title" contenteditable="true">매출 기록 (일자별 · 아이템별)</h2>
   </div>
   <div class="section-desc" contenteditable="true">날짜와 판매 아이템, 금액을 입력하세요. 주차는 날짜를 기준으로 자동 계산됩니다.</div>
@@ -545,7 +613,7 @@
 
   <!-- 일자별 매출 목표 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">05</span>
+    <span class="section-num" contenteditable="true">06</span>
     <h2 class="section-title" contenteditable="true">일자별 매출 목표</h2>
   </div>
   <div class="section-desc" contenteditable="true">날짜와 목표 금액만 입력하세요. 실적 · 차이 · 달성률은 매출 기록에서 같은 날짜끼리 자동 집계됩니다. 메모는 각 날짜 아래 한 줄에 길게 적으실 수 있습니다. 표가 길어지면 표 안에서 스크롤되며 헤더와 합계 줄은 고정됩니다.</div>
@@ -588,7 +656,7 @@
 
   <!-- 메모 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">06</span>
+    <span class="section-num" contenteditable="true">07</span>
     <h2 class="section-title" contenteditable="true">전략 & 메모</h2>
   </div>
   <div class="card">
@@ -601,7 +669,7 @@
 
   <!-- 저장 안내 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">07</span>
+    <span class="section-num" contenteditable="true">08</span>
     <h2 class="section-title" contenteditable="true">저장 & 업데이트 방식</h2>
   </div>
   <div class="card storage-card">
@@ -729,6 +797,100 @@
     return DOW_KO[d.getDay()];
   }
 
+  // ---------- item target DB ----------
+  var currentDbItem = '';
+
+  function buildTargetRow(data){
+    data = data || {};
+    var row = document.createElement('div');
+    row.className = 'drow target-row';
+    row.setAttribute('data-item', data.item || currentDbItem || '');
+    row.innerHTML =
+      '<div><input type="text" class="d-name" placeholder="대상 이름" value="'+escapeAttr(data.name||'')+'" oninput="onRowChange(this)"></div>' +
+      '<div><input type="text" inputmode="numeric" class="d-amt amt" placeholder="0" value="'+(data.amount?fmt(data.amount):'')+'" oninput="onAmountInput(this)"></div>' +
+      '<div><textarea class="d-memo" rows="1" placeholder="진행 상황 · 특이사항 (클릭하면 전체가 펼쳐집니다)" ' +
+        'onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(data.memo||'')+'</textarea></div>' +
+      '<div class="g-mid"><button class="del-x" onclick="removeTargetRow(this)">✕</button></div>';
+    return row;
+  }
+
+  function addTargetRow(data){
+    if(!currentDbItem && !data){
+      alert('먼저 02 아이템별 목표에 아이템을 등록한 뒤, 위 단추로 아이템을 골라주세요.');
+      return;
+    }
+    document.getElementById('dbBody').appendChild(buildTargetRow(data));
+    recalcAll();
+    scheduleSave();
+  }
+
+  function removeTargetRow(btn){
+    btn.closest('.target-row').remove();
+    recalcAll();
+    scheduleSave();
+  }
+
+  function selectDbItem(name){
+    currentDbItem = name;
+    recalcAll();
+  }
+
+  // itemMap: 02에서 등록한 아이템 이름 → 목표 금액
+  function recalcTargets(itemMap){
+    var items = Object.keys(itemMap);
+    var rows = document.querySelectorAll('#dbBody .target-row');
+
+    // 등록된 아이템이 없어지면 첫 아이템으로 되돌림
+    if(items.length && items.indexOf(currentDbItem) === -1) currentDbItem = items[0];
+    if(!items.length) currentDbItem = '';
+
+    var countBy = {}, sumBy = {};
+    rows.forEach(function(row){
+      var it = row.getAttribute('data-item') || '';
+      countBy[it] = (countBy[it]||0) + 1;
+      sumBy[it] = (sumBy[it]||0) + toNum(row.querySelector('.d-amt').value);
+    });
+
+    // 탭
+    var tabs = document.getElementById('dbTabs');
+    tabs.innerHTML = '';
+    items.forEach(function(name){
+      var b = document.createElement('button');
+      b.className = 'db-tab' + (name === currentDbItem ? ' on' : '');
+      b.innerHTML = escapeHtml(name) + '<span class="cnt">' + (countBy[name]||0) + '</span>';
+      b.onclick = function(){ selectDbItem(name); };
+      tabs.appendChild(b);
+    });
+    if(!items.length){
+      tabs.innerHTML = '<span class="db-note" style="margin:0;">02 아이템별 목표에 아이템을 먼저 등록하면 여기에 단추가 생깁니다.</span>';
+    }
+
+    // 선택한 아이템만 표시
+    rows.forEach(function(row){
+      row.style.display = (row.getAttribute('data-item') === currentDbItem) ? '' : 'none';
+    });
+
+    var sum = sumBy[currentDbItem] || 0;
+    var cnt = countBy[currentDbItem] || 0;
+    document.getElementById('dbSumCell').textContent = fmt(sum);
+
+    var note = document.getElementById('dbNote');
+    if(!items.length){ note.className='db-note'; note.innerHTML='먼저 02에서 아이템을 등록해주세요.'; return; }
+    var goal = itemMap[currentDbItem] || 0;
+    if(cnt === 0){
+      note.className = 'db-note';
+      note.innerHTML = '<b>'+escapeHtml(currentDbItem)+'</b> 대상이 아직 없습니다. <b>+ 대상 추가</b>로 이번 달에 접촉할 대상을 적어두세요.';
+    } else if(goal > 0){
+      var rate = sum / goal * 100;
+      note.className = 'db-note' + (rate < 100 ? ' warn' : '');
+      note.innerHTML = '<b>'+escapeHtml(currentDbItem)+'</b> 대상 <b>'+cnt+'명</b> · 예상 합계 <b>'+fmt(sum)+'원</b> · 목표 '+fmt(goal)+'원의 <b>'+rate.toFixed(0)+'%</b>' +
+        (rate < 100 ? ' · 목표까지 <b>'+fmt(goal-sum)+'원</b>어치 대상이 더 필요합니다.' : ' · 목표를 덮는 대상이 확보되어 있습니다.');
+    } else {
+      note.className = 'db-note';
+      note.innerHTML = '<b>'+escapeHtml(currentDbItem)+'</b> 대상 <b>'+cnt+'명</b> · 예상 합계 <b>'+fmt(sum)+'원</b> (02에 목표 금액을 넣으면 목표 대비로 보여드립니다)';
+    }
+  }
+
   // ---------- strategy rows ----------
   function buildStratRow(data){
     data = data || {};
@@ -848,6 +1010,13 @@
     document.getElementById('iLeftCell').textContent = fmt(Math.max(sumGoal - sumDone, 0));
 
     renderChart(chartData, sumGoal, sumDone);
+
+    var itemMap = {};
+    rows.forEach(function(row){
+      var nm = row.querySelector('.i-name').value.trim();
+      if(nm) itemMap[nm] = toNum(row.querySelector('.i-goal').value);
+    });
+    recalcTargets(itemMap);
 
     // 02 매출 기록 합계와 대조
     var note = document.getElementById('crossNote');
@@ -1273,6 +1442,15 @@
         memo: row.querySelector('.log-memo').value
       });
     });
+    var targets = [];
+    document.querySelectorAll('#dbBody .target-row').forEach(function(row){
+      targets.push({
+        item: row.getAttribute('data-item') || '',
+        name: row.querySelector('.d-name').value,
+        amount: toNum(row.querySelector('.d-amt').value),
+        memo: row.querySelector('.d-memo').value
+      });
+    });
     var strategies = [];
     document.querySelectorAll('#stratBody .strat-row').forEach(function(row){
       strategies.push({
@@ -1305,6 +1483,7 @@
       memo: document.getElementById('memoEl').innerHTML,
       goal: toNum(document.getElementById('goalInput').value),
       month: currentMonth,
+      targets: targets,
       stratComment: document.getElementById('stratComment').innerHTML,
       strategies: strategies,
       items: items,
@@ -1324,6 +1503,9 @@
     var tbody = document.getElementById('logBody');
     tbody.innerHTML = '';
     (state.rows || []).forEach(function(r){ tbody.appendChild(buildLogRow(r)); });
+    var dbody = document.getElementById('dbBody');
+    dbody.innerHTML = '';
+    (state.targets || []).forEach(function(t){ dbody.appendChild(buildTargetRow(t)); });
     if(state.stratComment) document.getElementById('stratComment').innerHTML = state.stratComment;
     var sbody = document.getElementById('stratBody');
     sbody.innerHTML = '';
@@ -1381,7 +1563,7 @@
       title: mm+'월 매출 진행 현황',
       subtitle: '목표 대비 진행률과, 남은 기간 동안 달성에 필요한 페이스를 실시간으로 확인합니다.',
       memo: '부족 자금을 채우기 위한 전략과 대표님 보고용 메모를 자유롭게 기록하세요.',
-      goal: 0, strategies: [], items: [], rows: [], goals: []
+      goal: 0, targets: [], strategies: [], items: [], rows: [], goals: []
     };
   }
   function onMonthChange(){
@@ -1461,9 +1643,9 @@
   function applyEditMode(){
     var editable = canEdit && !isSnapshotFile;
     document.querySelectorAll('[contenteditable]').forEach(function(el){ el.setAttribute('contenteditable', editable ? 'true' : 'false'); });
-    document.querySelectorAll('#goalInput, #stratBody input, #itemBody input, #logBody input, #goalBody input').forEach(function(el){ el.disabled = !editable; });
+    document.querySelectorAll('#goalInput, #stratBody input, #dbBody input, #itemBody input, #logBody input, #goalBody input').forEach(function(el){ el.disabled = !editable; });
     // 메모는 잠그지 않고 '수정 불가'로 둠 — 읽기 전용으로 보는 사람도 눌러서 전체를 볼 수 있어야 함
-    document.querySelectorAll('#goalBody textarea.g-memo, #stratBody textarea.s-memo').forEach(function(el){
+    document.querySelectorAll('#goalBody textarea.g-memo, #stratBody textarea.s-memo, #dbBody textarea.d-memo').forEach(function(el){
       el.disabled = false;
       el.readOnly = !editable;
     });
@@ -1562,6 +1744,24 @@
       var dst = clone.querySelector('#'+id);
       if(src && dst) dst.innerHTML = src.innerHTML;
     });
+
+    // bake target DB rows
+    var srcDb = document.getElementById('dbBody');
+    var dstDb = clone.querySelector('#dbBody');
+    if(srcDb && dstDb){
+      dstDb.innerHTML = '';
+      srcDb.querySelectorAll('.target-row').forEach(function(row){
+        var r = document.createElement('div');
+        r.className = 'drow target-row';
+        r.setAttribute('data-item', row.getAttribute('data-item') || '');
+        r.innerHTML =
+          '<div><input type="text" class="d-name" value="'+escapeAttr(row.querySelector('.d-name').value)+'" oninput="onRowChange(this)"></div>' +
+          '<div><input type="text" inputmode="numeric" class="d-amt amt" value="'+escapeAttr(row.querySelector('.d-amt').value)+'" oninput="onAmountInput(this)"></div>' +
+          '<div><textarea class="d-memo" rows="1" onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(row.querySelector('.d-memo').value)+'</textarea></div>' +
+          '<div class="g-mid"><button class="del-x" onclick="removeTargetRow(this)">✕</button></div>';
+        dstDb.appendChild(r);
+      });
+    }
 
     // bake strategy rows
     var srcStrat = document.getElementById('stratBody');
