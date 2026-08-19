@@ -54,6 +54,8 @@
   .mini:hover{ background:#FBF6EC; }
 
   /* ---------- 빠른 입력 ---------- */
+  .ro-note{ background:#FBF9F4; border:1px solid var(--line); border-radius:10px; padding:11px 14px;
+            font-size:12.5px; color:var(--muted); margin-bottom:16px; }
   .quick{ background:linear-gradient(160deg,#16294A,#101E36); border-radius:12px; padding:14px 16px; margin-bottom:16px; }
   .quick-label{ font-size:11px; letter-spacing:.16em; color:var(--brass-light); font-weight:700; margin-bottom:9px; }
   .quick-grid{ display:grid; grid-template-columns:86px 150px 130px minmax(200px,1fr) 92px; gap:8px; align-items:center; }
@@ -118,6 +120,43 @@
   .tl-body{ font-size:13.5px; margin-top:3px; white-space:pre-wrap; }
   .tl-meta{ font-size:11.5px; color:var(--muted); margin-top:4px; }
 
+  /* ---------- 보고서 ---------- */
+  .rep-controls{ background:#FBF9F4; border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin-bottom:16px; }
+  .rep-controls .row-line{ margin-bottom:10px; }
+  .rep-controls .row-line:last-child{ margin-bottom:0; }
+  .lbl{ font-size:11px; font-weight:800; letter-spacing:.1em; color:var(--brass); min-width:34px; }
+  .filter-in{ font-family:'Pretendard'; font-size:13.5px; padding:8px 11px; border:1px solid var(--line); border-radius:9px; background:#fff; min-width:170px; }
+  .filter-in:focus{ outline:none; border-color:var(--brass); }
+  .chk{ font-size:13px; color:var(--muted); display:flex; align-items:center; gap:5px; cursor:pointer; }
+  .hint-sm{ font-size:11.5px; color:var(--muted); }
+  .rep-summary{ background:linear-gradient(160deg,#16294A,#101E36); color:#EDEEF3; border-radius:12px; padding:16px 18px; margin-bottom:14px; }
+  .rep-summary .title{ font-family:'Noto Serif KR',serif; font-size:16px; font-weight:700; }
+  .rep-summary .facts{ display:flex; gap:20px; flex-wrap:wrap; margin-top:10px; }
+  .rep-summary .k{ font-size:10.5px; letter-spacing:.1em; color:var(--brass-light); font-weight:700; }
+  .rep-summary .v{ font-size:15px; font-weight:700; }
+  .rep-summary .brk{ margin-top:10px; font-size:12.5px; color:#B9BFCF; }
+  .rtable{ display:grid; grid-template-columns:92px 58px 108px 76px 92px minmax(240px,1fr) 150px 54px;
+           align-items:stretch; min-width:900px; font-size:13px; }
+  .rrow, #repBody{ display:contents; }
+  .rrow > div{ min-width:0; padding:7px 8px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
+  .rhead > div{ position:sticky; top:0; z-index:3; background:#F8F6F1; border-bottom:1px solid var(--line);
+                font-size:10.5px; letter-spacing:.04em; color:var(--muted); font-weight:700; white-space:nowrap; }
+
+  @media print{
+    .topbar, .tabs, .rep-controls, .gate, .scroll{ }
+    .topbar, .tabs, .rep-controls, .gate{ display:none !important; }
+    .panel:not(#panel-report){ display:none !important; }
+    #panel-report{ display:block !important; border:none; padding:0; }
+    body{ background:#fff; }
+    .scroll{ max-height:none !important; overflow:visible !important; border:none; }
+    .rtable{ min-width:0; font-size:10.5px; grid-template-columns:74px 44px 78px 58px 72px minmax(180px,1fr) 110px 40px; }
+    .rhead > div{ position:static !important; }
+    .rep-summary{ background:#fff !important; color:#000 !important; border:1px solid #999; }
+    .rep-summary .k{ color:#666 !important; }
+    .rep-summary .brk{ color:#333 !important; }
+    .empty{ display:none !important; }
+  }
+
   /* ---------- 로그인 ---------- */
   .gate{ position:fixed; inset:0; z-index:200; background:var(--navy); display:flex; align-items:center; justify-content:center; padding:20px; }
   .gate.hide{ display:none; }
@@ -167,6 +206,7 @@
 <div class="tabs">
   <div class="tab on" id="tab-day" onclick="switchTab('day')">오늘 기록</div>
   <div class="tab" id="tab-member" onclick="switchTab('member')">대상별 이력</div>
+  <div class="tab" id="tab-report" onclick="switchTab('report')">보고서 출력</div>
 </div>
 
 <main>
@@ -181,7 +221,10 @@
       <span class="chip g" id="dayDone">완료 0</span>
     </div>
 
-    <div class="quick">
+    <div class="ro-note" id="roNote" style="display:none;">
+      열람 전용 계정으로 접속하셨습니다. 기록을 보고 검색하실 수 있으며, 내용은 수정되지 않습니다.
+    </div>
+    <div class="quick" id="quickBox">
       <div class="quick-label">빠른 입력</div>
       <div class="quick-grid">
         <input type="text" id="qTime" placeholder="09:30" maxlength="5">
@@ -222,6 +265,44 @@
     <div class="suggest" id="mSuggest"></div>
     <div id="memberView"></div>
   </div>
+  <!-- ===== 보고서 출력 ===== -->
+  <div class="panel" id="panel-report">
+    <div class="rep-controls">
+      <div class="row-line">
+        <span class="lbl">기간</span>
+        <input type="date" class="date-input" id="rFrom">
+        <span>~</span>
+        <input type="date" class="date-input" id="rTo">
+        <button class="mini" onclick="setRange('week')">이번 주</button>
+        <button class="mini" onclick="setRange('month')">이번 달</button>
+        <button class="mini" onclick="setRange('lastmonth')">지난 달</button>
+      </div>
+      <div class="row-line">
+        <span class="lbl">조건</span>
+        <input type="text" id="rName" list="memberList" placeholder="대상 (비우면 전체)" class="filter-in" autocomplete="off">
+        <input type="text" id="rProduct" list="productList" placeholder="상품 (비우면 전체)" class="filter-in" autocomplete="off">
+        <label class="chk"><input type="checkbox" id="rPending"> 미완 후속만</label>
+        <button class="btn" onclick="runReport()">조회</button>
+      </div>
+      <div class="row-line">
+        <button class="mini" onclick="printReport()">🖨 인쇄 / PDF 저장</button>
+        <button class="mini" onclick="exportCsv()">⬇ 엑셀(CSV) 저장</button>
+        <span class="hint-sm">인쇄 화면에는 조회 결과만 담깁니다. PDF로 저장하려면 인쇄창에서 대상을 「PDF로 저장」으로 바꾸세요.</span>
+      </div>
+    </div>
+
+    <div id="repHead"></div>
+    <div class="scroll" id="repScrollBox" style="display:none;">
+      <div class="rtable" id="repTable">
+        <div class="rrow rhead">
+          <div>일자</div><div>시간</div><div>대상</div><div>등급</div>
+          <div>상품</div><div>업무 내용</div><div>후속</div><div class="mid">완료</div>
+        </div>
+        <div id="repBody"></div>
+      </div>
+    </div>
+    <div class="empty" id="repEmpty">기간과 조건을 고른 뒤 조회를 누르세요.</div>
+  </div>
 </main>
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
@@ -238,6 +319,8 @@
     appId: "1:17480780068:web:61b1a719ecfb0be9cd4bb1"
   };
   var LOGS = 'workLogs', MEMBERS = 'members';
+  // 이 이메일만 기록을 추가·수정·삭제할 수 있습니다. 나머지 계정은 열람만 가능합니다.
+  var EDITORS = ['parkshinje@gmail.com'];
 
   // 등급: 보유한 것 중 가장 높은 것 (숫자가 클수록 상위)
   var GRADE_RANK = { '비회원':0, '자비아':1, '이너서클':2, '지사장':3 };
@@ -245,6 +328,7 @@
 
   var db=null, auth=null, unsubDay=null, unsubMembers=null;
   var currentDate='', members={}, dayRows=[], currentMemberKey='';
+  var canEdit=false, myEmail='';
 
   // ---------- 유틸 ----------
   function localISO(d){
@@ -281,6 +365,17 @@
     return m ? (m.grade || computeGrade(m)) : '비회원';
   }
 
+  // 편집 권한에 따라 화면 잠금
+  function applyEditMode(){
+    document.getElementById('quickBox').style.display = canEdit ? '' : 'none';
+    document.querySelectorAll('#logBody input').forEach(function(el){ el.disabled = !canEdit; });
+    document.querySelectorAll('#logBody .del, #logBody .done-btn').forEach(function(el){
+      el.style.display = canEdit ? '' : 'none';
+    });
+    var ro=document.getElementById('roNote');
+    if(ro) ro.style.display = canEdit ? 'none' : '';
+  }
+
   // ---------- 인증 ----------
   function doLogin(){
     var e=document.getElementById('gEmail').value.trim(), p=document.getElementById('gPw').value;
@@ -300,7 +395,7 @@
 
   // ---------- 탭 ----------
   function switchTab(name){
-    ['day','member'].forEach(function(n){
+    ['day','member','report'].forEach(function(n){
       document.getElementById('tab-'+n).classList.toggle('on', n===name);
       document.getElementById('panel-'+n).classList.toggle('on', n===name);
     });
@@ -327,7 +422,7 @@
       snap.forEach(function(doc){ var v=doc.data(); v.id=doc.id; dayRows.push(v); });
       dayRows.sort(function(a,b){ return String(a.time||'').localeCompare(String(b.time||'')) || String(a.createdAt||'').localeCompare(String(b.createdAt||'')); });
       renderDay();
-      setStatus('ok');
+      setStatus(canEdit ? 'ok' : 'off', canEdit ? null : '열람 전용 · ' + myEmail);
     }, function(e){ setStatus('err', e.code||'조회 실패'); });
   }
 
@@ -350,6 +445,7 @@
         '<div class="mid"><button class="del" onclick="removeEntry(\''+r.id+'\')">✕</button></div>';
       body.appendChild(div);
     });
+    applyEditMode();
     document.getElementById('dayCount').textContent = dayRows.length+'건';
     document.getElementById('dayDone').textContent = '완료 '+dayRows.filter(function(r){return r.done;}).length;
     document.getElementById('dayEmpty').style.display = dayRows.length? 'none':'block';
@@ -361,6 +457,7 @@
     var content=document.getElementById('qContent').value.trim();
     var product=document.getElementById('qProduct').value.trim();
     var time=document.getElementById('qTime').value.trim() || nowHM();
+    if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
     if(!name && !content){ document.getElementById('qName').focus(); return; }
     var key=nameKey(name);
     var rec={ date:currentDate, time:time, memberKey:key, memberName:name,
@@ -377,6 +474,7 @@
     document.getElementById('qName').focus();
   }
   function editField(id, field, val){
+    if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
     var patch={}; patch[field]=val;
     setStatus('busy');
     db.collection(LOGS).doc(id).update(patch)
@@ -387,6 +485,7 @@
     editField(id, 'done', !cur);
   }
   function removeEntry(id){
+    if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
     if(!confirm('이 기록을 삭제할까요?')) return;
     db.collection(LOGS).doc(id).delete().then(function(){ setStatus('ok'); })
       .catch(function(e){ setStatus('err', e.code||e.message); });
@@ -394,6 +493,7 @@
 
   // ---------- 대상 ----------
   function touchMember(key, name){
+    if(!canEdit) return;
     var m=members[key];
     // 표시 이름은 처음 등록된 것을 유지 (「김희숙」/「김 희숙」이 섞여도 흔들리지 않음)
     var payload={ name:(m && m.name) ? m.name : name, nameKey:key, lastContact:currentDate };
@@ -492,6 +592,119 @@
     document.getElementById('memberView').innerHTML=html;
   }
 
+  // ---------- 보고서 ----------
+  var repRows=[];
+  function setRange(kind){
+    var t=new Date(), from, to;
+    if(kind==='week'){
+      var w=t.getDay(); var mon=new Date(t); mon.setDate(t.getDate() + (w===0? -6 : 1-w));
+      from=mon; to=new Date(mon); to.setDate(mon.getDate()+6);
+    } else if(kind==='month'){
+      from=new Date(t.getFullYear(), t.getMonth(), 1);
+      to=new Date(t.getFullYear(), t.getMonth()+1, 0);
+    } else {
+      from=new Date(t.getFullYear(), t.getMonth()-1, 1);
+      to=new Date(t.getFullYear(), t.getMonth(), 0);
+    }
+    document.getElementById('rFrom').value=localISO(from);
+    document.getElementById('rTo').value=localISO(to);
+    runReport();
+  }
+
+  function runReport(){
+    var from=document.getElementById('rFrom').value, to=document.getElementById('rTo').value;
+    if(!from||!to){ alert('기간을 먼저 골라주세요.'); return; }
+    if(from>to){ var t=from; from=to; to=t;
+      document.getElementById('rFrom').value=from; document.getElementById('rTo').value=to; }
+    setStatus('busy','조회 중...');
+    db.collection(LOGS).where('date','>=',from).where('date','<=',to).get().then(function(snap){
+      var list=[];
+      snap.forEach(function(doc){ var v=doc.data(); v.id=doc.id; list.push(v); });
+      var fName=nameKey(document.getElementById('rName').value);
+      var fProd=document.getElementById('rProduct').value.trim();
+      var onlyPending=document.getElementById('rPending').checked;
+      if(fName) list=list.filter(function(r){ return String(r.memberKey||'').indexOf(fName)>-1; });
+      if(fProd) list=list.filter(function(r){ return String(r.product||'').indexOf(fProd)>-1; });
+      if(onlyPending) list=list.filter(function(r){ return r.followUp && !r.done; });
+      list.sort(function(a,b){ return String(a.date+(a.time||'')).localeCompare(String(b.date+(b.time||''))); });
+      repRows=list;
+      renderReport(from, to);
+      setStatus(canEdit?'ok':'off', canEdit?null:'열람 전용 · '+myEmail);
+    }).catch(function(e){ setStatus('err', e.code||'조회 실패'); });
+  }
+
+  function renderReport(from, to){
+    var head=document.getElementById('repHead');
+    var people={}, prods={}, grades={}, pending=0, doneN=0;
+    repRows.forEach(function(r){
+      if(r.memberKey) people[r.memberKey]=1;
+      if(r.product) prods[r.product]=(prods[r.product]||0)+1;
+      var g=r.gradeAt || gradeOf(r.memberKey);
+      if(r.memberKey) grades[g]=(grades[g]||0)+1;
+      if(r.followUp && !r.done) pending++;
+      if(r.done) doneN++;
+    });
+    function top(o,n){
+      return Object.keys(o).sort(function(a,b){return o[b]-o[a];}).slice(0,n)
+        .map(function(k){ return k+' '+o[k]; }).join(' · ') || '—';
+    }
+    var fName=document.getElementById('rName').value.trim();
+    var fProd=document.getElementById('rProduct').value.trim();
+    var cond=[fName?('대상 '+fName):'', fProd?('상품 '+fProd):'',
+              document.getElementById('rPending').checked?'미완 후속만':''].filter(Boolean).join(' · ');
+    head.innerHTML =
+      '<div class="rep-summary">' +
+        '<div class="title">업무 히스토리 · '+esc(from)+' ~ '+esc(to)+'</div>' +
+        (cond? '<div class="brk">조건: '+esc(cond)+'</div>':'') +
+        '<div class="facts">' +
+          '<div><div class="k">총 기록</div><div class="v">'+repRows.length+'건</div></div>' +
+          '<div><div class="k">접촉 대상</div><div class="v">'+Object.keys(people).length+'명</div></div>' +
+          '<div><div class="k">완료</div><div class="v">'+doneN+'건</div></div>' +
+          '<div><div class="k">미완 후속</div><div class="v">'+pending+'건</div></div>' +
+        '</div>' +
+        '<div class="brk">등급별: '+esc(top(grades,5))+'</div>' +
+        '<div class="brk">상품별: '+esc(top(prods,6))+'</div>' +
+      '</div>';
+
+    var body=document.getElementById('repBody');
+    body.innerHTML='';
+    repRows.forEach(function(r){
+      var g=r.gradeAt || gradeOf(r.memberKey);
+      var div=document.createElement('div'); div.className='rrow';
+      div.innerHTML='<div>'+esc(r.date)+'</div><div>'+esc(r.time)+'</div>' +
+        '<div>'+esc(r.memberName||'')+'</div><div>'+esc(r.memberKey? g:'')+'</div>' +
+        '<div>'+esc(r.product)+'</div><div>'+esc(r.content)+'</div>' +
+        '<div>'+esc(r.followUp)+'</div><div class="mid">'+(r.done?'O':'')+'</div>';
+      body.appendChild(div);
+    });
+    document.getElementById('repScrollBox').style.display = repRows.length? '':'none';
+    document.getElementById('repEmpty').style.display = repRows.length? 'none':'block';
+    if(!repRows.length) document.getElementById('repEmpty').textContent='해당 조건의 기록이 없습니다.';
+  }
+
+  function printReport(){
+    if(!repRows.length){ alert('먼저 조회해주세요.'); return; }
+    window.print();
+  }
+
+  function exportCsv(){
+    if(!repRows.length){ alert('먼저 조회해주세요.'); return; }
+    var head=['일자','시간','대상','등급','상품','업무내용','후속액션','완료'];
+    function cell(v){ return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'; }
+    var lines=[head.map(cell).join(',')];
+    repRows.forEach(function(r){
+      lines.push([r.date, r.time, r.memberName, (r.memberKey? (r.gradeAt||gradeOf(r.memberKey)):''),
+                  r.product, r.content, r.followUp, r.done?'O':''].map(cell).join(','));
+    });
+    // 엑셀에서 한글이 깨지지 않도록 BOM 추가
+    var blob=new Blob(['\ufeff'+lines.join('\r\n')], {type:'text/csv;charset=utf-8;'});
+    var url=URL.createObjectURL(blob), a=document.createElement('a');
+    a.href=url;
+    a.download='업무히스토리_'+document.getElementById('rFrom').value+'_'+document.getElementById('rTo').value+'.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
   // ---------- 상품 빠른 버튼 ----------
   function buildProdButtons(){
     var row=document.getElementById('prodRow');
@@ -532,14 +745,24 @@
     document.getElementById('gPw').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
     document.getElementById('gEmail').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('gPw').focus(); });
     document.getElementById('mSearch').addEventListener('keydown', function(e){ if(e.key==='Enter') openMemberByInput(); });
+    ['rName','rProduct'].forEach(function(id){
+      document.getElementById(id).addEventListener('keydown', function(e){ if(e.key==='Enter') runReport(); });
+    });
+    var t=new Date();
+    document.getElementById('rFrom').value=localISO(new Date(t.getFullYear(), t.getMonth(), 1));
+    document.getElementById('rTo').value=localISO(new Date(t.getFullYear(), t.getMonth()+1, 0));
 
     auth.onAuthStateChanged(function(user){
       if(user){
+        myEmail = (user.email||'').toLowerCase();
+        canEdit = EDITORS.indexOf(myEmail) > -1;
         document.getElementById('gate').classList.add('hide');
-        setStatus('ok');
+        applyEditMode();
+        setStatus(canEdit ? 'ok' : 'off', canEdit ? null : '열람 전용 · '+myEmail);
         watchMembers();
         goToday();
       } else {
+        canEdit=false; myEmail='';
         document.getElementById('gate').classList.remove('hide');
         if(unsubDay){ unsubDay(); unsubDay=null; }
         if(unsubMembers){ unsubMembers(); unsubMembers=null; }

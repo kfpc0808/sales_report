@@ -403,6 +403,7 @@
     <button class="ghost" onclick="manualSave()">💾 지금 저장</button>
     <button class="ghost" onclick="exportSnapshot()">⬇ 최신본 다운로드</button>
     <button class="ghost" onclick="printReport()">🖨 인쇄</button>
+    <button class="ghost" id="worklogBtn" style="display:none;" onclick="location.href='worklog.html'">📝 업무 히스토리</button>
     <button id="authBtn" onclick="onAuthBtn()">🔑 편집 로그인</button>
   </div>
 </div>
@@ -1484,6 +1485,9 @@
     var btn = document.getElementById('authBtn');
     if(isSnapshotFile){ btn.style.display = 'none'; }
     else { btn.textContent = editable ? '🔓 로그아웃' : '🔑 편집 로그인'; }
+    // 업무 히스토리는 로그인해야 볼 수 있으므로, 로그인 상태에서만 이동 버튼 노출
+    var wbtn = document.getElementById('worklogBtn');
+    if(wbtn) wbtn.style.display = (editable && !isSnapshotFile) ? '' : 'none';
   }
 
   // ---------- init ----------
@@ -1559,6 +1563,7 @@
     clone.setAttribute('data-snapshot','1');
     clone.querySelectorAll('script[src*="firebasejs"]').forEach(function(el){ el.remove(); });
     var lm = clone.querySelector('#loginModal'); if(lm) lm.remove();
+    var wb = clone.querySelector('#worklogBtn'); if(wb) wb.remove();
     var mp = clone.querySelector('#monthPicker'); if(mp) mp.setAttribute('value', document.getElementById('monthPicker').value);
 
     // bake current goal value
