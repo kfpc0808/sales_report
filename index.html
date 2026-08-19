@@ -171,16 +171,11 @@
   .db-tab .cnt{ font-size:11px; opacity:.75; margin-left:4px; }
   .db-tab .x{ margin-left:7px; opacity:.6; font-weight:400; }
   .db-tab .x:hover{ opacity:1; }
-  .db-add{
-    font-family:'Pretendard',sans-serif; font-size:12.5px; font-weight:600; padding:7px 13px; border-radius:20px;
-    border:1px dashed var(--brass-light); background:none; color:var(--brass); width:134px; min-height:36px;
-  }
-  .db-add::placeholder{ color:var(--brass); opacity:.85; }
-  .db-add:focus{ outline:none; border-style:solid; border-color:var(--brass); background:#fff; color:var(--ink); }
   .drow.blank-row > div{ background:#FCFBF8; }
+  .dtable input.d-item{ font-weight:700; color:var(--navy); }
   .dtable{
-    display:grid; grid-template-columns:minmax(120px,190px) 130px minmax(220px,1fr) 44px;
-    align-items:stretch; min-width:560px; font-size:13.5px;
+    display:grid; grid-template-columns:minmax(110px,160px) minmax(110px,180px) 130px minmax(200px,1fr) 44px;
+    align-items:stretch; min-width:660px; font-size:13.5px;
   }
   .drow, #dbBody{ display:contents; }
   .drow > div{ min-width:0; padding:7px 8px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
@@ -418,7 +413,7 @@
     .itable input[type="text"]{ font-size:13px; }
 
     /* 03 전략 — 건수 접기 */
-    .dtable{ min-width:440px; grid-template-columns:minmax(88px,1fr) 104px minmax(130px,1.4fr) 26px; }
+    .dtable{ min-width:520px; grid-template-columns:minmax(80px,0.9fr) minmax(84px,1fr) 104px minmax(120px,1.3fr) 26px; }
     .stable{ min-width:560px; grid-template-columns:minmax(96px,0.8fr) minmax(108px,1fr) minmax(130px,1.2fr) 106px 26px; }
     .stable input[type="text"]{ font-size:13px; }
     .stable select{ font-size:12px; padding:5px 4px; }
@@ -639,15 +634,13 @@
   </div>
   <div class="section-desc" contenteditable="true">이번 달 목표를 채울 대상을 아이템별로 적어둡니다. 아이템 단추를 눌러 전환하세요.</div>
 
-  <div class="db-tabs">
-    <span id="dbTabs" style="display:contents"></span>
-    <input type="text" id="dbNewItem" class="db-add" placeholder="+ 아이템 추가" list="dbItemSuggest" autocomplete="off">
-    <datalist id="dbItemSuggest"></datalist>
-  </div>
+  <div class="db-tabs" id="dbTabs"></div>
+  <datalist id="dbItemSuggest"></datalist>
 
   <div class="log-scroll scroll-y">
     <div class="dtable" id="dbTable">
       <div class="drow dhead">
+        <div>아이템</div>
         <div>대상</div>
         <div class="g-num">예상 금액(원)</div>
         <div>메모</div>
@@ -656,6 +649,7 @@
       <div id="dbBody"></div>
       <div class="drow dfoot">
         <div>합계</div>
+        <div></div>
         <div class="g-num" id="dbSumCell">0</div>
         <div></div>
         <div></div>
@@ -808,16 +802,15 @@
   }
 
   // ---------- item target DB ----------
-  var currentDbItem = '';
-  var dbItems = [];              // 이 섹션에서 직접 관리하는 아이템 목록
+  var currentDbItem = '';        // '' 이면 전체 보기
 
   function buildTargetRow(data){
     data = data || {};
     var row = document.createElement('div');
     row.className = 'drow target-row';
-    row.setAttribute('data-item', data.item || currentDbItem || '');
     row.innerHTML =
-      '<div><input type="text" class="d-name" placeholder="대상 이름" value="'+escapeAttr(data.name||'')+'" oninput="onTargetInput(this)"></div>' +
+      '<div><input type="text" class="d-item" list="dbItemSuggest" placeholder="아이템" value="'+escapeAttr(data.item||'')+'" oninput="onRowChange(this)"></div>' +
+      '<div><input type="text" class="d-name" placeholder="대상 이름" value="'+escapeAttr(data.name||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><input type="text" inputmode="numeric" class="d-amt amt" placeholder="0" value="'+(data.amount?fmt(data.amount):'')+'" oninput="onAmountInput(this)"></div>' +
       '<div><textarea class="d-memo" rows="1" placeholder="진행 상황 · 특이사항" ' +
         'onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(data.memo||'')+'</textarea></div>' +
@@ -825,29 +818,12 @@
     return row;
   }
 
+  function rowItem(row){ return row.querySelector('.d-item').value.trim(); }
   function rowIsEmpty(row){
-    return !row.querySelector('.d-name').value.trim() &&
+    return !rowItem(row) &&
+           !row.querySelector('.d-name').value.trim() &&
            toNum(row.querySelector('.d-amt').value) === 0 &&
            !row.querySelector('.d-memo').value.trim();
-  }
-
-  // 빈 줄에 무언가 입력하면 아래에 새 빈 줄을 만들어 둡니다 (별도 추가 버튼 없이)
-  function onTargetInput(el){
-    onRowChange(el);
-  }
-
-  function ensureBlankRow(){
-    if(!currentDbItem) return;
-    var body = document.getElementById('dbBody');
-    var mine = Array.prototype.slice.call(body.querySelectorAll('.target-row'))
-      .filter(function(r){ return r.getAttribute('data-item') === currentDbItem; });
-    var hasBlank = mine.some(function(r){ return rowIsEmpty(r); });
-    mine.forEach(function(r){ r.classList.toggle('blank-row', rowIsEmpty(r)); });
-    if(!hasBlank){
-      var r = buildTargetRow({ item: currentDbItem });
-      r.classList.add('blank-row');
-      body.appendChild(r);
-    }
   }
 
   function addTargetRow(data){
@@ -855,108 +831,108 @@
     recalcAll();
     scheduleSave();
   }
-
   function removeTargetRow(btn){
     btn.closest('.target-row').remove();
     recalcAll();
     scheduleSave();
   }
-
   function selectDbItem(name){
     currentDbItem = name;
     recalcAll();
   }
 
-  function addDbItem(){
-    var inp = document.getElementById('dbNewItem');
-    var name = inp.value.trim();
-    if(!name) return;
-    if(dbItems.indexOf(name) === -1) dbItems.push(name);
-    currentDbItem = name;
-    inp.value = '';
-    recalcAll();
-    scheduleSave();
+  // 표 맨 아래에 늘 빈 줄 하나를 둡니다 (별도 추가 버튼 없이 바로 입력)
+  function ensureBlankRow(){
+    var body = document.getElementById('dbBody');
+    var rows = Array.prototype.slice.call(body.querySelectorAll('.target-row'));
+    rows.forEach(function(r){ r.classList.toggle('blank-row', rowIsEmpty(r)); });
+    if(!rows.some(function(r){ return rowIsEmpty(r); })){
+      var r = buildTargetRow({});
+      r.classList.add('blank-row');
+      body.appendChild(r);
+    }
   }
 
-  function removeDbItem(name){
-    var used = Array.prototype.slice.call(document.querySelectorAll('#dbBody .target-row'))
-      .filter(function(r){ return r.getAttribute('data-item') === name && !rowIsEmpty(r); });
-    if(used.length && !confirm('「'+name+'」에 입력된 대상 '+used.length+'명도 함께 지워집니다. 계속할까요?')) return;
-    dbItems = dbItems.filter(function(x){ return x !== name; });
-    document.querySelectorAll('#dbBody .target-row').forEach(function(r){
-      if(r.getAttribute('data-item') === name) r.remove();
-    });
-    if(currentDbItem === name) currentDbItem = dbItems[0] || '';
-    recalcAll();
-    scheduleSave();
-  }
-
-  // itemMap: 02에서 등록한 아이템 이름 → 목표 금액 (목표 대비 표시에만 사용)
+  // itemMap: 02에서 등록한 아이템 이름 → 목표 금액 (추천 목록·목표 대비 표시에 사용)
   function recalcTargets(itemMap){
-    if(dbItems.length && dbItems.indexOf(currentDbItem) === -1) currentDbItem = dbItems[0];
-    if(!dbItems.length) currentDbItem = '';
+    ensureBlankRow();
 
     var rows = document.querySelectorAll('#dbBody .target-row');
-    var countBy = {}, sumBy = {};
+    var order = [], countBy = {}, sumBy = {}, total = 0;
     rows.forEach(function(row){
-      var it = row.getAttribute('data-item') || '';
-      if(!rowIsEmpty(row)) countBy[it] = (countBy[it]||0) + 1;
-      sumBy[it] = (sumBy[it]||0) + toNum(row.querySelector('.d-amt').value);
+      if(rowIsEmpty(row)) return;
+      var it = rowItem(row) || '(아이템 없음)';
+      if(order.indexOf(it) === -1) order.push(it);
+      countBy[it] = (countBy[it]||0) + 1;
+      var amt = toNum(row.querySelector('.d-amt').value);
+      sumBy[it] = (sumBy[it]||0) + amt;
+      total += amt;
     });
 
-    // 탭
+    if(currentDbItem && order.indexOf(currentDbItem) === -1) currentDbItem = '';
+
+    // 위쪽 아이템 표시 (입력된 아이템에서 자동으로 모임)
     var tabs = document.getElementById('dbTabs');
     tabs.innerHTML = '';
-    dbItems.forEach(function(name){
+    if(order.length){
+      var all = document.createElement('button');
+      all.className = 'db-tab' + (currentDbItem === '' ? ' on' : '');
+      var totalCnt = order.reduce(function(a,k){ return a + countBy[k]; }, 0);
+      all.innerHTML = '전체<span class="cnt">' + totalCnt + '</span>';
+      all.onclick = function(){ selectDbItem(''); };
+      tabs.appendChild(all);
+    }
+    order.forEach(function(name){
       var b = document.createElement('button');
       b.className = 'db-tab' + (name === currentDbItem ? ' on' : '');
-      b.innerHTML = escapeHtml(name) + '<span class="cnt">' + (countBy[name]||0) + '</span>' +
-                    (name === currentDbItem ? '<span class="x" title="아이템 삭제">✕</span>' : '');
-      b.onclick = function(e){
-        if(e.target && e.target.className === 'x'){ removeDbItem(name); return; }
-        selectDbItem(name);
-      };
+      b.innerHTML = escapeHtml(name) + '<span class="cnt">' + countBy[name] + '</span>';
+      b.onclick = function(){ selectDbItem(name === currentDbItem ? '' : name); };
       tabs.appendChild(b);
     });
 
-    // 02에 등록한 아이템을 추천 목록으로
+    // 아이템 추천 목록 = 이미 쓴 아이템 + 02에 등록한 아이템
     var dl = document.getElementById('dbItemSuggest');
     if(dl){
       dl.innerHTML = '';
-      Object.keys(itemMap).forEach(function(n){
-        if(dbItems.indexOf(n) === -1){ var o=document.createElement('option'); o.value=n; dl.appendChild(o); }
+      var seen = {};
+      order.concat(Object.keys(itemMap)).forEach(function(n){
+        if(n && n !== '(아이템 없음)' && !seen[n]){
+          seen[n] = 1;
+          var o = document.createElement('option'); o.value = n; dl.appendChild(o);
+        }
       });
     }
 
-    ensureBlankRow();
-
-    // 선택한 아이템만 표시
-    document.querySelectorAll('#dbBody .target-row').forEach(function(row){
-      row.style.display = (row.getAttribute('data-item') === currentDbItem) ? '' : 'none';
+    // 고른 아이템만 표시 (빈 줄은 항상 표시)
+    rows.forEach(function(row){
+      var show = !currentDbItem || rowIsEmpty(row) || (rowItem(row) || '(아이템 없음)') === currentDbItem;
+      row.style.display = show ? '' : 'none';
     });
 
-    var sum = sumBy[currentDbItem] || 0;
-    var cnt = countBy[currentDbItem] || 0;
+    var sum = currentDbItem ? (sumBy[currentDbItem]||0) : total;
+    var cnt = currentDbItem ? (countBy[currentDbItem]||0) : order.reduce(function(a,k){ return a + countBy[k]; }, 0);
     document.getElementById('dbSumCell').textContent = fmt(sum);
 
     var note = document.getElementById('dbNote');
-    if(!dbItems.length){
+    if(cnt === 0){
       note.className = 'db-note';
-      note.innerHTML = '오른쪽 <b>+ 아이템 추가</b> 칸에 아이템 이름을 적고 Enter를 누르면 단추가 생깁니다.';
+      note.innerHTML = '표의 빈 줄에 <b>아이템</b>과 <b>대상</b>을 바로 입력하시면 다음 줄이 생기고, 입력한 아이템이 위에 모입니다.';
+      return;
+    }
+    if(!currentDbItem){
+      note.className = 'db-note';
+      note.innerHTML = '전체 <b>'+cnt+'명</b> · 예상 합계 <b>'+fmt(sum)+'원</b> · 아이템 '+order.length+'종. 위 단추를 누르면 아이템별로만 볼 수 있습니다.';
       return;
     }
     var goal = itemMap[currentDbItem] || 0;
-    if(cnt === 0){
-      note.className = 'db-note';
-      note.innerHTML = '<b>'+escapeHtml(currentDbItem)+'</b> 대상이 아직 없습니다. 표의 빈 줄에 바로 입력하시면 다음 줄이 생깁니다.';
-    } else if(goal > 0){
+    if(goal > 0){
       var rate = sum / goal * 100;
       note.className = 'db-note' + (rate < 100 ? ' warn' : '');
       note.innerHTML = '<b>'+escapeHtml(currentDbItem)+'</b> 대상 <b>'+cnt+'명</b> · 예상 합계 <b>'+fmt(sum)+'원</b> · 목표 '+fmt(goal)+'원의 <b>'+rate.toFixed(0)+'%</b>' +
         (rate < 100 ? ' · 목표까지 <b>'+fmt(goal-sum)+'원</b>어치 대상이 더 필요합니다.' : ' · 목표를 덮는 대상이 확보되어 있습니다.');
     } else {
       note.className = 'db-note';
-      note.innerHTML = '<b>'+escapeHtml(currentDbItem)+'</b> 대상 <b>'+cnt+'명</b> · 예상 합계 <b>'+fmt(sum)+'원</b>';
+      note.innerHTML = '<b>'+escapeHtml(currentDbItem)+'</b> 대상 <b>'+cnt+'명</b> · 예상 합계 <b>'+fmt(sum)+'원</b> (02에 같은 이름으로 목표를 넣으면 목표 대비로 보여드립니다)';
     }
   }
 
@@ -1515,7 +1491,7 @@
     document.querySelectorAll('#dbBody .target-row').forEach(function(row){
       if(rowIsEmpty(row)) return;          // 입력 안 된 빈 줄은 저장하지 않음
       targets.push({
-        item: row.getAttribute('data-item') || '',
+        item: rowItem(row),
         name: row.querySelector('.d-name').value,
         amount: toNum(row.querySelector('.d-amt').value),
         memo: row.querySelector('.d-memo').value
@@ -1553,7 +1529,6 @@
       memo: document.getElementById('memoEl').innerHTML,
       goal: toNum(document.getElementById('goalInput').value),
       month: currentMonth,
-      dbItems: dbItems,
       targets: targets,
       stratComment: document.getElementById('stratComment').innerHTML,
       strategies: strategies,
@@ -1577,13 +1552,6 @@
     var dbody = document.getElementById('dbBody');
     dbody.innerHTML = '';
     (state.targets || []).forEach(function(t){ dbody.appendChild(buildTargetRow(t)); });
-    // 저장된 아이템 목록 (예전 자료는 입력된 대상에서 뽑아 복원)
-    if(state.dbItems && state.dbItems.length){ dbItems = state.dbItems.slice(); }
-    else {
-      dbItems = [];
-      (state.targets || []).forEach(function(t){ if(t.item && dbItems.indexOf(t.item) === -1) dbItems.push(t.item); });
-    }
-    if(dbItems.indexOf(currentDbItem) === -1) currentDbItem = dbItems[0] || '';
     if(state.stratComment) document.getElementById('stratComment').innerHTML = state.stratComment;
     var sbody = document.getElementById('stratBody');
     sbody.innerHTML = '';
@@ -1641,7 +1609,7 @@
       title: mm+'월 매출 진행 현황',
       subtitle: '목표 대비 진행률과, 남은 기간 동안 달성에 필요한 페이스를 실시간으로 확인합니다.',
       memo: '부족 자금을 채우기 위한 전략과 대표님 보고용 메모를 자유롭게 기록하세요.',
-      goal: 0, dbItems: [], targets: [], strategies: [], items: [], rows: [], goals: []
+      goal: 0, targets: [], strategies: [], items: [], rows: [], goals: []
     };
   }
   function onMonthChange(){
@@ -1732,8 +1700,6 @@
     if(isSnapshotFile){ btn.style.display = 'none'; }
     else { btn.textContent = editable ? '🔓 로그아웃' : '🔑 편집 로그인'; }
     // 업무 히스토리는 로그인해야 볼 수 있으므로, 로그인 상태에서만 이동 버튼 노출
-    var dni = document.getElementById('dbNewItem');
-    if(dni) dni.style.display = editable ? '' : 'none';
     var wbtn = document.getElementById('worklogBtn');
     if(wbtn) wbtn.style.display = (editable && !isSnapshotFile) ? '' : 'none';
   }
@@ -1799,8 +1765,6 @@
     });
     document.getElementById('memoEl').addEventListener('input', updateMemoHint);
 
-    document.getElementById('dbNewItem').addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); addDbItem(); } });
-    document.getElementById('dbNewItem').addEventListener('blur', function(){ if(this.value.trim()) addDbItem(); });
     document.getElementById('loginPw').addEventListener('keydown', function(e){ if(e.key === 'Enter') doLogin(); });
     document.getElementById('loginEmail').addEventListener('keydown', function(e){ if(e.key === 'Enter') document.getElementById('loginPw').focus(); });
 
@@ -1836,8 +1800,8 @@
         if(rowIsEmpty(row)) return;
         var r = document.createElement('div');
         r.className = 'drow target-row';
-        r.setAttribute('data-item', row.getAttribute('data-item') || '');
         r.innerHTML =
+          '<div><input type="text" class="d-item" list="dbItemSuggest" value="'+escapeAttr(rowItem(row))+'" oninput="onRowChange(this)"></div>' +
           '<div><input type="text" class="d-name" value="'+escapeAttr(row.querySelector('.d-name').value)+'" oninput="onRowChange(this)"></div>' +
           '<div><input type="text" inputmode="numeric" class="d-amt amt" value="'+escapeAttr(row.querySelector('.d-amt').value)+'" oninput="onAmountInput(this)"></div>' +
           '<div><textarea class="d-memo" rows="1" onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(row.querySelector('.d-memo').value)+'</textarea></div>' +
