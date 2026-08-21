@@ -173,9 +173,15 @@
   .db-tab .x:hover{ opacity:1; }
   .drow.blank-row > div{ background:#FCFBF8; }
   .dtable input.d-item{ font-weight:700; color:var(--navy); }
+  .dtable input[type="date"]{
+    width:100%; min-width:0; border:1px solid transparent; background:transparent; border-radius:5px;
+    padding:5px 3px; font-size:12.5px; font-family:'Pretendard',sans-serif; color:var(--muted);
+  }
+  .dtable input[type="date"]:hover{ border-color:var(--line); background:#FBFAF7; }
+  .dtable input[type="date"]:focus{ border-color:var(--brass); background:#fff; outline:none; }
   .dtable{
-    display:grid; grid-template-columns:minmax(110px,160px) minmax(110px,180px) minmax(220px,1fr) 130px 44px;
-    align-items:stretch; min-width:660px; font-size:13.5px;
+    display:grid; grid-template-columns:118px minmax(100px,150px) minmax(100px,170px) minmax(200px,1fr) 130px 44px;
+    align-items:stretch; min-width:730px; font-size:13.5px;
   }
   .drow, #dbBody{ display:contents; }
   .drow > div{ min-width:0; padding:7px 8px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
@@ -465,7 +471,7 @@
     .itable input[type="text"]{ font-size:13px; }
 
     /* 03 전략 — 건수 접기 */
-    .dtable{ min-width:520px; grid-template-columns:minmax(80px,0.9fr) minmax(84px,1fr) minmax(120px,1.3fr) 104px 26px; }
+    .dtable{ min-width:600px; grid-template-columns:98px minmax(72px,0.9fr) minmax(80px,1fr) minmax(110px,1.2fr) 102px 26px; }
     .stable{ min-width:560px; grid-template-columns:minmax(96px,0.8fr) minmax(108px,1fr) minmax(130px,1.2fr) 106px 26px; }
     .stable input[type="text"]{ font-size:13px; }
     .stable select{ font-size:12px; padding:5px 4px; }
@@ -705,6 +711,7 @@
   <div class="log-scroll scroll-y">
     <div class="dtable" id="dbTable">
       <div class="drow dhead">
+        <div>등록일</div>
         <div>아이템</div>
         <div>대상</div>
         <div>메모</div>
@@ -714,6 +721,7 @@
       <div id="dbBody"></div>
       <div class="drow dfoot">
         <div>합계</div>
+        <div></div>
         <div></div>
         <div></div>
         <div class="g-num" id="dbSumCell">0</div>
@@ -913,6 +921,7 @@
     var row = document.createElement('div');
     row.className = 'drow target-row';
     row.innerHTML =
+      '<div><input type="date" class="d-date" value="'+escapeAttr(data.date||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><input type="text" class="d-item" list="dbItemSuggest" placeholder="아이템" value="'+escapeAttr(data.item||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><input type="text" class="d-name" placeholder="대상 이름" value="'+escapeAttr(data.name||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><textarea class="d-memo" rows="1" placeholder="진행 상황 · 특이사항" ' +
@@ -962,6 +971,13 @@
     ensureBlankRow();
 
     var rows = document.querySelectorAll('#dbBody .target-row');
+    // 내용이 들어간 줄에 등록일이 비어 있으면 오늘 날짜를 자동으로 찍습니다
+    var todayStr = localISO(new Date());
+    rows.forEach(function(row){
+      if(rowIsEmpty(row)) return;
+      var de = row.querySelector('.d-date');
+      if(de && !de.value) de.value = todayStr;
+    });
     var order = [], countBy = {}, sumBy = {}, total = 0;
     rows.forEach(function(row){
       if(rowIsEmpty(row)) return;
@@ -1013,6 +1029,21 @@
       row.style.display = show ? '' : 'none';
     });
 
+    // 최근 7일 신규 등록 · 가장 오래 묵은 대상
+    var weekAgo = localISO(new Date(Date.now() - 6*86400000));
+    var newCnt = 0, oldest = '';
+    rows.forEach(function(row){
+      if(rowIsEmpty(row)) return;
+      var it = rowItem(row) || '(아이템 없음)';
+      if(currentDbItem && it !== currentDbItem) return;
+      var dv = row.querySelector('.d-date').value;
+      if(dv && dv >= weekAgo) newCnt++;
+      if(dv && (!oldest || dv < oldest)) oldest = dv;
+    });
+    var newInfo = '';
+    if(newCnt) newInfo += ' · 최근 7일 신규 <b>'+newCnt+'명</b>';
+    if(oldest) newInfo += ' · 가장 오래된 등록 '+esc2(oldest);
+
     var sum = currentDbItem ? (sumBy[currentDbItem]||0) : total;
     var cnt = currentDbItem ? (countBy[currentDbItem]||0) : order.reduce(function(a,k){ return a + countBy[k]; }, 0);
     document.getElementById('dbSumCell').textContent = fmt(sum);
@@ -1025,18 +1056,18 @@
     }
     if(!currentDbItem){
       note.className = 'db-note';
-      note.innerHTML = '전체 <b>'+cnt+'명</b> · 예상 합계 <b>'+fmt(sum)+'원</b> · 아이템 '+order.length+'종. 위 단추를 누르면 아이템별로만 볼 수 있습니다.';
+      note.innerHTML = '전체 <b>'+cnt+'명</b> · 예상 합계 <b>'+fmt(sum)+'원</b> · 아이템 '+order.length+'종' + newInfo + '. 위 단추를 누르면 아이템별로만 볼 수 있습니다.';
       return;
     }
     var goal = itemMap[currentDbItem] || 0;
     if(goal > 0){
       var rate = sum / goal * 100;
       note.className = 'db-note' + (rate < 100 ? ' warn' : '');
-      note.innerHTML = '<b>'+escapeHtml(currentDbItem)+'</b> 대상 <b>'+cnt+'명</b> · 예상 합계 <b>'+fmt(sum)+'원</b> · 목표 '+fmt(goal)+'원의 <b>'+rate.toFixed(0)+'%</b>' +
+      note.innerHTML = '<b>'+escapeHtml(currentDbItem)+'</b> 대상 <b>'+cnt+'명</b> · 예상 합계 <b>'+fmt(sum)+'원</b> · 목표 '+fmt(goal)+'원의 <b>'+rate.toFixed(0)+'%</b>' + newInfo +
         (rate < 100 ? ' · 목표까지 <b>'+fmt(goal-sum)+'원</b>어치 대상이 더 필요합니다.' : ' · 목표를 덮는 대상이 확보되어 있습니다.');
     } else {
       note.className = 'db-note';
-      note.innerHTML = '<b>'+escapeHtml(currentDbItem)+'</b> 대상 <b>'+cnt+'명</b> · 예상 합계 <b>'+fmt(sum)+'원</b> (02에 같은 이름으로 목표를 넣으면 목표 대비로 보여드립니다)';
+      note.innerHTML = '<b>'+escapeHtml(currentDbItem)+'</b> 대상 <b>'+cnt+'명</b> · 예상 합계 <b>'+fmt(sum)+'원</b>' + newInfo + ' (02에 같은 이름으로 목표를 넣으면 목표 대비로 보여드립니다)';
     }
   }
 
@@ -1773,6 +1804,7 @@
     document.querySelectorAll('#dbBody .target-row').forEach(function(row){
       if(rowIsEmpty(row)) return;          // 입력 안 된 빈 줄은 저장하지 않음
       targets.push({
+        date: row.querySelector('.d-date').value,
         item: rowItem(row),
         name: row.querySelector('.d-name').value,
         amount: toNum(row.querySelector('.d-amt').value),
@@ -2093,6 +2125,7 @@
         var r = document.createElement('div');
         r.className = 'drow target-row';
         r.innerHTML =
+          '<div><input type="date" class="d-date" value="'+escapeAttr(row.querySelector('.d-date').value)+'" oninput="onRowChange(this)"></div>' +
           '<div><input type="text" class="d-item" list="dbItemSuggest" value="'+escapeAttr(rowItem(row))+'" oninput="onRowChange(this)"></div>' +
           '<div><input type="text" class="d-name" value="'+escapeAttr(row.querySelector('.d-name').value)+'" oninput="onRowChange(this)"></div>' +
           '<div><textarea class="d-memo" rows="1" onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(row.querySelector('.d-memo').value)+'</textarea></div>' +
