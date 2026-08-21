@@ -334,6 +334,40 @@
   .goal-note.warn b{ color:#7C382E; }
   .undated-note{ margin-top:8px; font-size:12.5px; color:var(--red); }
 
+  /* 일자별 전략 일지 */
+  .sl-bar{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+  .sl-bar input[type="date"]{
+    font-family:'Pretendard',sans-serif; font-size:13.5px; font-weight:700; padding:8px 11px;
+    border:1px solid var(--line); border-radius:9px; background:#fff; color:var(--navy);
+  }
+  .sl-bar input[type="date"]:focus{ outline:none; border-color:var(--brass); }
+  .sl-status{ font-size:12px; color:var(--muted); }
+  .sl-editor{ padding:18px 20px; }
+  .sl-head{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+  .sl-head #slTitle{ font-family:'Noto Serif KR',serif; font-size:16px; font-weight:700; color:var(--navy); }
+  .sl-sub{ font-size:12px; color:var(--muted); }
+  .sl-text{
+    width:100%; box-sizing:border-box; min-height:150px; resize:vertical; overflow:auto;
+    font-family:'Pretendard',sans-serif; font-size:13.5px; line-height:1.65; color:var(--ink);
+    border:1px solid var(--line); border-radius:10px; padding:12px 13px; background:#FBFAF7; white-space:pre-wrap;
+  }
+  .sl-text:focus{ outline:none; border-color:var(--brass); background:#fff; box-shadow:0 2px 10px rgba(20,20,30,0.05); }
+  .sl-listbar{ display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin:20px 0 10px; }
+  .sl-listbar select{
+    font-family:'Pretendard',sans-serif; font-size:13px; font-weight:600; padding:7px 10px;
+    border:1px solid var(--line); border-radius:9px; background:#fff; color:var(--navy); cursor:pointer;
+  }
+  #slListBox{ border:1px solid var(--line); border-radius:12px; background:#fff; }
+  .sl-item{ padding:12px 15px; border-bottom:1px solid #F0EEE7; cursor:pointer; }
+  .sl-item:last-child{ border-bottom:none; }
+  .sl-item:hover{ background:#FBF6EC; }
+  .sl-item.on{ background:#FBF6EC; box-shadow:inset 3px 0 0 var(--brass); }
+  .sl-item .d{ font-size:12.5px; font-weight:800; color:var(--brass); }
+  .sl-item .d .today{ font-size:10.5px; font-weight:800; background:var(--brass); color:#fff; border-radius:20px; padding:1px 7px; margin-left:6px; }
+  .sl-item .p{ font-size:13px; color:#4A4E5A; margin-top:4px; white-space:pre-wrap;
+               display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .sl-empty{ text-align:center; color:var(--muted); font-size:13px; padding:24px 0; }
+
   .range-box{ margin-top:16px; background:#FBF9F4; border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
   .range-line{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .range-line .lbl2{ font-size:11px; font-weight:800; letter-spacing:.1em; color:var(--brass); }
@@ -689,9 +723,45 @@
   </div>
   <div class="db-note" id="dbNote"></div>
 
-  <!-- 메모 -->
+  <!-- 일자별 전략 일지 -->
   <div class="section-head">
     <span class="section-num" contenteditable="true">07</span>
+    <h2 class="section-title" contenteditable="true">일자별 전략 일지</h2>
+  </div>
+  <div class="section-desc" contenteditable="true">날짜별로 전략을 기록해 계속 쌓아둡니다. 달이 바뀌어도 지워지지 않고, 지난 주·지난 달·지난 해 전략을 그대로 찾아볼 수 있습니다.</div>
+
+  <div class="sl-bar">
+    <span class="lbl2">날짜</span>
+    <button class="add-row" style="margin-top:0;" onclick="moveStratDay(-1)">◀ 이전</button>
+    <input type="date" id="slDate" onchange="onStratDateChange()">
+    <button class="add-row" style="margin-top:0;" onclick="moveStratDay(1)">다음 ▶</button>
+    <button class="add-row" style="margin-top:0;" onclick="goStratToday()">오늘</button>
+    <span class="sl-status" id="slStatus"></span>
+  </div>
+
+  <div class="card sl-editor">
+    <div class="sl-head"><span id="slTitle">오늘의 전략</span><span class="sl-sub" id="slSub"></span></div>
+    <textarea id="slText" class="sl-text" placeholder="이 날의 전략을 적어주세요. 대상·활동·판단 근거를 남겨두면 다음 전략을 세울 때 그대로 참고가 됩니다." oninput="onStratInput()"></textarea>
+  </div>
+
+  <div class="sl-listbar">
+    <span class="lbl2">지난 전략</span>
+    <select id="slRange" onchange="loadStratList()">
+      <option value="recent">최근 30건</option>
+      <option value="month">이번 달</option>
+      <option value="lastmonth">지난 달</option>
+      <option value="year">올해 전체</option>
+      <option value="lastyear">작년 전체</option>
+    </select>
+    <span class="sl-status" id="slListCount"></span>
+  </div>
+  <div class="log-scroll scroll-y" id="slListBox">
+    <div id="slList"></div>
+  </div>
+
+  <!-- 메모 -->
+  <div class="section-head">
+    <span class="section-num" contenteditable="true">08</span>
     <h2 class="section-title" contenteditable="true">전략 & 메모</h2>
   </div>
   <div class="card">
@@ -704,7 +774,7 @@
 
   <!-- 저장 안내 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">08</span>
+    <span class="section-num" contenteditable="true">09</span>
     <h2 class="section-title" contenteditable="true">저장 & 업데이트 방식</h2>
   </div>
   <div class="card storage-card">
@@ -1109,6 +1179,108 @@
       note.className = 'cross-note';
       note.innerHTML = '아이템 달성 합계 <b>'+fmt(sumDone)+'원</b> · 02 매출 기록 합계와 일치합니다.';
     }
+  }
+
+  // ---------- 일자별 전략 일지 ----------
+  var SLOGS = 'strategyLogs';
+  var slDateStr = '', slUnsub = null, slSaveTimer = null, slLoaded = {};
+
+  function slDow(dateStr){ return dowLabel(dateStr); }
+
+  function goStratToday(){ openStratDay(localISO(new Date())); }
+  function onStratDateChange(){ openStratDay(document.getElementById('slDate').value); }
+  function moveStratDay(delta){
+    var p = (slDateStr || localISO(new Date())).split('-');
+    var d = new Date(Number(p[0]), Number(p[1])-1, Number(p[2]));
+    d.setDate(d.getDate() + delta);
+    openStratDay(localISO(d));
+  }
+
+  function openStratDay(dateStr){
+    if(!dateStr) return;
+    slDateStr = dateStr;
+    document.getElementById('slDate').value = dateStr;
+    var today = localISO(new Date());
+    document.getElementById('slTitle').textContent = (dateStr === today) ? '오늘의 전략' : dateStr + ' 전략';
+    document.getElementById('slSub').textContent = dateStr + ' (' + slDow(dateStr) + ')' + (dateStr === today ? '' : ' · 지난 기록');
+    document.querySelectorAll('#slList .sl-item').forEach(function(el){
+      el.classList.toggle('on', el.getAttribute('data-date') === dateStr);
+    });
+    if(!firebaseReady){ return; }
+    if(slUnsub){ slUnsub(); slUnsub = null; }
+    document.getElementById('slStatus').textContent = '불러오는 중...';
+    slUnsub = db.collection(SLOGS).doc(dateStr).onSnapshot(function(snap){
+      if(snap.metadata.hasPendingWrites) return;
+      var ta = document.getElementById('slText');
+      if(document.activeElement === ta) return;      // 입력 중이면 덮지 않음
+      ta.value = snap.exists ? (snap.data().content || '') : '';
+      document.getElementById('slStatus').textContent = snap.exists ? '저장된 기록' : '아직 기록 없음';
+    }, function(e){ document.getElementById('slStatus').textContent = '불러오기 실패 (' + (e.code||'') + ')'; });
+  }
+
+  function onStratInput(){
+    if(!canEdit){ return; }
+    document.getElementById('slStatus').textContent = '입력 중...';
+    if(slSaveTimer) clearTimeout(slSaveTimer);
+    slSaveTimer = setTimeout(saveStratLog, 900);
+  }
+
+  function saveStratLog(){
+    if(!canEdit || !firebaseReady || !slDateStr) return;
+    var content = document.getElementById('slText').value;
+    document.getElementById('slStatus').textContent = '저장 중...';
+    db.collection(SLOGS).doc(slDateStr).set({
+      date: slDateStr, content: content, updatedAt: new Date().toISOString()
+    }).then(function(){
+      document.getElementById('slStatus').textContent = '저장됨';
+      loadStratList();
+    }).catch(function(e){
+      document.getElementById('slStatus').textContent = '저장 실패 (' + (e.code||e.message) + ')';
+    });
+  }
+
+  function loadStratList(){
+    if(!firebaseReady) return;
+    var kind = document.getElementById('slRange').value;
+    var t = new Date(), q = db.collection(SLOGS);
+    var from = null, to = null;
+    if(kind === 'month'){ from = localISO(new Date(t.getFullYear(), t.getMonth(), 1)); to = localISO(new Date(t.getFullYear(), t.getMonth()+1, 0)); }
+    else if(kind === 'lastmonth'){ from = localISO(new Date(t.getFullYear(), t.getMonth()-1, 1)); to = localISO(new Date(t.getFullYear(), t.getMonth(), 0)); }
+    else if(kind === 'year'){ from = t.getFullYear()+'-01-01'; to = t.getFullYear()+'-12-31'; }
+    else if(kind === 'lastyear'){ from = (t.getFullYear()-1)+'-01-01'; to = (t.getFullYear()-1)+'-12-31'; }
+
+    var ref = from ? q.where('date','>=',from).where('date','<=',to).orderBy('date','desc')
+                   : q.orderBy('date','desc').limit(30);
+    ref.get().then(function(snap){
+      var list = [];
+      snap.forEach(function(doc){ var v = doc.data(); v.id = doc.id; list.push(v); });
+      list.sort(function(a,b){ return String(b.date).localeCompare(String(a.date)); });
+      renderStratList(list);
+    }).catch(function(e){
+      document.getElementById('slList').innerHTML = '<div class="sl-empty">목록을 불러오지 못했습니다 (' + esc2(e.code||'') + ')</div>';
+    });
+  }
+
+  function renderStratList(list){
+    var box = document.getElementById('slList');
+    var today = localISO(new Date());
+    box.innerHTML = '';
+    var shown = list.filter(function(r){ return (r.content||'').trim(); });
+    document.getElementById('slListCount').textContent = shown.length ? (shown.length + '건') : '';
+    if(!shown.length){
+      box.innerHTML = '<div class="sl-empty">이 기간에 기록된 전략이 없습니다.</div>';
+      return;
+    }
+    shown.forEach(function(r){
+      var div = document.createElement('div');
+      div.className = 'sl-item' + (r.date === slDateStr ? ' on' : '');
+      div.setAttribute('data-date', r.date);
+      div.innerHTML = '<div class="d">' + esc2(r.date) + ' (' + esc2(slDow(r.date)) + ')' +
+                      (r.date === today ? '<span class="today">오늘</span>' : '') + '</div>' +
+                      '<div class="p">' + escapeHtml((r.content||'').trim()) + '</div>';
+      div.onclick = function(){ openStratDay(r.date); };
+      box.appendChild(div);
+    });
   }
 
   // ---------- 구간 합계 ----------
@@ -1804,6 +1976,8 @@
     document.querySelectorAll('[contenteditable]').forEach(function(el){ el.setAttribute('contenteditable', editable ? 'true' : 'false'); });
     document.querySelectorAll('#goalInput, #stratBody input, #dbBody input, #itemBody input, #logBody input, #goalBody input').forEach(function(el){ el.disabled = !editable; });
     // 메모는 잠그지 않고 '수정 불가'로 둠 — 읽기 전용으로 보는 사람도 눌러서 전체를 볼 수 있어야 함
+    var slt = document.getElementById('slText');
+    if(slt) slt.readOnly = !editable;
     document.querySelectorAll('#goalBody textarea.g-memo, #stratBody textarea.s-memo, #dbBody textarea.d-memo').forEach(function(el){
       el.disabled = false;
       el.readOnly = !editable;
@@ -1885,6 +2059,8 @@
 
     openMonth(monthFromUrl());
     setGoalRange('rest');
+    goStratToday();
+    loadStratList();
   }
 
   // ---------- export snapshot ----------
@@ -1943,6 +2119,10 @@
         dstStrat.appendChild(r);
       });
     }
+    var slSrc = document.getElementById('slText');
+    var slDst = clone.querySelector('#slText');
+    if(slSrc && slDst) slDst.textContent = slSrc.value;
+
     var lc = clone.querySelector('#stratComment');
     if(lc) lc.innerHTML = document.getElementById('stratComment').innerHTML;
 
