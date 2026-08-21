@@ -58,7 +58,7 @@
             font-size:12.5px; color:var(--muted); margin-bottom:16px; }
   .quick{ background:linear-gradient(160deg,#16294A,#101E36); border-radius:12px; padding:14px 16px; margin-bottom:16px; }
   .quick-label{ font-size:11px; letter-spacing:.16em; color:var(--brass-light); font-weight:700; margin-bottom:9px; }
-  .quick-grid{ display:grid; grid-template-columns:86px 150px 130px minmax(200px,1fr) 92px; gap:8px; align-items:center; }
+  .quick-grid{ display:grid; grid-template-columns:80px 128px 122px 92px 112px minmax(180px,1fr) 84px; gap:8px; align-items:center; }
   .quick input{ font-family:'Pretendard'; font-size:13.5px; padding:9px 10px; border-radius:8px;
                 border:1px solid rgba(255,255,255,0.22); background:rgba(255,255,255,0.10); color:#fff; width:100%; min-width:0; }
   .quick input::placeholder{ color:#9AA3B5; }
@@ -72,7 +72,7 @@
 
   /* ---------- 기록 표 ---------- */
   .scroll{ width:100%; overflow-x:auto; border:1px solid var(--line); border-radius:12px; max-height:58vh; overflow-y:auto; }
-  .ltable{ display:grid; grid-template-columns:66px 128px 112px minmax(220px,1fr) 150px 62px 34px;
+  .ltable{ display:grid; grid-template-columns:62px 152px 108px minmax(210px,1fr) 140px 58px 32px;
            align-items:stretch; min-width:830px; font-size:13.5px; }
   .lrow, #logBody{ display:contents; }
   .lrow > div{ min-width:0; padding:7px 8px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
@@ -83,6 +83,8 @@
   .ltable input:hover{ border-color:var(--line); background:#FBFAF7; }
   .ltable input:focus{ border-color:var(--brass); background:#fff; outline:none; }
   .mid{ justify-content:center; }
+  .name-wrap{ display:flex; flex-direction:column; align-items:flex-start; gap:1px; min-width:0; }
+  .name-sub{ font-size:10.5px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
   .name-cell{ font-weight:700; color:var(--navy); cursor:pointer; text-decoration:underline; text-decoration-color:var(--brass-light); text-underline-offset:3px; }
   .name-cell:hover{ color:var(--brass); }
   .grade-tag{ font-size:10px; font-weight:800; padding:1px 6px; border-radius:20px; margin-left:5px; white-space:nowrap; }
@@ -135,7 +137,7 @@
   .rep-summary .k{ font-size:10.5px; letter-spacing:.1em; color:var(--brass-light); font-weight:700; }
   .rep-summary .v{ font-size:15px; font-weight:700; }
   .rep-summary .brk{ margin-top:10px; font-size:12.5px; color:#B9BFCF; }
-  .rtable{ display:grid; grid-template-columns:92px 58px 108px 76px 92px minmax(240px,1fr) 150px 54px;
+  .rtable{ display:grid; grid-template-columns:92px 58px 152px 76px 92px minmax(220px,1fr) 140px 54px;
            align-items:stretch; min-width:900px; font-size:13px; }
   .rrow, #repBody{ display:contents; }
   .rrow > div{ min-width:0; padding:7px 8px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
@@ -174,6 +176,7 @@
     main{ padding:0 14px 60px; }
     .panel{ padding:14px; border-radius:0 10px 10px 10px; }
     .quick-grid{ grid-template-columns:1fr 1fr; }
+    .ltable{ min-width:660px; grid-template-columns:56px 140px minmax(180px,1fr) 104px 30px; }
     .quick-grid .wide{ grid-column:1 / -1; }
     .ltable{ min-width:640px; grid-template-columns:60px 116px minmax(180px,1fr) 104px 30px; }
     .lrow > div:nth-child(5), .lrow > div:nth-child(6){ display:none; }
@@ -229,6 +232,8 @@
       <div class="quick-grid">
         <input type="text" id="qTime" placeholder="09:30" maxlength="5">
         <input type="text" id="qName" list="memberList" placeholder="대상" autocomplete="off">
+        <input type="text" id="qCompany" list="companyList" placeholder="소속사" autocomplete="off">
+        <input type="text" id="qJob" list="jobList" placeholder="직함" autocomplete="off">
         <input type="text" id="qProduct" list="productList" placeholder="상품" autocomplete="off">
         <input type="text" id="qContent" class="wide" placeholder="업무 내용 (Enter로 저장)" autocomplete="off">
         <button class="go" onclick="addEntry()">추가</button>
@@ -238,6 +243,8 @@
     </div>
     <datalist id="memberList"></datalist>
     <datalist id="productList"></datalist>
+    <datalist id="companyList"></datalist>
+    <datalist id="jobList"></datalist>
 
     <div class="scroll">
       <div class="ltable" id="logTable">
@@ -432,12 +439,17 @@
     body.innerHTML='';
     dayRows.forEach(function(r){
       var g=gradeOf(r.memberKey);
+      var m=members[r.memberKey]||{};
+      var sub=[m.company||'', m.job||''].filter(Boolean).join(' · ');
       var div=document.createElement('div');
       div.className='lrow';
       div.innerHTML =
         '<div><input type="text" value="'+esc(r.time)+'" onchange="editField(\''+r.id+'\',\'time\',this.value)"></div>' +
-        '<div><span class="name-cell" onclick="openMember(\''+esc(r.memberKey)+'\')">'+esc(r.memberName||'-')+'</span>' +
-          (r.memberKey? '<span class="grade-tag g-'+esc(g)+'">'+esc(g)+'</span>':'') + '</div>' +
+        '<div><span class="name-wrap">' +
+            '<span><span class="name-cell" onclick="openMember(\''+esc(r.memberKey)+'\')">'+esc(r.memberName||'-')+'</span>' +
+            (r.memberKey? '<span class="grade-tag g-'+esc(g)+'">'+esc(g)+'</span>':'') + '</span>' +
+            (sub? '<span class="name-sub">'+esc(sub)+'</span>':'') +
+          '</span></div>' +
         '<div><input type="text" value="'+esc(r.product)+'" list="productList" onchange="editField(\''+r.id+'\',\'product\',this.value)"></div>' +
         '<div><input type="text" value="'+esc(r.content)+'" onchange="editField(\''+r.id+'\',\'content\',this.value)"></div>' +
         '<div><input type="text" value="'+esc(r.followUp)+'" placeholder="후속" onchange="editField(\''+r.id+'\',\'followUp\',this.value)"></div>' +
@@ -451,12 +463,24 @@
     document.getElementById('dayEmpty').style.display = dayRows.length? 'none':'block';
   }
 
+  // 이름을 넣으면 이전에 저장해 둔 소속사·직함을 자동으로 채웁니다
+  function fillMemberInfo(){
+    var key=nameKey(document.getElementById('qName').value);
+    var m=members[key];
+    if(!m) return;
+    var c=document.getElementById('qCompany'), j=document.getElementById('qJob');
+    if(!c.value.trim() && m.company) c.value=m.company;
+    if(!j.value.trim() && m.job) j.value=m.job;
+  }
+
   // ---------- 기록 추가/수정/삭제 ----------
   function addEntry(){
     var name=document.getElementById('qName').value.trim();
     var content=document.getElementById('qContent').value.trim();
     var product=document.getElementById('qProduct').value.trim();
     var time=document.getElementById('qTime').value.trim() || nowHM();
+    var company=document.getElementById('qCompany').value.trim();
+    var job=document.getElementById('qJob').value.trim();
     if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
     if(!name && !content){ document.getElementById('qName').focus(); return; }
     var key=nameKey(name);
@@ -465,9 +489,11 @@
               gradeAt:key? gradeOf(key):'', createdAt:new Date().toISOString() };
     setStatus('busy');
     db.collection(LOGS).add(rec)
-      .then(function(){ setStatus('ok'); if(key) touchMember(key, name); })
+      .then(function(){ setStatus('ok'); if(key) touchMember(key, name, company, job); })
       .catch(function(e){ setStatus('err', e.code||e.message); });
     document.getElementById('qName').value='';
+    document.getElementById('qCompany').value='';
+    document.getElementById('qJob').value='';
     document.getElementById('qContent').value='';
     document.getElementById('qTime').value=nowHM();
     clearProdButtons();
@@ -492,11 +518,13 @@
   }
 
   // ---------- 대상 ----------
-  function touchMember(key, name){
+  function touchMember(key, name, company, job){
     if(!canEdit) return;
     var m=members[key];
     // 표시 이름은 처음 등록된 것을 유지 (「김희숙」/「김 희숙」이 섞여도 흔들리지 않음)
     var payload={ name:(m && m.name) ? m.name : name, nameKey:key, lastContact:currentDate };
+    if(company) payload.company=company;   // 새로 입력한 값이 있으면 갱신
+    if(job) payload.job=job;
     if(!m){
       payload.contract=null; payload.memberships=[]; payload.products=[]; payload.tags=[];
       payload.grade='비회원'; payload.gradeLocked=false; payload.count=1;
@@ -523,6 +551,16 @@
       .forEach(function(k){
         var o=document.createElement('option'); o.value=members[k].name||k; dl.appendChild(o);
       });
+    var cl=document.getElementById('companyList'), jl=document.getElementById('jobList');
+    if(cl && jl){
+      cl.innerHTML=''; jl.innerHTML='';
+      var seenC={}, seenJ={};
+      Object.keys(members).forEach(function(k){
+        var m=members[k];
+        if(m.company && !seenC[m.company]){ seenC[m.company]=1; var o=document.createElement('option'); o.value=m.company; cl.appendChild(o); }
+        if(m.job && !seenJ[m.job]){ seenJ[m.job]=1; var o2=document.createElement('option'); o2.value=m.job; jl.appendChild(o2); }
+      });
+    }
     var pl=document.getElementById('productList');
     pl.innerHTML='';
     QUICK_PRODUCTS.forEach(function(p){ var o=document.createElement('option'); o.value=p; pl.appendChild(o); });
@@ -670,9 +708,11 @@
     body.innerHTML='';
     repRows.forEach(function(r){
       var g=r.gradeAt || gradeOf(r.memberKey);
+      var rm=members[r.memberKey]||{};
+      var subInfo=[rm.company||'', rm.job||''].filter(Boolean).join(' · ');
       var div=document.createElement('div'); div.className='rrow';
       div.innerHTML='<div>'+esc(r.date)+'</div><div>'+esc(r.time)+'</div>' +
-        '<div>'+esc(r.memberName||'')+'</div><div>'+esc(r.memberKey? g:'')+'</div>' +
+        '<div>'+esc(r.memberName||'')+(subInfo?' <span class="name-sub">'+esc(subInfo)+'</span>':'')+'</div><div>'+esc(r.memberKey? g:'')+'</div>' +
         '<div>'+esc(r.product)+'</div><div>'+esc(r.content)+'</div>' +
         '<div>'+esc(r.followUp)+'</div><div class="mid">'+(r.done?'O':'')+'</div>';
       body.appendChild(div);
@@ -689,11 +729,13 @@
 
   function exportCsv(){
     if(!repRows.length){ alert('먼저 조회해주세요.'); return; }
-    var head=['일자','시간','대상','등급','상품','업무내용','후속액션','완료'];
+    var head=['일자','시간','대상','소속사','직함','등급','상품','업무내용','후속액션','완료'];
     function cell(v){ return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'; }
     var lines=[head.map(cell).join(',')];
     repRows.forEach(function(r){
-      lines.push([r.date, r.time, r.memberName, (r.memberKey? (r.gradeAt||gradeOf(r.memberKey)):''),
+      var cm=members[r.memberKey]||{};
+      lines.push([r.date, r.time, r.memberName, cm.company||'', cm.job||'',
+                  (r.memberKey? (r.gradeAt||gradeOf(r.memberKey)):''),
                   r.product, r.content, r.followUp, r.done?'O':''].map(cell).join(','));
     });
     // 엑셀에서 한글이 깨지지 않도록 BOM 추가
@@ -740,7 +782,11 @@
     document.getElementById('qTime').value=nowHM();
 
     document.getElementById('qContent').addEventListener('keydown', function(e){ if(e.key==='Enter') addEntry(); });
-    document.getElementById('qName').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('qContent').focus(); });
+    document.getElementById('qName').addEventListener('input', fillMemberInfo);
+    document.getElementById('qName').addEventListener('keydown', function(e){ if(e.key==='Enter'){ fillMemberInfo(); document.getElementById('qContent').focus(); } });
+    ['qCompany','qJob'].forEach(function(id){
+      document.getElementById(id).addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('qContent').focus(); });
+    });
     document.getElementById('qProduct').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('qContent').focus(); });
     document.getElementById('gPw').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
     document.getElementById('gEmail').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('gPw').focus(); });

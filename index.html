@@ -715,6 +715,9 @@
     appId: "1:17480780068:web:61b1a719ecfb0be9cd4bb1"
   };
   var COLLECTION = 'salesReports';
+  // 이 이메일만 편집할 수 있습니다. 다른 계정은 로그인해도 열람만 가능합니다.
+  var EDITORS = ['parkshinje@gmail.com'];
+  var myEmail = '';
 
   var rowSeq = 0;
   var saveTimer = null;
@@ -1588,7 +1591,10 @@
       var mm = String(t.getMinutes()).padStart(2,'0');
       text.textContent = '저장됨 · '+hh+':'+mm;
     }
-    else if(mode === 'readonly'){ dot.className='save-dot'; dot.style.background='#B0A98F'; text.textContent='읽기 전용 · 편집하려면 로그인하세요'; }
+    else if(mode === 'readonly'){
+      dot.className='save-dot'; dot.style.background='#B0A98F';
+      text.textContent = extra ? ('열람 전용 · '+extra) : '읽기 전용 · 편집하려면 로그인하세요';
+    }
     else if(mode === 'snapshot'){ dot.className='save-dot'; dot.style.background='#B0A98F'; text.textContent='보관용 사본 · 서버와 연결되지 않습니다'; }
     else if(mode === 'loading'){ dot.className='save-dot saving'; text.textContent='불러오는 중...'; }
     else if(mode === 'error'){ dot.className='save-dot'; dot.style.background='#A6473A'; text.textContent='저장 실패 · '+(extra||''); }
@@ -1632,7 +1638,7 @@
       var data = snap.exists ? snap.data() : defaultState(monthKey);
       if(isTyping()){ pendingRemote = data; return; }  // 입력 중이면 커서 보호 후 나중에 반영
       applyState(data);
-      setSaveStatus(canEdit ? 'saved' : 'readonly');
+      setSaveStatus(canEdit ? 'saved' : 'readonly', myEmail);
     }, function(err){
       setSaveStatus('error', err.code || '연결 오류');
       document.getElementById('storageStatusLine').textContent = '서버 연결에 실패했습니다 ('+(err.code||'')+'). 보안 규칙이 게시되었는지 확인해주세요.';
@@ -1647,7 +1653,7 @@
   function manualSave(){
     if(isSnapshotFile){ setSaveStatus('snapshot'); return; }
     if(!firebaseReady){ setSaveStatus('error', '서버 미연결'); return; }
-    if(!canEdit){ setSaveStatus('readonly'); return; }
+    if(!canEdit){ setSaveStatus('readonly', myEmail); return; }
     setSaveStatus('saving');
     db.collection(COLLECTION).doc(currentMonth).set(collectState())
       .then(function(){ pendingRemote = null; setSaveStatus('saved'); })
@@ -1656,7 +1662,7 @@
 
   // ---------- auth ----------
   function onAuthBtn(){
-    if(canEdit){
+    if(myEmail){
       if(confirm('로그아웃하시겠습니까? 읽기 전용 화면으로 돌아갑니다.')) auth.signOut();
       return;
     }
@@ -1698,10 +1704,8 @@
     document.querySelectorAll('.add-row, .del-x').forEach(function(el){ el.style.display = editable ? '' : 'none'; });
     var btn = document.getElementById('authBtn');
     if(isSnapshotFile){ btn.style.display = 'none'; }
-    else { btn.textContent = editable ? '🔓 로그아웃' : '🔑 편집 로그인'; }
-    // 업무 히스토리는 로그인해야 볼 수 있으므로, 로그인 상태에서만 이동 버튼 노출
-    var wbtn = document.getElementById('worklogBtn');
-    if(wbtn) wbtn.style.display = (editable && !isSnapshotFile) ? '' : 'none';
+    else { btn.textContent = myEmail ? '🔓 로그아웃' : '🔑 편집 로그인'; }
+
   }
 
   // ---------- init ----------
@@ -1743,9 +1747,13 @@
     statusLine.textContent = '실시간 저장이 켜져 있습니다. 로그인한 사람이 값을 고치면, 이 링크를 열어둔 모든 화면에 몇 초 안에 자동 반영됩니다.';
 
     auth.onAuthStateChanged(function(user){
-      canEdit = !!user;
+      myEmail = user ? (user.email||'').toLowerCase() : '';
+      canEdit = !!user && EDITORS.indexOf(myEmail) > -1;
       applyEditMode();
-      setSaveStatus(canEdit ? 'saved' : 'readonly');
+      setSaveStatus(canEdit ? 'saved' : 'readonly', myEmail);
+      // 로그인만 하면(열람 전용이어도) 업무 히스토리는 볼 수 있습니다
+      var wb = document.getElementById('worklogBtn');
+      if(wb) wb.style.display = (user && !isSnapshotFile) ? '' : 'none';
     });
 
     // 입력이 끝나면 보류해둔 원격 변경을 반영
