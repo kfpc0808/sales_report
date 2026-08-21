@@ -334,6 +334,24 @@
   .goal-note.warn b{ color:#7C382E; }
   .undated-note{ margin-top:8px; font-size:12.5px; color:var(--red); }
 
+  .range-box{ margin-top:16px; background:#FBF9F4; border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+  .range-line{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .range-line .lbl2{ font-size:11px; font-weight:800; letter-spacing:.1em; color:var(--brass); }
+  .range-box input[type="date"]{
+    font-family:'Pretendard',sans-serif; font-size:13px; font-weight:600; padding:7px 9px;
+    border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--navy);
+  }
+  .range-box input[type="date"]:focus{ outline:none; border-color:var(--brass); }
+  .range-out{ margin-top:12px; padding-top:12px; border-top:1px solid var(--line); }
+  .range-head{ font-family:'Noto Serif KR',serif; font-size:14.5px; font-weight:700; color:var(--navy); }
+  .range-facts{ display:flex; gap:20px; flex-wrap:wrap; margin-top:9px; }
+  .range-facts .k{ font-size:10.5px; letter-spacing:.1em; color:var(--muted); font-weight:700; }
+  .range-facts .v{ font-size:16px; font-weight:800; font-variant-numeric:tabular-nums; color:var(--navy); }
+  .range-facts .v.plus{ color:var(--green); }
+  .range-facts .v.minus{ color:var(--red); }
+  .range-hint{ margin-top:9px; font-size:12.5px; color:var(--muted); }
+  .range-hint b{ color:var(--navy); }
+
   .sub-title{ margin:20px 0 10px; font-family:'Noto Serif KR',serif; font-size:14.5px; font-weight:700; color:var(--navy); }
   .wk-range{ font-weight:600; color:var(--brass); }
   .wk-line{ font-size:11.5px; color:var(--muted); margin-top:3px; }
@@ -620,6 +638,19 @@
     <button class="add-row" onclick="addGoalRow()">+ 목표 행 추가</button>
     <button class="add-row" onclick="genMonthGoals()">📅 이번 달 1일~말일 자동 생성</button>
     <button class="add-row" onclick="applyGoalSumToMonth()">↑ 합계를 월 목표로 반영</button>
+  </div>
+
+  <div class="range-box">
+    <div class="range-line">
+      <span class="lbl2">구간 합계</span>
+      <input type="date" id="rgFrom" onchange="renderRange()">
+      <span>~</span>
+      <input type="date" id="rgTo" onchange="renderRange()">
+      <button class="add-row" style="margin-top:0;" onclick="setGoalRange('rest')">오늘~말일</button>
+      <button class="add-row" style="margin-top:0;" onclick="setGoalRange('week')">이번 주</button>
+      <button class="add-row" style="margin-top:0;" onclick="setGoalRange('month')">이번 달</button>
+    </div>
+    <div class="range-out" id="rangeOut"></div>
   </div>
 
   <div class="sub-title">주별 목표 합계</div>
@@ -1080,6 +1111,78 @@
     }
   }
 
+  // ---------- 구간 합계 ----------
+  var goalDaily = [];    // [{date, goal, actual}]
+
+  function setGoalRange(kind){
+    var t = new Date(), from, to;
+    var p = (currentMonth || monthKeyNow()).split('-');
+    var y = Number(p[0]), m = Number(p[1]) - 1;
+    var last = new Date(y, m + 1, 0).getDate();
+    if(kind === 'rest'){
+      var isThisMonth = (t.getFullYear() === y && t.getMonth() === m);
+      from = isThisMonth ? new Date(y, m, t.getDate()) : new Date(y, m, 1);
+      to = new Date(y, m, last);
+    } else if(kind === 'week'){
+      var w = t.getDay();
+      from = new Date(t); from.setDate(t.getDate() + (w === 0 ? -6 : 1 - w));
+      to = new Date(from); to.setDate(from.getDate() + 6);
+    } else {
+      from = new Date(y, m, 1); to = new Date(y, m, last);
+    }
+    document.getElementById('rgFrom').value = localISO(from);
+    document.getElementById('rgTo').value = localISO(to);
+    renderRange();
+  }
+
+  function renderRange(){
+    var out = document.getElementById('rangeOut');
+    var from = document.getElementById('rgFrom').value;
+    var to = document.getElementById('rgTo').value;
+    if(!from || !to){
+      out.innerHTML = '<div class="range-hint">시작일과 종료일을 고르면 그 구간의 목표·실적 합계가 계산됩니다.</div>';
+      return;
+    }
+    if(from > to){ var t2 = from; from = to; to = t2;
+      document.getElementById('rgFrom').value = from; document.getElementById('rgTo').value = to; }
+
+    var goal = 0, actual = 0, days = 0;
+    goalDaily.forEach(function(r){
+      if(r.date && r.date >= from && r.date <= to){ goal += r.goal; actual += r.actual; days++; }
+    });
+    var diff = actual - goal;
+    var rate = goal > 0 ? (actual / goal * 100) : null;
+
+    // 구간의 달력일수·영업일수
+    var pf = from.split('-'), pt = to.split('-');
+    var dFrom = new Date(Number(pf[0]), Number(pf[1])-1, Number(pf[2]));
+    var dTo = new Date(Number(pt[0]), Number(pt[1])-1, Number(pt[2]));
+    var calDays = Math.round((dTo - dFrom) / 86400000) + 1;
+    var biz = 0;
+    for(var i = 0; i < calDays; i++){
+      var dd = new Date(dFrom); dd.setDate(dFrom.getDate() + i);
+      var wd = dd.getDay();
+      if(wd !== 0 && wd !== 6) biz++;
+    }
+
+    var html = '<div class="range-head">' + esc2(from) + ' ~ ' + esc2(to) +
+      ' <span style="font-family:Pretendard;font-size:12px;font-weight:600;color:var(--muted);">' +
+      calDays + '일 · 영업일 ' + biz + '일 · 입력된 날 ' + days + '일</span></div>';
+    html += '<div class="range-facts">' +
+      '<div><div class="k">목표 합계</div><div class="v">' + fmt(goal) + '원</div></div>' +
+      '<div><div class="k">실적 합계</div><div class="v">' + fmt(actual) + '원</div></div>' +
+      '<div><div class="k">차이</div><div class="v ' + (diff >= 0 ? 'plus' : 'minus') + '">' + (diff > 0 ? '+' : '') + fmt(diff) + '원</div></div>' +
+      '<div><div class="k">달성률</div><div class="v ' + (rate !== null && rate >= 100 ? 'plus' : 'minus') + '">' + (rate === null ? '-' : rate.toFixed(0) + '%') + '</div></div>' +
+      '</div>';
+    if(goal > actual && biz > 0){
+      html += '<div class="range-hint">남은 목표 <b>' + fmt(goal - actual) + '원</b> · 이 구간 영업일 ' + biz + '일 기준 하루 평균 <b>' + fmt((goal - actual) / biz) + '원</b>이 필요합니다.</div>';
+    } else if(goal > 0 && actual >= goal){
+      html += '<div class="range-hint">이 구간 목표를 <b>' + fmt(actual - goal) + '원</b> 넘겼습니다.</div>';
+    }
+    out.innerHTML = html;
+  }
+  function esc2(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
   function renderGoalWeeks(weeks){
     var box = document.getElementById('goalWeekGrid');
     box.innerHTML = '';
@@ -1271,6 +1374,7 @@
     var todayISO = localISO(new Date());
     var rows = document.querySelectorAll('#goalBody .goal-row');
     var sum = 0, act = 0, cum = 0;
+    var dailyTmp = [];
 
     rows.forEach(function(row){
       var d = row.querySelector('.g-date').value;
@@ -1284,6 +1388,7 @@
       }
 
       row.className = 'grow goal-row' + (d === todayISO ? ' today' : '');
+      if(d) dailyTmp.push({ date: d, goal: g, actual: a });
       row.querySelector('.g-dow').textContent = dowLabel(d);
       row.querySelector('.g-actual').textContent = fmt(a);
 
@@ -1303,6 +1408,8 @@
       }
     });
 
+    goalDaily = dailyTmp;
+    renderRange();
     renderGoalWeeks(weeks);
 
     var totalDiff = act - sum;
@@ -1777,6 +1884,7 @@
     document.getElementById('loginEmail').addEventListener('keydown', function(e){ if(e.key === 'Enter') document.getElementById('loginPw').focus(); });
 
     openMonth(monthFromUrl());
+    setGoalRange('rest');
   }
 
   // ---------- export snapshot ----------
