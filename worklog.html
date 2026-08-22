@@ -73,6 +73,14 @@
 
   /* ---------- 기록 표 ---------- */
   .scroll{ width:100%; overflow-x:auto; border:1px solid var(--line); border-radius:12px; max-height:58vh; overflow-y:auto; }
+  .scroll.expanded{ max-height:none !important; overflow-y:visible !important; }
+  .tbl-tools{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .mini-toggle{
+    font-family:'Pretendard',sans-serif; font-size:12.5px; font-weight:600; color:var(--brass);
+    background:none; border:1px dashed var(--brass-light); padding:7px 13px; border-radius:8px;
+    cursor:pointer; min-height:34px; touch-action:manipulation;
+  }
+  .mini-toggle:hover{ background:#FBF6EC; }
   .ltable{ display:grid; grid-template-columns:62px 152px 108px minmax(210px,1fr) 140px 58px 32px;
            align-items:stretch; min-width:830px; font-size:13.5px; }
   .lrow, #logBody{ display:contents; }
@@ -147,7 +155,7 @@
 
   @media print{
     .topbar, .tabs, .rep-controls, .gate, .scroll{ }
-    .topbar, .tabs, .rep-controls, .gate{ display:none !important; }
+    .topbar, .tabs, .rep-controls, .gate, .tbl-tools{ display:none !important; }
     .panel:not(#panel-report){ display:none !important; }
     #panel-report{ display:block !important; border:none; padding:0; }
     body{ background:#fff; }
@@ -248,7 +256,11 @@
     <datalist id="companyList"></datalist>
     <datalist id="jobList"></datalist>
 
-    <div class="scroll">
+    <div class="tbl-tools">
+      <button class="mini-toggle" id="dayExpandBtn" onclick="toggleBoxById('dayScrollBox',this)">⤢ 전체 펼치기</button>
+      <button class="mini-toggle" onclick="copyDayTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
+    </div>
+    <div class="scroll" id="dayScrollBox">
       <div class="ltable" id="logTable">
         <div class="lrow lhead">
           <div>시간</div>
@@ -294,8 +306,10 @@
         <button class="btn" onclick="runReport()">조회</button>
       </div>
       <div class="row-line">
+        <button class="mini" onclick="toggleBoxById('repScrollBox',this)">⤢ 전체 펼치기</button>
         <button class="mini" onclick="printReport()">🖨 인쇄 / PDF 저장</button>
         <button class="mini" onclick="exportCsv()">⬇ 엑셀(CSV) 저장</button>
+        <button class="mini" onclick="copyReportTable(this)">⧉ 표 복사</button>
         <span class="hint-sm">인쇄 화면에는 조회 결과만 담깁니다. PDF로 저장하려면 인쇄창에서 대상을 「PDF로 저장」으로 바꾸세요.</span>
       </div>
     </div>
@@ -630,6 +644,52 @@
       html+='</div>';
     }
     document.getElementById('memberView').innerHTML=html;
+  }
+
+  // ---------- 펼치기 · 표 복사 ----------
+  function toggleBoxById(boxId, btn){
+    var box = document.getElementById(boxId);
+    if(!box) return;
+    var on = box.classList.toggle('expanded');
+    if(btn) btn.textContent = on ? '⤡ 접기' : '⤢ 전체 펼치기';
+  }
+  function copyTsv(rows, btn){
+    var text = rows.map(function(r){ return r.join('\t'); }).join('\n');
+    var flash = function(){
+      if(!btn) return;
+      var t = btn.textContent; btn.textContent = '✓ 복사됨';
+      setTimeout(function(){ btn.textContent = t; }, 1500);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(flash).catch(function(){ fallbackCopy(text); flash(); });
+    } else { fallbackCopy(text); flash(); }
+  }
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position='fixed'; ta.style.left='-9999px';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+  }
+  function copyDayTable(btn){
+    var out = [['시간','대상','소속사','직함','등급','상품','업무 내용','후속 액션','완료']];
+    dayRows.forEach(function(r){
+      var m = members[r.memberKey] || {};
+      out.push([r.time||'', r.memberName||'', m.company||'', m.job||'',
+                r.memberKey? gradeOf(r.memberKey):'', r.product||'',
+                (r.content||'').replace(/\n/g,' / '), r.followUp||'', r.done?'O':'']);
+    });
+    copyTsv(out, btn);
+  }
+  function copyReportTable(btn){
+    var out = [['일자','시간','대상','소속사','직함','등급','상품','업무 내용','후속','완료']];
+    repRows.forEach(function(r){
+      var m = members[r.memberKey] || {};
+      out.push([r.date||'', r.time||'', r.memberName||'', m.company||'', m.job||'',
+                (r.memberKey? (r.gradeAt||gradeOf(r.memberKey)):''), r.product||'',
+                (r.content||'').replace(/\n/g,' / '), r.followUp||'', r.done?'O':'']);
+    });
+    copyTsv(out, btn);
   }
 
   // ---------- 보고서 ----------

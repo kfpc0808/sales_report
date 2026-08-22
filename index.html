@@ -609,7 +609,12 @@
     <div class="lead-comment" contenteditable="true" id="stratComment">핵심 코멘트를 한 줄로 적어주세요. (예: 8월 넷째 주 외부설명회 집중, 자비아 추천 전환이 관건)</div>
   </div>
 
-  <div class="log-scroll scroll-y">
+  <div class="log-tools">
+    <button class="mini-toggle" id="stratExpandBtn" onclick="toggleBoxById('stratScrollBox',this)">⤢ 전체 펼치기</button>
+    <button class="mini-toggle" onclick="copyStratTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
+    <span class="chip-cnt" id="stratCount"></span>
+  </div>
+  <div class="log-scroll scroll-y" id="stratScrollBox">
     <div class="stable" id="stratTable">
       <div class="srow shead">
         <div>전략 / 활동</div>
@@ -641,7 +646,7 @@
 
   <div class="log-tools">
     <button class="mini-toggle" id="logExpandBtn" onclick="toggleLogBox()">⤢ 전체 펼치기</button>
-    <button class="mini-toggle" onclick="copyLogTable()">⧉ 표 복사 (엑셀 붙여넣기용)</button>
+    <button class="mini-toggle" onclick="copyLogTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
     <span class="chip-cnt" id="logCount"></span>
   </div>
   <div class="log-scroll scroll-y" id="logScrollBox">
@@ -664,7 +669,12 @@
   </div>
   <div class="section-desc" contenteditable="true">날짜와 목표 금액만 입력하세요. 실적 · 차이 · 달성률은 매출 기록에서 같은 날짜끼리 자동 집계됩니다. 메모는 각 날짜 아래 한 줄에 길게 적으실 수 있습니다. 표가 길어지면 표 안에서 스크롤되며 헤더와 합계 줄은 고정됩니다.</div>
 
-  <div class="log-scroll scroll-y">
+  <div class="log-tools">
+    <button class="mini-toggle" id="goalExpandBtn" onclick="toggleBoxById('goalScrollBox',this)">⤢ 전체 펼치기</button>
+    <button class="mini-toggle" onclick="copyGoalTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
+    <span class="chip-cnt" id="goalCount"></span>
+  </div>
+  <div class="log-scroll scroll-y" id="goalScrollBox">
     <div class="gtable" id="goalTable">
       <div class="grow ghead">
         <div>날짜</div>
@@ -723,7 +733,12 @@
   <div class="db-tabs" id="dbTabs"></div>
   <datalist id="dbItemSuggest"></datalist>
 
-  <div class="log-scroll scroll-y">
+  <div class="log-tools">
+    <button class="mini-toggle" id="dbExpandBtn" onclick="toggleBoxById('dbScrollBox',this)">⤢ 전체 펼치기</button>
+    <button class="mini-toggle" onclick="copyDbTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
+    <span class="chip-cnt" id="dbCount"></span>
+  </div>
+  <div class="log-scroll scroll-y" id="dbScrollBox">
     <div class="dtable" id="dbTable">
       <div class="drow dhead">
         <div>등록일</div>
@@ -1062,6 +1077,8 @@
     var sum = currentDbItem ? (sumBy[currentDbItem]||0) : total;
     var cnt = currentDbItem ? (countBy[currentDbItem]||0) : order.reduce(function(a,k){ return a + countBy[k]; }, 0);
     document.getElementById('dbSumCell').textContent = fmt(sum);
+    var dc = document.getElementById('dbCount');
+    if(dc) dc.textContent = cnt + '명 · 예상 ' + fmt(sum) + '원';
 
     var note = document.getElementById('dbNote');
     if(cnt === 0){
@@ -1124,6 +1141,8 @@
     });
 
     document.getElementById('sAmtCell').textContent = fmt(sum);
+    var sc = document.getElementById('stratCount');
+    if(sc) sc.textContent = rows.length + '건 · 예상 ' + fmt(sum) + '원';
 
     var lead = document.getElementById('leadMain');
     if(rows.length === 0){
@@ -1228,38 +1247,77 @@
   }
 
   // ---------- 04 매출 기록 도구 ----------
-  function toggleLogBox(){
-    var box = document.getElementById('logScrollBox');
-    var btn = document.getElementById('logExpandBtn');
+  function toggleBoxById(boxId, btn){
+    var box = document.getElementById(boxId);
+    if(!box) return;
     var on = box.classList.toggle('expanded');
-    btn.textContent = on ? '⤡ 접기' : '⤢ 전체 펼치기';
+    if(btn) btn.textContent = on ? '⤡ 접기' : '⤢ 전체 펼치기';
   }
+  function toggleLogBox(){ toggleBoxById('logScrollBox', document.getElementById('logExpandBtn')); }
 
-  // 표 전체를 탭 구분 텍스트로 복사 → 엑셀에 그대로 붙여넣기 가능
-  function copyLogTable(){
-    var lines = ['날짜\t주차\t판매 아이템 / 대상\t금액(원)\t메모'];
-    var total = 0;
-    document.querySelectorAll('#logBody tr.log-row').forEach(function(row){
-      var amt = toNum(row.querySelector('.log-amt').value);
-      total += amt;
-      lines.push([
-        row.querySelector('.log-date').value,
-        row.querySelector('.week-badge').textContent,
-        row.querySelector('.log-item').value,
-        amt,
-        row.querySelector('.log-memo').value
-      ].join('\t'));
-    });
-    lines.push(['합계','','',total,''].join('\t'));
-    var text = lines.join('\n');
-    var done = function(){
-      var b = event && event.target ? event.target : null;
-      if(b){ var t = b.textContent; b.textContent = '✓ 복사됨'; setTimeout(function(){ b.textContent = t; }, 1500); }
+  // 표 내용을 탭 구분 텍스트로 복사 → 엑셀에 그대로 붙여넣기
+  function copyTsv(rows, btn){
+    var text = rows.map(function(r){ return r.join('\t'); }).join('\n');
+    var flash = function(){
+      if(!btn) return;
+      var t = btn.textContent; btn.textContent = '✓ 복사됨';
+      setTimeout(function(){ btn.textContent = t; }, 1500);
     };
     if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).then(done).catch(function(){ fallbackCopy(text); done(); });
-    } else { fallbackCopy(text); done(); }
+      navigator.clipboard.writeText(text).then(flash).catch(function(){ fallbackCopy(text); flash(); });
+    } else { fallbackCopy(text); flash(); }
   }
+
+  function copyStratTable(btn){
+    var out = [['전략 / 활동','대상','메모','예상 금액(원)']], sum = 0;
+    document.querySelectorAll('#stratBody .strat-row').forEach(function(r){
+      var amt = toNum(r.querySelector('.s-amt').value); sum += amt;
+      out.push([r.querySelector('.s-name').value, r.querySelector('.s-target').value,
+                r.querySelector('.s-memo').value.replace(/\n/g,' / '), amt]);
+    });
+    out.push(['합계','','',sum]);
+    copyTsv(out, btn);
+  }
+
+  function copyGoalTable(btn){
+    var out = [['날짜','요일','아이템 / 대상','목표(원)','실적(원)','차이','달성률','메모']];
+    var g = 0, a = 0;
+    document.querySelectorAll('#goalBody .goal-row').forEach(function(r){
+      var gv = toNum(r.querySelector('.g-amt').value);
+      var av = toNum(r.querySelector('.g-actual').textContent);
+      g += gv; a += av;
+      out.push([r.querySelector('.g-date').value, r.querySelector('.g-dow').textContent,
+                r.querySelector('.g-item').value, gv, av,
+                r.querySelector('.g-diff').textContent, r.querySelector('.g-rate').textContent,
+                r.querySelector('.g-memo').value.replace(/\n/g,' / ')]);
+    });
+    out.push(['합계','','',g,a,a-g, g>0? Math.round(a/g*100)+'%':'', '']);
+    copyTsv(out, btn);
+  }
+
+  function copyDbTable(btn){
+    var out = [['등록일','아이템','대상','메모','예상 금액(원)']], sum = 0;
+    document.querySelectorAll('#dbBody .target-row').forEach(function(r){
+      if(rowIsEmpty(r)) return;
+      var amt = toNum(r.querySelector('.d-amt').value); sum += amt;
+      out.push([r.querySelector('.d-date').value, rowItem(r), r.querySelector('.d-name').value,
+                r.querySelector('.d-memo').value.replace(/\n/g,' / '), amt]);
+    });
+    out.push(['합계','','','',sum]);
+    copyTsv(out, btn);
+  }
+
+  function copyLogTable(btn){
+    var out = [['날짜','주차','판매 아이템 / 대상','금액(원)','메모']], total = 0;
+    document.querySelectorAll('#logBody tr.log-row').forEach(function(row){
+      var amt = toNum(row.querySelector('.log-amt').value); total += amt;
+      out.push([row.querySelector('.log-date').value, row.querySelector('.week-badge').textContent,
+                row.querySelector('.log-item').value, amt, row.querySelector('.log-memo').value]);
+    });
+    out.push(['합계','','',total,'']);
+    copyTsv(out, btn);
+  }
+
   function fallbackCopy(text){
     var ta = document.createElement('textarea');
     ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
@@ -1673,6 +1731,8 @@
 
     var totalDiff = act - sum;
     document.getElementById('gSumCell').textContent = fmt(sum);
+    var gc = document.getElementById('goalCount');
+    if(gc) gc.textContent = rows.length + '일 · 목표 ' + fmt(sum) + '원 · 실적 ' + fmt(act) + '원';
     document.getElementById('gActualCell').textContent = fmt(act);
     document.getElementById('gDiffCell').textContent = (totalDiff > 0 ? '+' : '') + fmt(totalDiff);
     document.getElementById('gRateCell').textContent = sum > 0 ? (act/sum*100).toFixed(0)+'%' : '-';
