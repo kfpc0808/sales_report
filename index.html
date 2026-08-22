@@ -33,7 +33,7 @@
   .toolbar button.ghost{ background:transparent; color:var(--navy); }
   .toolbar button:hover{ opacity:.85; }
   @media print{
-    .toolbar,.add-row,.del-x{display:none !important;}
+    .toolbar,.add-row,.del-x,.ord{display:none !important;}
     body{background:#fff;}
     .scroll-y{ max-height:none !important; overflow:visible !important; }
     .gtable .ghead > div, .gtable .gfoot > div{ position:static !important; }
@@ -41,6 +41,7 @@
     table.log thead th, table.log tfoot td{ position:static !important; box-shadow:none !important; }
     .stable .shead > div, .stable .sfoot > div{ position:static !important; box-shadow:none !important; }
     .memo-body{ max-height:none !important; overflow:visible !important; }
+    .log-tools{ display:none !important; }
     .mini-toggle, .memo-hint{ display:none !important; }
   }
 
@@ -98,7 +99,10 @@
   table.log th:nth-child(2){ width:72px; }
   table.log th:nth-child(4){ width:150px; text-align:right; padding-right:14px; }
   table.log th:nth-child(5){ width:230px; }
-  table.log th:nth-child(6){ width:46px; }
+  table.log th:nth-child(6){ width:84px; }
+  td.row-ops{ white-space:nowrap; text-align:center; }
+  .ord{ background:none; border:none; color:#BCB6A7; cursor:pointer; font-size:10.5px; padding:3px 2px; line-height:1; }
+  .ord:hover{ color:var(--brass); }
   table.log #logTotalCell{ padding-right:14px; }
   table.log th{ text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; padding:9px 10px; border-bottom:1px solid var(--line); background:#F8F6F1; white-space:nowrap; }
   table.log td{ padding:7px 8px; border-bottom:1px solid #F0EEE7; vertical-align:middle; }
@@ -340,6 +344,10 @@
   .goal-note.warn b{ color:#7C382E; }
   .undated-note{ margin-top:8px; font-size:12.5px; color:var(--red); }
 
+  .log-tools{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .chip-cnt{ font-size:12px; font-weight:700; padding:4px 11px; border-radius:20px; background:#EFEAE0; color:#6B5122; }
+  .log-scroll.expanded{ max-height:none !important; overflow-y:visible !important; }
+
   /* 일자별 전략 일지 */
   .sl-bar{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
   .sl-bar input[type="date"]{
@@ -452,7 +460,8 @@
     table.log th:nth-child(1), table.log td:nth-child(1){ width:112px; }
     table.log th:nth-child(2){ width:58px; }
     table.log th:nth-child(4){ width:126px; padding-right:12px; }
-    table.log th:nth-child(6){ width:36px; }
+    table.log th:nth-child(6){ width:66px; }
+    .ord{ font-size:10px; padding:3px 1px; }
     table.log th:nth-child(5), table.log tbody td:nth-child(5){ display:none; }
     table.log input[type="date"]{ width:100%; min-width:0; font-size:13px; padding:5px 3px; }
     table.log input[type="text"]{ min-width:0; font-size:13px; }
@@ -629,7 +638,12 @@
   </div>
   <div class="section-desc" contenteditable="true">날짜와 판매 아이템, 금액을 입력하세요. 주차는 날짜를 기준으로 자동 계산됩니다.</div>
 
-  <div class="log-scroll scroll-y">
+  <div class="log-tools">
+    <button class="mini-toggle" id="logExpandBtn" onclick="toggleLogBox()">⤢ 전체 펼치기</button>
+    <button class="mini-toggle" onclick="copyLogTable()">⧉ 표 복사 (엑셀 붙여넣기용)</button>
+    <span class="chip-cnt" id="logCount"></span>
+  </div>
+  <div class="log-scroll scroll-y" id="logScrollBox">
     <table class="log" id="logTable">
       <thead>
         <tr><th>날짜</th><th>주차</th><th>판매 아이템 / 대상</th><th>금액(원)</th><th>메모</th><th></th></tr>
@@ -1212,6 +1226,47 @@
     }
   }
 
+  // ---------- 04 매출 기록 도구 ----------
+  function toggleLogBox(){
+    var box = document.getElementById('logScrollBox');
+    var btn = document.getElementById('logExpandBtn');
+    var on = box.classList.toggle('expanded');
+    btn.textContent = on ? '⤡ 접기' : '⤢ 전체 펼치기';
+  }
+
+  // 표 전체를 탭 구분 텍스트로 복사 → 엑셀에 그대로 붙여넣기 가능
+  function copyLogTable(){
+    var lines = ['날짜\t주차\t판매 아이템 / 대상\t금액(원)\t메모'];
+    var total = 0;
+    document.querySelectorAll('#logBody tr.log-row').forEach(function(row){
+      var amt = toNum(row.querySelector('.log-amt').value);
+      total += amt;
+      lines.push([
+        row.querySelector('.log-date').value,
+        row.querySelector('.week-badge').textContent,
+        row.querySelector('.log-item').value,
+        amt,
+        row.querySelector('.log-memo').value
+      ].join('\t'));
+    });
+    lines.push(['합계','','',total,''].join('\t'));
+    var text = lines.join('\n');
+    var done = function(){
+      var b = event && event.target ? event.target : null;
+      if(b){ var t = b.textContent; b.textContent = '✓ 복사됨'; setTimeout(function(){ b.textContent = t; }, 1500); }
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(function(){ fallbackCopy(text); done(); });
+    } else { fallbackCopy(text); done(); }
+  }
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+  }
+
   // ---------- 일자별 전략 일지 ----------
   var SLOGS = 'strategyLogs';
   var slDateStr = '', slUnsub = null, slSaveTimer = null, slLoaded = {};
@@ -1649,7 +1704,9 @@
       '<td><input type="text" class="log-item" placeholder="예: 스타19 / 자비아 / 총판 등" value="'+escapeAttr(data.item||'')+'" oninput="onRowChange(this)"></td>' +
       '<td><input type="text" inputmode="numeric" class="log-amt amt" placeholder="0" value="'+(data.amount?fmt(data.amount):'')+'" oninput="onAmountInput(this)"></td>' +
       '<td><input type="text" class="log-memo" placeholder="메모" value="'+escapeAttr(data.memo||'')+'" oninput="onRowChange(this)"></td>' +
-      '<td><button class="del-x" onclick="removeLogRow(this)">✕</button></td>';
+      '<td class="row-ops"><button class="ord" onclick="moveLogRow(this,-1)" title="위로">▲</button>' +
+        '<button class="ord" onclick="moveLogRow(this,1)" title="아래로">▼</button>' +
+        '<button class="del-x" onclick="removeLogRow(this)">✕</button></td>';
     return tr;
   }
   function escapeAttr(s){ return String(s).replace(/"/g,'&quot;'); }
@@ -1661,6 +1718,21 @@
     recalcAll();
     scheduleSave();
     return row;
+  }
+
+  // 행 순서 바꾸기 (-1 위로 / 1 아래로)
+  function moveLogRow(btn, dir){
+    var row = btn.closest('tr');
+    if(!row) return;
+    if(dir < 0){
+      var prev = row.previousElementSibling;
+      if(prev) row.parentNode.insertBefore(row, prev);
+    } else {
+      var next = row.nextElementSibling;
+      if(next) row.parentNode.insertBefore(next, row);
+    }
+    recalcAll();
+    scheduleSave();
   }
 
   function removeLogRow(btn){
@@ -1697,6 +1769,8 @@
     });
 
     document.getElementById('logTotalCell').textContent = fmt(total);
+    var lc = document.getElementById('logCount');
+    if(lc) lc.textContent = rows.length + '건 · 합계 ' + fmt(total) + '원';
     document.getElementById('curTotalText').textContent = fmt(total);
     document.getElementById('goalText').textContent = fmt(goal);
     document.getElementById('fsCur').textContent = fmt(total);
@@ -2014,7 +2088,7 @@
       el.disabled = false;
       el.readOnly = !editable;
     });
-    document.querySelectorAll('.add-row, .del-x').forEach(function(el){ el.style.display = editable ? '' : 'none'; });
+    document.querySelectorAll('.add-row, .del-x, .ord').forEach(function(el){ el.style.display = editable ? '' : 'none'; });
     var btn = document.getElementById('authBtn');
     if(isSnapshotFile){ btn.style.display = 'none'; }
     else { btn.textContent = myEmail ? '🔓 로그아웃' : '🔑 편집 로그인'; }
@@ -2200,7 +2274,9 @@
           '<td><input type="text" class="log-item" value="'+escapeAttr(item)+'" oninput="onRowChange(this)"></td>' +
           '<td><input type="text" inputmode="numeric" class="log-amt amt" value="'+escapeAttr(amt)+'" oninput="onAmountInput(this)"></td>' +
           '<td><input type="text" class="log-memo" value="'+escapeAttr(memo)+'" oninput="onRowChange(this)"></td>' +
-          '<td><button class="del-x" onclick="removeLogRow(this)">✕</button></td>';
+          '<td class="row-ops"><button class="ord" onclick="moveLogRow(this,-1)" title="위로">▲</button>' +
+            '<button class="ord" onclick="moveLogRow(this,1)" title="아래로">▼</button>' +
+            '<button class="del-x" onclick="removeLogRow(this)">✕</button></td>';
         dstBody.appendChild(tr);
       });
     }
