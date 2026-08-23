@@ -178,6 +178,7 @@
   .db-tab .x:hover{ opacity:1; }
   .drow.blank-row > div{ background:#FCFBF8; }
   .dtable input.d-item{ font-weight:700; color:var(--navy); }
+  .dtable input.d-ref{ color:var(--brass); font-weight:600; }
   .dtable input[type="date"]{
     width:100%; min-width:0; border:1px solid transparent; background:transparent; border-radius:5px;
     padding:5px 3px; font-size:12.5px; font-family:'Pretendard',sans-serif; color:var(--muted);
@@ -185,8 +186,8 @@
   .dtable input[type="date"]:hover{ border-color:var(--line); background:#FBFAF7; }
   .dtable input[type="date"]:focus{ border-color:var(--brass); background:#fff; outline:none; }
   .dtable{
-    display:grid; grid-template-columns:118px minmax(100px,150px) minmax(100px,170px) minmax(200px,1fr) 130px 44px;
-    align-items:stretch; min-width:730px; font-size:13.5px;
+    display:grid; grid-template-columns:118px minmax(96px,140px) minmax(96px,150px) minmax(90px,130px) minmax(180px,1fr) 130px 44px;
+    align-items:stretch; min-width:790px; font-size:13.5px;
   }
   .drow, #dbBody{ display:contents; }
   .drow > div{ min-width:0; padding:7px 8px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
@@ -515,7 +516,7 @@
     .itable input[type="text"]{ font-size:13px; }
 
     /* 03 전략 — 건수 접기 */
-    .dtable{ min-width:600px; grid-template-columns:98px minmax(72px,0.9fr) minmax(80px,1fr) minmax(110px,1.2fr) 102px 26px; }
+    .dtable{ min-width:660px; grid-template-columns:96px minmax(68px,0.85fr) minmax(74px,1fr) minmax(66px,0.8fr) minmax(100px,1.1fr) 100px 26px; }
     .stable{ min-width:560px; grid-template-columns:minmax(96px,0.8fr) minmax(108px,1fr) minmax(130px,1.2fr) 106px 26px; }
     .stable input[type="text"]{ font-size:13px; }
     .stable select{ font-size:12px; padding:5px 4px; }
@@ -786,6 +787,7 @@
 
   <div class="db-tabs" id="dbTabs"></div>
   <datalist id="dbItemSuggest"></datalist>
+  <datalist id="dbRefSuggest"></datalist>
 
   <div class="log-tools">
     <button class="mini-toggle" id="dbExpandBtn" onclick="toggleBoxById('dbScrollBox',this)">⤢ 전체 펼치기</button>
@@ -798,6 +800,7 @@
         <div>등록일</div>
         <div>아이템</div>
         <div>대상</div>
+        <div>추천인</div>
         <div>메모</div>
         <div class="g-num">예상 금액(원)</div>
         <div></div>
@@ -805,6 +808,7 @@
       <div id="dbBody"></div>
       <div class="drow dfoot">
         <div>합계</div>
+        <div></div>
         <div></div>
         <div></div>
         <div></div>
@@ -1008,6 +1012,7 @@
       '<div><input type="date" class="d-date" value="'+escapeAttr(data.date||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><input type="text" class="d-item" list="dbItemSuggest" placeholder="아이템" value="'+escapeAttr(data.item||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><input type="text" class="d-name" placeholder="대상 이름" value="'+escapeAttr(data.name||'')+'" oninput="onRowChange(this)"></div>' +
+      '<div><input type="text" class="d-ref" list="dbRefSuggest" placeholder="추천인" value="'+escapeAttr(data.ref||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><textarea class="d-memo" rows="1" placeholder="진행 상황 · 특이사항" ' +
         'onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(data.memo||'')+'</textarea></div>' +
       '<div><input type="text" inputmode="numeric" class="d-amt amt" placeholder="0" value="'+(data.amount?fmt(data.amount):'')+'" oninput="onAmountInput(this)"></div>' +
@@ -1019,6 +1024,7 @@
   function rowIsEmpty(row){
     return !rowItem(row) &&
            !row.querySelector('.d-name').value.trim() &&
+           !row.querySelector('.d-ref').value.trim() &&
            toNum(row.querySelector('.d-amt').value) === 0 &&
            !row.querySelector('.d-memo').value.trim();
   }
@@ -1106,6 +1112,17 @@
         }
       });
     }
+    // 추천인 자동완성 (이미 쓴 추천인 + 등록된 대상 이름)
+    var rl = document.getElementById('dbRefSuggest');
+    if(rl){
+      rl.innerHTML = '';
+      var seenR = {};
+      rows.forEach(function(row){
+        [row.querySelector('.d-ref').value.trim(), row.querySelector('.d-name').value.trim()].forEach(function(v){
+          if(v && !seenR[v]){ seenR[v] = 1; var o = document.createElement('option'); o.value = v; rl.appendChild(o); }
+        });
+      });
+    }
 
     // 고른 아이템만 표시 (빈 줄은 항상 표시)
     rows.forEach(function(row){
@@ -1124,8 +1141,20 @@
       if(dv && dv >= weekAgo) newCnt++;
       if(dv && (!oldest || dv < oldest)) oldest = dv;
     });
+    // 추천 유입 집계
+    var refCnt = 0, byRef = {};
+    rows.forEach(function(row){
+      if(rowIsEmpty(row)) return;
+      var it = rowItem(row) || '(아이템 없음)';
+      if(currentDbItem && it !== currentDbItem) return;
+      var rv = row.querySelector('.d-ref').value.trim();
+      if(rv){ refCnt++; byRef[rv] = (byRef[rv]||0) + 1; }
+    });
+    var topRef = Object.keys(byRef).sort(function(a,b){ return byRef[b]-byRef[a]; })[0];
+
     var newInfo = '';
     if(newCnt) newInfo += ' · 최근 7일 신규 <b>'+newCnt+'명</b>';
+    if(refCnt) newInfo += ' · 추천 유입 <b>'+refCnt+'명</b>' + (topRef ? '(최다 '+escapeHtml(topRef)+' '+byRef[topRef]+'명)' : '');
     if(oldest) newInfo += ' · 가장 오래된 등록 '+esc2(oldest);
 
     var sum = currentDbItem ? (sumBy[currentDbItem]||0) : total;
@@ -1352,14 +1381,15 @@
 
   function copyDbTable(btn){
     recalcNow();
-    var out = [['등록일','아이템','대상','메모','예상 금액(원)']], sum = 0;
+    var out = [['등록일','아이템','대상','추천인','메모','예상 금액(원)']], sum = 0;
     document.querySelectorAll('#dbBody .target-row').forEach(function(r){
       if(rowIsEmpty(r)) return;
       var amt = toNum(r.querySelector('.d-amt').value); sum += amt;
       out.push([r.querySelector('.d-date').value, rowItem(r), r.querySelector('.d-name').value,
+                r.querySelector('.d-ref').value,
                 r.querySelector('.d-memo').value.replace(/\n/g,' / '), amt]);
     });
-    out.push(['합계','','','',sum]);
+    out.push(['합계','','','','',sum]);
     copyTsv(out, btn);
   }
 
@@ -2108,6 +2138,7 @@
         date: row.querySelector('.d-date').value,
         item: rowItem(row),
         name: row.querySelector('.d-name').value,
+        ref: row.querySelector('.d-ref').value,
         amount: toNum(row.querySelector('.d-amt').value),
         memo: row.querySelector('.d-memo').value
       });
@@ -2430,6 +2461,7 @@
           '<div><input type="date" class="d-date" value="'+escapeAttr(row.querySelector('.d-date').value)+'" oninput="onRowChange(this)"></div>' +
           '<div><input type="text" class="d-item" list="dbItemSuggest" value="'+escapeAttr(rowItem(row))+'" oninput="onRowChange(this)"></div>' +
           '<div><input type="text" class="d-name" value="'+escapeAttr(row.querySelector('.d-name').value)+'" oninput="onRowChange(this)"></div>' +
+          '<div><input type="text" class="d-ref" list="dbRefSuggest" value="'+escapeAttr(row.querySelector('.d-ref').value)+'" oninput="onRowChange(this)"></div>' +
           '<div><textarea class="d-memo" rows="1" onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(row.querySelector('.d-memo').value)+'</textarea></div>' +
           '<div><input type="text" inputmode="numeric" class="d-amt amt" value="'+escapeAttr(row.querySelector('.d-amt').value)+'" oninput="onAmountInput(this)"></div>' +
           '<div class="g-mid"><button class="del-x" onclick="removeTargetRow(this)">✕</button></div>';
