@@ -231,8 +231,8 @@
   .lead-comment:focus{ background:rgba(255,255,255,0.12); color:#fff; box-shadow:none; outline:2px solid var(--brass); outline-offset:3px; }
 
   .stable{
-    display:grid; grid-template-columns:minmax(130px,180px) minmax(150px,1fr) minmax(220px,1.5fr) 130px 44px;
-    align-items:stretch; min-width:720px; font-size:13.5px; margin-top:16px;
+    display:grid; grid-template-columns:minmax(130px,180px) minmax(140px,1fr) minmax(200px,1.4fr) 118px 130px 44px;
+    align-items:stretch; min-width:800px; font-size:13.5px; margin-top:16px;
   }
   .srow, #stratBody{ display:contents; }
   .srow > div{ min-width:0; padding:7px 8px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
@@ -254,6 +254,17 @@
   .stable textarea.s-memo:hover{ border-color:var(--line); background:#FBFAF7; }
   .stable textarea.s-memo:focus{ border-color:var(--brass); background:#fff; outline:none; box-shadow:0 2px 10px rgba(20,20,30,0.06); }
   .stable textarea.s-memo[readonly]{ cursor:pointer; }
+  .stable input[type="date"]{
+    width:100%; min-width:0; border:1px solid transparent; background:transparent; border-radius:5px;
+    padding:5px 3px; font-size:12.5px; font-family:'Pretendard',sans-serif; color:var(--muted);
+  }
+  .stable input[type="date"]:hover{ border-color:var(--line); background:#FBFAF7; }
+  .stable input[type="date"]:focus{ border-color:var(--brass); background:#fff; outline:none; }
+  .srow.overdue input[type="date"]{ color:var(--red); font-weight:700; }
+  .lead-timeline{ margin-top:11px; padding-top:11px; border-top:1px solid rgba(255,255,255,0.16);
+                  font-family:'Pretendard',sans-serif; font-size:13px; font-weight:400; color:#D5D9E3; line-height:1.75; }
+  .lead-timeline b{ color:var(--brass-light); }
+  .lead-timeline .late{ color:#E6A88B; font-weight:700; }
 
   /* bar chart */
   .chart-card{ margin-top:16px; }
@@ -519,7 +530,7 @@
 
     /* 03 전략 — 건수 접기 */
     .dtable{ min-width:660px; grid-template-columns:96px minmax(68px,0.85fr) minmax(74px,1fr) minmax(66px,0.8fr) minmax(100px,1.1fr) 100px 26px; }
-    .stable{ min-width:560px; grid-template-columns:minmax(96px,0.8fr) minmax(108px,1fr) minmax(130px,1.2fr) 106px 26px; }
+    .stable{ min-width:640px; grid-template-columns:minmax(88px,0.8fr) minmax(96px,1fr) minmax(120px,1.2fr) 96px 100px 26px; }
     .stable input[type="text"]{ font-size:13px; }
     .stable select{ font-size:12px; padding:5px 4px; }
 
@@ -643,6 +654,7 @@
   <div class="lead-box">
     <div class="lead-label">Bottom Line</div>
     <div class="lead-main" id="leadMain">전략을 등록하면 부족 금액 대비 확보 계획이 여기 요약됩니다.</div>
+    <div class="lead-timeline" id="leadTimeline"></div>
     <div class="lead-comment" contenteditable="true" id="stratComment">핵심 코멘트를 한 줄로 적어주세요. (예: 8월 넷째 주 외부설명회 집중, 자비아 추천 전환이 관건)</div>
   </div>
 
@@ -657,12 +669,14 @@
         <div>전략 / 활동</div>
         <div>대상</div>
         <div>메모</div>
+        <div>예상일</div>
         <div class="g-num">예상 금액(원)</div>
         <div></div>
       </div>
       <div id="stratBody"></div>
       <div class="srow sfoot">
         <div>합계</div>
+        <div></div>
         <div></div>
         <div></div>
         <div class="g-num" id="sAmtCell">0</div>
@@ -1204,6 +1218,7 @@
       '<div><input type="text" class="s-target" placeholder="대상 이름을 쉼표로 나열" value="'+escapeAttr(data.target||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><textarea class="s-memo" rows="1" placeholder="인원·회차·특이사항 (클릭하면 전체가 펼쳐집니다)" ' +
         'onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(memoVal)+'</textarea></div>' +
+      '<div><input type="date" class="s-due" value="'+escapeAttr(data.due||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><input type="text" inputmode="numeric" class="s-amt amt" placeholder="0" value="'+(data.amount?fmt(data.amount):'')+'" oninput="onAmountInput(this)"></div>' +
       '<div class="g-mid"><button class="del-x" onclick="removeStratRow(this)">✕</button></div>';
     return row;
@@ -1221,13 +1236,54 @@
     scheduleSave();
   }
 
+  function shortDate(iso){
+    if(!iso) return '';
+    var p = String(iso).split('-');
+    return p.length === 3 ? (Number(p[1]) + '/' + Number(p[2])) : iso;
+  }
+
   function recalcStrategy(gap){
     var rows = document.querySelectorAll('#stratBody .strat-row');
     var sum = 0;
 
+    // 오늘 기준 시점별 예상액
+    var t = new Date();
+    var todayS = localISO(t);
+    var wd = t.getDay();
+    var sun = new Date(t); sun.setDate(t.getDate() + (wd === 0 ? 0 : 7 - wd));
+    var weekEnd = localISO(sun);
+    var mEnd = localISO(new Date(t.getFullYear(), t.getMonth() + 1, 0));
+    var late = 0, byToday = 0, byWeek = 0, byMonth = 0, later = 0, noDate = 0;
+
     rows.forEach(function(row){
-      sum += toNum(row.querySelector('.s-amt').value);
+      var amt = toNum(row.querySelector('.s-amt').value);
+      sum += amt;
+      var due = row.querySelector('.s-due').value;
+      row.classList.toggle('overdue', !!due && due < todayS);
+      if(!due){ noDate += amt; return; }
+      if(due < todayS){ late += amt; }
+      else if(due <= todayS){ byToday += amt; }
+      else if(due <= weekEnd){ byWeek += amt; }
+      else if(due <= mEnd){ byMonth += amt; }
+      else { later += amt; }
     });
+
+    var tl = document.getElementById('leadTimeline');
+    if(tl){
+      if(rows.length === 0){ tl.innerHTML = ''; }
+      else {
+        var c1 = byToday, c2 = c1 + byWeek, c3 = c2 + byMonth;
+        var parts = [];
+        parts.push('오늘(' + shortDate(todayS) + ')까지 <b>' + fmt(c1) + '원</b>');
+        parts.push('이번 주(~' + shortDate(weekEnd) + ') 누적 <b>' + fmt(c2) + '원</b>');
+        parts.push('이달 말(~' + shortDate(mEnd) + ') 누적 <b>' + fmt(c3) + '원</b>');
+        var extra = [];
+        if(late) extra.push('<span class="late">예정일 지남 ' + fmt(late) + '원</span>');
+        if(later) extra.push('다음 달 이후 ' + fmt(later) + '원');
+        if(noDate) extra.push('예상일 미정 ' + fmt(noDate) + '원');
+        tl.innerHTML = parts.join(' · ') + (extra.length ? '<br>' + extra.join(' · ') : '');
+      }
+    }
 
     document.getElementById('sAmtCell').textContent = fmt(sum);
     var sc = document.getElementById('stratCount');
@@ -1358,13 +1414,14 @@
   }
 
   function copyStratTable(btn){
-    var out = [['전략 / 활동','대상','메모','예상 금액(원)']], sum = 0;
+    var out = [['전략 / 활동','대상','메모','예상일','예상 금액(원)']], sum = 0;
     document.querySelectorAll('#stratBody .strat-row').forEach(function(r){
       var amt = toNum(r.querySelector('.s-amt').value); sum += amt;
       out.push([r.querySelector('.s-name').value, r.querySelector('.s-target').value,
-                r.querySelector('.s-memo').value.replace(/\n/g,' / '), amt]);
+                r.querySelector('.s-memo').value.replace(/\n/g,' / '),
+                r.querySelector('.s-due').value, amt]);
     });
-    out.push(['합계','','',sum]);
+    out.push(['합계','','','',sum]);
     copyTsv(out, btn);
   }
 
@@ -2177,6 +2234,7 @@
         name: row.querySelector('.s-name').value,
         target: row.querySelector('.s-target').value,
         memo: row.querySelector('.s-memo').value,
+        due: row.querySelector('.s-due').value,
         amount: toNum(row.querySelector('.s-amt').value)
       });
     });
@@ -2509,6 +2567,7 @@
           '<div><input type="text" class="s-name" value="'+escapeAttr(row.querySelector('.s-name').value)+'" oninput="onRowChange(this)"></div>' +
           '<div><input type="text" class="s-target" value="'+escapeAttr(row.querySelector('.s-target').value)+'" oninput="onRowChange(this)"></div>' +
           '<div><textarea class="s-memo" rows="1" onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(row.querySelector('.s-memo').value)+'</textarea></div>' +
+          '<div><input type="date" class="s-due" value="'+escapeAttr(row.querySelector('.s-due').value)+'" oninput="onRowChange(this)"></div>' +
           '<div><input type="text" inputmode="numeric" class="s-amt amt" value="'+escapeAttr(row.querySelector('.s-amt').value)+'" oninput="onAmountInput(this)"></div>' +
           '<div class="g-mid"><button class="del-x" onclick="removeStratRow(this)">✕</button></div>';
         dstStrat.appendChild(r);
