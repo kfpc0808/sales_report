@@ -261,10 +261,25 @@
   .stable input[type="date"]:hover{ border-color:var(--line); background:#FBFAF7; }
   .stable input[type="date"]:focus{ border-color:var(--brass); background:#fff; outline:none; }
   .srow.overdue input[type="date"]{ color:var(--red); font-weight:700; }
-  .lead-timeline{ margin-top:11px; padding-top:11px; border-top:1px solid rgba(255,255,255,0.16);
-                  font-family:'Pretendard',sans-serif; font-size:13px; font-weight:400; color:#D5D9E3; line-height:1.75; }
-  .lead-timeline b{ color:var(--brass-light); }
-  .lead-timeline .late{ color:#E6A88B; font-weight:700; }
+  .tl-cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:10px;
+             margin-top:15px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.16); }
+  .tl-card{ background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.13); border-radius:11px; padding:13px 15px; }
+  .tl-card .when{ font-family:'Pretendard',sans-serif; font-size:11.5px; font-weight:700; color:var(--brass-light); letter-spacing:.02em; }
+  .tl-card .amt{ font-family:'Noto Serif KR',serif; font-size:21px; font-weight:900; color:#fff; margin-top:5px; line-height:1.2; }
+  .tl-card .cnt{ font-family:'Pretendard',sans-serif; font-size:11.5px; font-weight:400; color:#9AA3B5; margin-top:3px; }
+  .tl-card.now{ background:rgba(176,141,87,0.22); border-color:rgba(216,195,154,0.5); }
+  .tl-extra{ margin-top:11px; font-family:'Pretendard',sans-serif; font-size:12.5px; font-weight:400; color:#B9BFCF; }
+  .tl-extra .late{ color:#E6A88B; font-weight:700; }
+  .tl-pick{ margin-top:14px; padding-top:13px; border-top:1px solid rgba(255,255,255,0.16);
+            display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .tl-pick-lab{ font-family:'Pretendard',sans-serif; font-size:11.5px; font-weight:700; letter-spacing:.1em; color:var(--brass-light); }
+  .tl-pick input[type="date"]{
+    font-family:'Pretendard',sans-serif; font-size:13.5px; font-weight:700; padding:7px 10px; border-radius:8px;
+    border:1px solid rgba(255,255,255,0.28); background:rgba(255,255,255,0.10); color:#fff;
+  }
+  .tl-pick input[type="date"]:focus{ outline:none; border-color:var(--brass); background:rgba(255,255,255,0.16); }
+  .tl-pick-out{ font-family:'Pretendard',sans-serif; font-size:13.5px; font-weight:400; color:#D5D9E3; }
+  .tl-pick-out b{ color:var(--brass-light); font-weight:800; font-size:15px; }
 
   /* bar chart */
   .chart-card{ margin-top:16px; }
@@ -652,10 +667,14 @@
   <div class="section-desc" contenteditable="true">부족 금액을 무엇으로, 누구를 대상으로 메울 것인지 먼저 정리합니다.</div>
 
   <div class="lead-box">
-    <div class="lead-label">Bottom Line</div>
     <div class="lead-main" id="leadMain">전략을 등록하면 부족 금액 대비 확보 계획이 여기 요약됩니다.</div>
-    <div class="lead-timeline" id="leadTimeline"></div>
-    <div class="lead-comment" contenteditable="true" id="stratComment">핵심 코멘트를 한 줄로 적어주세요. (예: 8월 넷째 주 외부설명회 집중, 자비아 추천 전환이 관건)</div>
+    <div class="tl-cards" id="leadTimeline"></div>
+    <div class="tl-extra" id="leadExtra"></div>
+    <div class="tl-pick">
+      <span class="tl-pick-lab">기준일 지정</span>
+      <input type="date" id="stratAsOf" onchange="recalcNow()">
+      <span class="tl-pick-out" id="stratAsOfOut">날짜를 고르면 그날까지 누적 예상액을 보여드립니다.</span>
+    </div>
   </div>
 
   <div class="log-tools">
@@ -1255,33 +1274,65 @@
     var mEnd = localISO(new Date(t.getFullYear(), t.getMonth() + 1, 0));
     var late = 0, byToday = 0, byWeek = 0, byMonth = 0, later = 0, noDate = 0;
 
+    var dated = [];
     rows.forEach(function(row){
       var amt = toNum(row.querySelector('.s-amt').value);
       sum += amt;
       var due = row.querySelector('.s-due').value;
       row.classList.toggle('overdue', !!due && due < todayS);
       if(!due){ noDate += amt; return; }
+      dated.push({ due: due, amt: amt });
       if(due < todayS){ late += amt; }
-      else if(due <= todayS){ byToday += amt; }
-      else if(due <= weekEnd){ byWeek += amt; }
       else if(due <= mEnd){ byMonth += amt; }
       else { later += amt; }
     });
+    // 기준일까지의 누적 (예정일이 지난 건도 포함)
+    function cum(upto){
+      var v = 0;
+      dated.forEach(function(x){ if(x.due <= upto) v += x.amt; });
+      return v;
+    }
+    function cnt(upto){
+      var c = 0;
+      dated.forEach(function(x){ if(x.due <= upto) c++; });
+      return c;
+    }
 
+    // 시점별 누적 카드
     var tl = document.getElementById('leadTimeline');
+    var ex = document.getElementById('leadExtra');
     if(tl){
-      if(rows.length === 0){ tl.innerHTML = ''; }
+      if(rows.length === 0){ tl.innerHTML = ''; if(ex) ex.innerHTML = ''; }
       else {
-        var c1 = byToday, c2 = c1 + byWeek, c3 = c2 + byMonth;
-        var parts = [];
-        parts.push('오늘(' + shortDate(todayS) + ')까지 <b>' + fmt(c1) + '원</b>');
-        parts.push('이번 주(~' + shortDate(weekEnd) + ') 누적 <b>' + fmt(c2) + '원</b>');
-        parts.push('이달 말(~' + shortDate(mEnd) + ') 누적 <b>' + fmt(c3) + '원</b>');
-        var extra = [];
-        if(late) extra.push('<span class="late">예정일 지남 ' + fmt(late) + '원</span>');
-        if(later) extra.push('다음 달 이후 ' + fmt(later) + '원');
-        if(noDate) extra.push('예상일 미정 ' + fmt(noDate) + '원');
-        tl.innerHTML = parts.join(' · ') + (extra.length ? '<br>' + extra.join(' · ') : '');
+        var cards = [
+          { when:'오늘 ' + shortDate(todayS) + '까지', amt:cum(todayS), cnt:cnt(todayS), now:true },
+          { when:'이번 주 ~' + shortDate(weekEnd) + ' 누적', amt:cum(weekEnd), cnt:cnt(weekEnd) },
+          { when:'이달 말 ~' + shortDate(mEnd) + ' 누적', amt:cum(mEnd), cnt:cnt(mEnd) }
+        ];
+        tl.innerHTML = cards.map(function(c){
+          return '<div class="tl-card' + (c.now ? ' now' : '') + '">' +
+            '<div class="when">' + c.when + '</div>' +
+            '<div class="amt">' + fmt(c.amt) + '원</div>' +
+            '<div class="cnt">' + c.cnt + '건</div></div>';
+        }).join('');
+        if(ex){
+          var extra = [];
+          if(late) extra.push('<span class="late">예정일 지남 ' + fmt(late) + '원</span>');
+          if(later) extra.push('다음 달 이후 ' + fmt(later) + '원');
+          if(noDate) extra.push('예상일 미정 ' + fmt(noDate) + '원');
+          ex.innerHTML = extra.join(' · ');
+        }
+      }
+    }
+
+    // 기준일 직접 지정
+    var pick = document.getElementById('stratAsOf');
+    var pickOut = document.getElementById('stratAsOfOut');
+    if(pick && pickOut){
+      var pv = pick.value;
+      if(!pv){ pickOut.innerHTML = '날짜를 고르면 그날까지 누적 예상액을 보여드립니다.'; }
+      else {
+        pickOut.innerHTML = shortDate(pv) + '까지 누적 <b>' + fmt(cum(pv)) + '원</b> · ' + cnt(pv) + '건';
       }
     }
 
@@ -1302,10 +1353,7 @@
     var cls = cover >= 100 ? 'ok' : 'warn';
     lead.innerHTML =
       '부족 <b>'+fmt(gap)+'원</b> → 등록된 전략으로 <b>'+fmt(sum)+'원</b> 확보 예정 ' +
-      '<span class="'+cls+'">(커버율 '+cover.toFixed(0)+'%)</span>' +
-      '<div class="lead-sub">전략 '+rows.length+'건' +
-      (cover < 100 ? ' · 아직 <b>'+fmt(gap-sum)+'원</b>에 대한 전략이 없습니다.' : ' · 부족액을 넘어서는 계획이 잡혀 있습니다.') +
-      '</div>';
+      '<span class="'+cls+'">(커버율 '+cover.toFixed(0)+'%)</span>';
   }
 
   // ---------- item rows & chart ----------
@@ -2262,7 +2310,6 @@
       goal: toNum(document.getElementById('goalInput').value),
       month: currentMonth,
       targets: targets,
-      stratComment: document.getElementById('stratComment').innerHTML,
       strategies: strategies,
       items: items,
       rows: rows,
@@ -2284,7 +2331,6 @@
     var dbody = document.getElementById('dbBody');
     dbody.innerHTML = '';
     (state.targets || []).forEach(function(t){ dbody.appendChild(buildTargetRow(t)); });
-    if(state.stratComment) document.getElementById('stratComment').innerHTML = state.stratComment;
     var sbody = document.getElementById('stratBody');
     sbody.innerHTML = '';
     (state.strategies || []).forEach(function(st){ sbody.appendChild(buildStratRow(st)); });
@@ -2576,9 +2622,6 @@
     var slSrc = document.getElementById('slText');
     var slDst = clone.querySelector('#slText');
     if(slSrc && slDst) slDst.textContent = slSrc.value;
-
-    var lc = clone.querySelector('#stratComment');
-    if(lc) lc.innerHTML = document.getElementById('stratComment').innerHTML;
 
     // bake item rows
     var srcItem = document.getElementById('itemBody');
