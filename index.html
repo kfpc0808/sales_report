@@ -41,6 +41,7 @@
     table.log thead th, table.log tfoot td{ position:static !important; box-shadow:none !important; }
     .stable .shead > div, .stable .sfoot > div{ position:static !important; box-shadow:none !important; }
     .memo-body{ max-height:none !important; overflow:visible !important; }
+    .sl-text{ height:auto !important; min-height:0 !important; overflow:visible !important; border-color:transparent !important; }
     .log-tools{ display:none !important; }
     .mini-toggle, .memo-hint{ display:none !important; }
   }
@@ -368,6 +369,7 @@
     border:1px solid var(--line); border-radius:10px; padding:12px 13px; background:#FBFAF7; white-space:pre-wrap;
   }
   .sl-text:focus{ outline:none; border-color:var(--brass); background:#fff; box-shadow:0 2px 10px rgba(20,20,30,0.05); }
+  .sl-text.expanded{ height:auto; overflow:hidden; resize:none; }
   .sl-listbar{ display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin:20px 0 10px; }
   .sl-listbar select{
     font-family:'Pretendard',sans-serif; font-size:13px; font-weight:600; padding:7px 10px;
@@ -836,7 +838,11 @@
   </div>
 
   <div class="card sl-editor">
-    <div class="sl-head"><span id="slTitle">오늘의 전략</span><span class="sl-sub" id="slSub"></span></div>
+    <div class="sl-head">
+      <span id="slTitle">오늘의 전략</span><span class="sl-sub" id="slSub"></span>
+      <button class="mini-toggle" id="slExpandBtn" style="margin-left:auto;" onclick="toggleStratBox()">⤢ 전체 펼치기</button>
+      <button class="mini-toggle" onclick="copyStratLog(this)">⧉ 복사</button>
+    </div>
     <textarea id="slText" class="sl-text" placeholder="이 날의 전략을 적어주세요. 대상·활동·판단 근거를 남겨두면 다음 전략을 세울 때 그대로 참고가 됩니다." oninput="onStratInput()"></textarea>
   </div>
 
@@ -1445,11 +1451,33 @@
       var ta = document.getElementById('slText');
       if(document.activeElement === ta) return;      // 입력 중이면 덮지 않음
       ta.value = snap.exists ? (snap.data().content || '') : '';
+      growStratIfExpanded();
       document.getElementById('slStatus').textContent = snap.exists ? '저장된 기록' : '아직 기록 없음';
     }, function(e){ document.getElementById('slStatus').textContent = '불러오기 실패 (' + (e.code||'') + ')'; });
   }
 
+  // 전략 본문 전체 펼치기 (내용 높이에 맞춰 늘어남)
+  function toggleStratBox(){
+    var ta = document.getElementById('slText');
+    var btn = document.getElementById('slExpandBtn');
+    var on = ta.classList.toggle('expanded');
+    if(on){ ta.style.height = 'auto'; ta.style.height = (ta.scrollHeight + 4) + 'px'; }
+    else { ta.style.height = ''; }
+    if(btn) btn.textContent = on ? '⤡ 접기' : '⤢ 전체 펼치기';
+  }
+  function growStratIfExpanded(){
+    var ta = document.getElementById('slText');
+    if(ta && ta.classList.contains('expanded')){
+      ta.style.height = 'auto'; ta.style.height = (ta.scrollHeight + 4) + 'px';
+    }
+  }
+  function copyStratLog(btn){
+    var ta = document.getElementById('slText');
+    copyTsv([[ (slDateStr || '') + ' 전략' ], [ ta.value ]], btn);
+  }
+
   function onStratInput(){
+    growStratIfExpanded();
     if(!canEdit){ return; }
     document.getElementById('slStatus').textContent = '입력 중...';
     if(slSaveTimer) clearTimeout(slSaveTimer);
