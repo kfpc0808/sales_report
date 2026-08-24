@@ -412,6 +412,42 @@
                display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .sl-empty{ text-align:center; color:var(--muted); font-size:13px; padding:24px 0; }
 
+  /* 중요 일정 */
+  .td-strip{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:26px;
+             box-shadow:0 1px 3px rgba(20,20,30,0.04); }
+  .td-head{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+  .td-title{ font-family:'Noto Serif KR',serif; font-size:14px; font-weight:700; color:var(--navy); }
+  .td-count{ font-size:11.5px; font-weight:700; padding:2px 9px; border-radius:20px; background:#EFEAE0; color:#6B5122; }
+  .td-chk{ margin-left:auto; font-size:12px; color:var(--muted); display:flex; align-items:center; gap:5px; cursor:pointer; }
+  .td-add{ display:flex; gap:7px; flex-wrap:wrap; margin-bottom:10px; }
+  .td-add input[type="date"]{ font-family:'Pretendard',sans-serif; font-size:13px; font-weight:600; padding:7px 9px;
+        border:1px solid var(--line); border-radius:8px; background:#FBFAF7; color:var(--navy); }
+  .td-add input[type="text"]{ flex:1; min-width:180px; font-family:'Pretendard',sans-serif; font-size:13.5px;
+        padding:7px 11px; border:1px solid var(--line); border-radius:8px; background:#FBFAF7; color:var(--ink); }
+  .td-add input:focus{ outline:none; border-color:var(--brass); background:#fff; }
+  .td-list{ display:flex; flex-direction:column; }
+  .td-row{ display:flex; align-items:center; gap:9px; padding:7px 2px; border-top:1px solid #F2F0EA; font-size:13.5px; }
+  .td-row:first-child{ border-top:none; }
+  .td-dday{ flex:0 0 auto; min-width:52px; text-align:center; font-size:11px; font-weight:800; padding:2px 7px;
+            border-radius:20px; background:#EFEAE0; color:#6B5122; }
+  .td-dday.soon{ background:#FBF0E4; color:var(--brass); }
+  .td-dday.today{ background:var(--brass); color:#fff; }
+  .td-dday.late{ background:var(--red-bg); color:var(--red); }
+  .td-date{ flex:0 0 auto; font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums; min-width:44px; }
+  .td-text{ flex:1; min-width:0; color:var(--ink); word-break:break-word; }
+  .td-row.done .td-text{ color:#A9A497; text-decoration:line-through; }
+  .td-row.done .td-dday{ background:var(--green-bg); color:var(--green); }
+  .td-btn{ flex:0 0 auto; background:none; border:none; cursor:pointer; font-size:12px; color:#BCB6A7; padding:3px 5px; }
+  .td-btn:hover{ color:var(--brass); }
+  .td-btn.ok:hover{ color:var(--green); }
+  .td-empty{ font-size:12.5px; color:var(--muted); padding:6px 2px; }
+  @media (max-width:768px){
+    .td-strip{ padding:12px 13px; margin-bottom:20px; }
+    .td-add input[type="text"]{ min-width:120px; }
+    .td-date{ display:none; }
+  }
+  @media print{ .td-add, .td-chk{ display:none !important; } }
+
   /* 주별 막대 · 누적 선 그래프 */
   .wc-legend{ display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin-bottom:14px; }
   .wc-legend span{ display:flex; align-items:center; gap:5px; }
@@ -612,6 +648,21 @@
     <div><div class="fs-label">현재 확보 매출</div><div class="fs-num"><span id="fsCur">0</span>원</div></div>
     <div><div class="fs-label">목표 매출</div><div class="fs-num" id="fsGoal">0원</div></div>
     <div class="fs-gap"><div class="fs-label">부족 금액</div><div class="fs-num"><span id="fsGap">0</span>원</div></div>
+  </div>
+
+  <!-- 중요 일정 -->
+  <div class="td-strip">
+    <div class="td-head">
+      <span class="td-title">중요 일정 · 해야 할 일</span>
+      <span class="td-count" id="tdCount"></span>
+      <label class="td-chk"><input type="checkbox" id="tdShowDone" onchange="renderTodos()"> 완료 포함</label>
+    </div>
+    <div class="td-add" id="tdAdd">
+      <input type="date" id="tdDate">
+      <input type="text" id="tdText" placeholder="예: 9월 전략회의 이너서클 프로그램 보고 (Enter로 추가)" autocomplete="off">
+      <button class="mini-toggle" onclick="addTodo()">+ 추가</button>
+    </div>
+    <div class="td-list" id="tdList"></div>
   </div>
 
   <!-- 주별 요약 -->
@@ -1521,6 +1572,92 @@
     document.body.appendChild(ta); ta.select();
     try{ document.execCommand('copy'); }catch(e){}
     document.body.removeChild(ta);
+  }
+
+  // ---------- 중요 일정 ----------
+  var TODOS = 'todos';
+  var todoList = [];
+
+  function initTodos(){
+    if(!firebaseReady) return;
+    db.collection(TODOS).orderBy('date','asc').onSnapshot(function(snap){
+      todoList = [];
+      snap.forEach(function(doc){ var v = doc.data(); v.id = doc.id; todoList.push(v); });
+      renderTodos();
+    }, function(){ /* 조회 실패 시 조용히 넘어감 */ });
+  }
+
+  function addTodo(){
+    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    var dt = document.getElementById('tdDate').value;
+    var tx = document.getElementById('tdText').value.trim();
+    if(!tx){ document.getElementById('tdText').focus(); return; }
+    if(!dt) dt = localISO(new Date());
+    db.collection(TODOS).add({ date: dt, text: tx, done: false, createdAt: new Date().toISOString() })
+      .then(function(){
+        document.getElementById('tdText').value = '';
+        document.getElementById('tdText').focus();
+      })
+      .catch(function(e){ alert('저장 실패 (' + (e.code || e.message) + ')'); });
+  }
+
+  function toggleTodo(id, cur){
+    if(!canEdit) return;
+    db.collection(TODOS).doc(id).update({ done: !cur });
+  }
+
+  function removeTodo(id){
+    if(!canEdit) return;
+    if(!confirm('이 일정을 지울까요?')) return;
+    db.collection(TODOS).doc(id).delete();
+  }
+
+  function ddayLabel(dateStr){
+    var t = localISO(new Date());
+    if(dateStr === t) return { txt:'오늘', cls:'today' };
+    var a = new Date(t.replace(/-/g,'/')), b = new Date(String(dateStr).replace(/-/g,'/'));
+    var diff = Math.round((b - a) / 86400000);
+    if(diff < 0) return { txt: (-diff) + '일 지남', cls:'late' };
+    return { txt: 'D-' + diff, cls: diff <= 7 ? 'soon' : '' };
+  }
+
+  function renderTodos(){
+    var box = document.getElementById('tdList');
+    if(!box) return;
+    var showDone = document.getElementById('tdShowDone').checked;
+    var list = todoList.filter(function(x){ return showDone || !x.done; });
+    list.sort(function(a,b){
+      if(!!a.done !== !!b.done) return a.done ? 1 : -1;   // 완료는 아래로
+      return String(a.date).localeCompare(String(b.date));
+    });
+
+    var openCnt = todoList.filter(function(x){ return !x.done; }).length;
+    var lateCnt = todoList.filter(function(x){ return !x.done && x.date < localISO(new Date()); }).length;
+    var cc = document.getElementById('tdCount');
+    if(cc) cc.textContent = openCnt + '건' + (lateCnt ? ' · 기한 지남 ' + lateCnt : '');
+
+    if(!list.length){
+      box.innerHTML = '<div class="td-empty">' + (canEdit ? '날짜와 내용을 적고 Enter를 누르면 추가됩니다.' : '등록된 일정이 없습니다.') + '</div>';
+      return;
+    }
+    box.innerHTML = '';
+    list.forEach(function(x){
+      var d = ddayLabel(x.date);
+      var row = document.createElement('div');
+      row.className = 'td-row' + (x.done ? ' done' : '');
+      row.innerHTML =
+        '<span class="td-dday ' + (x.done ? '' : d.cls) + '">' + (x.done ? '완료' : escapeHtml(d.txt)) + '</span>' +
+        '<span class="td-date">' + escapeHtml(shortDate(x.date)) + '</span>' +
+        '<span class="td-text">' + escapeHtml(x.text || '') + '</span>' +
+        (canEdit ? '<button class="td-btn ok" title="완료 전환">' + (x.done ? '↺' : '✓') + '</button>' +
+                   '<button class="td-btn" title="삭제">✕</button>' : '');
+      if(canEdit){
+        var btns = row.querySelectorAll('.td-btn');
+        btns[0].onclick = function(){ toggleTodo(x.id, !!x.done); };
+        btns[1].onclick = function(){ removeTodo(x.id); };
+      }
+      box.appendChild(row);
+    });
   }
 
   // ---------- 일자별 전략 일지 ----------
@@ -2475,6 +2612,9 @@
     // 메모는 잠그지 않고 '수정 불가'로 둠 — 읽기 전용으로 보는 사람도 눌러서 전체를 볼 수 있어야 함
     var slt = document.getElementById('slText');
     if(slt) slt.readOnly = !editable;
+    var tda = document.getElementById('tdAdd');
+    if(tda) tda.style.display = editable ? '' : 'none';
+    renderTodos();
     document.querySelectorAll('#goalBody textarea.g-memo, #stratBody textarea.s-memo, #dbBody textarea.d-memo').forEach(function(el){
       el.disabled = false;
       el.readOnly = !editable;
@@ -2558,6 +2698,9 @@
     setGoalRange('rest');
     goStratToday();
     loadStratList();
+    initTodos();
+    document.getElementById('tdText').addEventListener('keydown', function(e){ if(e.key === 'Enter') addTodo(); });
+    document.getElementById('tdDate').value = localISO(new Date());
   }
 
   // ---------- export snapshot ----------
