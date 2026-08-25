@@ -418,14 +418,19 @@
   .td-head{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
   .td-title{ font-family:'Noto Serif KR',serif; font-size:14px; font-weight:700; color:var(--navy); }
   .td-count{ font-size:11.5px; font-weight:700; padding:2px 9px; border-radius:20px; background:#EFEAE0; color:#6B5122; }
-  .td-chk{ margin-left:auto; font-size:12px; color:var(--muted); display:flex; align-items:center; gap:5px; cursor:pointer; }
+  .td-chk{ font-size:12px; color:var(--muted); display:flex; align-items:center; gap:5px; cursor:pointer; }
   .td-add{ display:flex; gap:7px; flex-wrap:wrap; margin-bottom:10px; }
   .td-add input[type="date"]{ font-family:'Pretendard',sans-serif; font-size:13px; font-weight:600; padding:7px 9px;
         border:1px solid var(--line); border-radius:8px; background:#FBFAF7; color:var(--navy); }
   .td-add input[type="text"]{ flex:1; min-width:180px; font-family:'Pretendard',sans-serif; font-size:13.5px;
         padding:7px 11px; border:1px solid var(--line); border-radius:8px; background:#FBFAF7; color:var(--ink); }
   .td-add input:focus{ outline:none; border-color:var(--brass); background:#fff; }
-  .td-list{ display:flex; flex-direction:column; }
+  .td-list{ display:flex; flex-direction:column; max-height:210px; overflow-y:auto; }
+  .td-list.expanded{ max-height:none; overflow-y:visible; }
+  .td-list::-webkit-scrollbar{ width:8px; }
+  .td-list::-webkit-scrollbar-thumb{ background:#D9D4C8; border-radius:8px; }
+  .td-exp{ margin-left:auto; padding:5px 11px; min-height:28px; font-size:11.5px; }
+  .td-chk{ margin-left:0; }
   .td-row{ display:flex; align-items:center; gap:9px; padding:7px 2px; border-top:1px solid #F2F0EA; font-size:13.5px; }
   .td-row:first-child{ border-top:none; }
   .td-dday{ flex:0 0 auto; min-width:52px; text-align:center; font-size:11px; font-weight:800; padding:2px 7px;
@@ -435,6 +440,15 @@
   .td-dday.late{ background:var(--red-bg); color:var(--red); }
   .td-date{ flex:0 0 auto; font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums; min-width:44px; }
   .td-text{ flex:1; min-width:0; color:var(--ink); word-break:break-word; }
+  input.td-text{ font-family:'Pretendard',sans-serif; font-size:13.5px; border:1px solid transparent;
+        background:transparent; border-radius:6px; padding:4px 7px; }
+  input.td-text:hover{ border-color:var(--line); background:#FBFAF7; }
+  input.td-text:focus{ border-color:var(--brass); background:#fff; outline:none; }
+  .td-editdate{ flex:0 0 auto; width:118px; font-family:'Pretendard',sans-serif; font-size:12px; color:var(--muted);
+        border:1px solid transparent; background:transparent; border-radius:6px; padding:4px 3px; }
+  .td-editdate:hover{ border-color:var(--line); background:#FBFAF7; }
+  .td-editdate:focus{ border-color:var(--brass); background:#fff; outline:none; }
+  .td-row.done input.td-text{ color:#A9A497; text-decoration:line-through; }
   .td-row.done .td-text{ color:#A9A497; text-decoration:line-through; }
   .td-row.done .td-dday{ background:var(--green-bg); color:var(--green); }
   .td-btn{ flex:0 0 auto; background:none; border:none; cursor:pointer; font-size:12px; color:#BCB6A7; padding:3px 5px; }
@@ -445,8 +459,12 @@
     .td-strip{ padding:12px 13px; margin-bottom:20px; }
     .td-add input[type="text"]{ min-width:120px; }
     .td-date{ display:none; }
+    .td-editdate{ width:100px; }
   }
-  @media print{ .td-add, .td-chk{ display:none !important; } }
+  @media print{
+    .td-add, .td-chk, .td-exp{ display:none !important; }
+    .td-list{ max-height:none !important; overflow:visible !important; }
+  }
 
   /* 주별 막대 · 누적 선 그래프 */
   .wc-legend{ display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin-bottom:14px; }
@@ -655,6 +673,7 @@
     <div class="td-head">
       <span class="td-title">중요 일정 · 해야 할 일</span>
       <span class="td-count" id="tdCount"></span>
+      <button class="mini-toggle td-exp" id="tdExpandBtn" onclick="toggleTodoBox()">⤢ 전체 펼치기</button>
       <label class="td-chk"><input type="checkbox" id="tdShowDone" onchange="renderTodos()"> 완료 포함</label>
     </div>
     <div class="td-add" id="tdAdd">
@@ -1601,6 +1620,25 @@
       .catch(function(e){ alert('저장 실패 (' + (e.code || e.message) + ')'); });
   }
 
+  function toggleTodoBox(){
+    var box = document.getElementById('tdList');
+    var btn = document.getElementById('tdExpandBtn');
+    var on = box.classList.toggle('expanded');
+    if(btn) btn.textContent = on ? '⤡ 접기' : '⤢ 전체 펼치기';
+  }
+
+  // 목록에서 날짜·내용을 직접 고쳐 저장
+  function saveTodoField(id, field, val, prev){
+    if(!canEdit) return;
+    if(val === prev) return;
+    if(field === 'text' && !val){ renderTodos(); return; }   // 내용을 비우면 되돌림
+    if(field === 'date' && !val){ renderTodos(); return; }
+    var patch = {};
+    patch[field] = val;
+    db.collection(TODOS).doc(id).update(patch)
+      .catch(function(e){ alert('수정 실패 (' + (e.code || e.message) + ')'); renderTodos(); });
+  }
+
   function toggleTodo(id, cur){
     if(!canEdit) return;
     db.collection(TODOS).doc(id).update({ done: !cur });
@@ -1647,14 +1685,21 @@
       row.className = 'td-row' + (x.done ? ' done' : '');
       row.innerHTML =
         '<span class="td-dday ' + (x.done ? '' : d.cls) + '">' + (x.done ? '완료' : escapeHtml(d.txt)) + '</span>' +
-        '<span class="td-date">' + escapeHtml(shortDate(x.date)) + '</span>' +
-        '<span class="td-text">' + escapeHtml(x.text || '') + '</span>' +
+        (canEdit
+          ? '<input type="date" class="td-editdate" value="' + escapeAttr(x.date || '') + '">' +
+            '<input type="text" class="td-text td-edit" value="' + escapeAttr(x.text || '') + '">'
+          : '<span class="td-date">' + escapeHtml(shortDate(x.date)) + '</span>' +
+            '<span class="td-text">' + escapeHtml(x.text || '') + '</span>') +
         (canEdit ? '<button class="td-btn ok" title="완료 전환">' + (x.done ? '↺' : '✓') + '</button>' +
                    '<button class="td-btn" title="삭제">✕</button>' : '');
       if(canEdit){
         var btns = row.querySelectorAll('.td-btn');
         btns[0].onclick = function(){ toggleTodo(x.id, !!x.done); };
         btns[1].onclick = function(){ removeTodo(x.id); };
+        var te = row.querySelector('.td-edit'), de = row.querySelector('.td-editdate');
+        te.onchange = function(){ saveTodoField(x.id, 'text', te.value.trim(), x.text || ''); };
+        te.onkeydown = function(e){ if(e.key === 'Enter') te.blur(); };
+        de.onchange = function(){ saveTodoField(x.id, 'date', de.value, x.date || ''); };
       }
       box.appendChild(row);
     });
