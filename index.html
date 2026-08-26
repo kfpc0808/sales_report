@@ -462,6 +462,21 @@
   .td-btn:hover{ color:var(--brass); }
   .td-btn.ok:hover{ color:var(--green); }
   .td-empty{ font-size:12.5px; color:var(--muted); padding:6px 2px; }
+  .td-filter{ display:flex; align-items:center; gap:5px; }
+  .td-flab{ font-size:11px; font-weight:700; letter-spacing:.06em; color:var(--brass); }
+  .td-filter input[type="date"]{ font-family:'Pretendard',sans-serif; font-size:12px; font-weight:600; padding:4px 7px;
+        border:1px solid var(--line); border-radius:7px; background:#FBFAF7; color:var(--navy); }
+  .td-filter input[type="date"]:focus{ outline:none; border-color:var(--brass); background:#fff; }
+  .td-fbtn{ font-family:'Pretendard',sans-serif; font-size:11.5px; font-weight:700; padding:4px 9px; border-radius:20px;
+        border:1px solid var(--line); background:#fff; color:var(--muted); cursor:pointer; }
+  .td-fbtn:hover{ border-color:var(--brass); color:var(--brass); }
+  .td-sec{ display:flex; align-items:center; gap:8px; padding:9px 2px 5px; }
+  .td-sec:first-child{ padding-top:2px; }
+  .td-sec .lb{ font-size:11px; font-weight:800; letter-spacing:.08em; color:var(--brass); white-space:nowrap; }
+  .td-sec .lb.late{ color:var(--red); }
+  .td-sec .lb.done{ color:var(--green); }
+  .td-sec .ln{ flex:1; height:1px; background:var(--line); }
+  .td-doneat{ flex:0 0 auto; font-size:11px; color:var(--green); }
   @media (max-width:768px){
     .td-strip{ padding:12px 13px; margin-bottom:20px; }
     .td-add input[type="text"]{ min-width:120px; }
@@ -680,6 +695,12 @@
     <div class="td-head">
       <span class="td-title">중요 일정 · 해야 할 일</span>
       <span class="td-count" id="tdCount"></span>
+      <span class="td-filter">
+        <span class="td-flab">날짜 보기</span>
+        <input type="date" id="tdFilter" onchange="renderTodos()">
+        <button class="td-fbtn" onclick="setTodoFilter(0)">오늘</button>
+        <button class="td-fbtn" onclick="clearTodoFilter()">전체</button>
+      </span>
       <button class="mini-toggle td-exp" id="tdExpandBtn" onclick="toggleTodoBox()">⤢ 전체 펼치기</button>
       <label class="td-chk"><input type="checkbox" id="tdShowDone" onchange="renderTodos()"> 완료 포함</label>
     </div>
@@ -1682,7 +1703,7 @@
 
   function toggleTodo(id, cur){
     if(!canEdit) return;
-    db.collection(TODOS).doc(id).update({ done: !cur });
+    db.collection(TODOS).doc(id).update({ done: !cur, doneAt: cur ? '' : localISO(new Date()) });
   }
 
   function removeTodo(id){
@@ -1700,50 +1721,101 @@
     return { txt: 'D-' + diff, cls: diff <= 7 ? 'soon' : '' };
   }
 
+  function setTodoFilter(offset){
+    var x = new Date(); x.setDate(x.getDate() + offset);
+    document.getElementById('tdFilter').value = localISO(x);
+    renderTodos();
+  }
+  function clearTodoFilter(){
+    document.getElementById('tdFilter').value = '';
+    renderTodos();
+  }
+
   function renderTodos(){
     var box = document.getElementById('tdList');
     if(!box) return;
+    var today = localISO(new Date());
     var showDone = document.getElementById('tdShowDone').checked;
-    var list = todoList.filter(function(x){ return showDone || !x.done; });
-    list.sort(function(a,b){
-      if(!!a.done !== !!b.done) return a.done ? 1 : -1;   // 완료는 아래로
-      return String(a.date).localeCompare(String(b.date));
-    });
+    var filter = document.getElementById('tdFilter') ? document.getElementById('tdFilter').value : '';
 
     var openCnt = todoList.filter(function(x){ return !x.done; }).length;
-    var lateCnt = todoList.filter(function(x){ return !x.done && x.date < localISO(new Date()); }).length;
+    var lateCnt = todoList.filter(function(x){ return !x.done && x.date < today; }).length;
+    var todayCnt = todoList.filter(function(x){ return !x.done && x.date === today; }).length;
+    var doneCnt = todoList.filter(function(x){ return x.done; }).length;
     var cc = document.getElementById('tdCount');
-    if(cc) cc.textContent = openCnt + '건' + (lateCnt ? ' · 기한 지남 ' + lateCnt : '');
+    if(cc){
+      cc.textContent = openCnt + '건' +
+        (todayCnt ? ' · 오늘 ' + todayCnt : '') +
+        (lateCnt ? ' · 기한 지남 ' + lateCnt : '') +
+        (doneCnt ? ' · 완료 ' + doneCnt : '');
+    }
 
-    if(!list.length){
-      box.innerHTML = '<div class="td-empty">' + (canEdit ? '날짜와 내용을 적고 Enter를 누르면 추가됩니다.' : '등록된 일정이 없습니다.') + '</div>';
+    box.innerHTML = '';
+
+    // 특정 날짜만 보기
+    if(filter){
+      var day = todoList.filter(function(x){ return x.date === filter && (showDone || !x.done); });
+      addSection(box, shortDate(filter) + ' 일정 ' + day.length + '건' + (filter === today ? ' (오늘)' : ''), '');
+      if(!day.length){ box.appendChild(emptyRow('이 날짜에 등록된 일정이 없습니다.')); return; }
+      day.forEach(function(x){ box.appendChild(todoRow(x, today)); });
       return;
     }
-    box.innerHTML = '';
-    list.forEach(function(x){
-      var d = ddayLabel(x.date);
-      var row = document.createElement('div');
-      row.className = 'td-row' + (x.done ? ' done' : '');
-      row.innerHTML =
-        '<span class="td-dday ' + (x.done ? '' : d.cls) + '">' + (x.done ? '완료' : escapeHtml(d.txt)) + '</span>' +
-        (canEdit
-          ? '<input type="date" class="td-editdate" value="' + escapeAttr(x.date || '') + '">' +
-            '<input type="text" class="td-text td-edit" value="' + escapeAttr(x.text || '') + '">'
-          : '<span class="td-date">' + escapeHtml(shortDate(x.date)) + '</span>' +
-            '<span class="td-text">' + escapeHtml(x.text || '') + '</span>') +
-        (canEdit ? '<button class="td-btn ok" title="완료 전환">' + (x.done ? '↺' : '✓') + '</button>' +
-                   '<button class="td-btn" title="삭제">✕</button>' : '');
-      if(canEdit){
-        var btns = row.querySelectorAll('.td-btn');
-        btns[0].onclick = function(){ toggleTodo(x.id, !!x.done); };
-        btns[1].onclick = function(){ removeTodo(x.id); };
-        var te = row.querySelector('.td-edit'), de = row.querySelector('.td-editdate');
-        te.onchange = function(){ saveTodoField(x.id, 'text', te.value.trim(), x.text || ''); };
-        te.onkeydown = function(e){ if(e.key === 'Enter') te.blur(); };
-        de.onchange = function(){ saveTodoField(x.id, 'date', de.value, x.date || ''); };
-      }
-      box.appendChild(row);
+
+    // 오늘 → 기한 지남 → 예정 → 완료 순
+    var byDate = function(a,b){ return String(a.date).localeCompare(String(b.date)); };
+    var g1 = todoList.filter(function(x){ return !x.done && x.date === today; }).sort(byDate);
+    var g2 = todoList.filter(function(x){ return !x.done && x.date < today; }).sort(byDate);
+    var g3 = todoList.filter(function(x){ return !x.done && x.date > today; }).sort(byDate);
+    var g4 = showDone ? todoList.filter(function(x){ return x.done; })
+              .sort(function(a,b){ return String(b.doneAt||b.date).localeCompare(String(a.doneAt||a.date)); }) : [];
+
+    if(!g1.length && !g2.length && !g3.length && !g4.length){
+      box.appendChild(emptyRow(canEdit ? '날짜와 내용을 적고 Enter를 누르면 추가됩니다.' : '등록된 일정이 없습니다.'));
+      return;
+    }
+    [[g1,'오늘 ' + shortDate(today),''], [g2,'기한 지남','late'], [g3,'예정',''], [g4,'완료','done']].forEach(function(gp){
+      if(!gp[0].length) return;
+      addSection(box, gp[1] + ' ' + gp[0].length + '건', gp[2]);
+      gp[0].forEach(function(x){ box.appendChild(todoRow(x, today)); });
     });
+  }
+
+  function addSection(box, label, cls){
+    var sec = document.createElement('div');
+    sec.className = 'td-sec';
+    sec.innerHTML = '<span class="lb ' + cls + '">' + escapeHtml(label) + '</span><span class="ln"></span>';
+    box.appendChild(sec);
+  }
+  function emptyRow(txt){
+    var e = document.createElement('div');
+    e.className = 'td-empty'; e.textContent = txt;
+    return e;
+  }
+
+  function todoRow(x, today){
+    var d = ddayLabel(x.date);
+    var row = document.createElement('div');
+    row.className = 'td-row' + (x.done ? ' done' : '');
+    row.innerHTML =
+      '<span class="td-dday ' + (x.done ? '' : d.cls) + '">' + (x.done ? '완료' : escapeHtml(d.txt)) + '</span>' +
+      (canEdit
+        ? '<input type="date" class="td-editdate" value="' + escapeAttr(x.date || '') + '">' +
+          '<input type="text" class="td-text td-edit" value="' + escapeAttr(x.text || '') + '">'
+        : '<span class="td-date">' + escapeHtml(shortDate(x.date)) + '</span>' +
+          '<span class="td-text">' + escapeHtml(x.text || '') + '</span>') +
+      (x.done && x.doneAt ? '<span class="td-doneat">' + escapeHtml(shortDate(x.doneAt)) + ' 완료</span>' : '') +
+      (canEdit ? '<button class="td-btn ok" title="' + (x.done ? '완료 취소' : '완료 처리') + '">' + (x.done ? '↺' : '✓') + '</button>' +
+                 '<button class="td-btn" title="삭제">✕</button>' : '');
+    if(canEdit){
+      var btns = row.querySelectorAll('.td-btn');
+      btns[0].onclick = function(){ toggleTodo(x.id, !!x.done); };
+      btns[1].onclick = function(){ removeTodo(x.id); };
+      var te = row.querySelector('.td-edit'), de = row.querySelector('.td-editdate');
+      te.onchange = function(){ saveTodoField(x.id, 'text', te.value.trim(), x.text || ''); };
+      te.onkeydown = function(e){ if(e.key === 'Enter') te.blur(); };
+      de.onchange = function(){ saveTodoField(x.id, 'date', de.value, x.date || ''); };
+    }
+    return row;
   }
 
   // ---------- 일자별 전략 일지 ----------
