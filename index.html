@@ -260,6 +260,17 @@
   }
   .stable input[type="date"]:hover{ border-color:var(--line); background:#FBFAF7; }
   .stable input[type="date"]:focus{ border-color:var(--brass); background:#fff; outline:none; }
+  .due-cell{ flex-direction:column; align-items:flex-start !important; gap:2px; }
+  .due-chip{ font-size:9.5px; font-weight:800; letter-spacing:.03em; padding:1px 7px; border-radius:20px;
+             background:#EFEAE0; color:#6B5122; white-space:nowrap; }
+  .due-chip.late{ background:var(--red-bg); color:var(--red); }
+  .due-chip.today{ background:var(--brass); color:#fff; }
+  .due-chip.soon{ background:#FBF0E4; color:var(--brass); }
+  .due-chip.none{ background:#F0EEE9; color:#A9A497; }
+  .srow.strat-row > div:first-child{ box-shadow:inset 3px 0 0 transparent; }
+  .srow.due-late > div:first-child{ box-shadow:inset 3px 0 0 var(--red); }
+  .srow.due-today > div:first-child{ box-shadow:inset 3px 0 0 var(--brass); }
+  .srow.due-none > div:first-child{ box-shadow:inset 3px 0 0 #DCD7C9; }
   .srow.overdue input[type="date"]{ color:var(--red); font-weight:700; }
   .tl-cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:10px;
              margin-top:15px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.16); }
@@ -784,6 +795,7 @@
   <div class="log-tools">
     <button class="mini-toggle" id="stratExpandBtn" onclick="toggleBoxById('stratScrollBox',this)">⤢ 전체 펼치기</button>
     <button class="mini-toggle" onclick="copyStratTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
+    <button class="mini-toggle" onclick="sortStratRows()">⇅ 예상일순 정렬</button>
     <span class="chip-cnt" id="stratCount"></span>
   </div>
   <div class="log-scroll scroll-y" id="stratScrollBox">
@@ -1341,7 +1353,8 @@
       '<div><input type="text" class="s-target" placeholder="대상 이름을 쉼표로 나열" value="'+escapeAttr(data.target||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><textarea class="s-memo" rows="1" placeholder="인원·회차·특이사항 (클릭하면 전체가 펼쳐집니다)" ' +
         'onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(memoVal)+'</textarea></div>' +
-      '<div><input type="date" class="s-due" value="'+escapeAttr(data.due||'')+'" oninput="onRowChange(this)"></div>' +
+      '<div class="due-cell"><span class="due-chip"></span>' +
+        '<input type="date" class="s-due" value="'+escapeAttr(data.due||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><input type="text" inputmode="numeric" class="s-amt amt" placeholder="0" value="'+(data.amount?fmt(data.amount):'')+'" oninput="onAmountInput(this)"></div>' +
       '<div class="g-mid"><button class="del-x" onclick="removeStratRow(this)">✕</button></div>';
     return row;
@@ -1356,6 +1369,28 @@
   function removeStratRow(btn){
     btn.closest('.strat-row').remove();
     recalcAll();
+    scheduleSave();
+  }
+
+  // 예상일 순으로 재배열 (지남 → 오늘 → 예정 → 미정)
+  function sortStratRows(){
+    var body = document.getElementById('stratBody');
+    var rows = Array.prototype.slice.call(body.querySelectorAll('.strat-row'));
+    var today = localISO(new Date());
+    var bucket = function(d){
+      if(!d) return 3;
+      if(d < today) return 0;
+      if(d === today) return 1;
+      return 2;
+    };
+    rows.sort(function(a, b){
+      var da = a.querySelector('.s-due').value, dbv = b.querySelector('.s-due').value;
+      var ba = bucket(da), bb = bucket(dbv);
+      if(ba !== bb) return ba - bb;
+      return String(da).localeCompare(String(dbv));
+    });
+    rows.forEach(function(r){ body.appendChild(r); });
+    recalcNow();
     scheduleSave();
   }
 
@@ -1403,6 +1438,20 @@
       sum += amt;
       var due = row.querySelector('.s-due').value;
       row.classList.toggle('overdue', !!due && due < todayS);
+
+      // 예상일 상태 배지 · 행 색 띠
+      var chip = row.querySelector('.due-chip');
+      row.classList.remove('due-late','due-today','due-none');
+      if(chip){
+        if(!due){ chip.textContent = '미정'; chip.className = 'due-chip none'; row.classList.add('due-none'); }
+        else {
+          var dl = ddayLabel(due);
+          chip.textContent = dl.txt;
+          chip.className = 'due-chip ' + (dl.cls || '');
+          if(dl.cls === 'late') row.classList.add('due-late');
+          else if(dl.cls === 'today') row.classList.add('due-today');
+        }
+      }
       if(!due){ noDate += amt; return; }
       dated.push({ due: due, amt: amt });
       if(due < todayS){ late += amt; }
@@ -2915,7 +2964,8 @@
           '<div><input type="text" class="s-name" value="'+escapeAttr(row.querySelector('.s-name').value)+'" oninput="onRowChange(this)"></div>' +
           '<div><input type="text" class="s-target" value="'+escapeAttr(row.querySelector('.s-target').value)+'" oninput="onRowChange(this)"></div>' +
           '<div><textarea class="s-memo" rows="1" onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(row.querySelector('.s-memo').value)+'</textarea></div>' +
-          '<div><input type="date" class="s-due" value="'+escapeAttr(row.querySelector('.s-due').value)+'" oninput="onRowChange(this)"></div>' +
+          '<div class="due-cell"><span class="due-chip"></span>' +
+            '<input type="date" class="s-due" value="'+escapeAttr(row.querySelector('.s-due').value)+'" oninput="onRowChange(this)"></div>' +
           '<div><input type="text" inputmode="numeric" class="s-amt amt" value="'+escapeAttr(row.querySelector('.s-amt').value)+'" oninput="onAmountInput(this)"></div>' +
           '<div class="g-mid"><button class="del-x" onclick="removeStratRow(this)">✕</button></div>';
         dstStrat.appendChild(r);
