@@ -278,7 +278,14 @@
     border:1px solid rgba(255,255,255,0.28); background:rgba(255,255,255,0.10); color:#fff;
   }
   .tl-pick input[type="date"]:focus{ outline:none; border-color:var(--brass); background:rgba(255,255,255,0.16); }
-  .tl-pick-out{ font-family:'Pretendard',sans-serif; font-size:13.5px; font-weight:400; color:#D5D9E3; }
+  .tl-tilde{ color:#9AA3B5; font-size:13px; }
+  .tl-quick{
+    font-family:'Pretendard',sans-serif; font-size:11.5px; font-weight:700; padding:6px 11px; border-radius:20px;
+    border:1px solid rgba(255,255,255,0.24); background:none; color:var(--brass-light); cursor:pointer; min-height:30px;
+  }
+  .tl-quick:hover{ background:rgba(255,255,255,0.12); color:#fff; }
+  .tl-pick-out{ font-family:'Pretendard',sans-serif; font-size:13.5px; font-weight:400; color:#D5D9E3;
+                flex:1 1 100%; margin-top:2px; }
   .tl-pick-out b{ color:var(--brass-light); font-weight:800; font-size:15px; }
 
   /* bar chart */
@@ -741,9 +748,15 @@
     <div class="tl-cards" id="leadTimeline"></div>
     <div class="tl-extra" id="leadExtra"></div>
     <div class="tl-pick">
-      <span class="tl-pick-lab">기준일 지정</span>
-      <input type="date" id="stratAsOf" onchange="recalcNow()">
-      <span class="tl-pick-out" id="stratAsOfOut">날짜를 고르면 그날까지 누적 예상액을 보여드립니다.</span>
+      <span class="tl-pick-lab">구간 조회</span>
+      <input type="date" id="stratFrom" onchange="recalcNow()">
+      <span class="tl-tilde">~</span>
+      <input type="date" id="stratTo" onchange="recalcNow()">
+      <button class="tl-quick" onclick="setStratRange('rest')">오늘~말일</button>
+      <button class="tl-quick" onclick="setStratRange('week')">이번 주</button>
+      <button class="tl-quick" onclick="setStratRange('month')">이번 달</button>
+      <button class="tl-quick" onclick="setStratRange('all')">전체</button>
+      <span class="tl-pick-out" id="stratAsOfOut"></span>
     </div>
   </div>
 
@@ -1325,6 +1338,25 @@
     scheduleSave();
   }
 
+  function setStratRange(kind){
+    var t = new Date(), from, to;
+    var last = new Date(t.getFullYear(), t.getMonth() + 1, 0);
+    if(kind === 'all'){
+      document.getElementById('stratFrom').value = '';
+      document.getElementById('stratTo').value = '';
+      recalcNow(); return;
+    }
+    if(kind === 'rest'){ from = t; to = last; }
+    else if(kind === 'week'){
+      var wd = t.getDay();
+      from = new Date(t); from.setDate(t.getDate() + (wd === 0 ? -6 : 1 - wd));
+      to = new Date(from); to.setDate(from.getDate() + 6);
+    } else { from = new Date(t.getFullYear(), t.getMonth(), 1); to = last; }
+    document.getElementById('stratFrom').value = localISO(from);
+    document.getElementById('stratTo').value = localISO(to);
+    recalcNow();
+  }
+
   function shortDate(iso){
     if(!iso) return '';
     var p = String(iso).split('-');
@@ -1395,14 +1427,23 @@
       }
     }
 
-    // 기준일 직접 지정
-    var pick = document.getElementById('stratAsOf');
+    // 구간 조회 (시작일 ~ 종료일)
+    var pf = document.getElementById('stratFrom');
+    var pt = document.getElementById('stratTo');
     var pickOut = document.getElementById('stratAsOfOut');
-    if(pick && pickOut){
-      var pv = pick.value;
-      if(!pv){ pickOut.innerHTML = '날짜를 고르면 그날까지 누적 예상액을 보여드립니다.'; }
-      else {
-        pickOut.innerHTML = shortDate(pv) + '까지 누적 <b>' + fmt(cum(pv)) + '원</b> · ' + cnt(pv) + '건';
+    if(pf && pt && pickOut){
+      var f = pf.value, tt = pt.value;
+      {
+        if(f && tt && f > tt){ var sw = f; f = tt; tt = sw; pf.value = f; pt.value = tt; }
+        var rSum = 0, rCnt = 0;
+        dated.forEach(function(x){
+          if(f && x.due < f) return;
+          if(tt && x.due > tt) return;
+          rSum += x.amt; rCnt++;
+        });
+        var label = (!f && !tt) ? '예상일 등록된 전체' : ((f ? shortDate(f) : '처음') + ' ~ ' + (tt ? shortDate(tt) : '끝'));
+        pickOut.innerHTML = label + ' 구간 예상 <b>' + fmt(rSum) + '원</b> · ' + rCnt + '건' +
+          (rCnt === 0 ? ' <span style="color:#9AA3B5;">(이 구간에 예정된 건이 없습니다)</span>' : '');
       }
     }
 
@@ -2744,6 +2785,7 @@
     goStratToday();
     loadStratList();
     initTodos();
+    setStratRange('rest');
     document.getElementById('tdText').addEventListener('keydown', function(e){ if(e.key === 'Enter') addTodo(); });
     document.getElementById('tdDate').value = localISO(new Date());
   }
