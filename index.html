@@ -795,7 +795,7 @@
   <div class="log-tools">
     <button class="mini-toggle" id="stratExpandBtn" onclick="toggleBoxById('stratScrollBox',this)">⤢ 전체 펼치기</button>
     <button class="mini-toggle" onclick="copyStratTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
-    <button class="mini-toggle" onclick="sortStratRows()">⇅ 예상일순 정렬</button>
+    <button class="mini-toggle" onclick="sortStratRows()">⇅ 오늘부터 정렬</button>
     <span class="chip-cnt" id="stratCount"></span>
   </div>
   <div class="log-scroll scroll-y" id="stratScrollBox">
@@ -1372,16 +1372,16 @@
     scheduleSave();
   }
 
-  // 예상일 순으로 재배열 (지남 → 오늘 → 예정 → 미정)
+  // 예상일 순으로 재배열 (오늘 → 앞으로 다가올 날짜 → 지난 건 → 미정)
   function sortStratRows(){
     var body = document.getElementById('stratBody');
     var rows = Array.prototype.slice.call(body.querySelectorAll('.strat-row'));
     var today = localISO(new Date());
     var bucket = function(d){
-      if(!d) return 3;
-      if(d < today) return 0;
-      if(d === today) return 1;
-      return 2;
+      if(!d) return 3;          // 예상일 미정 → 맨 아래
+      if(d === today) return 0; // 오늘
+      if(d > today) return 1;   // 앞으로
+      return 2;                 // 지난 건 → 아래로
     };
     rows.sort(function(a, b){
       var da = a.querySelector('.s-due').value, dbv = b.querySelector('.s-due').value;
