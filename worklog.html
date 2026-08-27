@@ -74,6 +74,25 @@
   /* ---------- 기록 표 ---------- */
   .scroll{ width:100%; overflow-x:auto; border:1px solid var(--line); border-radius:12px; max-height:58vh; overflow-y:auto; }
   .scroll.expanded{ max-height:none !important; overflow-y:visible !important; }
+  .peek{ background:#FBF9F4; border:1px solid var(--line); border-radius:12px; padding:12px 15px; margin-bottom:14px; }
+  .peek-head{ display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:9px; }
+  .peek-name{ font-family:'Noto Serif KR',serif; font-size:15px; font-weight:700; color:var(--navy); }
+  .peek-sub{ font-size:11.5px; color:var(--muted); }
+  .peek-stat{ font-size:11.5px; font-weight:700; padding:2px 9px; border-radius:20px; background:#EFEAE0; color:#6B5122; }
+  .peek-stat.warn{ background:var(--red-bg); color:var(--red); }
+  .peek-more{ margin-left:auto; font-family:'Pretendard',sans-serif; font-size:12px; font-weight:600; padding:5px 11px;
+              border-radius:20px; border:1px solid var(--line); background:#fff; color:var(--navy); cursor:pointer; }
+  .peek-more:hover{ border-color:var(--brass); color:var(--brass); }
+  .peek-item{ display:flex; gap:9px; padding:5px 0; border-top:1px solid #F0EEE7; font-size:12.5px; align-items:baseline; }
+  .peek-item:first-of-type{ border-top:none; }
+  .peek-when{ flex:0 0 auto; color:var(--brass); font-weight:700; white-space:nowrap; }
+  .peek-prod{ flex:0 0 auto; font-size:11px; padding:1px 7px; border-radius:20px; background:#EFEAE0; color:#6B5122; }
+  .peek-txt{ flex:1; min-width:0; color:#4A4E5A; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .peek-txt .fu{ color:var(--red); font-weight:600; }
+  .peek-none{ font-size:12.5px; color:var(--muted); }
+  .peek-ref{ font-size:12px; color:var(--brass); margin-top:7px; }
+  .peek-ref b{ color:var(--navy); }
+
   .tbl-tools{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .mini-toggle{
     font-family:'Pretendard',sans-serif; font-size:12.5px; font-weight:600; color:var(--brass);
@@ -268,6 +287,8 @@
     <datalist id="productList"></datalist>
     <datalist id="companyList"></datalist>
     <datalist id="jobList"></datalist>
+
+    <div class="peek" id="peekBox" style="display:none;"></div>
 
     <div class="tbl-tools">
       <button class="mini-toggle" id="dayExpandBtn" onclick="toggleBoxById('dayScrollBox',this)">⤢ 전체 펼치기</button>
@@ -504,6 +525,99 @@
     if(!j.value.trim() && m.job) j.value=m.job;
   }
 
+  // ---------- 대상 미리보기 (이름 입력 시 전체 기록 조회) ----------
+  var peekTimer = null, peekKey = '';
+
+  function schedulePeek(){
+    if(peekTimer) clearTimeout(peekTimer);
+    peekTimer = setTimeout(runPeek, 350);
+  }
+
+  function runPeek(){
+    var key = nameKey(document.getElementById('qName').value);
+    if(!key){ clearPeek(); return; }
+    if(key === peekKey) return;          // 같은 이름이면 다시 조회하지 않음
+    loadPeek(key);
+  }
+
+  function refreshPeekFor(key){          // 기록을 저장한 뒤 강제로 다시 조회
+    if(!key) return;
+    peekKey = '';
+    loadPeek(key);
+  }
+
+  function loadPeek(key){
+    var box = document.getElementById('peekBox');
+    peekKey = key;
+    box.style.display = '';
+    box.innerHTML = '<div class="peek-none">' + esc(key) + ' 기록을 찾는 중...</div>';
+
+    Promise.all([
+      db.collection(LOGS).where('memberKey','==',key).get(),
+      db.collection(LOGS).where('refKey','==',key).get()
+    ]).then(function(res){
+      if(peekKey !== key) return;        // 그새 다른 이름을 쳤으면 무시
+      var list = [], refd = [];
+      res[0].forEach(function(d){ list.push(d.data()); });
+      res[1].forEach(function(d){ refd.push(d.data()); });
+      renderPeek(key, list, refd);
+    }).catch(function(e){
+      box.innerHTML = '<div class="peek-none">조회 실패 (' + esc(e.code||'') + ')</div>';
+    });
+  }
+
+  function renderPeek(key, list, refd){
+    var box = document.getElementById('peekBox');
+    var m = members[key] || {};
+    var disp = m.name || key;
+    var sub = [m.company||'', m.job||''].filter(Boolean).join(' · ');
+    var g = m.grade || (m.nameKey ? computeGrade(m) : '');
+
+    if(!list.length && !refd.length){
+      box.innerHTML = '<div class="peek-head"><span class="peek-name">' + esc(disp) + '</span>' +
+        '<span class="peek-sub">이전 기록이 없습니다 · 새 대상입니다</span></div>';
+      return;
+    }
+    list.sort(function(a,b){ return String(b.date+(b.time||'')).localeCompare(String(a.date+(a.time||''))); });
+    var pending = list.filter(function(r){ return r.followUp && !r.done; });
+    var refPeople = [], seen = {};
+    refd.forEach(function(r){ if(r.memberKey && !seen[r.memberKey]){ seen[r.memberKey] = 1; refPeople.push(r.memberName || r.memberKey); } });
+
+    var html = '<div class="peek-head">' +
+      '<span class="peek-name">' + esc(disp) + '</span>' +
+      (g ? '<span class="grade-tag g-' + esc(g) + '">' + esc(g) + '</span>' : '') +
+      (sub ? '<span class="peek-sub">' + esc(sub) + '</span>' : '') +
+      '<span class="peek-stat">총 ' + list.length + '회</span>' +
+      (list.length ? '<span class="peek-sub">최근 ' + esc(list[0].date) + '</span>' : '') +
+      (pending.length ? '<span class="peek-stat warn">미완 후속 ' + pending.length + '</span>' : '') +
+      '<button class="peek-more" onclick="openMemberFromPeek(\'' + esc(key) + '\')">전체 이력 →</button>' +
+      '</div>';
+
+    list.slice(0, 5).forEach(function(r){
+      html += '<div class="peek-item">' +
+        '<span class="peek-when">' + esc(r.date) + (r.time ? ' ' + esc(r.time) : '') + '</span>' +
+        (r.product ? '<span class="peek-prod">' + esc(r.product) + '</span>' : '') +
+        '<span class="peek-txt">' + esc(r.content || '') +
+          (r.followUp ? ' <span class="fu">→ ' + esc(r.followUp) + (r.done ? ' (완료)' : '') + '</span>' : '') +
+        '</span></div>';
+    });
+    if(list.length > 5) html += '<div class="peek-none" style="padding-top:6px;">외 ' + (list.length - 5) + '건 더 있습니다.</div>';
+    if(refPeople.length) html += '<div class="peek-ref">이 분이 추천한 대상 ' + refPeople.length + '명 · <b>' + esc(refPeople.slice(0,6).join(', ')) + '</b></div>';
+
+    box.innerHTML = html;
+  }
+
+  function openMemberFromPeek(key){
+    switchTab('member');
+    openMember(key);
+  }
+
+  function clearPeek(){
+    peekKey = '';
+    var box = document.getElementById('peekBox');
+    if(box){ box.style.display = 'none'; box.innerHTML = ''; }
+  }
+
   // ---------- 기록 추가/수정/삭제 ----------
   function addEntry(){
     var name=document.getElementById('qName').value.trim();
@@ -527,12 +641,14 @@
         setStatus('ok');
         if(key) touchMember(key, name, company, job);
         if(refKey) touchMember(refKey, refName);   // 추천인도 대상으로 등록해 이력을 이어감
+        refreshPeekFor(key);                       // 방금 저장한 기록까지 미리보기에 반영
       })
       .catch(function(e){ setStatus('err', e.code||e.message); });
     document.getElementById('qName').value='';
     document.getElementById('qCompany').value='';
     document.getElementById('qJob').value='';
     document.getElementById('qRef').value='';
+
     document.getElementById('qContent').value='';
     document.getElementById('qTime').value=nowHM();
     clearProdButtons();
@@ -901,8 +1017,8 @@
     document.getElementById('qTime').value=nowHM();
 
     document.getElementById('qContent').addEventListener('keydown', function(e){ if(e.key==='Enter') addEntry(); });
-    document.getElementById('qName').addEventListener('input', fillMemberInfo);
-    document.getElementById('qName').addEventListener('keydown', function(e){ if(e.key==='Enter'){ fillMemberInfo(); document.getElementById('qContent').focus(); } });
+    document.getElementById('qName').addEventListener('input', function(){ fillMemberInfo(); schedulePeek(); });
+    document.getElementById('qName').addEventListener('keydown', function(e){ if(e.key==='Enter'){ fillMemberInfo(); runPeek(); document.getElementById('qContent').focus(); } });
     ['qCompany','qJob','qRef'].forEach(function(id){
       document.getElementById(id).addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('qContent').focus(); });
     });
