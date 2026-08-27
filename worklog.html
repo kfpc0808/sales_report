@@ -162,6 +162,49 @@
   .tl-body{ font-size:13.5px; margin-top:3px; white-space:pre-wrap; }
   .tl-meta{ font-size:11.5px; color:var(--muted); margin-top:4px; }
 
+  /* ---------- 상담 관리 ---------- */
+  .tab-badge{ display:inline-block; min-width:16px; margin-left:5px; padding:1px 6px; border-radius:20px;
+              background:var(--red); color:#fff; font-size:10.5px; font-weight:800; vertical-align:middle; }
+  .tab-badge:empty{ display:none; }
+  .consult-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:9px; }
+  .cs-toggle{ font-family:'Pretendard',sans-serif; font-size:12.5px; font-weight:700; padding:6px 14px; border-radius:20px;
+              border:1px solid rgba(255,255,255,0.3); background:rgba(255,255,255,0.08); color:#E7E3D8; cursor:pointer; }
+  .cs-toggle:hover{ background:rgba(255,255,255,0.16); }
+  .cs-toggle.on{ background:var(--brass); border-color:var(--brass); color:#fff; }
+  .cs-hint{ font-size:11.5px; color:var(--brass-light); }
+  .cs-tools{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+  .cs-lab{ font-size:11px; font-weight:800; letter-spacing:.1em; color:var(--brass); }
+  .cs-tools select{ font-family:'Pretendard',sans-serif; font-size:13px; font-weight:600; padding:7px 10px;
+        border:1px solid var(--line); border-radius:9px; background:#fff; color:var(--navy); cursor:pointer; }
+  .cs-sum{ font-size:12px; color:var(--muted); }
+  .cs-sec{ display:flex; align-items:center; gap:8px; margin:16px 0 8px; }
+  .cs-sec .lb{ font-size:11.5px; font-weight:800; letter-spacing:.06em; color:var(--brass); white-space:nowrap; }
+  .cs-sec .lb.late{ color:var(--red); }
+  .cs-sec .lb.done{ color:var(--green); }
+  .cs-sec .ln{ flex:1; height:1px; background:var(--line); }
+  .cs-card{ border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:8px; background:#fff; }
+  .cs-card.aging{ border-color:#E8CFCB; background:#FDF7F5; }
+  .cs-top{ display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:9px; }
+  .cs-when{ font-size:12px; color:var(--brass); font-weight:700; white-space:nowrap; }
+  .cs-who{ font-family:'Noto Serif KR',serif; font-size:14.5px; font-weight:700; color:var(--navy); cursor:pointer;
+           text-decoration:underline; text-decoration-color:var(--brass-light); text-underline-offset:3px; }
+  .cs-age{ font-size:11px; font-weight:800; padding:1px 8px; border-radius:20px; background:#EFEAE0; color:#6B5122; }
+  .cs-age.late{ background:var(--red-bg); color:var(--red); }
+  .cs-ask{ font-size:13px; color:#4A4E5A; margin-bottom:9px; word-break:break-word; }
+  .cs-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:7px; }
+  .cs-fld{ display:flex; flex-direction:column; gap:3px; }
+  .cs-fld .k{ font-size:10.5px; font-weight:700; letter-spacing:.04em; color:var(--muted); }
+  .cs-fld input, .cs-fld select{ font-family:'Pretendard',sans-serif; font-size:13px; padding:6px 9px;
+        border:1px solid var(--line); border-radius:8px; background:#FBFAF7; color:var(--ink); width:100%; box-sizing:border-box; }
+  .cs-fld input:focus, .cs-fld select:focus{ outline:none; border-color:var(--brass); background:#fff; }
+  .cs-fld input[readonly], .cs-fld select[disabled]{ background:#F5F3EE; color:var(--muted); }
+  .cs-st-접수{ box-shadow:inset 3px 0 0 var(--brass); }
+  .cs-st-진행{ box-shadow:inset 3px 0 0 #6E8CB5; }
+  .cs-st-보류{ box-shadow:inset 3px 0 0 #B0A98F; }
+  .cs-st-완료{ box-shadow:inset 3px 0 0 var(--green); }
+  .cs-tag{ font-size:10.5px; font-weight:800; padding:1px 8px; border-radius:20px; background:#EFEAE0; color:#6B5122; }
+  .cs-empty{ text-align:center; color:var(--muted); font-size:13px; padding:26px 0; }
+
   /* ---------- 보고서 ---------- */
   .rep-controls{ background:#FBF9F4; border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin-bottom:16px; }
   .rep-controls .row-line{ margin-bottom:10px; }
@@ -250,6 +293,7 @@
 <div class="tabs">
   <div class="tab on" id="tab-day" onclick="switchTab('day')">오늘 기록</div>
   <div class="tab" id="tab-member" onclick="switchTab('member')">대상별 이력</div>
+  <div class="tab" id="tab-consult" onclick="switchTab('consult')">상담 관리<span class="tab-badge" id="csBadge"></span></div>
   <div class="tab" id="tab-report" onclick="switchTab('report')">보고서 출력</div>
 </div>
 
@@ -281,11 +325,17 @@
         <button class="go" onclick="addEntry()">추가</button>
       </div>
       <div class="prod-row" id="prodRow"></div>
+      <div class="consult-row">
+        <button class="cs-toggle" id="csToggle" onclick="toggleConsultMode()">🗣 상담 건으로 기록</button>
+        <span class="cs-hint" id="csHint"></span>
+      </div>
       <div class="quick-hint" id="qHint">대상을 입력하면 이전 기록에서 등급을 찾아 자동으로 붙입니다. 내용 칸에서 Enter를 누르면 저장되고 커서가 대상 칸으로 돌아갑니다.</div>
     </div>
     <datalist id="memberList"></datalist>
     <datalist id="productList"></datalist>
     <datalist id="companyList"></datalist>
+    <datalist id="csFieldList"></datalist>
+    <datalist id="csExpertList"></datalist>
     <datalist id="jobList"></datalist>
 
     <div class="peek" id="peekBox" style="display:none;"></div>
@@ -321,6 +371,25 @@
     <div class="suggest" id="mSuggest"></div>
     <div id="memberView"></div>
   </div>
+  <!-- ===== 상담 관리 ===== -->
+  <div class="panel" id="panel-consult">
+    <div class="cs-tools">
+      <span class="cs-lab">상태</span>
+      <select id="csFilter" onchange="renderConsults()">
+        <option value="open">미완 (접수·진행·보류)</option>
+        <option value="all">전체</option>
+        <option value="접수">접수</option>
+        <option value="진행">진행</option>
+        <option value="보류">보류</option>
+        <option value="완료">완료</option>
+      </select>
+      <button class="mini" onclick="loadConsults()">↻ 새로고침</button>
+      <button class="mini" onclick="copyConsultTable(this)">⧉ 표 복사</button>
+      <span class="cs-sum" id="csSum"></span>
+    </div>
+    <div id="csList"></div>
+  </div>
+
   <!-- ===== 보고서 출력 ===== -->
   <div class="panel" id="panel-report">
     <div class="rep-controls">
@@ -426,6 +495,8 @@
   // 편집 권한에 따라 화면 잠금
   function applyEditMode(){
     document.getElementById('quickBox').style.display = canEdit ? '' : 'none';
+    var csb=document.getElementById('csToggle');
+    if(csb) csb.style.display = canEdit ? '' : 'none';
     document.querySelectorAll('#logBody input').forEach(function(el){ el.disabled = !canEdit; });
     document.querySelectorAll('#logBody .del, #logBody .done-btn').forEach(function(el){
       el.style.display = canEdit ? '' : 'none';
@@ -453,7 +524,7 @@
 
   // ---------- 탭 ----------
   function switchTab(name){
-    ['day','member','report'].forEach(function(n){
+    ['day','member','consult','report'].forEach(function(n){
       document.getElementById('tab-'+n).classList.toggle('on', n===name);
       document.getElementById('panel-'+n).classList.toggle('on', n===name);
     });
@@ -500,6 +571,7 @@
             '<span><span class="name-cell" onclick="openMember(\''+esc(r.memberKey)+'\')">'+esc(r.memberName||'-')+'</span>' +
             (r.memberKey? '<span class="grade-tag g-'+esc(g)+'">'+esc(g)+'</span>':'') + '</span>' +
             (sub? '<span class="name-sub">'+esc(sub)+'</span>':'') +
+            (r.isConsult? '<span class="name-sub" style="color:var(--brass);font-weight:700;">🗣 상담 · '+esc(csStatus(r))+'</span>':'') +
           '</span></div>' +
         '<div>' + (r.refKey ? '<span class="ref-cell" onclick="openMember(\''+esc(r.refKey)+'\')">'+esc(r.refName||'')+'</span>' : '<input type="text" value="" list="memberList" placeholder="추천인" onchange="editRef(\''+r.id+'\',this.value)">') + '</div>' +
         '<div><input type="text" value="'+esc(r.product)+'" list="productList" onchange="editField(\''+r.id+'\',\'product\',this.value)"></div>' +
@@ -523,6 +595,165 @@
     var c=document.getElementById('qCompany'), j=document.getElementById('qJob');
     if(!c.value.trim() && m.company) c.value=m.company;
     if(!j.value.trim() && m.job) j.value=m.job;
+  }
+
+  // ---------- 상담 관리 ----------
+  var CS_STATES = ['접수','진행','보류','완료'];
+  var CS_WAYS = ['','전문가 연결','직접 안내'];
+  var consultMode = false;
+  var csRows = [];
+
+  function toggleConsultMode(){
+    consultMode = !consultMode;
+    var b = document.getElementById('csToggle');
+    b.classList.toggle('on', consultMode);
+    b.textContent = consultMode ? '🗣 상담 건 (켜짐)' : '🗣 상담 건으로 기록';
+    document.getElementById('csHint').textContent = consultMode
+      ? '이 상태로 저장하면 상담 관리 탭에 접수됩니다.' : '';
+  }
+
+  function loadConsults(){
+    if(!db) return;
+    db.collection(LOGS).where('isConsult','==',true).get().then(function(snap){
+      csRows = [];
+      snap.forEach(function(doc){ var v = doc.data(); v.id = doc.id; csRows.push(v); });
+      csRows.sort(function(a,b){ return String(b.date+(b.time||'')).localeCompare(String(a.date+(a.time||''))); });
+      renderConsults();
+    }).catch(function(e){
+      document.getElementById('csList').innerHTML = '<div class="cs-empty">조회 실패 (' + esc(e.code||'') + ')</div>';
+    });
+  }
+
+  function csStatus(r){ return CS_STATES.indexOf(r.csStatus) > -1 ? r.csStatus : '접수'; }
+
+  function daysSince(dateStr){
+    if(!dateStr) return 0;
+    var a = new Date(localISO(new Date()).replace(/-/g,'/'));
+    var b = new Date(String(dateStr).replace(/-/g,'/'));
+    return Math.max(0, Math.round((a - b) / 86400000));
+  }
+
+  function updateCsBadge(){
+    var open = csRows.filter(function(r){ return csStatus(r) !== '완료'; }).length;
+    var b = document.getElementById('csBadge');
+    if(b) b.textContent = open ? String(open) : '';
+  }
+
+  function renderConsults(){
+    var box = document.getElementById('csList');
+    if(!box) return;
+    updateCsBadge();
+    var f = document.getElementById('csFilter').value;
+    var list = csRows.filter(function(r){
+      var st = csStatus(r);
+      if(f === 'all') return true;
+      if(f === 'open') return st !== '완료';
+      return st === f;
+    });
+
+    var cnt = {};
+    CS_STATES.forEach(function(st){ cnt[st] = csRows.filter(function(r){ return csStatus(r) === st; }).length; });
+    document.getElementById('csSum').textContent =
+      '전체 ' + csRows.length + '건 · ' + CS_STATES.map(function(st){ return st + ' ' + cnt[st]; }).join(' · ');
+
+    if(!list.length){
+      box.innerHTML = '<div class="cs-empty">해당 상태의 상담 건이 없습니다.<br>오늘 기록 탭에서 <b>🗣 상담 건으로 기록</b>을 켜고 저장하면 여기에 쌓입니다.</div>';
+      return;
+    }
+
+    box.innerHTML = '';
+    ['접수','진행','보류','완료'].forEach(function(st){
+      var grp = list.filter(function(r){ return csStatus(r) === st; });
+      if(!grp.length) return;
+      var sec = document.createElement('div');
+      sec.className = 'cs-sec';
+      sec.innerHTML = '<span class="lb ' + (st === '완료' ? 'done' : (st === '접수' ? 'late' : '')) + '">' +
+                      st + ' ' + grp.length + '건</span><span class="ln"></span>';
+      box.appendChild(sec);
+      grp.forEach(function(r){ box.appendChild(csCard(r, st)); });
+    });
+  }
+
+  function csCard(r, st){
+    var age = daysSince(r.date);
+    var aging = (st === '접수' || st === '진행') && age >= 7;
+    var card = document.createElement('div');
+    card.className = 'cs-card cs-st-' + st + (aging ? ' aging' : '');
+    var opts = function(arr, sel){
+      return arr.map(function(o){
+        return '<option value="' + esc(o) + '"' + (o === sel ? ' selected' : '') + '>' + esc(o || '미정') + '</option>';
+      }).join('');
+    };
+    card.innerHTML =
+      '<div class="cs-top">' +
+        '<span class="cs-when">' + esc(r.date) + (r.time ? ' ' + esc(r.time) : '') + '</span>' +
+        '<span class="cs-who" onclick="goMemberFromConsult(\'' + esc(r.memberKey||'') + '\')">' + esc(r.memberName || '-') + '</span>' +
+        (r.product ? '<span class="cs-tag">' + esc(r.product) + '</span>' : '') +
+        (r.refName ? '<span class="cs-tag">추천 ' + esc(r.refName) + '</span>' : '') +
+        '<span class="cs-age' + (aging ? ' late' : '') + '">' + (age === 0 ? '오늘 접수' : age + '일 경과') + '</span>' +
+      '</div>' +
+      '<div class="cs-ask">' + esc(r.content || '') + '</div>' +
+      '<div class="cs-grid">' +
+        '<div class="cs-fld"><span class="k">상담분야</span><input type="text" class="cs-field" list="csFieldList" value="' + esc(r.csField || '') + '" placeholder="예: 세무, 노무" ' + (canEdit ? '' : 'readonly') + '></div>' +
+        '<div class="cs-fld"><span class="k">처리 방식</span><select class="cs-way" ' + (canEdit ? '' : 'disabled') + '>' + opts(CS_WAYS, r.csWay || '') + '</select></div>' +
+        '<div class="cs-fld"><span class="k">담당 전문가</span><input type="text" class="cs-expert" list="csExpertList" value="' + esc(r.csExpert || '') + '" placeholder="이름" ' + (canEdit ? '' : 'readonly') + '></div>' +
+        '<div class="cs-fld"><span class="k">상태</span><select class="cs-status" ' + (canEdit ? '' : 'disabled') + '>' + opts(CS_STATES, st) + '</select></div>' +
+        '<div class="cs-fld" style="grid-column:1/-1;"><span class="k">진행·결과 메모</span><input type="text" class="cs-result" value="' + esc(r.csResult || '') + '" placeholder="처리 내용, 회신 결과" ' + (canEdit ? '' : 'readonly') + '></div>' +
+      '</div>';
+
+    if(canEdit){
+      var bind = function(sel, field){
+        var el = card.querySelector(sel);
+        el.onchange = function(){ saveConsult(r, field, el.value); };
+      };
+      bind('.cs-field','csField'); bind('.cs-way','csWay');
+      bind('.cs-expert','csExpert'); bind('.cs-result','csResult');
+      var stEl = card.querySelector('.cs-status');
+      stEl.onchange = function(){ saveConsult(r, 'csStatus', stEl.value, true); };
+    }
+    return card;
+  }
+
+  function saveConsult(r, field, val, redraw){
+    if(!canEdit) return;
+    var patch = {};
+    patch[field] = val;
+    if(field === 'csStatus') patch.csDoneAt = (val === '완료') ? localISO(new Date()) : '';
+    setStatus('busy');
+    db.collection(LOGS).doc(r.id).update(patch).then(function(){
+      setStatus('ok');
+      r[field] = val;
+      if(field === 'csStatus'){ r.csDoneAt = patch.csDoneAt; }
+      if(redraw) renderConsults(); else updateCsBadge();
+      buildCsSuggest();
+    }).catch(function(e){ setStatus('err', e.code||e.message); });
+  }
+
+  function goMemberFromConsult(key){
+    if(!key) return;
+    switchTab('member');
+    openMember(key);
+  }
+
+  function buildCsSuggest(){
+    var fl = document.getElementById('csFieldList'), el = document.getElementById('csExpertList');
+    if(!fl || !el) return;
+    fl.innerHTML = ''; el.innerHTML = '';
+    var sf = {}, se = {};
+    csRows.forEach(function(r){
+      if(r.csField && !sf[r.csField]){ sf[r.csField] = 1; var o = document.createElement('option'); o.value = r.csField; fl.appendChild(o); }
+      if(r.csExpert && !se[r.csExpert]){ se[r.csExpert] = 1; var o2 = document.createElement('option'); o2.value = r.csExpert; el.appendChild(o2); }
+    });
+  }
+
+  function copyConsultTable(btn){
+    var out = [['접수일','시간','대상','추천인','상품','상담 요청 내용','상담분야','처리 방식','담당 전문가','상태','진행·결과','완료일']];
+    csRows.forEach(function(r){
+      out.push([r.date||'', r.time||'', r.memberName||'', r.refName||'', r.product||'',
+                (r.content||'').replace(/\n/g,' / '), r.csField||'', r.csWay||'', r.csExpert||'',
+                csStatus(r), (r.csResult||'').replace(/\n/g,' / '), r.csDoneAt||'']);
+    });
+    copyTsv(out, btn);
   }
 
   // ---------- 대상 미리보기 (이름 입력 시 전체 기록 조회) ----------
@@ -633,6 +864,8 @@
     var key=nameKey(name);
     var rec={ date:currentDate, time:time, memberKey:key, memberName:name,
               refKey:refKey, refName:refName,
+              isConsult:consultMode, csStatus:consultMode?'접수':'',
+              csField:'', csWay:'', csExpert:'', csResult:'', csDoneAt:'',
               product:product, content:content, followUp:'', done:false,
               gradeAt:key? gradeOf(key):'', createdAt:new Date().toISOString() };
     setStatus('busy');
@@ -642,6 +875,7 @@
         if(key) touchMember(key, name, company, job);
         if(refKey) touchMember(refKey, refName);   // 추천인도 대상으로 등록해 이력을 이어감
         refreshPeekFor(key);                       // 방금 저장한 기록까지 미리보기에 반영
+        if(consultMode) loadConsults();            // 상담 건이면 상담 관리에도 반영
       })
       .catch(function(e){ setStatus('err', e.code||e.message); });
     document.getElementById('qName').value='';
@@ -1042,11 +1276,13 @@
         setStatus(canEdit ? 'ok' : 'off', canEdit ? null : '열람 전용 · '+myEmail);
         watchMembers();
         goToday();
+        loadConsults();          // 로그인 후 상담 건 조회
       } else {
         canEdit=false; myEmail='';
         document.getElementById('gate').classList.remove('hide');
         if(unsubDay){ unsubDay(); unsubDay=null; }
         if(unsubMembers){ unsubMembers(); unsubMembers=null; }
+        csRows=[]; renderConsults();
         setStatus('off','로그인이 필요합니다');
       }
     });
