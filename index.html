@@ -43,6 +43,8 @@
     .memo-body{ max-height:none !important; overflow:visible !important; }
     .sl-text{ height:auto !important; min-height:0 !important; overflow:visible !important; border-color:transparent !important; }
     .log-tools{ display:none !important; }
+    .lg-range{ border:none; background:none; padding:0 0 8px; }
+    .lg-range input, .lg-range button, .lg-only{ display:none !important; }
     .mini-toggle, .memo-hint{ display:none !important; }
   }
 
@@ -392,6 +394,16 @@
   .undated-note{ margin-top:8px; font-size:12.5px; color:var(--red); }
 
   .log-tools{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .lg-range{ background:#FBF9F4; border:1px solid var(--line); border-radius:12px; padding:12px 15px; margin-bottom:12px;
+             display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .lg-range input[type="date"]{ font-family:'Pretendard',sans-serif; font-size:13px; font-weight:600; padding:7px 9px;
+        border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--navy); }
+  .lg-range input[type="date"]:focus{ outline:none; border-color:var(--brass); }
+  .lg-only{ font-size:12.5px; color:var(--muted); display:flex; align-items:center; gap:5px; cursor:pointer; }
+  .lg-out{ flex:1 1 100%; font-size:13.5px; color:var(--ink); margin-top:2px; }
+  .lg-out b{ color:var(--navy); font-weight:800; font-size:15px; }
+  .lg-out .sub{ color:var(--muted); font-size:12.5px; }
+  tr.log-row.out-range{ display:none; }
   .chip-cnt{ font-size:12px; font-weight:700; padding:4px 11px; border-radius:20px; background:#EFEAE0; color:#6B5122; }
   .log-scroll.expanded{ max-height:none !important; overflow-y:visible !important; }
 
@@ -850,6 +862,19 @@
     <button class="mini-toggle" onclick="copyLogTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
     <span class="chip-cnt" id="logCount"></span>
   </div>
+  <div class="lg-range">
+    <span class="lbl2">구간 조회</span>
+    <input type="date" id="lgFrom" onchange="renderLogRange()">
+    <span>~</span>
+    <input type="date" id="lgTo" onchange="renderLogRange()">
+    <button class="add-row" style="margin-top:0;" onclick="setLogRange('week')">이번 주</button>
+    <button class="add-row" style="margin-top:0;" onclick="setLogRange('month')">이번 달</button>
+    <button class="add-row" style="margin-top:0;" onclick="setLogRange('lastmonth')">지난 달</button>
+    <button class="add-row" style="margin-top:0;" onclick="setLogRange('clear')">전체</button>
+    <label class="lg-only"><input type="checkbox" id="lgOnly" onchange="renderLogRange()"> 구간만 표에 보기</label>
+    <div class="lg-out" id="lgOut"></div>
+  </div>
+
   <div class="log-scroll scroll-y" id="logScrollBox">
     <table class="log" id="logTable">
       <thead>
@@ -1635,6 +1660,67 @@
     }
   }
 
+  // ---------- 04 매출 기록 구간 조회 ----------
+  function setLogRange(kind){
+    var t = new Date(), from, to;
+    if(kind === 'clear'){
+      document.getElementById('lgFrom').value = '';
+      document.getElementById('lgTo').value = '';
+      renderLogRange(); return;
+    }
+    if(kind === 'week'){
+      var wd = t.getDay();
+      from = new Date(t); from.setDate(t.getDate() + (wd === 0 ? -6 : 1 - wd));
+      to = new Date(from); to.setDate(from.getDate() + 6);
+    } else if(kind === 'lastmonth'){
+      from = new Date(t.getFullYear(), t.getMonth() - 1, 1);
+      to = new Date(t.getFullYear(), t.getMonth(), 0);
+    } else {
+      from = new Date(t.getFullYear(), t.getMonth(), 1);
+      to = new Date(t.getFullYear(), t.getMonth() + 1, 0);
+    }
+    document.getElementById('lgFrom').value = localISO(from);
+    document.getElementById('lgTo').value = localISO(to);
+    renderLogRange();
+  }
+
+  function renderLogRange(){
+    var out = document.getElementById('lgOut');
+    if(!out) return;
+    var f = document.getElementById('lgFrom').value;
+    var tt = document.getElementById('lgTo').value;
+    var only = document.getElementById('lgOnly').checked;
+    if(f && tt && f > tt){
+      var sw = f; f = tt; tt = sw;
+      document.getElementById('lgFrom').value = f;
+      document.getElementById('lgTo').value = tt;
+    }
+
+    var sum = 0, cnt = 0, total = 0, days = {};
+    document.querySelectorAll('#logBody tr.log-row').forEach(function(row){
+      var d = row.querySelector('.log-date').value;
+      var amt = toNum(row.querySelector('.log-amt').value);
+      total += amt;
+      var inRange = (!f || (d && d >= f)) && (!tt || (d && d <= tt));
+      row.classList.toggle('out-range', only && !inRange);
+      if(!inRange) return;
+      sum += amt; cnt++;
+      if(d) days[d] = 1;
+    });
+
+    if(!f && !tt){
+      out.innerHTML = '<span class="sub">날짜를 고르면 그 구간의 매출 합계를 보여드립니다. 지금은 전체 ' + cnt + '건 · ' + fmt(sum) + '원입니다.</span>';
+      return;
+    }
+    var label = (f ? shortDate(f) : '처음') + ' ~ ' + (tt ? shortDate(tt) : '끝');
+    var dayCnt = Object.keys(days).length;
+    var share = total > 0 ? Math.round(sum / total * 100) : 0;
+    out.innerHTML = label + ' 매출 <b>' + fmt(sum) + '원</b> · ' + cnt + '건' +
+      '<span class="sub"> · 입력된 날 ' + dayCnt + '일' +
+      (dayCnt ? ' · 하루 평균 ' + fmt(Math.round(sum / dayCnt)) + '원' : '') +
+      ' · 표 전체(' + fmt(total) + '원) 대비 ' + share + '%</span>';
+  }
+
   // ---------- 04 매출 기록 도구 ----------
   function toggleBoxById(boxId, btn){
     var box = document.getElementById(boxId);
@@ -1703,6 +1789,7 @@
   function copyLogTable(btn){
     var out = [['날짜','주차','판매 아이템 / 대상','금액(원)','메모']], total = 0;
     document.querySelectorAll('#logBody tr.log-row').forEach(function(row){
+      if(row.classList.contains('out-range')) return;   // 구간만 보기 상태면 그 범위만 복사
       var amt = toNum(row.querySelector('.log-amt').value); total += amt;
       out.push([row.querySelector('.log-date').value, row.querySelector('.week-badge').textContent,
                 row.querySelector('.log-item').value, amt, row.querySelector('.log-memo').value]);
@@ -2558,6 +2645,7 @@
     document.getElementById('logTotalCell').textContent = fmt(total);
     var lc = document.getElementById('logCount');
     if(lc) lc.textContent = rows.length + '건 · 합계 ' + fmt(total) + '원';
+    renderLogRange();
     document.getElementById('curTotalText').textContent = fmt(total);
     document.getElementById('goalText').textContent = fmt(goal);
     document.getElementById('fsCur').textContent = fmt(total);
