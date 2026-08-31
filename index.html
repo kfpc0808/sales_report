@@ -2888,7 +2888,9 @@
   // ---------- firestore ----------
   function openMonth(monthKey){
     currentMonth = monthKey;
-    document.getElementById('monthPicker').value = monthKey;
+    var mp = document.getElementById('monthPicker');
+    mp.value = monthKey;
+    if(document.activeElement === mp) mp.blur();
     if(saveTimer) clearTimeout(saveTimer);
     pendingRemote = null;
     if(!firebaseReady){ applyState(defaultState(monthKey)); return; }
@@ -2897,7 +2899,11 @@
     unsub = db.collection(COLLECTION).doc(monthKey).onSnapshot(function(snap){
       if(snap.metadata.hasPendingWrites) return;   // 내가 방금 저장한 것은 다시 그리지 않음
       var data = snap.exists ? snap.data() : defaultState(monthKey);
-      if(isTyping()){ pendingRemote = data; return; }  // 입력 중이면 커서 보호 후 나중에 반영
+      if(isTyping()){                                  // 입력 중이면 커서 보호 후 나중에 반영
+        pendingRemote = data;
+        schedulePendingApply();
+        return;
+      }
       applyState(data);
       setSaveStatus(canEdit ? 'saved' : 'readonly', myEmail);
     }, function(err){
@@ -2906,9 +2912,32 @@
     });
   }
 
+  // 입력이 끝나면 보류해 둔 서버 자료를 반영
+  var pendingTimer = null;
+  function schedulePendingApply(){
+    if(pendingTimer) clearTimeout(pendingTimer);
+    pendingTimer = setTimeout(function(){
+      pendingTimer = null;
+      if(!pendingRemote) return;
+      if(isTyping()){ schedulePendingApply(); return; }
+      applyState(pendingRemote);
+      pendingRemote = null;
+      setSaveStatus(canEdit ? 'saved' : 'readonly', myEmail);
+    }, 1200);
+  }
+
   function isTyping(){
     var a = document.activeElement;
-    return !!(a && (a.tagName === 'INPUT' || a.isContentEditable));
+    if(!a) return false;
+    if(a.id === 'monthPicker') return false;          // 월 선택기는 입력이 아님
+    if(a.isContentEditable) return true;
+    if(a.tagName === 'TEXTAREA') return true;         // 메모 작성 중 보호
+    if(a.tagName === 'INPUT'){
+      var t = (a.type || 'text').toLowerCase();
+      // 날짜·월·체크박스 등은 타이핑이 아니므로 갱신을 막지 않음
+      return ['text','number','search','tel','email','password'].indexOf(t) > -1;
+    }
+    return false;
   }
 
   function manualSave(){
