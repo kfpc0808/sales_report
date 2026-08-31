@@ -251,6 +251,35 @@
     .ar-total{ margin-left:0; }
   }
 
+  /* ---------- 결제 관리 ---------- */
+  .pay-add{ display:grid; grid-template-columns:110px 118px 148px 128px 128px minmax(130px,1fr) 84px; gap:7px; margin-bottom:10px; }
+  .pay-add input, .pay-add select{ font-family:'Pretendard',sans-serif; font-size:13px; padding:8px 10px;
+        border:1px solid var(--line); border-radius:9px; background:#FBFAF7; color:var(--ink); width:100%; box-sizing:border-box; }
+  .pay-add input:focus, .pay-add select:focus{ outline:none; border-color:var(--brass); background:#fff; }
+  .pay-add .go{ background:var(--brass); border-color:var(--brass); color:#fff; font-weight:700; }
+  .pay-sec{ display:flex; align-items:center; gap:8px; margin:16px 0 8px; }
+  .pay-sec .lb{ font-size:11.5px; font-weight:800; letter-spacing:.06em; color:var(--brass); white-space:nowrap; }
+  .pay-sec .ln{ flex:1; height:1px; background:var(--line); }
+  .ptable{ display:grid; grid-template-columns:132px minmax(120px,1fr) 128px 118px minmax(140px,1.2fr) 66px;
+           align-items:stretch; min-width:700px; font-size:13px; }
+  .prow{ display:contents; }
+  .prow > div{ min-width:0; padding:8px 9px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
+  .phead > div{ background:#F8F6F1; border-bottom:1px solid var(--line); font-size:10.5px; letter-spacing:.04em;
+                color:var(--muted); font-weight:700; white-space:nowrap; position:sticky; top:0; z-index:3; }
+  .pfoot > div{ background:#F8F6F1; border-top:2px solid var(--line); border-bottom:none; font-weight:800; color:var(--navy); }
+  .prow.off > div{ background:#FAFAF8; color:#A9A497; }
+  .prow.off .p-name{ text-decoration:line-through; }
+  .p-name{ font-weight:700; color:var(--navy); cursor:pointer; text-decoration:underline;
+           text-decoration-color:var(--brass-light); text-underline-offset:3px; }
+  .p-amt{ justify-content:flex-end; font-variant-numeric:tabular-nums; font-weight:700; color:var(--navy); }
+  .p-tag{ font-size:10.5px; font-weight:700; padding:1px 8px; border-radius:20px; background:#EFEAE0; color:#6B5122; }
+  .p-btn{ background:none; border:none; cursor:pointer; font-size:12px; color:#BCB6A7; padding:3px 4px; }
+  .p-btn:hover{ color:var(--brass); }
+  @media (max-width:768px){
+    .pay-add{ grid-template-columns:1fr 1fr; }
+    .ptable{ min-width:560px; grid-template-columns:110px minmax(96px,1fr) 104px 96px minmax(110px,1fr) 56px; }
+  }
+
   /* ---------- 보고서 ---------- */
   .rep-controls{ background:#FBF9F4; border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin-bottom:16px; }
   .rep-controls .row-line{ margin-bottom:10px; }
@@ -341,6 +370,7 @@
   <div class="tab" id="tab-member" onclick="switchTab('member')">대상별 이력</div>
   <div class="tab" id="tab-consult" onclick="switchTab('consult')">상담 관리<span class="tab-badge" id="csBadge"></span></div>
   <div class="tab" id="tab-arrear" onclick="switchTab('arrear')">미결 관리<span class="tab-badge" id="arBadge"></span></div>
+  <div class="tab" id="tab-pay" onclick="switchTab('pay')">결제 관리</div>
   <div class="tab" id="tab-report" onclick="switchTab('report')">보고서 출력</div>
 </div>
 
@@ -461,6 +491,37 @@
     <div id="arList"></div>
   </div>
 
+  <!-- ===== 결제 관리 ===== -->
+  <div class="panel" id="panel-pay">
+    <div class="ar-sum" id="paySum"></div>
+
+    <div class="pay-add" id="payAdd">
+      <select id="pyKind">
+        <option value="정기">정기결제</option>
+        <option value="개별">개별결제</option>
+      </select>
+      <input type="text" id="pyName" list="memberList" placeholder="대상" autocomplete="off">
+      <input type="text" id="pyItem" list="payItemList" placeholder="항목" autocomplete="off">
+      <input type="text" id="pyAmt" inputmode="numeric" placeholder="월 결제금액">
+      <input type="text" id="pyMethod" list="payMethodList" placeholder="결제수단" autocomplete="off">
+      <input type="text" id="pyMemo" placeholder="비고 (선택)" autocomplete="off">
+      <button class="mini go" onclick="addPayment()">+ 추가</button>
+    </div>
+    <datalist id="payItemList"></datalist>
+    <datalist id="payMethodList">
+      <option value="카드"></option><option value="계좌이체"></option>
+      <option value="CMS 자동이체"></option><option value="현금"></option>
+    </datalist>
+
+    <div class="ar-tools">
+      <button class="mini" onclick="copyPayTable(this)">⧉ 표 복사</button>
+      <label class="ar-chk"><input type="checkbox" id="pyShowOff" onchange="renderPayments()"> 해지 포함</label>
+      <span class="ar-sub" id="pyHint"></span>
+    </div>
+
+    <div id="payList"></div>
+  </div>
+
   <!-- ===== 보고서 출력 ===== -->
   <div class="panel" id="panel-report">
     <div class="rep-controls">
@@ -570,6 +631,8 @@
     if(csb) csb.style.display = canEdit ? '' : 'none';
     var ara=document.getElementById('arAdd');
     if(ara) ara.style.display = canEdit ? '' : 'none';
+    var pya=document.getElementById('payAdd');
+    if(pya) pya.style.display = canEdit ? '' : 'none';
     document.querySelectorAll('#logBody input').forEach(function(el){ el.disabled = !canEdit; });
     document.querySelectorAll('#logBody .del, #logBody .done-btn').forEach(function(el){
       el.style.display = canEdit ? '' : 'none';
@@ -597,7 +660,7 @@
 
   // ---------- 탭 ----------
   function switchTab(name){
-    ['day','member','consult','arrear','report'].forEach(function(n){
+    ['day','member','consult','arrear','pay','report'].forEach(function(n){
       document.getElementById('tab-'+n).classList.toggle('on', n===name);
       document.getElementById('panel-'+n).classList.toggle('on', n===name);
     });
@@ -668,6 +731,198 @@
     var c=document.getElementById('qCompany'), j=document.getElementById('qJob');
     if(!c.value.trim() && m.company) c.value=m.company;
     if(!j.value.trim() && m.job) j.value=m.job;
+  }
+
+  // ---------- 결제 관리 ----------
+  var PAYS = 'payments';
+  var payRows = [];
+
+  function initPayUI(){
+    var dl = document.getElementById('payItemList');
+    if(dl && !dl.children.length){
+      dl.innerHTML = MS_TYPES.map(function(t){ return '<option value="' + esc(t) + '"></option>'; }).join('');
+    }
+    var k = document.getElementById('pyKind');
+    if(k) k.onchange = onPayKind;
+    var it = document.getElementById('pyItem');
+    if(it) it.onchange = fillPayFee;
+    ['pyName','pyItem','pyAmt','pyMethod','pyMemo'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.addEventListener('keydown', function(e){ if(e.key === 'Enter') addPayment(); });
+    });
+    var amt = document.getElementById('pyAmt');
+    if(amt) amt.addEventListener('input', function(){
+      var v = String(this.value).replace(/[^0-9]/g,'');
+      this.value = v ? Number(v).toLocaleString('ko-KR') : '';
+    });
+    onPayKind();
+  }
+
+  function onPayKind(){
+    var k = document.getElementById('pyKind').value;
+    document.getElementById('pyAmt').placeholder = (k === '정기') ? '월 결제금액' : '결제금액';
+    document.getElementById('pyHint').textContent = (k === '정기')
+      ? '정기결제는 월 합계에 반영됩니다.' : '개별결제는 이번 달 합계에만 반영됩니다.';
+  }
+
+  // 항목이 멤버십이면 등록해둔 월 이용료를 자동으로 채움
+  function fillPayFee(){
+    var it = document.getElementById('pyItem').value.trim();
+    var amt = document.getElementById('pyAmt');
+    if(!amt.value && msFees[it]) amt.value = Number(msFees[it]).toLocaleString('ko-KR');
+  }
+
+  function loadPayments(){
+    if(!db) return;
+    db.collection(PAYS).get().then(function(snap){
+      payRows = [];
+      snap.forEach(function(doc){ var v = doc.data(); v.id = doc.id; payRows.push(v); });
+      renderPayments();
+    }).catch(function(e){
+      document.getElementById('payList').innerHTML = '<div class="ar-empty">조회 실패 (' + esc(e.code||'') + ')</div>';
+    });
+  }
+
+  function addPayment(){
+    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    var nm = document.getElementById('pyName').value.trim();
+    if(!nm){ document.getElementById('pyName').focus(); return; }
+    var rec = {
+      kind: document.getElementById('pyKind').value,
+      nameKey: nameKey(nm), name: nm,
+      item: document.getElementById('pyItem').value.trim(),
+      amount: Number(String(document.getElementById('pyAmt').value).replace(/[^0-9]/g,'')) || 0,
+      method: document.getElementById('pyMethod').value.trim(),
+      memo: document.getElementById('pyMemo').value.trim(),
+      date: localISO(new Date()), active: true, createdAt: new Date().toISOString()
+    };
+    setStatus('busy');
+    db.collection(PAYS).add(rec).then(function(){
+      setStatus('ok');
+      ['pyName','pyMemo'].forEach(function(id){ document.getElementById(id).value = ''; });
+      document.getElementById('pyName').focus();
+      if(rec.nameKey) touchMember(rec.nameKey, nm);
+      loadPayments();
+    }).catch(function(e){ setStatus('err', e.code||e.message); });
+  }
+
+  function savePayField(r, field, val){
+    if(!canEdit) return;
+    var patch = {};
+    patch[field] = (field === 'amount') ? (Number(String(val).replace(/[^0-9]/g,'')) || 0) : val;
+    db.collection(PAYS).doc(r.id).update(patch).then(function(){
+      r[field] = patch[field]; setStatus('ok'); renderPayments();
+    }).catch(function(e){ setStatus('err', e.code||e.message); });
+  }
+
+  function togglePayActive(r){
+    if(!canEdit) return;
+    db.collection(PAYS).doc(r.id).update({ active: !r.active, endedAt: r.active ? localISO(new Date()) : '' })
+      .then(function(){ setStatus('ok'); loadPayments(); });
+  }
+
+  function removePayment(r){
+    if(!canEdit) return;
+    if(!confirm(r.name + ' · ' + (r.item || '') + ' 결제 건을 지울까요?')) return;
+    db.collection(PAYS).doc(r.id).delete().then(loadPayments);
+  }
+
+  function renderPayments(){
+    var box = document.getElementById('payList');
+    if(!box) return;
+    var showOff = document.getElementById('pyShowOff').checked;
+    var curMo = localISO(new Date()).slice(0,7);
+
+    var reg = payRows.filter(function(r){ return r.kind === '정기' && (showOff || r.active !== false); });
+    var one = payRows.filter(function(r){ return r.kind === '개별'; });
+    reg.sort(function(a,b){ return (b.amount||0) - (a.amount||0); });
+    one.sort(function(a,b){ return String(b.date).localeCompare(String(a.date)); });
+
+    var mrr = payRows.filter(function(r){ return r.kind === '정기' && r.active !== false; })
+                     .reduce(function(a,r){ return a + (r.amount||0); }, 0);
+    var regCnt = payRows.filter(function(r){ return r.kind === '정기' && r.active !== false; }).length;
+    var oneMo = one.filter(function(r){ return String(r.date).slice(0,7) === curMo; });
+    var oneAmt = oneMo.reduce(function(a,r){ return a + (r.amount||0); }, 0);
+    var byMethod = {};
+    payRows.filter(function(r){ return r.kind === '정기' && r.active !== false; })
+      .forEach(function(r){ var m = r.method || '미지정'; byMethod[m] = (byMethod[m]||0) + 1; });
+    var mtTxt = Object.keys(byMethod).sort(function(a,b){ return byMethod[b]-byMethod[a]; })
+      .map(function(m){ return m + ' ' + byMethod[m] + '건'; }).join(' · ') || '—';
+
+    document.getElementById('paySum').innerHTML =
+      '<div class="facts">' +
+        '<div><div class="k">정기결제</div><div class="v">' + regCnt + '건</div></div>' +
+        '<div><div class="k">월 합계</div><div class="v">' + Number(mrr).toLocaleString('ko-KR') + '원</div></div>' +
+        '<div><div class="k">이번 달 개별</div><div class="v">' + oneMo.length + '건 · ' + Number(oneAmt).toLocaleString('ko-KR') + '원</div></div>' +
+      '</div>' +
+      '<div class="brk">결제수단 · ' + esc(mtTxt) + '</div>';
+
+    box.innerHTML = '';
+    if(!payRows.length){
+      box.innerHTML = '<div class="ar-empty">등록된 결제가 없습니다.<br>위에서 구분 · 대상 · 항목 · 금액 · 결제수단을 입력하면 여기에 쌓입니다.</div>';
+      return;
+    }
+    [['정기결제 ' + reg.length + '건', reg, '정기'], ['개별결제 ' + one.length + '건', one, '개별']].forEach(function(g){
+      if(!g[1].length) return;
+      var sec = document.createElement('div');
+      sec.className = 'pay-sec';
+      sec.innerHTML = '<span class="lb">' + esc(g[0]) + '</span><span class="ln"></span>';
+      box.appendChild(sec);
+
+      var wrap = document.createElement('div');
+      wrap.className = 'scroll';
+      var tb = document.createElement('div');
+      tb.className = 'ptable';
+      var head = document.createElement('div');
+      head.className = 'prow phead';
+      head.innerHTML = '<div>' + (g[2] === '정기' ? '대상' : '결제일 · 대상') + '</div><div>항목</div>' +
+        '<div class="p-amt">' + (g[2] === '정기' ? '월 결제금액' : '결제금액') + '</div><div>결제수단</div><div>비고</div><div></div>';
+      tb.appendChild(head);
+
+      var sum = 0;
+      g[1].forEach(function(r){
+        if(r.active !== false || g[2] === '개별') sum += (r.amount || 0);
+        var row = document.createElement('div');
+        row.className = 'prow' + (r.active === false ? ' off' : '');
+        row.innerHTML =
+          '<div>' + (g[2] === '개별' ? '<span class="ar-sub" style="margin-right:6px;">' + esc(String(r.date||'').slice(5)) + '</span>' : '') +
+            '<span class="p-name">' + esc(r.name || '') + '</span></div>' +
+          '<div><input type="text" class="f-item" list="payItemList" value="' + esc(r.item||'') + '" ' + (canEdit?'':'readonly') + '></div>' +
+          '<div class="p-amt"><input type="text" class="f-amt" style="text-align:right;" value="' + Number(r.amount||0).toLocaleString('ko-KR') + '" ' + (canEdit?'':'readonly') + '></div>' +
+          '<div><input type="text" class="f-method" list="payMethodList" value="' + esc(r.method||'') + '" ' + (canEdit?'':'readonly') + '></div>' +
+          '<div><input type="text" class="f-memo" value="' + esc(r.memo||'') + '" ' + (canEdit?'':'readonly') + '></div>' +
+          '<div>' + (canEdit ? (g[2] === '정기' ? '<button class="p-btn b-off" title="' + (r.active === false ? '재개' : '해지') + '">' + (r.active === false ? '↺' : '⏸') + '</button>' : '') +
+            '<button class="p-btn b-del" title="삭제">✕</button>' : '') + '</div>';
+        row.querySelector('.p-name').onclick = function(){ goMemberFromConsult(r.nameKey); };
+        if(canEdit){
+          [['.f-item','item'],['.f-amt','amount'],['.f-method','method'],['.f-memo','memo']].forEach(function(pair){
+            var el = row.querySelector(pair[0]);
+            el.onchange = function(){ savePayField(r, pair[1], el.value); };
+          });
+          var off = row.querySelector('.b-off');
+          if(off) off.onclick = function(){ togglePayActive(r); };
+          row.querySelector('.b-del').onclick = function(){ removePayment(r); };
+        }
+        tb.appendChild(row);
+      });
+      var foot = document.createElement('div');
+      foot.className = 'prow pfoot';
+      foot.innerHTML = '<div>합계</div><div></div><div class="p-amt">' + Number(sum).toLocaleString('ko-KR') + '</div><div></div><div></div><div></div>';
+      tb.appendChild(foot);
+      wrap.appendChild(tb);
+      box.appendChild(wrap);
+    });
+  }
+
+  function copyPayTable(btn){
+    var out = [['구분','대상','항목','금액','결제수단','비고','등록일','상태']];
+    payRows.slice().sort(function(a,b){
+      return String(a.kind).localeCompare(String(b.kind)) || (b.amount||0) - (a.amount||0);
+    }).forEach(function(r){
+      out.push([r.kind||'', r.name||'', r.item||'', r.amount||0, r.method||'', r.memo||'',
+                r.date||'', (r.kind === '정기' && r.active === false) ? '해지' : '유효']);
+    });
+    copyTsv(out, btn);
   }
 
   // ---------- 미결 관리 ----------
@@ -1618,6 +1873,7 @@
         goToday();
         loadConsults();          // 로그인 후 상담 건 조회
         initArrearUI(); loadArrears();
+        initPayUI(); loadPayments();
       } else {
         canEdit=false; myEmail='';
         document.getElementById('gate').classList.remove('hide');
@@ -1625,6 +1881,7 @@
         if(unsubMembers){ unsubMembers(); unsubMembers=null; }
         csRows=[]; renderConsults();
         arRows=[]; renderArrears();
+        payRows=[]; renderPayments();
         setStatus('off','로그인이 필요합니다');
       }
     });
