@@ -2075,8 +2075,10 @@
     var doneCnt = todoList.filter(function(x){ return x.done; }).length;
     var cc = document.getElementById('tdCount');
     if(cc){
+      var d3 = localISO(new Date(Date.now() + 2*86400000));
+      var soon3 = todoList.filter(function(x){ return !x.done && x.date >= today && x.date <= d3; }).length;
       cc.textContent = openCnt + '건' +
-        (todayCnt ? ' · 오늘 ' + todayCnt : '') +
+        (soon3 ? ' · 3일 내 ' + soon3 : '') +
         (lateCnt ? ' · 기한 지남 ' + lateCnt : '') +
         (doneCnt ? ' · 완료 ' + doneCnt : '');
     }
@@ -2092,19 +2094,33 @@
       return;
     }
 
-    // 오늘 → 기한 지남 → 예정 → 완료 순
+    // 오늘 · 내일 · 모레를 각각 묶어 3일치를 한눈에 → 기한 지남 → 그 이후 → 완료
     var byDate = function(a,b){ return String(a.date).localeCompare(String(b.date)); };
-    var g1 = todoList.filter(function(x){ return !x.done && x.date === today; }).sort(byDate);
-    var g2 = todoList.filter(function(x){ return !x.done && x.date < today; }).sort(byDate);
-    var g3 = todoList.filter(function(x){ return !x.done && x.date > today; }).sort(byDate);
-    var g4 = showDone ? todoList.filter(function(x){ return x.done; })
+    var dayAfter = function(n){
+      var d = new Date(); d.setDate(d.getDate() + n); return localISO(d);
+    };
+    var d1 = dayAfter(1), d2 = dayAfter(2);
+    var open = todoList.filter(function(x){ return !x.done; });
+
+    var g0 = open.filter(function(x){ return x.date === today; }).sort(byDate);
+    var gA = open.filter(function(x){ return x.date === d1; }).sort(byDate);
+    var gB = open.filter(function(x){ return x.date === d2; }).sort(byDate);
+    var gL = open.filter(function(x){ return x.date < today; }).sort(byDate);
+    var gN = open.filter(function(x){ return x.date > d2; }).sort(byDate);
+    var gD = showDone ? todoList.filter(function(x){ return x.done; })
               .sort(function(a,b){ return String(b.doneAt||b.date).localeCompare(String(a.doneAt||a.date)); }) : [];
 
-    if(!g1.length && !g2.length && !g3.length && !g4.length){
+    if(!open.length && !gD.length){
       box.appendChild(emptyRow(canEdit ? '날짜와 내용을 적고 Enter를 누르면 추가됩니다.' : '등록된 일정이 없습니다.'));
       return;
     }
-    [[g1,'오늘 ' + shortDate(today),''], [g2,'기한 지남','late'], [g3,'예정',''], [g4,'완료','done']].forEach(function(gp){
+    var dlab = function(iso){ return shortDate(iso) + ' (' + dowLabel(iso) + ')'; };
+    [[g0, '오늘 ' + dlab(today), ''],
+     [gA, '내일 ' + dlab(d1), ''],
+     [gB, '모레 ' + dlab(d2), ''],
+     [gL, '기한 지남', 'late'],
+     [gN, '그 이후', ''],
+     [gD, '완료', 'done']].forEach(function(gp){
       if(!gp[0].length) return;
       addSection(box, gp[1] + ' ' + gp[0].length + '건', gp[2]);
       gp[0].forEach(function(x){ box.appendChild(todoRow(x, today)); });
