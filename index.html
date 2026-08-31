@@ -182,6 +182,15 @@
   .drow.blank-row > div{ background:#FCFBF8; }
   .dtable input.d-item{ font-weight:700; color:var(--navy); }
   .dtable input.d-ref{ color:var(--brass); font-weight:600; }
+  .dtable .due-cell{ flex-direction:column; align-items:flex-start !important; gap:2px; }
+  .dtable input[type="date"].d-due{ width:100%; min-width:0; border:1px solid transparent; background:transparent;
+        border-radius:5px; padding:4px 3px; font-size:12.5px; font-family:'Pretendard',sans-serif; color:var(--muted); }
+  .dtable input.d-due:hover{ border-color:var(--line); background:#FBFAF7; }
+  .dtable input.d-due:focus{ border-color:var(--brass); background:#fff; outline:none; }
+  .drow.due-late input.d-due{ color:var(--red); font-weight:700; }
+  .drow.target-row > div:first-child{ box-shadow:inset 3px 0 0 transparent; }
+  .drow.due-late > div:first-child{ box-shadow:inset 3px 0 0 var(--red); }
+  .drow.due-today > div:first-child{ box-shadow:inset 3px 0 0 var(--brass); }
   .dtable input[type="date"]{
     width:100%; min-width:0; border:1px solid transparent; background:transparent; border-radius:5px;
     padding:5px 3px; font-size:12.5px; font-family:'Pretendard',sans-serif; color:var(--muted);
@@ -189,8 +198,8 @@
   .dtable input[type="date"]:hover{ border-color:var(--line); background:#FBFAF7; }
   .dtable input[type="date"]:focus{ border-color:var(--brass); background:#fff; outline:none; }
   .dtable{
-    display:grid; grid-template-columns:118px minmax(96px,140px) minmax(96px,150px) minmax(90px,130px) minmax(180px,1fr) 130px 44px;
-    align-items:stretch; min-width:790px; font-size:13.5px;
+    display:grid; grid-template-columns:112px minmax(92px,132px) minmax(92px,142px) minmax(84px,120px) minmax(170px,1fr) 118px 126px 44px;
+    align-items:stretch; min-width:870px; font-size:13.5px;
   }
   .drow, #dbBody{ display:contents; }
   .drow > div{ min-width:0; padding:7px 8px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
@@ -236,7 +245,7 @@
     display:grid; grid-template-columns:minmax(130px,180px) minmax(140px,1fr) minmax(200px,1.4fr) 118px 130px 44px;
     align-items:stretch; min-width:800px; font-size:13.5px; margin-top:16px;
   }
-  .srow, #stratBody{ display:contents; }
+  .srow{ display:contents; }
   .srow > div{ min-width:0; padding:7px 8px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
   .shead > div{ background:#F8F6F1; border-bottom:1px solid var(--line); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .sfoot > div{ background:#F8F6F1; border-top:2px solid var(--line); border-bottom:none; font-weight:800; color:var(--navy); }
@@ -690,7 +699,7 @@
     .itable input[type="text"]{ font-size:13px; }
 
     /* 03 전략 — 건수 접기 */
-    .dtable{ min-width:660px; grid-template-columns:96px minmax(68px,0.85fr) minmax(74px,1fr) minmax(66px,0.8fr) minmax(100px,1.1fr) 100px 26px; }
+    .dtable{ min-width:740px; grid-template-columns:94px minmax(64px,0.8fr) minmax(70px,1fr) minmax(62px,0.8fr) minmax(96px,1.1fr) 96px 98px 26px; }
     .stable{ min-width:640px; grid-template-columns:minmax(88px,0.8fr) minmax(96px,1fr) minmax(120px,1.2fr) 96px 100px 26px; }
     .stable input[type="text"]{ font-size:13px; }
     .stable select{ font-size:12px; padding:5px 4px; }
@@ -806,8 +815,8 @@
         <div>아이템</div>
         <div class="g-num">월 목표(원)</div>
         <div class="g-num">실적(자동)</div>
-        <div>전략 (03)</div>
-        <div>근거 대상 (06)</div>
+        <div>대상 (05)</div>
+        <div>예상일 잡힌 건</div>
         <div>커버율</div>
         <div></div>
       </div>
@@ -837,64 +846,9 @@
   <div class="section-desc" contenteditable="true">아래 매출 기록의 날짜를 달력 주(월~일) 단위로 자동 집계합니다.</div>
   <div class="week-grid" id="weekGrid"></div>
 
-  <!-- 목표 달성 전략 & 대상 -->
-  <div class="section-head">
-    <span class="section-num" contenteditable="true">03</span>
-    <h2 class="section-title" contenteditable="true">목표 달성 전략 &amp; 대상</h2>
-  </div>
-  <div class="section-desc" contenteditable="true">부족 금액을 무엇으로, 누구를 대상으로 메울 것인지 먼저 정리합니다.</div>
-
-  <div class="lead-box">
-    <div class="lead-main" id="leadMain">전략을 등록하면 부족 금액 대비 확보 계획이 여기 요약됩니다.</div>
-    <div class="tl-cards" id="leadTimeline"></div>
-    <div class="tl-extra" id="leadExtra"></div>
-    <div class="tl-pick">
-      <span class="tl-pick-lab">구간 조회</span>
-      <input type="date" id="stratFrom" onchange="recalcNow()">
-      <span class="tl-tilde">~</span>
-      <input type="date" id="stratTo" onchange="recalcNow()">
-      <button class="tl-quick" onclick="setStratRange('rest')">오늘~말일</button>
-      <button class="tl-quick" onclick="setStratRange('week')">이번 주</button>
-      <button class="tl-quick" onclick="setStratRange('month')">이번 달</button>
-      <button class="tl-quick" onclick="setStratRange('all')">전체</button>
-      <span class="tl-pick-out" id="stratAsOfOut"></span>
-    </div>
-  </div>
-
-  <div class="log-tools">
-    <button class="mini-toggle" id="stratExpandBtn" onclick="toggleBoxById('stratScrollBox',this)">⤢ 전체 펼치기</button>
-    <button class="mini-toggle" onclick="copyStratTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
-    <button class="mini-toggle" onclick="sortStratRows()">⇅ 오늘부터 정렬</button>
-    <span class="chip-cnt" id="stratCount"></span>
-  </div>
-  <div class="log-scroll scroll-y" id="stratScrollBox">
-    <div class="stable" id="stratTable">
-      <div class="srow shead">
-        <div>전략 / 활동</div>
-        <div>대상</div>
-        <div>메모</div>
-        <div>예상일</div>
-        <div class="g-num">예상 금액(원)</div>
-        <div></div>
-      </div>
-      <div id="stratBody"></div>
-      <div class="srow sfoot">
-        <div>합계</div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div class="g-num" id="sAmtCell">0</div>
-        <div></div>
-      </div>
-    </div>
-  </div>
-  <div class="goal-tools">
-    <button class="add-row" onclick="addStratRow()">+ 전략 추가</button>
-  </div>
-
   <!-- 매출 기록 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">04</span>
+    <span class="section-num" contenteditable="true">03</span>
     <h2 class="section-title" contenteditable="true">매출 기록 (일자별 · 아이템별)</h2>
   </div>
   <div class="section-desc" contenteditable="true">날짜와 판매 아이템, 금액을 입력하세요. 주차는 날짜를 기준으로 자동 계산됩니다.</div>
@@ -932,7 +886,7 @@
 
   <!-- 일자별 매출 목표 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">05</span>
+    <span class="section-num" contenteditable="true">04</span>
     <h2 class="section-title" contenteditable="true">일자별 매출 목표</h2>
   </div>
   <div class="section-desc" contenteditable="true">날짜와 목표 금액만 입력하세요. 실적 · 차이 · 달성률은 매출 기록에서 같은 날짜끼리 자동 집계됩니다. 메모는 각 날짜 아래 한 줄에 길게 적으실 수 있습니다. 표가 길어지면 표 안에서 스크롤되며 헤더와 합계 줄은 고정됩니다.</div>
@@ -1013,10 +967,29 @@
 
   <!-- 아이템별 대상 DB -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">06</span>
-    <h2 class="section-title" contenteditable="true">아이템별 대상 DB</h2>
+    <span class="section-num" contenteditable="true">05</span>
+    <h2 class="section-title" contenteditable="true">영업 대상 &amp; 전략</h2>
   </div>
-  <div class="section-desc" contenteditable="true">이번 달 목표를 채울 대상을 아이템별로 적어둡니다. 아이템 단추를 눌러 전환하세요.</div>
+  <div class="section-desc" contenteditable="true">이번 달 목표를 채울 대상과 예상일을 한 곳에 적습니다. 아이템 단추를 눌러 전환하세요.</div>
+
+  <div class="lead-box">
+    <div class="lead-main" id="leadMain">전략을 등록하면 부족 금액 대비 확보 계획이 여기 요약됩니다.</div>
+    <div class="tl-cards" id="leadTimeline"></div>
+    <div class="tl-extra" id="leadExtra"></div>
+    <div class="tl-pick">
+      <span class="tl-pick-lab">구간 조회</span>
+      <input type="date" id="stratFrom" onchange="recalcNow()">
+      <span class="tl-tilde">~</span>
+      <input type="date" id="stratTo" onchange="recalcNow()">
+      <button class="tl-quick" onclick="setStratRange('rest')">오늘~말일</button>
+      <button class="tl-quick" onclick="setStratRange('week')">이번 주</button>
+      <button class="tl-quick" onclick="setStratRange('month')">이번 달</button>
+      <button class="tl-quick" onclick="setStratRange('all')">전체</button>
+      <span class="tl-pick-out" id="stratAsOfOut"></span>
+    </div>
+  </div>
+
+
 
   <div class="db-tabs" id="dbTabs"></div>
   <datalist id="dbItemSuggest"></datalist>
@@ -1025,6 +998,8 @@
   <div class="log-tools">
     <button class="mini-toggle" id="dbExpandBtn" onclick="toggleBoxById('dbScrollBox',this)">⤢ 전체 펼치기</button>
     <button class="mini-toggle" onclick="copyDbTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
+    <button class="mini-toggle" onclick="sortDbRows()">⇅ 오늘부터 정렬</button>
+    <button class="mini-toggle" id="migBtn" style="display:none;" onclick="migrateStrategies()">↩ 이전 전략 가져오기</button>
     <span class="chip-cnt" id="dbCount"></span>
   </div>
   <div class="log-scroll scroll-y" id="dbScrollBox">
@@ -1035,12 +1010,14 @@
         <div>대상</div>
         <div>추천인</div>
         <div>메모</div>
+        <div>예상일</div>
         <div class="g-num">예상 금액(원)</div>
         <div></div>
       </div>
       <div id="dbBody"></div>
       <div class="drow dfoot">
         <div>합계</div>
+        <div></div>
         <div></div>
         <div></div>
         <div></div>
@@ -1054,7 +1031,7 @@
 
   <!-- 일자별 전략 일지 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">07</span>
+    <span class="section-num" contenteditable="true">06</span>
     <h2 class="section-title" contenteditable="true">일자별 전략 일지</h2>
   </div>
   <div class="section-desc" contenteditable="true">날짜별로 전략을 기록해 계속 쌓아둡니다. 달이 바뀌어도 지워지지 않고, 지난 주·지난 달·지난 해 전략을 그대로 찾아볼 수 있습니다.</div>
@@ -1094,7 +1071,7 @@
 
   <!-- 메모 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">08</span>
+    <span class="section-num" contenteditable="true">07</span>
     <h2 class="section-title" contenteditable="true">전략 & 메모</h2>
   </div>
   <div class="card">
@@ -1107,7 +1084,7 @@
 
   <!-- 저장 안내 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">09</span>
+    <span class="section-num" contenteditable="true">08</span>
     <h2 class="section-title" contenteditable="true">저장 & 업데이트 방식</h2>
   </div>
   <div class="card storage-card">
@@ -1252,18 +1229,31 @@
       '<div><input type="text" class="d-ref" list="dbRefSuggest" placeholder="추천인" value="'+escapeAttr(data.ref||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><textarea class="d-memo" rows="1" placeholder="진행 상황 · 특이사항" ' +
         'onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(data.memo||'')+'</textarea></div>' +
+      '<div class="due-cell"><span class="due-chip"></span>' +
+        '<input type="date" class="d-due" value="'+escapeAttr(data.due||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><input type="text" inputmode="numeric" class="d-amt amt" placeholder="0" value="'+(data.amount?fmt(data.amount):'')+'" oninput="onAmountInput(this)"></div>' +
       '<div class="g-mid"><button class="del-x" onclick="removeTargetRow(this)">✕</button></div>';
+    cacheTargetFields(row);
     return row;
   }
 
-  function rowItem(row){ return row.querySelector('.d-item').value.trim(); }
+  // 칸을 매번 다시 찾지 않도록 참조를 보관 (표가 커져도 계산이 느려지지 않음)
+  function cacheTargetFields(row){
+    row._f = {
+      date: row.querySelector('.d-date'), item: row.querySelector('.d-item'),
+      name: row.querySelector('.d-name'), ref: row.querySelector('.d-ref'),
+      memo: row.querySelector('.d-memo'), due: row.querySelector('.d-due'),
+      amt: row.querySelector('.d-amt'), chip: row.querySelector('.due-chip')
+    };
+    return row._f;
+  }
+  function tf(row){ return row._f || cacheTargetFields(row); }
+
+  function rowItem(row){ return tf(row).item.value.trim(); }
   function rowIsEmpty(row){
-    return !rowItem(row) &&
-           !row.querySelector('.d-name').value.trim() &&
-           !row.querySelector('.d-ref').value.trim() &&
-           toNum(row.querySelector('.d-amt').value) === 0 &&
-           !row.querySelector('.d-memo').value.trim();
+    var f = tf(row);
+    return !f.item.value.trim() && !f.name.value.trim() && !f.ref.value.trim() &&
+           !f.due.value && toNum(f.amt.value) === 0 && !f.memo.value.trim();
   }
 
   function addTargetRow(data){
@@ -1302,7 +1292,7 @@
     var todayStr = localISO(new Date());
     rows.forEach(function(row){
       if(rowIsEmpty(row)) return;
-      var de = row.querySelector('.d-date');
+      var de = tf(row).date;
       if(de && !de.value) de.value = todayStr;
     });
     var order = [], countBy = {}, sumBy = {}, total = 0;
@@ -1311,7 +1301,7 @@
       var it = rowItem(row) || '(아이템 없음)';
       if(order.indexOf(it) === -1) order.push(it);
       countBy[it] = (countBy[it]||0) + 1;
-      var amt = toNum(row.querySelector('.d-amt').value);
+      var amt = toNum(tf(row).amt.value);
       sumBy[it] = (sumBy[it]||0) + amt;
       total += amt;
     });
@@ -1423,50 +1413,67 @@
     }
   }
 
-  // ---------- strategy rows ----------
-  function buildStratRow(data){
-    data = data || {};
-    // 기존에 「건수/인원」으로 넣어둔 값은 메모로 이어받습니다
-    var memoVal = (data.memo !== undefined && data.memo !== null && data.memo !== '') ? data.memo : (data.count || '');
-    var row = document.createElement('div');
-    row.className = 'srow strat-row';
-    row.innerHTML =
-      '<div><input type="text" class="s-name" placeholder="예: 외부설명회 5회" value="'+escapeAttr(data.name||'')+'" oninput="onRowChange(this)"></div>' +
-      '<div><input type="text" class="s-target" placeholder="대상 이름을 쉼표로 나열" value="'+escapeAttr(data.target||'')+'" oninput="onRowChange(this)"></div>' +
-      '<div><textarea class="s-memo" rows="1" placeholder="인원·회차·특이사항 (클릭하면 전체가 펼쳐집니다)" ' +
-        'onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(memoVal)+'</textarea></div>' +
-      '<div class="due-cell"><span class="due-chip"></span>' +
-        '<input type="date" class="s-due" value="'+escapeAttr(data.due||'')+'" oninput="onRowChange(this)"></div>' +
-      '<div><input type="text" inputmode="numeric" class="s-amt amt" placeholder="0" value="'+(data.amount?fmt(data.amount):'')+'" oninput="onAmountInput(this)"></div>' +
-      '<div class="g-mid"><button class="del-x" onclick="removeStratRow(this)">✕</button></div>';
-    return row;
+  // ---------- 05 영업 대상 & 전략 (03 통합) ----------
+  var legacyStrategies = [];   // 예전 03 전략 데이터 (이관 전까지 보존)
+
+  function shortDate(iso){
+    if(!iso) return '';
+    var p = String(iso).split('-');
+    return p.length === 3 ? (Number(p[1]) + '/' + Number(p[2])) : iso;
   }
 
-  function addStratRow(data){
-    document.getElementById('stratBody').appendChild(buildStratRow(data));
-    recalcAll();
+  // 예전 03 전략을 대상 표로 옮겨 담기
+  function migrateStrategies(){
+    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    if(!legacyStrategies.length){ alert('가져올 전략 데이터가 없습니다.'); return; }
+    if(!confirm('예전 03 전략 ' + legacyStrategies.length + '건을 이 표로 옮길까요?\n\n전략/활동 → 아이템, 대상 → 대상, 예상일·금액·메모는 그대로 들어갑니다.')) return;
+
+    var body = document.getElementById('dbBody');
+    var exists = {};
+    body.querySelectorAll('.target-row').forEach(function(r){
+      if(rowIsEmpty(r)) return;
+      exists[rowItem(r) + '|' + r.querySelector('.d-name').value.trim() + '|' + toNum(r.querySelector('.d-amt').value)] = 1;
+    });
+    var added = 0;
+    legacyStrategies.forEach(function(st){
+      var item = String(st.name || '').trim();       // 「자비아,스타19」 같은 연계 표기도 그대로 유지
+      var key = item + '|' + String(st.target || '').trim() + '|' + Number(st.amount || 0);
+      if(exists[key]) return;
+      body.appendChild(buildTargetRow({
+        date: localISO(new Date()), item: item, name: st.target || '', ref: '',
+        memo: st.memo || '', due: st.due || '', amount: Number(st.amount || 0)
+      }));
+      added++;
+    });
+    legacyStrategies = [];
+    document.getElementById('migBtn').style.display = 'none';
+    recalcNow();
     scheduleSave();
+    alert(added + '건을 옮겼습니다.' + (added < legacyStrategies.length ? ' (중복된 건은 건너뛰었습니다)' : ''));
   }
 
-  function removeStratRow(btn){
-    btn.closest('.strat-row').remove();
-    recalcAll();
-    scheduleSave();
+  function updateMigBtn(){
+    var b = document.getElementById('migBtn');
+    if(!b) return;
+    b.style.display = (canEdit && legacyStrategies.length) ? '' : 'none';
+    if(legacyStrategies.length) b.textContent = '↩ 이전 전략 ' + legacyStrategies.length + '건 가져오기';
   }
 
-  // 예상일 순으로 재배열 (오늘 → 앞으로 다가올 날짜 → 지난 건 → 미정)
-  function sortStratRows(){
-    var body = document.getElementById('stratBody');
-    var rows = Array.prototype.slice.call(body.querySelectorAll('.strat-row'));
-    var today = localISO(new Date());
+  // 예상일 기준 재배열 (오늘 → 앞으로 → 지난 건 → 미정)
+  function sortDbRows(){
+    var body = document.getElementById('dbBody');
+    var rows = Array.prototype.slice.call(body.querySelectorAll('.target-row'));
+    var t = localISO(new Date());
     var bucket = function(d){
-      if(!d) return 3;          // 예상일 미정 → 맨 아래
-      if(d === today) return 0; // 오늘
-      if(d > today) return 1;   // 앞으로
-      return 2;                 // 지난 건 → 아래로
+      if(!d) return 3;
+      if(d === t) return 0;
+      if(d > t) return 1;
+      return 2;
     };
     rows.sort(function(a, b){
-      var da = a.querySelector('.s-due').value, dbv = b.querySelector('.s-due').value;
+      var ea = rowIsEmpty(a), eb = rowIsEmpty(b);
+      if(ea !== eb) return ea ? 1 : -1;          // 빈 줄은 항상 맨 아래
+      var da = a.querySelector('.d-due').value, dbv = b.querySelector('.d-due').value;
       var ba = bucket(da), bb = bucket(dbv);
       if(ba !== bb) return ba - bb;
       return String(da).localeCompare(String(dbv));
@@ -1474,6 +1481,113 @@
     rows.forEach(function(r){ body.appendChild(r); });
     recalcNow();
     scheduleSave();
+  }
+
+  // 결론 박스 (부족액 대비 확보 예정 · 시점별 누적 · 구간 조회)
+  function recalcStrategy(gap){
+    var rows = document.querySelectorAll('#dbBody .target-row');
+    var sum = 0, cnt = 0;
+
+    var t = new Date();
+    var todayS = localISO(t);
+    var wd = t.getDay();
+    var sun = new Date(t); sun.setDate(t.getDate() + (wd === 0 ? 0 : 7 - wd));
+    var weekEnd = localISO(sun);
+    var mEnd = localISO(new Date(t.getFullYear(), t.getMonth() + 1, 0));
+    var late = 0, later = 0, noDate = 0;
+    var dated = [];
+
+    rows.forEach(function(row){
+      if(rowIsEmpty(row)) return;
+      var f = tf(row);
+      var amt = toNum(f.amt.value);
+      sum += amt; cnt++;
+      var due = f.due.value;
+
+      var chip = f.chip;
+      row.classList.remove('due-late','due-today');
+      if(chip){
+        if(!due){ chip.textContent = '미정'; chip.className = 'due-chip none'; }
+        else {
+          var dl = ddayLabel(due);
+          chip.textContent = dl.txt;
+          chip.className = 'due-chip ' + (dl.cls || '');
+          if(dl.cls === 'late') row.classList.add('due-late');
+          else if(dl.cls === 'today') row.classList.add('due-today');
+        }
+      }
+      if(!due){ noDate += amt; return; }
+      dated.push({ due: due, amt: amt });
+      if(due < todayS) late += amt;
+      else if(due > mEnd) later += amt;
+    });
+    // 빈 줄의 배지는 비움
+    rows.forEach(function(row){
+      if(!rowIsEmpty(row)) return;
+      var chip = tf(row).chip;
+      if(chip){ chip.textContent = ''; chip.className = 'due-chip'; }
+      row.classList.remove('due-late','due-today');
+    });
+
+    function cum(upto){ var v = 0; dated.forEach(function(x){ if(x.due <= upto) v += x.amt; }); return v; }
+    function cntTo(upto){ var c = 0; dated.forEach(function(x){ if(x.due <= upto) c++; }); return c; }
+
+    // 시점별 누적 카드
+    var tl = document.getElementById('leadTimeline');
+    var ex = document.getElementById('leadExtra');
+    if(tl){
+      if(!cnt){ tl.innerHTML = ''; if(ex) ex.innerHTML = ''; }
+      else {
+        var cards = [
+          { when:'오늘 ' + shortDate(todayS) + '까지', amt:cum(todayS), cnt:cntTo(todayS), now:true },
+          { when:'이번 주 ~' + shortDate(weekEnd) + ' 누적', amt:cum(weekEnd), cnt:cntTo(weekEnd) },
+          { when:'이달 말 ~' + shortDate(mEnd) + ' 누적', amt:cum(mEnd), cnt:cntTo(mEnd) }
+        ];
+        tl.innerHTML = cards.map(function(c){
+          return '<div class="tl-card' + (c.now ? ' now' : '') + '">' +
+            '<div class="when">' + c.when + '</div>' +
+            '<div class="amt">' + fmt(c.amt) + '원</div>' +
+            '<div class="cnt">' + c.cnt + '건</div></div>';
+        }).join('');
+        if(ex){
+          var extra = [];
+          if(late) extra.push('<span class="late">예정일 지남 ' + fmt(late) + '원</span>');
+          if(later) extra.push('다음 달 이후 ' + fmt(later) + '원');
+          if(noDate) extra.push('예상일 미정 ' + fmt(noDate) + '원');
+          ex.innerHTML = extra.join(' · ');
+        }
+      }
+    }
+
+    // 구간 조회
+    var pf = document.getElementById('stratFrom');
+    var pt = document.getElementById('stratTo');
+    var pickOut = document.getElementById('stratAsOfOut');
+    if(pf && pt && pickOut){
+      var f = pf.value, tt = pt.value;
+      if(f && tt && f > tt){ var sw = f; f = tt; tt = sw; pf.value = f; pt.value = tt; }
+      var rSum = 0, rCnt = 0;
+      dated.forEach(function(x){
+        if(f && x.due < f) return;
+        if(tt && x.due > tt) return;
+        rSum += x.amt; rCnt++;
+      });
+      var label = (!f && !tt) ? '예상일 등록된 전체' : ((f ? shortDate(f) : '처음') + ' ~ ' + (tt ? shortDate(tt) : '끝'));
+      pickOut.innerHTML = label + ' 구간 예상 <b>' + fmt(rSum) + '원</b> · ' + rCnt + '건' +
+        (rCnt === 0 ? ' <span style="color:#9AA3B5;">(이 구간에 예정된 건이 없습니다)</span>' : '');
+    }
+
+    // 헤드라인
+    var lead = document.getElementById('leadMain');
+    if(!lead) return;
+    if(gap <= 0){
+      lead.innerHTML = '<span class="ok">이번 달 목표를 이미 달성했습니다.</span> 등록된 대상의 예상 금액은 <b>' + fmt(sum) + '원</b>입니다.';
+      return;
+    }
+    var cover = sum / gap * 100;
+    lead.innerHTML =
+      '부족 <b>' + fmt(gap) + '원</b> → 등록된 대상 <b>' + cnt + '명</b>으로 <b>' + fmt(sum) + '원</b> 확보 예정 ' +
+      '<span class="' + (cover >= 100 ? 'ok' : 'warn') + '">(커버율 ' + cover.toFixed(0) + '%)</span>';
   }
 
   function setStratRange(kind){
@@ -1495,131 +1609,7 @@
     recalcNow();
   }
 
-  function shortDate(iso){
-    if(!iso) return '';
-    var p = String(iso).split('-');
-    return p.length === 3 ? (Number(p[1]) + '/' + Number(p[2])) : iso;
-  }
-
-  function recalcStrategy(gap){
-    var rows = document.querySelectorAll('#stratBody .strat-row');
-    var sum = 0;
-
-    // 오늘 기준 시점별 예상액
-    var t = new Date();
-    var todayS = localISO(t);
-    var wd = t.getDay();
-    var sun = new Date(t); sun.setDate(t.getDate() + (wd === 0 ? 0 : 7 - wd));
-    var weekEnd = localISO(sun);
-    var mEnd = localISO(new Date(t.getFullYear(), t.getMonth() + 1, 0));
-    var late = 0, byToday = 0, byWeek = 0, byMonth = 0, later = 0, noDate = 0;
-
-    var dated = [];
-    rows.forEach(function(row){
-      var amt = toNum(row.querySelector('.s-amt').value);
-      sum += amt;
-      var due = row.querySelector('.s-due').value;
-      row.classList.toggle('overdue', !!due && due < todayS);
-
-      // 예상일 상태 배지 · 행 색 띠
-      var chip = row.querySelector('.due-chip');
-      row.classList.remove('due-late','due-today','due-none');
-      if(chip){
-        if(!due){ chip.textContent = '미정'; chip.className = 'due-chip none'; row.classList.add('due-none'); }
-        else {
-          var dl = ddayLabel(due);
-          chip.textContent = dl.txt;
-          chip.className = 'due-chip ' + (dl.cls || '');
-          if(dl.cls === 'late') row.classList.add('due-late');
-          else if(dl.cls === 'today') row.classList.add('due-today');
-        }
-      }
-      if(!due){ noDate += amt; return; }
-      dated.push({ due: due, amt: amt });
-      if(due < todayS){ late += amt; }
-      else if(due <= mEnd){ byMonth += amt; }
-      else { later += amt; }
-    });
-    // 기준일까지의 누적 (예정일이 지난 건도 포함)
-    function cum(upto){
-      var v = 0;
-      dated.forEach(function(x){ if(x.due <= upto) v += x.amt; });
-      return v;
-    }
-    function cnt(upto){
-      var c = 0;
-      dated.forEach(function(x){ if(x.due <= upto) c++; });
-      return c;
-    }
-
-    // 시점별 누적 카드
-    var tl = document.getElementById('leadTimeline');
-    var ex = document.getElementById('leadExtra');
-    if(tl){
-      if(rows.length === 0){ tl.innerHTML = ''; if(ex) ex.innerHTML = ''; }
-      else {
-        var cards = [
-          { when:'오늘 ' + shortDate(todayS) + '까지', amt:cum(todayS), cnt:cnt(todayS), now:true },
-          { when:'이번 주 ~' + shortDate(weekEnd) + ' 누적', amt:cum(weekEnd), cnt:cnt(weekEnd) },
-          { when:'이달 말 ~' + shortDate(mEnd) + ' 누적', amt:cum(mEnd), cnt:cnt(mEnd) }
-        ];
-        tl.innerHTML = cards.map(function(c){
-          return '<div class="tl-card' + (c.now ? ' now' : '') + '">' +
-            '<div class="when">' + c.when + '</div>' +
-            '<div class="amt">' + fmt(c.amt) + '원</div>' +
-            '<div class="cnt">' + c.cnt + '건</div></div>';
-        }).join('');
-        if(ex){
-          var extra = [];
-          if(late) extra.push('<span class="late">예정일 지남 ' + fmt(late) + '원</span>');
-          if(later) extra.push('다음 달 이후 ' + fmt(later) + '원');
-          if(noDate) extra.push('예상일 미정 ' + fmt(noDate) + '원');
-          ex.innerHTML = extra.join(' · ');
-        }
-      }
-    }
-
-    // 구간 조회 (시작일 ~ 종료일)
-    var pf = document.getElementById('stratFrom');
-    var pt = document.getElementById('stratTo');
-    var pickOut = document.getElementById('stratAsOfOut');
-    if(pf && pt && pickOut){
-      var f = pf.value, tt = pt.value;
-      {
-        if(f && tt && f > tt){ var sw = f; f = tt; tt = sw; pf.value = f; pt.value = tt; }
-        var rSum = 0, rCnt = 0;
-        dated.forEach(function(x){
-          if(f && x.due < f) return;
-          if(tt && x.due > tt) return;
-          rSum += x.amt; rCnt++;
-        });
-        var label = (!f && !tt) ? '예상일 등록된 전체' : ((f ? shortDate(f) : '처음') + ' ~ ' + (tt ? shortDate(tt) : '끝'));
-        pickOut.innerHTML = label + ' 구간 예상 <b>' + fmt(rSum) + '원</b> · ' + rCnt + '건' +
-          (rCnt === 0 ? ' <span style="color:#9AA3B5;">(이 구간에 예정된 건이 없습니다)</span>' : '');
-      }
-    }
-
-    document.getElementById('sAmtCell').textContent = fmt(sum);
-    var sc = document.getElementById('stratCount');
-    if(sc) sc.textContent = rows.length + '건 · 예상 ' + fmt(sum) + '원';
-
-    var lead = document.getElementById('leadMain');
-    if(rows.length === 0){
-      lead.innerHTML = '전략을 등록하면 부족 금액 대비 확보 계획이 여기 요약됩니다.';
-      return;
-    }
-    if(gap <= 0){
-      lead.innerHTML = '<span class="ok">이번 달 목표를 이미 달성했습니다.</span> 등록된 전략 예상 금액은 <b>'+fmt(sum)+'원</b>입니다.';
-      return;
-    }
-    var cover = sum / gap * 100;
-    var cls = cover >= 100 ? 'ok' : 'warn';
-    lead.innerHTML =
-      '부족 <b>'+fmt(gap)+'원</b> → 등록된 전략으로 <b>'+fmt(sum)+'원</b> 확보 예정 ' +
-      '<span class="'+cls+'">(커버율 '+cover.toFixed(0)+'%)</span>';
-  }
-
-  // ---------- 01 이번 달 계획 ----------
+  // ---------- 01 이번 달 계획 ----------  // ---------- 01 이번 달 계획 ----------
   function buildPlanRow(data){
     data = data || {};
     var row = document.createElement('div');
@@ -1656,13 +1646,11 @@
       var v = el.value.trim(); if(v) have[v] = 1;
     });
     var found = [];
-    document.querySelectorAll('#stratBody .s-name').forEach(function(el){
-      itemParts(el.value).forEach(function(v){ if(v && !have[v]){ have[v] = 1; found.push(v); } });
-    });
     document.querySelectorAll('#dbBody .target-row').forEach(function(r){
       if(rowIsEmpty(r)) return;
       var v = rowItem(r);
-      if(v && !have[v]){ have[v] = 1; found.push(v); }
+      if(!v) return;
+      itemParts(v).forEach(function(x){ if(x && !have[x]){ have[x] = 1; found.push(x); } });
     });
     if(!found.length){ alert('가져올 새 아이템이 없습니다.'); return; }
     found.forEach(function(v){ document.getElementById('planBody').appendChild(buildPlanRow({ name:v })); });
@@ -1677,25 +1665,22 @@
       if(v) names.push(v);
     });
 
-    // 전략(03) — 대표 아이템에 전액, 나머지는 연계 표시
-    var stCnt = {}, stSum = {}, linkOf = {};
-    document.querySelectorAll('#stratBody .strat-row').forEach(function(r){
-      var parts = itemParts(r.querySelector('.s-name').value);
-      if(!parts.length) return;
-      var amt = toNum(r.querySelector('.s-amt').value);
-      stCnt[parts[0]] = (stCnt[parts[0]]||0) + 1;
-      stSum[parts[0]] = (stSum[parts[0]]||0) + amt;
-      parts.slice(1).forEach(function(p){ linkOf[p] = (linkOf[p]||0) + 1; });
-    });
-
-    // 대상 DB(06)
-    var dbCnt = {}, dbSum = {};
+    // 영업 대상 & 전략(05) — 아이템 여러 개면 대표 아이템에 전액, 나머지는 연계 표시
+    var stCnt = {}, stSum = {}, linkOf = {}, dbCnt = {}, dbSum = {};
     document.querySelectorAll('#dbBody .target-row').forEach(function(r){
       if(rowIsEmpty(r)) return;
-      var it = rowItem(r);
-      if(!it) return;
-      dbCnt[it] = (dbCnt[it]||0) + 1;
-      dbSum[it] = (dbSum[it]||0) + toNum(r.querySelector('.d-amt').value);
+      var f = tf(r);
+      var parts = itemParts(f.item.value.trim());
+      if(!parts.length) return;
+      var amt = toNum(f.amt.value);
+      var head = parts[0];
+      dbCnt[head] = (dbCnt[head]||0) + 1;
+      dbSum[head] = (dbSum[head]||0) + amt;
+      if(f.due.value){
+        stCnt[head] = (stCnt[head]||0) + 1;
+        stSum[head] = (stSum[head]||0) + amt;
+      }
+      parts.slice(1).forEach(function(p){ linkOf[p] = (linkOf[p]||0) + 1; });
     });
 
     // 매출 기록(04) — 아이템 이름이 들어간 줄을 자동 집계
@@ -1720,11 +1705,11 @@
 
       r.querySelector('.pl-act').textContent = fmt(act);
       var lk = linkOf[nm] ? '<span class="pl-link">연계 ' + linkOf[nm] + '</span>' : '';
-      r.querySelector('.pl-st').innerHTML = (sc
-        ? '<span class="pl-n">' + sc + '건</span><span class="pl-a">' + fmt(ss) + '</span>'
-        : '<span class="pl-none">—</span>') + lk;
-      r.querySelector('.pl-db').innerHTML = dc
+      r.querySelector('.pl-st').innerHTML = (dc
         ? '<span class="pl-n">' + dc + '명</span><span class="pl-a">' + fmt(ds) + '</span>'
+        : '<span class="pl-none">—</span>') + lk;
+      r.querySelector('.pl-db').innerHTML = sc
+        ? '<span class="pl-n">' + sc + '건</span><span class="pl-a">' + fmt(ss) + '</span>'
         : '<span class="pl-none">—</span>';
 
       var cov = goal > 0 ? ((act + ss) / goal * 100) : null;
@@ -1736,8 +1721,8 @@
 
     document.getElementById('plGoal').textContent = fmt(sumGoal);
     document.getElementById('plAct').textContent = fmt(sumAct);
-    document.getElementById('plStrat').innerHTML = '<span class="pl-n">' + sumStCnt + '건</span><span class="pl-a">' + fmt(sumSt) + '</span>';
-    document.getElementById('plDb').innerHTML = '<span class="pl-n">' + sumDbCnt + '명</span><span class="pl-a">' + fmt(sumDb) + '</span>';
+    document.getElementById('plStrat').innerHTML = '<span class="pl-n">' + sumDbCnt + '명</span><span class="pl-a">' + fmt(sumDb) + '</span>';
+    document.getElementById('plDb').innerHTML = '<span class="pl-n">' + sumStCnt + '건</span><span class="pl-a">' + fmt(sumSt) + '</span>';
     var tCov = sumGoal > 0 ? Math.round((sumAct + sumSt) / sumGoal * 100) : null;
     document.getElementById('plCover').innerHTML = tCov === null ? '—' :
       '<span class="pl-rate ' + (tCov >= 100 ? 'ok' : (tCov >= 50 ? 'mid' : 'low')) + '">' + tCov + '%</span>';
@@ -1761,7 +1746,7 @@
         html = '아이템을 추가하면 목표·전략·근거 대상이 한 줄로 정리됩니다. <b>↻ 전략·DB에서 아이템 가져오기</b>를 누르면 이미 쓰고 계신 이름을 그대로 불러옵니다.';
       } else if(weak.length){
         var w = weak[0];
-        html = '가장 모자란 곳은 <b>' + escapeHtml(w.nm) + '</b>입니다. <b>' + fmt(w.gap) + '원</b>어치 전략이 더 필요하고, 현재 근거 대상은 <b>' + w.db + '명</b>입니다.' +
+        html = '가장 모자란 곳은 <b>' + escapeHtml(w.nm) + '</b>입니다. <b>' + fmt(w.gap) + '원</b>이 더 필요하고, 현재 등록된 대상은 <b>' + w.db + '명</b>입니다.' +
                (weak.length > 1 ? ' 이어서 ' + weak.slice(1,3).map(function(x){ return escapeHtml(x.nm) + ' ' + fmt(x.gap) + '원'; }).join(', ') + '이 부족합니다.' : '');
       } else {
         html = '<b>모든 아이템이 목표를 덮고 있습니다.</b> 실적과 전략 예상액의 합이 목표 이상입니다.';
@@ -1885,17 +1870,6 @@
     } else { fallbackCopy(text); flash(); }
   }
 
-  function copyStratTable(btn){
-    var out = [['전략 / 활동','대상','메모','예상일','예상 금액(원)']], sum = 0;
-    document.querySelectorAll('#stratBody .strat-row').forEach(function(r){
-      var amt = toNum(r.querySelector('.s-amt').value); sum += amt;
-      out.push([r.querySelector('.s-name').value, r.querySelector('.s-target').value,
-                r.querySelector('.s-memo').value.replace(/\n/g,' / '),
-                r.querySelector('.s-due').value, amt]);
-    });
-    out.push(['합계','','','',sum]);
-    copyTsv(out, btn);
-  }
 
   function copyGoalTable(btn){
     recalcNow();
@@ -1916,15 +1890,16 @@
 
   function copyDbTable(btn){
     recalcNow();
-    var out = [['등록일','아이템','대상','추천인','메모','예상 금액(원)']], sum = 0;
+    var out = [['등록일','아이템','대상','추천인','메모','예상일','예상 금액(원)']], sum = 0;
     document.querySelectorAll('#dbBody .target-row').forEach(function(r){
       if(rowIsEmpty(r)) return;
       var amt = toNum(r.querySelector('.d-amt').value); sum += amt;
       out.push([r.querySelector('.d-date').value, rowItem(r), r.querySelector('.d-name').value,
                 r.querySelector('.d-ref').value,
-                r.querySelector('.d-memo').value.replace(/\n/g,' / '), amt]);
+                r.querySelector('.d-memo').value.replace(/\n/g,' / '),
+                r.querySelector('.d-due').value, amt]);
     });
-    out.push(['합계','','','','',sum]);
+    out.push(['합계','','','','','',sum]);
     copyTsv(out, btn);
   }
 
@@ -1950,7 +1925,7 @@
 
   // ---------- 간편 / 전체 보기 ----------
   // 간편 보기에 남길 섹션 (0 = 섹션 제목 이전의 요약·중요일정)
-  var LEAN_SECTIONS = [0, 1, 3, 4, 6, 7];
+  var LEAN_SECTIONS = [0, 1, 3, 5, 6];
 
   function tagSections(){
     var main = document.querySelector('main');
@@ -2875,20 +2850,12 @@
         item: rowItem(row),
         name: row.querySelector('.d-name').value,
         ref: row.querySelector('.d-ref').value,
+        due: row.querySelector('.d-due').value,
         amount: toNum(row.querySelector('.d-amt').value),
         memo: row.querySelector('.d-memo').value
       });
     });
-    var strategies = [];
-    document.querySelectorAll('#stratBody .strat-row').forEach(function(row){
-      strategies.push({
-        name: row.querySelector('.s-name').value,
-        target: row.querySelector('.s-target').value,
-        memo: row.querySelector('.s-memo').value,
-        due: row.querySelector('.s-due').value,
-        amount: toNum(row.querySelector('.s-amt').value)
-      });
-    });
+    var strategies = legacyStrategies;   // 05로 옮기기 전까지 원본 보존
     var items = [];
     document.querySelectorAll('#planBody .plan-row').forEach(function(row){
       items.push({
@@ -2933,9 +2900,9 @@
     var dbody = document.getElementById('dbBody');
     dbody.innerHTML = '';
     (state.targets || []).forEach(function(t){ dbody.appendChild(buildTargetRow(t)); });
-    var sbody = document.getElementById('stratBody');
-    sbody.innerHTML = '';
-    (state.strategies || []).forEach(function(st){ sbody.appendChild(buildStratRow(st)); });
+    legacyStrategies = (state.strategies || []).filter(function(st){
+      return (st.name || st.target || st.memo || Number(st.amount||0) > 0);
+    });
     var pbody = document.getElementById('planBody');
     pbody.innerHTML = '';
     (state.items || []).forEach(function(it){ pbody.appendChild(buildPlanRow(it)); });
@@ -2943,6 +2910,7 @@
     gbody.innerHTML = '';
     (state.goals || []).forEach(function(g){ gbody.appendChild(buildGoalRow(g)); });
     recalcAll();
+    updateMigBtn();
     applyEditMode();
     refreshMemoMarks();
     updateMemoHint();
@@ -3102,14 +3070,15 @@
   function applyEditMode(){
     var editable = canEdit && !isSnapshotFile;
     document.querySelectorAll('[contenteditable]').forEach(function(el){ el.setAttribute('contenteditable', editable ? 'true' : 'false'); });
-    document.querySelectorAll('#goalInput, #stratBody input, #dbBody input, #planBody input, #logBody input, #goalBody input').forEach(function(el){ el.disabled = !editable; });
+    document.querySelectorAll('#goalInput, #dbBody input, #planBody input, #logBody input, #goalBody input').forEach(function(el){ el.disabled = !editable; });
     // 메모는 잠그지 않고 '수정 불가'로 둠 — 읽기 전용으로 보는 사람도 눌러서 전체를 볼 수 있어야 함
     var slt = document.getElementById('slText');
     if(slt) slt.readOnly = !editable;
+    updateMigBtn();
     var tda = document.getElementById('tdAdd');
     if(tda) tda.style.display = editable ? '' : 'none';
     renderTodos();
-    document.querySelectorAll('#goalBody textarea.g-memo, #stratBody textarea.s-memo, #dbBody textarea.d-memo').forEach(function(el){
+    document.querySelectorAll('#goalBody textarea.g-memo, #dbBody textarea.d-memo').forEach(function(el){
       el.disabled = false;
       el.readOnly = !editable;
     });
@@ -3234,31 +3203,15 @@
           '<div><input type="text" class="d-name" value="'+escapeAttr(row.querySelector('.d-name').value)+'" oninput="onRowChange(this)"></div>' +
           '<div><input type="text" class="d-ref" list="dbRefSuggest" value="'+escapeAttr(row.querySelector('.d-ref').value)+'" oninput="onRowChange(this)"></div>' +
           '<div><textarea class="d-memo" rows="1" onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(row.querySelector('.d-memo').value)+'</textarea></div>' +
+          '<div class="due-cell"><span class="due-chip"></span>' +
+            '<input type="date" class="d-due" value="'+escapeAttr(row.querySelector('.d-due').value)+'" oninput="onRowChange(this)"></div>' +
           '<div><input type="text" inputmode="numeric" class="d-amt amt" value="'+escapeAttr(row.querySelector('.d-amt').value)+'" oninput="onAmountInput(this)"></div>' +
           '<div class="g-mid"><button class="del-x" onclick="removeTargetRow(this)">✕</button></div>';
         dstDb.appendChild(r);
       });
     }
 
-    // bake strategy rows
-    var srcStrat = document.getElementById('stratBody');
-    var dstStrat = clone.querySelector('#stratBody');
-    if(srcStrat && dstStrat){
-      dstStrat.innerHTML = '';
-      srcStrat.querySelectorAll('.strat-row').forEach(function(row){
-        var r = document.createElement('div');
-        r.className = 'srow strat-row';
-        r.innerHTML =
-          '<div><input type="text" class="s-name" value="'+escapeAttr(row.querySelector('.s-name').value)+'" oninput="onRowChange(this)"></div>' +
-          '<div><input type="text" class="s-target" value="'+escapeAttr(row.querySelector('.s-target').value)+'" oninput="onRowChange(this)"></div>' +
-          '<div><textarea class="s-memo" rows="1" onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(row.querySelector('.s-memo').value)+'</textarea></div>' +
-          '<div class="due-cell"><span class="due-chip"></span>' +
-            '<input type="date" class="s-due" value="'+escapeAttr(row.querySelector('.s-due').value)+'" oninput="onRowChange(this)"></div>' +
-          '<div><input type="text" inputmode="numeric" class="s-amt amt" value="'+escapeAttr(row.querySelector('.s-amt').value)+'" oninput="onAmountInput(this)"></div>' +
-          '<div class="g-mid"><button class="del-x" onclick="removeStratRow(this)">✕</button></div>';
-        dstStrat.appendChild(r);
-      });
-    }
+
     var slSrc = document.getElementById('slText');
     var slDst = clone.querySelector('#slText');
     if(slSrc && slDst) slDst.textContent = slSrc.value;
@@ -3284,24 +3237,7 @@
     }
 
     // bake strategy rows
-    var srcStrat = document.getElementById('stratBody');
-    var dstStrat = clone.querySelector('#stratBody');
-    if(srcStrat && dstStrat){
-      dstStrat.innerHTML = '';
-      srcStrat.querySelectorAll('.strat-row').forEach(function(row){
-        var r = document.createElement('div');
-        r.className = 'srow strat-row';
-        r.innerHTML =
-          '<div><input type="text" class="s-name" value="'+escapeAttr(row.querySelector('.s-name').value)+'" oninput="onRowChange(this)"></div>' +
-          '<div><input type="text" class="s-target" value="'+escapeAttr(row.querySelector('.s-target').value)+'" oninput="onRowChange(this)"></div>' +
-          '<div><textarea class="s-memo" rows="1" onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(row.querySelector('.s-memo').value)+'</textarea></div>' +
-          '<div class="due-cell"><span class="due-chip"></span>' +
-            '<input type="date" class="s-due" value="'+escapeAttr(row.querySelector('.s-due').value)+'" oninput="onRowChange(this)"></div>' +
-          '<div><input type="text" inputmode="numeric" class="s-amt amt" value="'+escapeAttr(row.querySelector('.s-amt').value)+'" oninput="onAmountInput(this)"></div>' +
-          '<div class="g-mid"><button class="del-x" onclick="removeStratRow(this)">✕</button></div>';
-        dstStrat.appendChild(r);
-      });
-    }
+
     var slSrc = document.getElementById('slText');
     var slDst = clone.querySelector('#slText');
     if(slSrc && slDst) slDst.textContent = slSrc.value;
