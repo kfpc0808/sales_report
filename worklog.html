@@ -205,6 +205,52 @@
   .cs-tag{ font-size:10.5px; font-weight:800; padding:1px 8px; border-radius:20px; background:#EFEAE0; color:#6B5122; }
   .cs-empty{ text-align:center; color:var(--muted); font-size:13px; padding:26px 0; }
 
+  /* ---------- 미결 관리 ---------- */
+  .ar-sum{ background:linear-gradient(160deg,#16294A,#101E36); color:#EDEEF3; border-radius:14px; padding:16px 18px; margin-bottom:14px; }
+  .ar-sum .facts{ display:flex; gap:22px; flex-wrap:wrap; }
+  .ar-sum .k{ font-size:10.5px; letter-spacing:.1em; color:var(--brass-light); font-weight:700; }
+  .ar-sum .v{ font-size:19px; font-weight:800; margin-top:3px; }
+  .ar-sum .v.warn{ color:#E6A88B; }
+  .ar-sum .brk{ margin-top:11px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.16); font-size:12.5px; color:#B9BFCF; }
+  .ar-add{ display:grid; grid-template-columns:118px 152px 132px 118px minmax(140px,1fr) 84px; gap:7px; margin-bottom:10px; }
+  .ar-add input, .ar-add select{ font-family:'Pretendard',sans-serif; font-size:13px; padding:8px 10px;
+        border:1px solid var(--line); border-radius:9px; background:#FBFAF7; color:var(--ink); width:100%; box-sizing:border-box; }
+  .ar-add input:focus, .ar-add select:focus{ outline:none; border-color:var(--brass); background:#fff; }
+  .ar-add .go{ background:var(--brass); border-color:var(--brass); color:#fff; font-weight:700; }
+  .ar-tools{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+  .ar-chk{ font-size:12.5px; color:var(--muted); display:flex; align-items:center; gap:5px; cursor:pointer; }
+  .ar-fee{ background:#FBF9F4; border:1px solid var(--line); border-radius:12px; padding:13px 15px; margin-bottom:14px; }
+  .ar-fee-row{ display:flex; align-items:center; gap:9px; padding:5px 0; }
+  .ar-fee-row .nm{ flex:0 0 160px; font-size:13px; font-weight:700; color:var(--navy); }
+  .ar-fee-row input{ width:140px; font-family:'Pretendard',sans-serif; font-size:13px; padding:6px 9px;
+        border:1px solid var(--line); border-radius:8px; background:#fff; text-align:right; }
+  .ar-fee-row input:focus{ outline:none; border-color:var(--brass); }
+  .ar-person{ border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:8px; background:#fff; }
+  .ar-person.warn2{ border-color:#EADFC6; background:#FDFBF6; }
+  .ar-person.warn3{ border-color:#E8CFCB; background:#FDF7F5; }
+  .ar-top{ display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+  .ar-who{ font-family:'Noto Serif KR',serif; font-size:15px; font-weight:700; color:var(--navy); cursor:pointer;
+           text-decoration:underline; text-decoration-color:var(--brass-light); text-underline-offset:3px; }
+  .ar-sub{ font-size:11.5px; color:var(--muted); }
+  .ar-streak{ font-size:11px; font-weight:800; padding:2px 9px; border-radius:20px; background:#EFEAE0; color:#6B5122; }
+  .ar-streak.w2{ background:#FBF0E4; color:var(--brass); }
+  .ar-streak.w3{ background:var(--red-bg); color:var(--red); }
+  .ar-total{ margin-left:auto; font-size:15px; font-weight:800; color:var(--navy); font-variant-numeric:tabular-nums; }
+  .ar-items{ display:flex; flex-wrap:wrap; gap:6px; margin-top:9px; }
+  .ar-chip{ display:flex; align-items:center; gap:6px; font-size:12px; padding:4px 8px 4px 11px; border-radius:20px;
+            border:1px solid var(--line); background:#FBFAF7; }
+  .ar-chip.paid{ background:var(--green-bg); border-color:#BFD9CB; color:var(--green); }
+  .ar-chip b{ font-variant-numeric:tabular-nums; color:var(--navy); }
+  .ar-chip.paid b{ color:var(--green); text-decoration:line-through; }
+  .ar-chip .tp{ color:var(--brass); font-weight:700; }
+  .ar-chip button{ background:none; border:none; cursor:pointer; font-size:11px; color:#BCB6A7; padding:1px 3px; }
+  .ar-chip button:hover{ color:var(--brass); }
+  .ar-empty{ text-align:center; color:var(--muted); font-size:13px; padding:26px 0; }
+  @media (max-width:768px){
+    .ar-add{ grid-template-columns:1fr 1fr; }
+    .ar-total{ margin-left:0; }
+  }
+
   /* ---------- 보고서 ---------- */
   .rep-controls{ background:#FBF9F4; border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin-bottom:16px; }
   .rep-controls .row-line{ margin-bottom:10px; }
@@ -294,6 +340,7 @@
   <div class="tab on" id="tab-day" onclick="switchTab('day')">오늘 기록</div>
   <div class="tab" id="tab-member" onclick="switchTab('member')">대상별 이력</div>
   <div class="tab" id="tab-consult" onclick="switchTab('consult')">상담 관리<span class="tab-badge" id="csBadge"></span></div>
+  <div class="tab" id="tab-arrear" onclick="switchTab('arrear')">미결 관리<span class="tab-badge" id="arBadge"></span></div>
   <div class="tab" id="tab-report" onclick="switchTab('report')">보고서 출력</div>
 </div>
 
@@ -388,6 +435,30 @@
       <span class="cs-sum" id="csSum"></span>
     </div>
     <div id="csList"></div>
+  </div>
+
+  <!-- ===== 미결 관리 ===== -->
+  <div class="panel" id="panel-arrear">
+    <div class="ar-sum" id="arSum"></div>
+
+    <div class="ar-add" id="arAdd">
+      <input type="text" id="arName" list="memberList" placeholder="성함" autocomplete="off">
+      <select id="arType"></select>
+      <input type="month" id="arMonth">
+      <input type="text" id="arAmt" inputmode="numeric" placeholder="미결금액">
+      <input type="text" id="arMemo" placeholder="메모 (선택)" autocomplete="off">
+      <button class="mini go" onclick="addArrear()">+ 추가</button>
+    </div>
+
+    <div class="ar-tools">
+      <button class="mini" onclick="carryOverArrears()">↻ 지난달 미결 이어받기</button>
+      <button class="mini" onclick="toggleFeeBox()">₩ 월 이용료 설정</button>
+      <button class="mini" onclick="copyArrearTable(this)">⧉ 표 복사</button>
+      <label class="ar-chk"><input type="checkbox" id="arShowPaid" onchange="renderArrears()"> 완납 포함</label>
+    </div>
+
+    <div class="ar-fee" id="arFeeBox" style="display:none;"></div>
+    <div id="arList"></div>
   </div>
 
   <!-- ===== 보고서 출력 ===== -->
@@ -497,6 +568,8 @@
     document.getElementById('quickBox').style.display = canEdit ? '' : 'none';
     var csb=document.getElementById('csToggle');
     if(csb) csb.style.display = canEdit ? '' : 'none';
+    var ara=document.getElementById('arAdd');
+    if(ara) ara.style.display = canEdit ? '' : 'none';
     document.querySelectorAll('#logBody input').forEach(function(el){ el.disabled = !canEdit; });
     document.querySelectorAll('#logBody .del, #logBody .done-btn').forEach(function(el){
       el.style.display = canEdit ? '' : 'none';
@@ -524,7 +597,7 @@
 
   // ---------- 탭 ----------
   function switchTab(name){
-    ['day','member','consult','report'].forEach(function(n){
+    ['day','member','consult','arrear','report'].forEach(function(n){
       document.getElementById('tab-'+n).classList.toggle('on', n===name);
       document.getElementById('panel-'+n).classList.toggle('on', n===name);
     });
@@ -595,6 +668,273 @@
     var c=document.getElementById('qCompany'), j=document.getElementById('qJob');
     if(!c.value.trim() && m.company) c.value=m.company;
     if(!j.value.trim() && m.job) j.value=m.job;
+  }
+
+  // ---------- 미결 관리 ----------
+  var ARREARS = 'arrears', FEES = 'settings';
+  var MS_TYPES = ['이너서클','자비아','지사(총판)','컨설턴트 홈페이지','기업 홈페이지'];
+  var arRows = [], msFees = {};
+
+  function initArrearUI(){
+    var sel = document.getElementById('arType');
+    if(sel && !sel.options.length){
+      sel.innerHTML = MS_TYPES.map(function(t){ return '<option value="' + esc(t) + '">' + esc(t) + '</option>'; }).join('');
+      sel.onchange = fillArrearFee;
+    }
+    var mm = document.getElementById('arMonth');
+    if(mm && !mm.value) mm.value = localISO(new Date()).slice(0,7);
+    ['arName','arAmt','arMemo'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.addEventListener('keydown', function(e){ if(e.key === 'Enter') addArrear(); });
+    });
+    var amt = document.getElementById('arAmt');
+    if(amt) amt.addEventListener('input', function(){
+      var v = String(this.value).replace(/[^0-9]/g,'');
+      this.value = v ? Number(v).toLocaleString('ko-KR') : '';
+    });
+  }
+
+  function fillArrearFee(){
+    var t = document.getElementById('arType').value;
+    var amt = document.getElementById('arAmt');
+    if(msFees[t]) amt.value = Number(msFees[t]).toLocaleString('ko-KR');
+  }
+
+  function loadArrears(){
+    if(!db) return;
+    db.collection(FEES).doc('membershipFees').get().then(function(snap){
+      msFees = snap.exists ? (snap.data().fees || {}) : {};
+      fillArrearFee();
+      renderFeeBox();
+    }).catch(function(){});
+    db.collection(ARREARS).get().then(function(snap){
+      arRows = [];
+      snap.forEach(function(doc){ var v = doc.data(); v.id = doc.id; arRows.push(v); });
+      renderArrears();
+    }).catch(function(e){
+      document.getElementById('arList').innerHTML = '<div class="ar-empty">조회 실패 (' + esc(e.code||'') + ')</div>';
+    });
+  }
+
+  function addArrear(){
+    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    var nm = document.getElementById('arName').value.trim();
+    var tp = document.getElementById('arType').value;
+    var mo = document.getElementById('arMonth').value;
+    var amt = Number(String(document.getElementById('arAmt').value).replace(/[^0-9]/g,'')) || 0;
+    var memo = document.getElementById('arMemo').value.trim();
+    if(!nm){ document.getElementById('arName').focus(); return; }
+    if(!mo){ document.getElementById('arMonth').focus(); return; }
+    var key = nameKey(nm);
+    var dup = arRows.filter(function(r){ return r.nameKey === key && r.type === tp && r.month === mo; });
+    if(dup.length && !confirm('같은 사람·상품·월 미결이 이미 있습니다. 그래도 추가할까요?')) return;
+    setStatus('busy');
+    db.collection(ARREARS).add({
+      nameKey: key, name: nm, type: tp, month: mo, amount: amt,
+      memo: memo, paid: false, paidAt: '', createdAt: new Date().toISOString()
+    }).then(function(){
+      setStatus('ok');
+      document.getElementById('arName').value = '';
+      document.getElementById('arMemo').value = '';
+      document.getElementById('arName').focus();
+      if(key) touchMember(key, nm);
+      loadArrears();
+    }).catch(function(e){ setStatus('err', e.code||e.message); });
+  }
+
+  function togglePaid(r){
+    if(!canEdit) return;
+    db.collection(ARREARS).doc(r.id).update({ paid: !r.paid, paidAt: r.paid ? '' : localISO(new Date()) })
+      .then(function(){ setStatus('ok'); loadArrears(); })
+      .catch(function(e){ setStatus('err', e.code||e.message); });
+  }
+
+  function removeArrear(r){
+    if(!canEdit) return;
+    if(!confirm(r.name + ' · ' + r.type + ' · ' + r.month + ' 미결을 지울까요?')) return;
+    db.collection(ARREARS).doc(r.id).delete().then(loadArrears);
+  }
+
+  // 지난달 미결자를 이번 달 줄로 복제
+  function carryOverArrears(){
+    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    var t = new Date();
+    var cur = localISO(new Date(t.getFullYear(), t.getMonth(), 1)).slice(0,7);
+    var prev = localISO(new Date(t.getFullYear(), t.getMonth() - 1, 1)).slice(0,7);
+    var src = arRows.filter(function(r){ return r.month === prev && !r.paid; });
+    if(!src.length){ alert(prev + ' 미결 건이 없습니다.'); return; }
+    var already = {};
+    arRows.forEach(function(r){ if(r.month === cur) already[r.nameKey + '|' + r.type] = 1; });
+    var todo = src.filter(function(r){ return !already[r.nameKey + '|' + r.type]; });
+    if(!todo.length){ alert('이미 ' + cur + ' 줄이 모두 만들어져 있습니다.'); return; }
+    if(!confirm(prev + ' 미결 ' + todo.length + '건을 ' + cur + ' 줄로 복제할까요?')) return;
+    setStatus('busy');
+    Promise.all(todo.map(function(r){
+      return db.collection(ARREARS).add({
+        nameKey: r.nameKey, name: r.name, type: r.type, month: cur,
+        amount: msFees[r.type] || r.amount, memo: '', paid: false, paidAt: '',
+        createdAt: new Date().toISOString()
+      });
+    })).then(function(){ setStatus('ok'); loadArrears(); })
+      .catch(function(e){ setStatus('err', e.code||e.message); });
+  }
+
+  function toggleFeeBox(){
+    var box = document.getElementById('arFeeBox');
+    box.style.display = (box.style.display === 'none') ? '' : 'none';
+    if(box.style.display === '') renderFeeBox();
+  }
+
+  function renderFeeBox(){
+    var box = document.getElementById('arFeeBox');
+    if(!box || box.style.display === 'none') return;
+    box.innerHTML = '<div style="font-size:12px;font-weight:800;letter-spacing:.06em;color:var(--brass);margin-bottom:8px;">멤버십 월 이용료</div>' +
+      MS_TYPES.map(function(t){
+        return '<div class="ar-fee-row"><span class="nm">' + esc(t) + '</span>' +
+          '<input type="text" inputmode="numeric" data-type="' + esc(t) + '" value="' +
+          (msFees[t] ? Number(msFees[t]).toLocaleString('ko-KR') : '') + '" placeholder="0" ' +
+          (canEdit ? '' : 'readonly') + '><span class="ar-sub">원 / 월</span></div>';
+      }).join('') +
+      (canEdit ? '<div style="margin-top:9px;"><button class="mini" onclick="saveFees()">저장</button>' +
+        '<span class="ar-sub" style="margin-left:8px;">상품을 고르면 이 금액이 자동으로 채워집니다.</span></div>' : '');
+  }
+
+  function saveFees(){
+    if(!canEdit) return;
+    var fees = {};
+    document.querySelectorAll('#arFeeBox input[data-type]').forEach(function(el){
+      var v = Number(String(el.value).replace(/[^0-9]/g,'')) || 0;
+      if(v) fees[el.getAttribute('data-type')] = v;
+    });
+    setStatus('busy');
+    db.collection(FEES).doc('membershipFees').set({ fees: fees, updatedAt: new Date().toISOString() })
+      .then(function(){ msFees = fees; setStatus('ok'); fillArrearFee(); renderFeeBox(); })
+      .catch(function(e){ setStatus('err', e.code||e.message); });
+  }
+
+  // 연속 미결 개월 수 (이번 달부터 거슬러 올라가며 끊기지 않는 구간)
+  function streakOf(months){
+    if(!months.length) return 0;
+    var sorted = months.slice().sort().reverse();
+    var n = 1;
+    for(var i = 1; i < sorted.length; i++){
+      var a = sorted[i-1].split('-'), b = sorted[i].split('-');
+      var diff = (Number(a[0])*12 + Number(a[1])) - (Number(b[0])*12 + Number(b[1]));
+      if(diff === 1) n++; else break;
+    }
+    return n;
+  }
+
+  function renderArrears(){
+    var box = document.getElementById('arList');
+    if(!box) return;
+    var showPaid = document.getElementById('arShowPaid').checked;
+    var open = arRows.filter(function(r){ return !r.paid; });
+
+    // 사람 단위로 묶기
+    var byPerson = {};
+    arRows.forEach(function(r){
+      if(!showPaid && r.paid) return;
+      (byPerson[r.nameKey] = byPerson[r.nameKey] || []).push(r);
+    });
+
+    // 요약
+    var totalAmt = open.reduce(function(a,r){ return a + (r.amount||0); }, 0);
+    var openBy = {};
+    open.forEach(function(r){ (openBy[r.nameKey] = openBy[r.nameKey] || []).push(r.month); });
+    var risky = Object.keys(openBy).filter(function(k){ return streakOf(openBy[k]) >= 3; }).length;
+    var curMo = localISO(new Date()).slice(0,7);
+    var newCnt = open.filter(function(r){ return r.month === curMo; }).length;
+    var byMonth = {};
+    open.forEach(function(r){ byMonth[r.month] = (byMonth[r.month]||0) + (r.amount||0); });
+    var moTxt = Object.keys(byMonth).sort().map(function(m){
+      return m.slice(5) + '월 ' + Number(byMonth[m]).toLocaleString('ko-KR');
+    }).join(' · ') || '—';
+    var byType = {};
+    open.forEach(function(r){ byType[r.type] = (byType[r.type]||0) + (r.amount||0); });
+    var tpTxt = Object.keys(byType).sort(function(a,b){ return byType[b]-byType[a]; }).map(function(t){
+      return t + ' ' + Number(byType[t]).toLocaleString('ko-KR');
+    }).join(' · ') || '—';
+
+    document.getElementById('arSum').innerHTML =
+      '<div class="facts">' +
+        '<div><div class="k">미결 인원</div><div class="v">' + Object.keys(openBy).length + '명</div></div>' +
+        '<div><div class="k">미결 총계</div><div class="v">' + Number(totalAmt).toLocaleString('ko-KR') + '원</div></div>' +
+        '<div><div class="k">3개월 이상</div><div class="v' + (risky ? ' warn' : '') + '">' + risky + '명</div></div>' +
+        '<div><div class="k">이번 달 미결</div><div class="v">' + newCnt + '건</div></div>' +
+      '</div>' +
+      '<div class="brk">월별 · ' + esc(moTxt) + '</div>' +
+      '<div class="brk" style="border:none;padding-top:0;margin-top:5px;">멤버십별 · ' + esc(tpTxt) + '</div>';
+
+    var b = document.getElementById('arBadge');
+    if(b) b.textContent = open.length ? String(Object.keys(openBy).length) : '';
+
+    var keys = Object.keys(byPerson);
+    if(!keys.length){
+      box.innerHTML = '<div class="ar-empty">미결 건이 없습니다.<br>위에서 성함 · 멤버십 · 월 · 금액을 입력하면 여기에 쌓입니다.</div>';
+      return;
+    }
+    // 연속 개월 많은 순 → 금액 큰 순
+    keys.sort(function(a,b2){
+      var sa = streakOf((openBy[a]||[])), sb = streakOf((openBy[b2]||[]));
+      if(sa !== sb) return sb - sa;
+      var ta = byPerson[a].reduce(function(x,r){ return x + (r.paid?0:(r.amount||0)); }, 0);
+      var tb = byPerson[b2].reduce(function(x,r){ return x + (r.paid?0:(r.amount||0)); }, 0);
+      return tb - ta;
+    });
+
+    box.innerHTML = '';
+    keys.forEach(function(k){
+      var rows = byPerson[k].slice().sort(function(a,b2){ return String(a.month).localeCompare(String(b2.month)); });
+      var m = members[k] || {};
+      var sub = [m.company||'', m.job||''].filter(Boolean).join(' · ');
+      var st = streakOf(openBy[k] || []);
+      var unpaid = rows.filter(function(r){ return !r.paid; });
+      var tot = unpaid.reduce(function(a,r){ return a + (r.amount||0); }, 0);
+
+      var card = document.createElement('div');
+      card.className = 'ar-person' + (st >= 3 ? ' warn3' : (st === 2 ? ' warn2' : ''));
+      var html = '<div class="ar-top">' +
+        '<span class="ar-who" onclick="goMemberFromConsult(\'' + esc(k) + '\')">' + esc(rows[0].name || k) + '</span>' +
+        (m.grade ? '<span class="grade-tag g-' + esc(m.grade) + '">' + esc(m.grade) + '</span>' : '') +
+        (sub ? '<span class="ar-sub">' + esc(sub) + '</span>' : '') +
+        (st ? '<span class="ar-streak' + (st >= 3 ? ' w3' : (st === 2 ? ' w2' : '')) + '">' + st + '개월 연속' +
+              (st >= 3 ? ' · 이탈 위험' : '') + '</span>' : '') +
+        '<span class="ar-total">' + Number(tot).toLocaleString('ko-KR') + '원</span>' +
+        '</div><div class="ar-items">';
+      rows.forEach(function(r, i){
+        html += '<span class="ar-chip' + (r.paid ? ' paid' : '') + '">' +
+          '<span class="tp">' + esc(r.type) + '</span>' +
+          '<span>' + esc(String(r.month).slice(5)) + '월</span>' +
+          '<b>' + Number(r.amount||0).toLocaleString('ko-KR') + '</b>' +
+          (r.memo ? '<span class="ar-sub">' + esc(r.memo) + '</span>' : '') +
+          (canEdit ? '<button data-i="' + i + '" data-a="p" title="' + (r.paid ? '미결로 되돌리기' : '입금 처리') + '">' +
+                     (r.paid ? '↺' : '✓') + '</button><button data-i="' + i + '" data-a="d" title="삭제">✕</button>' : '') +
+          '</span>';
+      });
+      html += '</div>';
+      card.innerHTML = html;
+      if(canEdit){
+        card.querySelectorAll('.ar-chip button').forEach(function(btn){
+          var r = rows[Number(btn.getAttribute('data-i'))];
+          btn.onclick = function(){ btn.getAttribute('data-a') === 'p' ? togglePaid(r) : removeArrear(r); };
+        });
+      }
+      box.appendChild(card);
+    });
+  }
+
+  function copyArrearTable(btn){
+    var out = [['성함','멤버십','월','미결금액','상태','입금일','메모','미결총계(사람 기준)']];
+    var totBy = {};
+    arRows.forEach(function(r){ if(!r.paid) totBy[r.nameKey] = (totBy[r.nameKey]||0) + (r.amount||0); });
+    arRows.slice().sort(function(a,b2){
+      return String(a.name).localeCompare(String(b2.name)) || String(a.month).localeCompare(String(b2.month));
+    }).forEach(function(r){
+      out.push([r.name||'', r.type||'', r.month||'', r.amount||0, r.paid?'완납':'미결',
+                r.paidAt||'', r.memo||'', totBy[r.nameKey]||0]);
+    });
+    copyTsv(out, btn);
   }
 
   // ---------- 상담 관리 ----------
@@ -1277,12 +1617,14 @@
         watchMembers();
         goToday();
         loadConsults();          // 로그인 후 상담 건 조회
+        initArrearUI(); loadArrears();
       } else {
         canEdit=false; myEmail='';
         document.getElementById('gate').classList.remove('hide');
         if(unsubDay){ unsubDay(); unsubDay=null; }
         if(unsubMembers){ unsubMembers(); unsubMembers=null; }
         csRows=[]; renderConsults();
+        arRows=[]; renderArrears();
         setStatus('off','로그인이 필요합니다');
       }
     });
