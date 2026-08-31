@@ -33,7 +33,7 @@
   .toolbar button.ghost{ background:transparent; color:var(--navy); }
   .toolbar button:hover{ opacity:.85; }
   @media print{
-    .toolbar,.add-row,.del-x,.ord{display:none !important;}
+    .toolbar,.add-row,.del-x,.ord,.more-wrap{display:none !important;}
     body{background:#fff;}
     .scroll-y{ max-height:none !important; overflow:visible !important; }
     .gtable .ghead > div, .gtable .gfoot > div{ position:static !important; }
@@ -451,6 +451,19 @@
                display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .sl-empty{ text-align:center; color:var(--muted); font-size:13px; padding:24px 0; }
 
+  /* 더보기 메뉴 */
+  .more-wrap{ position:relative; }
+  .more-btn{ font-size:15px; line-height:1; padding:8px 13px; }
+  .more-menu{ display:none; position:absolute; right:0; top:calc(100% + 7px); z-index:60;
+              background:#fff; border:1px solid var(--line); border-radius:12px; padding:7px;
+              box-shadow:0 8px 26px rgba(20,20,30,0.14); min-width:212px; }
+  .more-menu.on{ display:block; }
+  .more-menu button{ display:block; width:100%; text-align:left; padding:9px 12px; border:none; background:none;
+        font-family:'Pretendard',sans-serif; font-size:13px; font-weight:600; color:var(--ink); cursor:pointer; border-radius:8px; }
+  .more-menu button:hover{ background:#FBF6EC; color:var(--brass); }
+  .more-sep{ height:1px; background:var(--line); margin:6px 4px; }
+  .more-note{ padding:4px 12px 6px; font-size:11.5px; color:var(--muted); line-height:1.6; }
+
   /* 간편 보기 */
   body.view-lean [data-lean="0"]{ display:none !important; }
   #viewBtn.on{ background:var(--brass); border-color:var(--brass); color:#fff; }
@@ -729,12 +742,19 @@
   <div class="save-status"><span class="save-dot" id="saveDot"></span><span id="saveText">저장 준비됨</span></div>
   <div class="toolbar-right">
     <input type="month" id="monthPicker" class="month-picker" onchange="onMonthChange()">
-    <button class="ghost" onclick="manualSave()">💾 지금 저장</button>
-    <button class="ghost" onclick="exportSnapshot()">⬇ 최신본 다운로드</button>
-    <button class="ghost" onclick="printReport()">🖨 인쇄</button>
     <button class="ghost" onclick="location.href='control.html'">🛰 관제탑</button>
-    <button class="ghost" id="viewBtn" onclick="toggleLeanView()">🔎 간편 보기</button>
     <button class="ghost" id="worklogBtn" style="display:none;" onclick="location.href='worklog.html'">📝 업무 히스토리</button>
+    <button class="ghost" id="viewBtn" onclick="toggleLeanView()">🔎 간편 보기</button>
+    <div class="more-wrap">
+      <button class="ghost more-btn" onclick="toggleMore(event)" title="더보기">⋯</button>
+      <div class="more-menu" id="moreMenu">
+        <button onclick="closeMore();manualSave()">💾 지금 저장</button>
+        <button onclick="closeMore();exportSnapshot()">⬇ 최신본 다운로드</button>
+        <button onclick="closeMore();printReport()">🖨 인쇄</button>
+        <div class="more-sep"></div>
+        <div class="more-note" id="moreNote">값을 고치면 약 1초 뒤 자동 저장됩니다. 달을 바꾸면 그 달의 리포트가 열립니다.</div>
+      </div>
+    </div>
     <button id="authBtn" onclick="onAuthBtn()">🔑 편집 로그인</button>
   </div>
 </div>
@@ -1032,7 +1052,7 @@
   <!-- 일자별 전략 일지 -->
   <div class="section-head">
     <span class="section-num" contenteditable="true">06</span>
-    <h2 class="section-title" contenteditable="true">일자별 전략 일지</h2>
+    <h2 class="section-title" contenteditable="true">전략 일지 &amp; 메모</h2>
   </div>
   <div class="section-desc" contenteditable="true">날짜별로 전략을 기록해 계속 쌓아둡니다. 달이 바뀌어도 지워지지 않고, 지난 주·지난 달·지난 해 전략을 그대로 찾아볼 수 있습니다.</div>
 
@@ -1069,31 +1089,14 @@
     <div id="slList"></div>
   </div>
 
-  <!-- 메모 -->
-  <div class="section-head">
-    <span class="section-num" contenteditable="true">07</span>
-    <h2 class="section-title" contenteditable="true">전략 & 메모</h2>
-  </div>
+
+  <div class="sub-title">전략 &amp; 메모 (날짜와 무관한 상시 메모)</div>
   <div class="card">
     <div class="memo-tools">
       <button class="mini-toggle" id="memoToggleBtn" onclick="toggleMemoBox()">⤢ 전체 펼치기</button>
       <span class="memo-hint" id="memoHint"></span>
     </div>
     <div class="memo-body" contenteditable="true" id="memoEl">부족 자금을 채우기 위한 전략과 대표님 보고용 메모를 자유롭게 기록하세요.</div>
-  </div>
-
-  <!-- 저장 안내 -->
-  <div class="section-head">
-    <span class="section-num" contenteditable="true">08</span>
-    <h2 class="section-title" contenteditable="true">저장 & 업데이트 방식</h2>
-  </div>
-  <div class="card storage-card">
-    <h3>이 리포트는 이렇게 저장되고 공유됩니다</h3>
-    <p id="storageStatusLine">확인 중...</p>
-    <p><b>편집하려면:</b> 우측 상단 <code>🔑 편집 로그인</code>을 눌러 등록된 계정으로 로그인하세요. 로그인해야만 입력칸이 열립니다. 값을 고치면 약 1초 뒤 자동으로 저장되고, 상태 표시가 <code>저장됨</code>으로 바뀝니다.</p>
-    <p><b>공유받은 분이 볼 때:</b> 로그인 없이 링크만 열면 읽기 전용으로 보입니다. 편집 중인 내용이 저장되면 <b>새로고침 없이 몇 초 안에 화면이 자동으로 갱신</b>됩니다. 더 이상 파일을 다시 올릴 필요가 없습니다.</p>
-    <p><b>월별 관리:</b> 우측 상단 월 선택 칸으로 달을 바꾸면 그 달의 리포트가 열립니다. 달마다 데이터가 따로 보관됩니다. 주소 뒤에 <code>?m=2026-08</code>을 붙이면 특정 달을 바로 여는 링크가 됩니다.</p>
-    <p><b>⬇ 최신본 다운로드:</b> 지금 화면 그대로를 담은 보관용 HTML 파일을 받습니다. 이 파일은 서버와 연결되지 않는 고정 사본이라, 월말 결산본을 따로 남겨둘 때 쓰시면 됩니다.</p>
   </div>
 
 </main>
@@ -1922,6 +1925,17 @@
     try{ document.execCommand('copy'); }catch(e){}
     document.body.removeChild(ta);
   }
+
+  // ---------- 더보기 메뉴 ----------
+  function toggleMore(e){
+    if(e) e.stopPropagation();
+    document.getElementById('moreMenu').classList.toggle('on');
+  }
+  function closeMore(){ document.getElementById('moreMenu').classList.remove('on'); }
+  document.addEventListener('click', function(e){
+    var m = document.getElementById('moreMenu');
+    if(m && m.classList.contains('on') && !e.target.closest('.more-wrap')) closeMore();
+  });
 
   // ---------- 간편 / 전체 보기 ----------
   // 간편 보기에 남길 섹션 (0 = 섹션 제목 이전의 요약·중요일정)
@@ -2992,7 +3006,7 @@
       setSaveStatus(canEdit ? 'saved' : 'readonly', myEmail);
     }, function(err){
       setSaveStatus('error', err.code || '연결 오류');
-      document.getElementById('storageStatusLine').textContent = '서버 연결에 실패했습니다 ('+(err.code||'')+'). 보안 규칙이 게시되었는지 확인해주세요.';
+      var ssl = document.getElementById('storageStatusLine'); if(ssl) ssl.textContent = '서버 연결에 실패했습니다 ('+(err.code||'')+'). 보안 규칙이 게시되었는지 확인해주세요.';
     });
   }
 
@@ -3095,7 +3109,7 @@
     document.getElementById('monthPicker').value = monthFromUrl();
 
     if(isSnapshotFile){
-      statusLine.textContent = '이 파일은 보관용으로 내려받은 고정 사본입니다. 화면에 보이는 값은 내려받던 시점의 내용이며, 서버와 연결되지 않아 수정해도 저장되지 않습니다.';
+      if(statusLine) statusLine.textContent = '이 파일은 보관용으로 내려받은 고정 사본입니다. 화면에 보이는 값은 내려받던 시점의 내용이며, 서버와 연결되지 않아 수정해도 저장되지 않습니다.';
       setSaveStatus('snapshot');
       currentMonth = monthFromUrl();
       applyEditMode();
@@ -3105,7 +3119,7 @@
 
     if(typeof firebase === 'undefined' || !firebase.initializeApp){
       firebaseReady = false;
-      statusLine.textContent = 'Firebase 접속 프로그램(SDK)을 불러오지 못했습니다. 외부 스크립트가 차단되는 환경(예: 미리보기 창, 사내 방화벽, 광고 차단 확장 프로그램)에서 열면 이렇게 표시됩니다. 실제 공유 링크(GitHub Pages)에서 열어보세요.';
+      if(statusLine) statusLine.textContent = 'Firebase 접속 프로그램(SDK)을 불러오지 못했습니다. 외부 스크립트가 차단되는 환경(예: 미리보기 창, 사내 방화벽, 광고 차단 확장 프로그램)에서 열면 이렇게 표시됩니다. 실제 공유 링크(GitHub Pages)에서 열어보세요.';
       setSaveStatus('error', 'SDK 로드 실패 (외부 접속 차단)');
       applyState(defaultState(monthFromUrl()));
       applyEditMode();
@@ -3118,14 +3132,14 @@
       firebaseReady = true;
     }catch(e){
       firebaseReady = false;
-      statusLine.textContent = '서버 연결 구성에 실패했습니다 ('+(e.code || e.message || '')+'). 설정값이 올바른지 확인이 필요합니다.';
+      if(statusLine) statusLine.textContent = '서버 연결 구성에 실패했습니다 ('+(e.code || e.message || '')+'). 설정값이 올바른지 확인이 필요합니다.';
       setSaveStatus('error', '설정 오류');
       applyState(defaultState(monthFromUrl()));
       applyEditMode();
       return;
     }
 
-    statusLine.textContent = '실시간 저장이 켜져 있습니다. 로그인한 사람이 값을 고치면, 이 링크를 열어둔 모든 화면에 몇 초 안에 자동 반영됩니다.';
+    if(statusLine) statusLine.textContent = '실시간 저장이 켜져 있습니다. 로그인한 사람이 값을 고치면, 이 링크를 열어둔 모든 화면에 몇 초 안에 자동 반영됩니다.';
 
     auth.onAuthStateChanged(function(user){
       myEmail = user ? (user.email||'').toLowerCase() : '';
