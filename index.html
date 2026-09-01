@@ -51,30 +51,31 @@
   header.hero{
     background:linear-gradient(160deg,var(--navy) 0%, var(--navy-2) 60%, #0C1830 100%);
     color:#EDEEF3; position:relative; overflow:hidden;
-    padding:36px max(clamp(16px,2.5vw,40px), calc((100vw - 1320px) / 2 + 40px)) 28px;
+    padding:22px max(clamp(16px,2.5vw,40px), calc((100vw - 1320px) / 2 + 40px)) 18px;
   }
   header.hero::after{
     content:""; position:absolute; right:-10%; top:-30%; width:520px; height:520px; border-radius:50%;
     background:radial-gradient(circle, rgba(176,141,87,0.18) 0%, rgba(176,141,87,0) 70%);
   }
-  .eyebrow{ font-size:12.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--brass-light); font-weight:600; margin-bottom:12px; }
-  h1.title{ font-family:'Noto Serif KR',serif; font-weight:900; font-size:clamp(22px,4vw,36px); margin:0 0 8px; line-height:1.3; outline:none; }
-  .subtitle{ color:#B9BFCF; font-size:14px; max-width:680px; outline:none; }
+  .eyebrow{ display:none; }
+  .subtitle{ display:none; }
+  .hero-top{ display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; position:relative; z-index:1; }
+  h1.title{ font-family:'Noto Serif KR',serif; font-weight:900; font-size:22px; margin:0; line-height:1.3; outline:none; }
 
-  .goal-row{ margin-top:18px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .goal-row{ display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
   .goal-row label{ font-size:12.5px; color:#B9BFCF; }
   .goal-input{
-    font-family:'Noto Serif KR',serif; font-weight:900; font-size:20px; color:#fff;
+    font-family:'Noto Serif KR',serif; font-weight:900; font-size:16px; color:#fff;
     background:rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.28); border-radius:8px;
-    padding:7px 12px; width:160px; text-align:right;
+    padding:5px 10px; width:140px; text-align:right;
   }
   .goal-row .unit{ color:#B9BFCF; font-size:13px; }
 
-  .gauge-wrap{ margin-top:14px; }
-  .gauge-top{ display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px; margin-bottom:8px;}
-  .gauge-top .pct{ font-family:'Noto Serif KR',serif; font-weight:900; font-size:34px; }
-  .gauge-top .cur{ font-size:13px; color:#B9BFCF; }
-  .gauge-track{ width:100%; height:16px; border-radius:10px; background:rgba(255,255,255,0.12); overflow:hidden; }
+  .gauge-wrap{ margin-top:10px; position:relative; z-index:1; }
+  .gauge-top{ display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px; margin-bottom:5px;}
+  .gauge-top .pct{ font-family:'Noto Serif KR',serif; font-weight:900; font-size:22px; line-height:1.2; }
+  .gauge-top .cur{ display:none; }
+  .gauge-track{ width:100%; height:10px; border-radius:10px; background:rgba(255,255,255,0.12); overflow:hidden; }
   .gauge-fill{ height:100%; background:linear-gradient(90deg,var(--brass),var(--brass-light)); transition:width .3s; }
 
   main{ padding:32px clamp(16px,2.5vw,40px) 90px; max-width:1320px; margin:0 auto; }
@@ -542,12 +543,12 @@
   .storage-card code{ background:#F0EBDD; padding:1px 5px; border-radius:4px; font-size:12px; }
 
   .footer-summary{
-    margin:18px 0 0; padding:18px 22px; border-radius:14px; background:rgba(255,255,255,0.06); color:#EDEEF3;
-    border:1px solid rgba(255,255,255,0.15);
-    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
+    margin:9px 0 0; color:#EDEEF3; position:relative; z-index:1;
+    display:flex; align-items:baseline; flex-wrap:wrap; gap:6px 26px;
   }
-  .footer-summary .fs-label{ font-size:12px; color:#B9BFCF; letter-spacing:.05em; text-transform:uppercase; }
-  .footer-summary .fs-num{ font-family:'Noto Serif KR',serif; font-weight:900; font-size:20px; }
+  .footer-summary > div{ display:flex; align-items:baseline; gap:7px; }
+  .footer-summary .fs-label{ font-size:11.5px; color:#B9BFCF; letter-spacing:.02em; }
+  .footer-summary .fs-num{ font-family:'Noto Serif KR',serif; font-weight:900; font-size:15px; }
   .fs-gap .fs-num{ color:#E6A88B; }
 
   [contenteditable="true"]{ cursor:text; border-radius:5px; transition:background .15s; }
@@ -600,19 +601,17 @@
 
     .toolbar{ padding:8px 14px; }
     .toolbar button{ font-size:12px; padding:7px 11px; }
-    header.hero{ padding:24px 5vw 20px; }
+    header.hero{ padding:16px 5vw 14px; }
     .tabs{ gap:0; margin-bottom:20px; }
     .tab-btn{ padding:9px 2px 8px; }
     .tab-btn .tab-no{ font-size:9.5px; letter-spacing:.04em; }
     .tab-btn .tab-lb{ font-size:12.5px; }
-    h1.title{ font-size:20px; }
-    .gauge-top .pct{ font-size:26px; }
+    h1.title{ font-size:19px; }
+    .gauge-top .pct{ font-size:20px; }
     main{ padding:30px 4.5vw 60px; max-width:none; }
     .card{ padding:16px 14px; border-radius:12px; }
-    .footer-summary{ flex-direction:column; align-items:stretch; gap:0; padding:4px 14px; }
-    .footer-summary > div{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:9px 0; border-top:1px solid rgba(255,255,255,0.12); }
-    .footer-summary > div:first-child{ border-top:none; }
-    .footer-summary .fs-num{ font-size:17px; }
+    .footer-summary{ gap:4px 16px; }
+    .footer-summary .fs-num{ font-size:14px; }
   }
 </style>
 </head>
@@ -632,14 +631,15 @@
 
 <header class="hero">
   <div class="eyebrow">Sales Progress Tracker</div>
-  <h1 class="title" contenteditable="true" id="titleEl">8월 매출 진행 현황</h1>
-  <div class="subtitle" contenteditable="true" id="subtitleEl">목표 대비 진행률과, 남은 기간 동안 달성에 필요한 페이스를 실시간으로 확인합니다.</div>
-
-  <div class="goal-row">
-    <label>이번달 목표 매출</label>
-    <input type="text" id="goalInput" class="goal-input" value="0" inputmode="numeric" oninput="onAmountInput(this)">
-    <span class="unit">원</span>
+  <div class="hero-top">
+    <h1 class="title" contenteditable="true" id="titleEl">8월 매출 진행 현황</h1>
+    <div class="goal-row">
+      <label>이번달 목표 매출</label>
+      <input type="text" id="goalInput" class="goal-input" value="0" inputmode="numeric" oninput="onAmountInput(this)">
+      <span class="unit">원</span>
+    </div>
   </div>
+  <div class="subtitle" contenteditable="true" id="subtitleEl">목표 대비 진행률과, 남은 기간 동안 달성에 필요한 페이스를 실시간으로 확인합니다.</div>
 
   <div class="gauge-wrap">
     <div class="gauge-top">
