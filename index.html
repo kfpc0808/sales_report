@@ -51,7 +51,7 @@
   header.hero{
     background:linear-gradient(160deg,var(--navy) 0%, var(--navy-2) 60%, #0C1830 100%);
     color:#EDEEF3; position:relative; overflow:hidden;
-    padding:48px max(clamp(16px,2.5vw,40px), calc((100vw - 1320px) / 2 + 40px)) 36px;
+    padding:26px max(clamp(16px,2.5vw,40px), calc((100vw - 1320px) / 2 + 40px)) 22px;
   }
   header.hero::after{
     content:""; position:absolute; right:-10%; top:-30%; width:520px; height:520px; border-radius:50%;
@@ -182,6 +182,8 @@
   .drow.blank-row > div{ background:#FCFBF8; }
   .dtable input.d-item{ font-weight:700; color:var(--navy); }
   .dtable input.d-ref{ color:var(--brass); font-weight:600; }
+  .dtable input.d-comp{ color:var(--muted); }
+  .d-no{ font-size:12.5px; color:var(--muted); font-variant-numeric:tabular-nums; justify-content:center; }
   .dtable .due-cell{ flex-direction:column; align-items:flex-start !important; gap:2px; }
   .dtable input[type="date"].d-due{ width:100%; min-width:0; border:1px solid transparent; background:transparent;
         border-radius:5px; padding:4px 3px; font-size:12.5px; font-family:'Pretendard',sans-serif; color:var(--muted); }
@@ -198,8 +200,8 @@
   .dtable input[type="date"]:hover{ border-color:var(--line); background:#FBFAF7; }
   .dtable input[type="date"]:focus{ border-color:var(--brass); background:#fff; outline:none; }
   .dtable{
-    display:grid; grid-template-columns:98px minmax(120px,170px) minmax(110px,160px) minmax(180px,1fr) 140px 128px 46px;
-    align-items:stretch; min-width:830px; font-size:15px;
+    display:grid; grid-template-columns:52px minmax(104px,148px) minmax(96px,140px) minmax(96px,138px) minmax(150px,1fr) 132px 122px 46px;
+    align-items:stretch; min-width:880px; font-size:15px;
   }
   .drow, #dbBody{ display:contents; }
   .drow > div{ min-width:0; padding:11px 10px; border-bottom:1px solid #EFEDE6; display:flex; align-items:center; }
@@ -545,11 +547,18 @@
   .db-empty{ text-align:center; color:var(--muted); font-size:14px; padding:34px 0; }
 
   /* 사슬 한 줄 · 탭 */
-  .chain{ display:flex; align-items:stretch; gap:10px; flex-wrap:wrap; margin-top:20px;
-          padding-top:18px; border-top:1px solid rgba(255,255,255,0.16); }
+  .chain{ display:flex; align-items:center; gap:11px; flex-wrap:wrap; margin-top:16px; }
+  .chain .goal-input{ font-family:'Noto Serif KR',serif; font-size:20px; font-weight:900; width:158px;
+        padding:5px 10px; border:1px solid rgba(255,255,255,0.28); border-radius:9px;
+        background:rgba(255,255,255,0.10); color:#fff; text-align:right; font-variant-numeric:tabular-nums; }
+  .chain .goal-input:focus{ outline:none; border-color:var(--brass); background:rgba(255,255,255,0.16); }
+  .chain .bar-cell{ flex:1; min-width:150px; }
+  .chain .gauge-track{ display:block; height:7px; background:rgba(255,255,255,0.16); border-radius:7px;
+        overflow:hidden; margin-top:7px; }
+  .chain .gauge-fill{ display:block; height:100%; background:var(--brass); border-radius:7px; transition:width .35s; }
   .chain .ch{ display:flex; flex-direction:column; gap:3px; min-width:118px; }
   .chain .k{ font-size:11.5px; font-weight:700; letter-spacing:.04em; color:var(--brass-light); }
-  .chain .v{ font-family:'Noto Serif KR',serif; font-size:23px; font-weight:900; color:#fff; line-height:1.2;
+  .chain .v{ font-family:'Noto Serif KR',serif; font-size:21px; font-weight:900; color:#fff; line-height:1.2;
              font-variant-numeric:tabular-nums; }
   .chain .v.ok{ color:#8FD3AE; }
   .chain .v.warn{ color:#F0B49A; }
@@ -570,6 +579,9 @@
               background:#EFECE4; color:var(--muted); cursor:pointer; }
   .tabs .tab:hover{ color:var(--brass); }
   .tabs .tab.on{ background:#fff; color:var(--navy); border-color:var(--line); box-shadow:0 -2px 0 var(--brass) inset; }
+  .tab-n{ display:inline-block; min-width:16px; margin-left:6px; padding:1px 6px; border-radius:20px;
+          background:var(--red); color:#fff; font-size:10.5px; font-weight:800; vertical-align:middle; }
+  .tab-n:empty{ display:none; }
   main > [data-tab]{ display:none; }
   main > [data-tab].show{ display:block; }
   @media (max-width:768px){
@@ -814,6 +826,7 @@
 
     /* 03 전략 — 건수 접기 */
     .dtable{ display:block; min-width:0; }
+    .d-no{ display:none; }
     .dtable .dhead, .dtable .dfoot{ display:none; }
     .drow.target-row{ display:block; border:1.5px solid var(--line); border-radius:13px; padding:12px 14px; margin-bottom:9px; background:#fff; }
     .drow.target-row > div{ border:none; padding:3px 0; }
@@ -870,24 +883,11 @@
 <header class="hero">
   <div class="eyebrow">Sales Progress Tracker</div>
   <h1 class="title" contenteditable="true" id="titleEl">8월 매출 진행 현황</h1>
-  <div class="subtitle" contenteditable="true" id="subtitleEl">목표 대비 진행률과, 남은 기간 동안 달성에 필요한 페이스를 실시간으로 확인합니다.</div>
-
-  <div class="goal-row">
-    <label>이번달 목표 매출</label>
-    <input type="text" id="goalInput" class="goal-input" value="0" inputmode="numeric" oninput="onAmountInput(this)">
-    <span class="unit">원</span>
-  </div>
-
-  <div class="gauge-wrap">
-    <div class="gauge-top">
-      <div class="pct" id="pctText">0%</div>
-      <div class="cur"><span id="curTotalText">0</span>원 / <span id="goalText">0</span>원</div>
-    </div>
-    <div class="gauge-track"><div class="gauge-fill" id="gaugeFill" style="width:0%"></div></div>
-  </div>
-
   <div class="chain" id="chainBar">
-    <div class="ch"><span class="k">목표</span><span class="v" id="chGoal">0</span></div>
+    <div class="ch">
+      <span class="k">목표</span>
+      <input type="text" id="goalInput" class="goal-input" value="0" inputmode="numeric" oninput="onAmountInput(this)">
+    </div>
     <span class="arw">→</span>
     <div class="ch"><span class="k">달성</span><span class="v ok" id="chDone">0</span><span class="s" id="chDoneRate"></span></div>
     <span class="arw">→</span>
@@ -895,30 +895,35 @@
     <span class="arw">→</span>
     <div class="ch"><span class="k">확보 예정</span><span class="v gold" id="chPlan">0</span><span class="s" id="chCover"></span></div>
     <span class="arw">→</span>
-    <div class="ch last"><span class="k">아직 비어 있음</span><span class="v" id="chLeft">0</span></div>
+    <div class="ch"><span class="k">아직 비어 있음</span><span class="v" id="chLeft">0</span></div>
+    <div class="ch bar-cell">
+      <span class="k"><span id="pctText">0%</span> 달성</span>
+      <span class="gauge-track"><span class="gauge-fill" id="gaugeFill" style="width:0%"></span></span>
+    </div>
   </div>
 
 </header>
 
 <nav class="tabs" id="mainTabs">
-  <button class="tab on" data-t="now" onclick="showTab('now')">영업 현황</button>
-  <button class="tab" data-t="sales" onclick="showTab('sales')">매출 기록</button>
-  <button class="tab" data-t="daily" onclick="showTab('daily')">일자별 목표</button>
-  <button class="tab" data-t="log" onclick="showTab('log')">전략 일지</button>
+  <button class="tab on" data-t="todo" onclick="showTab('todo')">중요업무<span class="tab-n" id="tabTodoN"></span></button>
+  <button class="tab" data-t="plan" onclick="showTab('plan')">매출목표 · 전략</button>
+  <button class="tab" data-t="sales" onclick="showTab('sales')">매출기록</button>
+  <button class="tab" data-t="db" onclick="showTab('db')">DB<span class="tab-n" id="tabDbN"></span></button>
 </nav>
 
 <main>
 
-  <div class="footer-summary">
-    <div><div class="fs-label">현재 확보 매출</div><div class="fs-num"><span id="fsCur">0</span>원</div></div>
-    <div><div class="fs-label">목표 매출</div><div class="fs-num" id="fsGoal">0원</div></div>
-    <div class="fs-gap"><div class="fs-label">부족 금액</div><div class="fs-num"><span id="fsGap">0</span>원</div></div>
   </div>
 
   <!-- 중요 일정 -->
+  <div class="section-head">
+    <span class="section-num" contenteditable="true">＊</span>
+    <h2 class="section-title" contenteditable="true">중요업무 · 해야 할 일</h2>
+  </div>
+  <div class="section-desc" contenteditable="true">날짜별로 꼭 처리해야 할 일을 적어둡니다. 오늘·내일·모레가 위에 모입니다.</div>
+
   <div class="td-strip">
     <div class="td-head">
-      <span class="td-title">중요 일정 · 해야 할 일</span>
       <span class="td-count" id="tdCount"></span>
       <span class="td-filter">
         <span class="td-flab">날짜 보기</span>
@@ -936,14 +941,6 @@
     </div>
     <div class="td-list" id="tdList"></div>
   </div>
-
-  <!-- 주별 요약 -->
-  <div class="section-head">
-    <span class="section-num" contenteditable="true">01</span>
-    <h2 class="section-title" contenteditable="true">주별 요약</h2>
-  </div>
-  <div class="section-desc" contenteditable="true">아래 매출 기록의 날짜를 달력 주(월~일) 단위로 자동 집계합니다.</div>
-  <div class="week-grid" id="weekGrid"></div>
 
   <!-- 매출 기록 -->
   <div class="section-head">
@@ -982,6 +979,31 @@
     </table>
   </div>
   <button class="add-row" onclick="addLogRow()">+ 매출 기록 추가</button>
+
+  <!-- 매출 목표 & 전략 -->
+  <div class="section-head">
+    <span class="section-num" contenteditable="true">＊</span>
+    <h2 class="section-title" contenteditable="true">매출 목표 &amp; 전략</h2>
+  </div>
+  <div class="section-desc" contenteditable="true">이번 달 목표와 아이템별 확보 상황입니다. 목표는 카드에서 바로 고칠 수 있습니다.</div>
+
+  <!-- 목표 달성 현황 -->
+  <div class="kpi-band">
+    <div class="kpi-row">
+      <div class="kpi-cell"><div class="k">목표 부족액</div><div class="v" id="kpiGap">0원</div></div>
+      <div class="kpi-cell"><div class="k">확보 예정액</div><div class="v gold" id="kpiPlan">0원</div></div>
+      <div class="kpi-cell"><div class="k">남은 부족액</div><div class="v" id="kpiLeft">0원</div></div>
+      <div class="kpi-cell"><div class="k">예상 달성률</div><div class="v" id="kpiRate">—</div></div>
+    </div>
+    <div class="kpi-bar"><i id="kpiBar" style="width:0"></i></div>
+    <div class="kpi-sub" id="kpiSub">대상을 등록하면 목표 대비 확보 계획이 계산됩니다.</div>
+  </div>
+
+  <div class="sub-title">아이템별 목표 &amp; 확보</div>
+  <div class="item-cards" id="dbTabs"></div>
+  <datalist id="dbItemSuggest"></datalist>
+  <datalist id="dbRefSuggest"></datalist>
+  <datalist id="dbCompSuggest"></datalist>
 
   <!-- 일자별 매출 목표 -->
   <div class="section-head">
@@ -1064,25 +1086,13 @@
   <div class="goal-note" id="goalNote"></div>
   <div class="undated-note" id="undatedNote"></div>
 
-  <!-- 영업 대상 & 전략 -->
+  <!-- 영업 DB -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">04</span>
-    <h2 class="section-title" contenteditable="true">영업 대상 &amp; 전략</h2>
+    <span class="section-num" contenteditable="true">＊</span>
+    <h2 class="section-title" contenteditable="true">영업 DB</h2>
     <button class="primary-btn" id="dbAddBtn" onclick="addTargetRowTop()">＋ 대상 등록</button>
   </div>
-  <div class="section-desc" contenteditable="true">목표 달성을 위해 지금 집중할 대상과 다음 행동을 관리합니다.</div>
-
-  <!-- 목표 달성 현황 -->
-  <div class="kpi-band">
-    <div class="kpi-row">
-      <div class="kpi-cell"><div class="k">목표 부족액</div><div class="v" id="kpiGap">0원</div></div>
-      <div class="kpi-cell"><div class="k">확보 예정액</div><div class="v gold" id="kpiPlan">0원</div></div>
-      <div class="kpi-cell"><div class="k">남은 부족액</div><div class="v" id="kpiLeft">0원</div></div>
-      <div class="kpi-cell"><div class="k">예상 달성률</div><div class="v" id="kpiRate">—</div></div>
-    </div>
-    <div class="kpi-bar"><i id="kpiBar" style="width:0"></i></div>
-    <div class="kpi-sub" id="kpiSub">대상을 등록하면 목표 대비 확보 계획이 계산됩니다.</div>
-  </div>
+  <div class="section-desc" contenteditable="true">목표를 채울 대상을 관리합니다. 카드를 눌러 기한 지남·오늘·이번 주로 걸러볼 수 있습니다.</div>
 
   <!-- 지금 확인할 대상 -->
   <div class="sub-title">지금 확인할 대상</div>
@@ -1113,11 +1123,6 @@
     </span>
   </div>
 
-  <div class="sub-title">아이템별 목표 &amp; 확보</div>
-  <div class="item-cards" id="dbTabs"></div>
-  <datalist id="dbItemSuggest"></datalist>
-  <datalist id="dbRefSuggest"></datalist>
-
   <div class="db-bar">
     <input type="text" id="dbSearch" class="db-search" placeholder="대상 · 아이템 · 메모 검색" oninput="recalcSoon()" autocomplete="off">
     <span class="db-sum" id="dbCount"></span>
@@ -1140,17 +1145,19 @@
   <div class="log-scroll" id="dbScrollBox">
     <div class="dtable" id="dbTable">
       <div class="drow dhead">
-        <div>상태</div>
-        <div>대상</div>
-        <div>아이템 · 전략</div>
+        <div class="g-mid">No</div>
+        <div>성명</div>
+        <div>소속사</div>
+        <div>항목</div>
         <div>메모</div>
         <div class="g-num">예상 금액(원)</div>
-        <div>예정일</div>
+        <div>예상일</div>
         <div></div>
       </div>
       <div id="dbBody"></div>
       <div class="drow dfoot">
-        <div>합계</div>
+        <div class="g-mid">계</div>
+        <div id="dbCntCell">0명</div>
         <div></div>
         <div></div>
         <div></div>
@@ -1339,16 +1346,18 @@
     var row = document.createElement('div');
     row.className = 'drow target-row';
     row.innerHTML =
-      '<div class="d-stcell"><span class="st-badge none">—</span></div>' +
+      '<div class="g-mid d-no"></div>' +
       '<div class="d-namecell">' +
-        '<input type="text" class="d-name" placeholder="대상 이름" value="'+escapeAttr(data.name||'')+'" oninput="onRowChange(this)">' +
+        '<input type="text" class="d-name" placeholder="성명" value="'+escapeAttr(data.name||'')+'" oninput="onRowChange(this)">' +
         '<input type="text" class="d-ref" list="dbRefSuggest" placeholder="추천인" value="'+escapeAttr(data.ref||'')+'" oninput="onRowChange(this)">' +
       '</div>' +
-      '<div><input type="text" class="d-item" list="dbItemSuggest" placeholder="아이템 · 전략" value="'+escapeAttr(data.item||'')+'" oninput="onRowChange(this)"></div>' +
+      '<div><input type="text" class="d-comp" list="dbCompSuggest" placeholder="소속사" value="'+escapeAttr(data.company||'')+'" oninput="onRowChange(this)"></div>' +
+      '<div><input type="text" class="d-item" list="dbItemSuggest" placeholder="항목" value="'+escapeAttr(data.item||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><textarea class="d-memo" rows="1" placeholder="진행 상황 · 특이사항" ' +
         'onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(data.memo||'')+'</textarea></div>' +
       '<div><input type="text" inputmode="numeric" class="d-amt amt" placeholder="0" value="'+(data.amount?fmt(data.amount):'')+'" oninput="onAmountInput(this)"></div>' +
       '<div class="due-cell">' +
+        '<span class="st-badge none"></span>' +
         '<input type="date" class="d-due" value="'+escapeAttr(data.due||'')+'" oninput="onRowChange(this)">' +
         '<input type="date" class="d-date" value="'+escapeAttr(data.date||'')+'" style="display:none;">' +
       '</div>' +
@@ -1417,6 +1426,7 @@
       date: row.querySelector('.d-date'), item: row.querySelector('.d-item'),
       name: row.querySelector('.d-name'), ref: row.querySelector('.d-ref'),
       memo: row.querySelector('.d-memo'), due: row.querySelector('.d-due'),
+      comp: row.querySelector('.d-comp'), no: row.querySelector('.d-no'),
       amt: row.querySelector('.d-amt'), badge: row.querySelector('.st-badge'),
       doneBtn: row.querySelector('.rm-done')
     };
@@ -1427,7 +1437,7 @@
   function rowItem(row){ return tf(row).item.value.trim(); }
   function rowIsEmpty(row){
     var f = tf(row);
-    return !f.item.value.trim() && !f.name.value.trim() && !f.ref.value.trim() &&
+    return !f.item.value.trim() && !f.name.value.trim() && !f.ref.value.trim() && !f.comp.value.trim() &&
            !f.due.value && toNum(f.amt.value) === 0 && !f.memo.value.trim();
   }
 
@@ -1485,6 +1495,15 @@
         if(n && n !== '(아이템 없음)' && !seen[n]){
           seen[n] = 1; var o = document.createElement('option'); o.value = n; dl.appendChild(o);
         }
+      });
+    }
+    var cl = document.getElementById('dbCompSuggest');
+    if(cl){
+      cl.innerHTML = '';
+      var seenC = {};
+      rows.forEach(function(row){
+        var v = tf(row).comp.value.trim();
+        if(v && !seenC[v]){ seenC[v] = 1; var o = document.createElement('option'); o.value = v; cl.appendChild(o); }
       });
     }
     var rl = document.getElementById('dbRefSuggest');
@@ -1688,11 +1707,12 @@
       if(pass && row._done && !dbShowDone) pass = false;
       if(pass && currentDbItem) pass = (rowItem(row) || '(아이템 없음)') === currentDbItem;
       if(pass && q){
-        var hay = (f.name.value + ' ' + f.item.value + ' ' + f.memo.value + ' ' + f.ref.value).toLowerCase();
+        var hay = (f.name.value + ' ' + f.item.value + ' ' + f.memo.value + ' ' + f.ref.value + ' ' + f.comp.value).toLowerCase();
         pass = hay.indexOf(q) > -1;
       }
       row.style.display = pass ? '' : 'none';
-      if(pass){ shownSum += amt; shownCnt++; }
+      if(pass){ shownSum += amt; shownCnt++; if(f.no) f.no.textContent = shownCnt; }
+      else if(f.no) f.no.textContent = '';
     });
 
     // 핵심지표
@@ -1718,6 +1738,8 @@
     renderChain(lastGoal, lastDone, gap, planSum);
 
     // 지금 확인할 대상
+    var dbn = document.getElementById('tabDbN');
+    if(dbn) dbn.textContent = lateN ? String(lateN) : '';
     document.getElementById('fcLateN').textContent = lateN + '건';
     document.getElementById('fcLateA').textContent = fmt(lateA) + '원';
     document.getElementById('fcTodayN').textContent = todayN + '건';
@@ -1730,6 +1752,8 @@
     document.getElementById('dbCount').textContent =
       lab + ' ' + shownCnt + '건 · 예상금액 ' + fmt(shownSum) + '원';
     document.getElementById('dbSumCell').textContent = fmt(shownSum);
+    var dc2 = document.getElementById('dbCntCell');
+    if(dc2) dc2.textContent = shownCnt + '명';
 
     // 아무것도 없을 때
     var note = document.getElementById('dbNote');
@@ -1949,15 +1973,16 @@
 
   function copyDbTable(btn){
     recalcNow();
-    var out = [['상태','대상','추천인','아이템 · 전략','메모','예상일','예상 금액(원)','등록일']], sum = 0;
+    var out = [['No','성명','소속사','항목','메모','예상 금액(원)','예상일','상태','추천인','등록일']], sum = 0;
     document.querySelectorAll('#dbBody .target-row').forEach(function(r){
       if(rowIsEmpty(r)) return;
       var amt = toNum(r.querySelector('.d-amt').value); sum += amt;
       var f = tf(r);
-      out.push([targetState(r).txt, f.name.value, f.ref.value, f.item.value,
-                f.memo.value.replace(/\n/g,' / '), f.due.value, amt, f.date.value]);
+      out.push([out.length, f.name.value, f.comp.value, f.item.value,
+                f.memo.value.replace(/\n/g,' / '), amt, f.due.value,
+                targetState(r).txt, f.ref.value, f.date.value]);
     });
-    out.push(['합계','','','','','',sum,'']);
+    out.push(['합계','','','','',sum,'','','','']);
     copyTsv(out, btn);
   }
 
@@ -1994,15 +2019,15 @@
 
   // ---------- 탭 ----------
   // 섹션을 탭으로 나눠 담습니다 (0=요약·중요일정, 1=주별요약, 2=매출기록, 3=일자별목표, 4=영업대상, 5=전략일지)
-  var curTab = 'now';
+  var curTab = 'todo';
 
   // 섹션 제목으로 어느 탭에 속할지 정합니다 (번호가 바뀌어도 안전)
   function tabOfTitle(t){
-    if(t.indexOf('영업 대상') > -1) return 'now';
-    if(t.indexOf('매출 기록') > -1 || t.indexOf('주별 요약') > -1) return 'sales';
-    if(t.indexOf('일자별 매출 목표') > -1) return 'daily';
-    if(t.indexOf('전략 일지') > -1) return 'log';
-    return 'now';
+    if(t.indexOf('중요업무') > -1) return 'todo';
+    if(t.indexOf('영업 DB') > -1) return 'db';
+    if(t.indexOf('매출 기록') > -1) return 'sales';
+    if(t.indexOf('매출 목표') > -1 || t.indexOf('일자별 매출 목표') > -1 || t.indexOf('전략 일지') > -1) return 'plan';
+    return 'todo';
   }
 
   function tagSections(){
@@ -2032,17 +2057,16 @@
 
   function initTabs(){
     tagSections();
-    var saved = 'now';
+    var saved = 'todo';
     try{ saved = localStorage.getItem('salesTab') || 'now'; }catch(e){}
-    if(['now','sales','daily','log'].indexOf(saved) === -1) saved = 'now';
+    if(['todo','plan','sales','db'].indexOf(saved) === -1) saved = 'todo';
     showTab(saved);
   }
 
   // 목표 → 달성 → 부족 → 확보 예정 → 남은 부족 (한 줄 요약)
   function renderChain(goal, done, gap, plan){
     var el = function(id){ return document.getElementById(id); };
-    if(!el('chGoal')) return;
-    el('chGoal').textContent = fmtShort(goal) + '원';
+    if(!el('chDone')) return;
     el('chDone').textContent = fmtShort(done) + '원';
     el('chDoneRate').textContent = goal > 0 ? (Math.round(done / goal * 100) + '%') : '';
     el('chGap').textContent = fmtShort(Math.max(gap, 0)) + '원';
@@ -2141,6 +2165,8 @@
     var lateCnt = todoList.filter(function(x){ return !x.done && x.date < today; }).length;
     var todayCnt = todoList.filter(function(x){ return !x.done && x.date === today; }).length;
     var doneCnt = todoList.filter(function(x){ return x.done; }).length;
+    var tn = document.getElementById('tabTodoN');
+    if(tn) tn.textContent = (todayCnt + lateCnt) ? String(todayCnt + lateCnt) : '';
     var cc = document.getElementById('tdCount');
     if(cc){
       var d3 = localISO(new Date(Date.now() + 2*86400000));
@@ -2865,30 +2891,17 @@
     var lc = document.getElementById('logCount');
     if(lc) lc.textContent = rows.length + '건 · 합계 ' + fmt(total) + '원';
     renderLogRange();
-    document.getElementById('curTotalText').textContent = fmt(total);
-    document.getElementById('goalText').textContent = fmt(goal);
-    document.getElementById('fsCur').textContent = fmt(total);
-    document.getElementById('fsGoal').textContent = fmt(goal)+'원';
+    var ct = document.getElementById('curTotalText'); if(ct) ct.textContent = fmt(total);
+    var gt = document.getElementById('goalText'); if(gt) gt.textContent = fmt(goal);
+
 
     var gap = Math.max(goal - total, 0);
     lastGoal = goal; lastDone = total;
-    document.getElementById('fsGap').textContent = fmt(gap);
+
 
     var pct = goal > 0 ? Math.min(100, (total/goal*100)) : 0;
     document.getElementById('pctText').textContent = pct.toFixed(1)+'%';
     document.getElementById('gaugeFill').style.width = pct+'%';
-
-    // weekly summary cards
-    var weekGrid = document.getElementById('weekGrid');
-    weekGrid.innerHTML = '';
-    weeks.forEach(function(w){
-      var div = document.createElement('div');
-      div.className = 'week-card';
-      div.innerHTML = '<div class="wk-name">'+w.label+' <span class="wk-range">'+w.range+'</span></div>' +
-                      '<div class="wk-amt">'+fmt(w.total)+'원</div>' +
-                      '<div class="wk-cnt">'+w.count+'건</div>';
-      weekGrid.appendChild(div);
-    });
 
     // strategy board
     recalcTargets();
@@ -2939,6 +2952,7 @@
         item: rowItem(row),
         name: row.querySelector('.d-name').value,
         ref: row.querySelector('.d-ref').value,
+        company: tf(row).comp.value,
         due: row.querySelector('.d-due').value,
         amount: toNum(row.querySelector('.d-amt').value),
         memo: row.querySelector('.d-memo').value
@@ -2957,7 +2971,6 @@
     });
     return {
       title: document.getElementById('titleEl').innerHTML,
-      subtitle: document.getElementById('subtitleEl').innerHTML,
       memo: document.getElementById('memoEl').innerHTML,
       goal: toNum(document.getElementById('goalInput').value),
       month: currentMonth,
@@ -2973,7 +2986,6 @@
   function applyState(state){
     if(!state) return;
     if(state.title) document.getElementById('titleEl').innerHTML = state.title;
-    if(state.subtitle) document.getElementById('subtitleEl').innerHTML = state.subtitle;
     if(state.memo) document.getElementById('memoEl').innerHTML = state.memo;
     if(state.month) currentMonth = state.month;
     document.getElementById('goalInput').value = state.goal ? fmt(state.goal) : '';
@@ -3267,7 +3279,7 @@
     if(goalClone) goalClone.setAttribute('value', document.getElementById('goalInput').value);
 
     // bake title/subtitle/memo
-    ['titleEl','subtitleEl','memoEl'].forEach(function(id){
+    ['titleEl','memoEl'].forEach(function(id){
       var src = document.getElementById(id);
       var dst = clone.querySelector('#'+id);
       if(src && dst) dst.innerHTML = src.innerHTML;
@@ -3283,7 +3295,8 @@
         var f = tf(row);
         dstDb.appendChild(buildTargetRow({
           date: f.date.value, item: f.item.value, name: f.name.value, ref: f.ref.value,
-          memo: f.memo.value, due: f.due.value, amount: toNum(f.amt.value), done: !!row._done
+          memo: f.memo.value, due: f.due.value, company: f.comp.value,
+          amount: toNum(f.amt.value), done: !!row._done
         }));
       });
     }
