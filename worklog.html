@@ -92,6 +92,20 @@
   .peek-none{ font-size:12.5px; color:var(--muted); }
   .peek-ref{ font-size:12px; color:var(--brass); margin-top:7px; }
   .peek-ref b{ color:var(--navy); }
+  /* 이월된 미완 후속 액션 */
+  .carry{ background:#FFF9F0; border:1px solid #EAD9B8; border-radius:12px; padding:11px 15px; margin-bottom:14px; }
+  .carry-head{ display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:6px; }
+  .carry-title{ font-family:'Noto Serif KR',serif; font-size:14px; font-weight:700; color:var(--navy); }
+  .carry-hint{ font-size:11.5px; color:var(--muted); }
+  .carry-item{ display:flex; gap:9px; padding:6px 0; border-top:1px solid #F0E6D2; font-size:12.5px; align-items:center; }
+  .carry-item:first-of-type{ border-top:none; }
+  .carry-when{ flex:0 0 auto; color:var(--brass); font-weight:700; white-space:nowrap; }
+  .carry-name{ flex:0 0 auto; font-weight:700; color:var(--navy); cursor:pointer; text-decoration:underline; text-decoration-color:var(--brass-light); text-underline-offset:3px; white-space:nowrap; }
+  .carry-txt{ flex:1; min-width:0; color:#4A4E5A; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .carry-fu{ flex:1; min-width:0; color:var(--red); font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .carry-done{ flex:0 0 auto; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; cursor:pointer;
+               border:1px solid #BFD9CB; background:var(--green-bg); color:var(--green); font-family:'Pretendard',sans-serif; }
+  .carry-done:hover{ background:#D9EBDF; }
 
   .tbl-tools{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .mini-toggle{
@@ -100,8 +114,8 @@
     cursor:pointer; min-height:34px; touch-action:manipulation;
   }
   .mini-toggle:hover{ background:#FBF6EC; }
-  .ltable{ display:grid; grid-template-columns:58px 148px 96px 100px minmax(190px,1fr) 130px 54px 30px;
-           align-items:stretch; min-width:830px; font-size:13.5px; }
+  .ltable{ display:grid; grid-template-columns:58px 148px 96px 100px minmax(190px,1fr) minmax(240px,.9fr) 54px 30px;
+           align-items:stretch; min-width:940px; font-size:13.5px; }
   .lrow, #logBody{ display:contents; }
   .lrow > div{ min-width:0; padding:7px 8px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
   .lhead > div{ position:sticky; top:0; z-index:3; background:#F8F6F1; border-bottom:1px solid var(--line);
@@ -418,6 +432,8 @@
 
     <div class="peek" id="peekBox" style="display:none;"></div>
 
+    <div class="carry" id="carryBox" style="display:none;"></div>
+
     <div class="tbl-tools">
       <button class="mini-toggle" id="dayExpandBtn" onclick="toggleBoxById('dayScrollBox',this)">⤢ 전체 펼치기</button>
       <button class="mini-toggle" onclick="copyDayTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
@@ -586,7 +602,7 @@
   var GRADE_RANK = { '비회원':0, '자비아':1, '이너서클':2, '지사장':3 };
   var QUICK_PRODUCTS = ['STAR','이너','지사','자비아','비즈라인','기홈','컨홈','컨설팅','IIP택스'];
 
-  var db=null, auth=null, unsubDay=null, unsubMembers=null;
+  var db=null, auth=null, unsubDay=null, unsubMembers=null, unsubCarry=null;
   var currentDate='', members={}, dayRows=[], currentMemberKey='';
   var canEdit=false, myEmail='';
 
@@ -690,6 +706,41 @@
       renderDay();
       setStatus(canEdit ? 'ok' : 'off', canEdit ? null : '열람 전용 · ' + myEmail);
     }, function(e){ setStatus('err', e.code||'조회 실패'); });
+    loadCarry(dateStr);
+  }
+
+  // ---------- 이월된 미완 후속 액션 ----------
+  // 보고 있는 날짜보다 이전 + 후속 액션 있음 + 미완료. (done + date 복합 색인 필요 — 첫 실행 시 콘솔 오류 링크로 생성)
+  function loadCarry(dateStr){
+    if(unsubCarry){ unsubCarry(); unsubCarry=null; }
+    unsubCarry = db.collection(LOGS).where('done','==',false).where('date','<',dateStr).onSnapshot(function(snap){
+      var rows=[];
+      snap.forEach(function(doc){ var v=doc.data(); if(String(v.followUp||'').trim()){ v.id=doc.id; rows.push(v); } });
+      rows.sort(function(a,b){ return String(a.date+(a.time||'')).localeCompare(String(b.date+(b.time||''))); });
+      renderCarry(rows);
+    }, function(e){
+      console.error('이월 후속 조회 실패 (복합 색인 필요 시 아래 링크로 생성):', e);
+      document.getElementById('carryBox').style.display='none';
+    });
+  }
+  function renderCarry(rows){
+    var box=document.getElementById('carryBox');
+    if(!rows.length){ box.style.display='none'; box.innerHTML=''; return; }
+    var html='<div class="carry-head"><span class="carry-title">📌 이월된 후속 액션</span>' +
+      '<span class="peek-stat warn">'+rows.length+'건</span>' +
+      '<span class="carry-hint">이전 날짜의 미완 후속 건입니다. 완료 처리하면 목록에서 빠집니다.</span></div>';
+    rows.forEach(function(r){
+      html+='<div class="carry-item">' +
+        '<span class="carry-when">'+esc(r.date)+'</span>' +
+        '<span class="carry-name" onclick="openMemberFromPeek(\''+esc(r.memberKey)+'\')">'+esc(r.memberName||'-')+'</span>' +
+        (r.product? '<span class="peek-prod">'+esc(r.product)+'</span>':'') +
+        '<span class="carry-txt">'+esc(r.content||'')+'</span>' +
+        '<span class="carry-fu">→ '+esc(r.followUp)+'</span>' +
+        (canEdit? '<button class="carry-done" onclick="toggleDone(\''+r.id+'\',false)">✓ 완료</button>':'') +
+        '</div>';
+    });
+    box.innerHTML=html;
+    box.style.display='';
   }
 
   // ---------- 기록 목록 ----------
@@ -1879,6 +1930,7 @@
         canEdit=false; myEmail='';
         document.getElementById('gate').classList.remove('hide');
         if(unsubDay){ unsubDay(); unsubDay=null; }
+        if(unsubCarry){ unsubCarry(); unsubCarry=null; }
         if(unsubMembers){ unsubMembers(); unsubMembers=null; }
         csRows=[]; renderConsults();
         arRows=[]; renderArrears();
