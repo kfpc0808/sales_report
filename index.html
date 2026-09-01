@@ -466,13 +466,6 @@
   .more-sep{ height:1px; background:var(--line); margin:6px 4px; }
   .more-note{ padding:4px 12px 6px; font-size:11.5px; color:var(--muted); line-height:1.6; }
 
-  /* 간편 보기 */
-  body.view-lean [data-lean="0"]{ display:none !important; }
-  #viewBtn.on{ background:var(--brass); border-color:var(--brass); color:#fff; }
-  .lean-note{ display:none; font-size:12.5px; color:var(--muted); background:#FBF9F4; border:1px solid var(--line);
-              border-radius:10px; padding:10px 14px; margin-bottom:22px; }
-  body.view-lean .lean-note{ display:block; }
-  .lean-note b{ color:var(--navy); }
 
   /* 05 영업 대상 & 전략 */
   .section-head .primary-btn{
@@ -550,6 +543,39 @@
   .st-badge.none{ background:#F2F0EA; color:#A9A497; }
 
   .db-empty{ text-align:center; color:var(--muted); font-size:14px; padding:34px 0; }
+
+  /* 사슬 한 줄 · 탭 */
+  .chain{ display:flex; align-items:stretch; gap:10px; flex-wrap:wrap; margin-top:20px;
+          padding-top:18px; border-top:1px solid rgba(255,255,255,0.16); }
+  .chain .ch{ display:flex; flex-direction:column; gap:3px; min-width:118px; }
+  .chain .k{ font-size:11.5px; font-weight:700; letter-spacing:.04em; color:var(--brass-light); }
+  .chain .v{ font-family:'Noto Serif KR',serif; font-size:23px; font-weight:900; color:#fff; line-height:1.2;
+             font-variant-numeric:tabular-nums; }
+  .chain .v.ok{ color:#8FD3AE; }
+  .chain .v.warn{ color:#F0B49A; }
+  .chain .v.gold{ color:var(--brass-light); }
+  .chain .s{ font-size:12px; color:#A9B0C0; }
+  .chain .arw{ align-self:center; color:#6E7789; font-size:17px; }
+  @media (max-width:768px){
+    .chain{ gap:7px; }
+    .chain .ch{ min-width:calc(50% - 6px); }
+    .chain .arw{ display:none; }
+    .chain .v{ font-size:19px; }
+  }
+
+  .tabs{ display:flex; gap:6px; flex-wrap:wrap; max-width:1320px; margin:0 auto;
+         padding:16px clamp(16px,2.5vw,40px) 0; box-sizing:border-box; }
+  .tabs .tab{ font-family:'Pretendard',sans-serif; font-size:14.5px; font-weight:700; padding:11px 20px;
+              border:1px solid var(--line); border-bottom:none; border-radius:12px 12px 0 0;
+              background:#EFECE4; color:var(--muted); cursor:pointer; }
+  .tabs .tab:hover{ color:var(--brass); }
+  .tabs .tab.on{ background:#fff; color:var(--navy); border-color:var(--line); box-shadow:0 -2px 0 var(--brass) inset; }
+  main > [data-tab]{ display:none; }
+  main > [data-tab].show{ display:block; }
+  @media (max-width:768px){
+    .tabs{ padding:12px 4.5vw 0; }
+    .tabs .tab{ font-size:13px; padding:9px 14px; }
+  }
 
   /* 아이템 카드 */
   .item-cards{ display:grid; grid-template-columns:repeat(auto-fill,minmax(196px,1fr)); gap:11px; margin-bottom:20px; }
@@ -827,7 +853,6 @@
     <input type="month" id="monthPicker" class="month-picker" onchange="onMonthChange()">
     <button class="ghost" onclick="location.href='control.html'">🛰 관제탑</button>
     <button class="ghost" id="worklogBtn" style="display:none;" onclick="location.href='worklog.html'">📝 업무 히스토리</button>
-    <button class="ghost" id="viewBtn" onclick="toggleLeanView()">🔎 간편 보기</button>
     <div class="more-wrap">
       <button class="ghost more-btn" onclick="toggleMore(event)" title="더보기">⋯</button>
       <div class="more-menu" id="moreMenu">
@@ -861,7 +886,26 @@
     <div class="gauge-track"><div class="gauge-fill" id="gaugeFill" style="width:0%"></div></div>
   </div>
 
+  <div class="chain" id="chainBar">
+    <div class="ch"><span class="k">목표</span><span class="v" id="chGoal">0</span></div>
+    <span class="arw">→</span>
+    <div class="ch"><span class="k">달성</span><span class="v ok" id="chDone">0</span><span class="s" id="chDoneRate"></span></div>
+    <span class="arw">→</span>
+    <div class="ch"><span class="k">부족</span><span class="v warn" id="chGap">0</span></div>
+    <span class="arw">→</span>
+    <div class="ch"><span class="k">확보 예정</span><span class="v gold" id="chPlan">0</span><span class="s" id="chCover"></span></div>
+    <span class="arw">→</span>
+    <div class="ch last"><span class="k">아직 비어 있음</span><span class="v" id="chLeft">0</span></div>
+  </div>
+
 </header>
+
+<nav class="tabs" id="mainTabs">
+  <button class="tab on" data-t="now" onclick="showTab('now')">영업 현황</button>
+  <button class="tab" data-t="sales" onclick="showTab('sales')">매출 기록</button>
+  <button class="tab" data-t="daily" onclick="showTab('daily')">일자별 목표</button>
+  <button class="tab" data-t="log" onclick="showTab('log')">전략 일지</button>
+</nav>
 
 <main>
 
@@ -891,12 +935,6 @@
       <button class="mini-toggle" onclick="addTodo()">+ 추가</button>
     </div>
     <div class="td-list" id="tdList"></div>
-  </div>
-
-  <div class="lean-note">
-    <b>간편 보기</b> — 매출 기록 · 전략 &amp; 대상 · 대상 DB · 전략 일지만 표시합니다.
-    숨긴 항목(주별 요약, 아이템별 목표, 일자별 매출 목표, 그래프, 메모)의 내용은 그대로 남아 있으며,
-    상단 <b>전체 보기</b>를 누르면 다시 나타납니다.
   </div>
 
   <!-- 주별 요약 -->
@@ -1677,6 +1715,7 @@
       : ('<b>이번 달 목표를 이미 달성했습니다.</b> 등록 대상 ' + planCnt + '명 · 예상 ' + fmt(planSum) + '원');
 
     renderItemCards(byItem, planCnt);
+    renderChain(lastGoal, lastDone, gap, planSum);
 
     // 지금 확인할 대상
     document.getElementById('fcLateN').textContent = lateN + '건';
@@ -1953,42 +1992,66 @@
     if(m && m.classList.contains('on') && !e.target.closest('.more-wrap')) closeMore();
   });
 
-  // ---------- 간편 / 전체 보기 ----------
-  // 간편 보기에 남길 섹션 (0 = 섹션 제목 이전의 요약·중요일정)
-  var LEAN_SECTIONS = [0, 2, 4, 5];
+  // ---------- 탭 ----------
+  // 섹션을 탭으로 나눠 담습니다 (0=요약·중요일정, 1=주별요약, 2=매출기록, 3=일자별목표, 4=영업대상, 5=전략일지)
+  var curTab = 'now';
+
+  // 섹션 제목으로 어느 탭에 속할지 정합니다 (번호가 바뀌어도 안전)
+  function tabOfTitle(t){
+    if(t.indexOf('영업 대상') > -1) return 'now';
+    if(t.indexOf('매출 기록') > -1 || t.indexOf('주별 요약') > -1) return 'sales';
+    if(t.indexOf('일자별 매출 목표') > -1) return 'daily';
+    if(t.indexOf('전략 일지') > -1) return 'log';
+    return 'now';
+  }
 
   function tagSections(){
     var main = document.querySelector('main');
     if(!main) return;
-    var idx = 0;
+    var cur = 'now';
     Array.prototype.forEach.call(main.children, function(el){
-      if(el.classList && el.classList.contains('section-head')) idx++;
-      if(el.classList && el.classList.contains('lean-note')) return;   // 안내문은 항상 별도 처리
-      el.setAttribute('data-sec', idx);
-      el.setAttribute('data-lean', LEAN_SECTIONS.indexOf(idx) > -1 ? '1' : '0');
+      if(el.classList && el.classList.contains('section-head')){
+        var h = el.querySelector('.section-title');
+        cur = tabOfTitle(h ? h.textContent : '');
+      }
+      el.setAttribute('data-tab', cur);
     });
   }
 
-  function applyLeanView(on){
-    document.body.classList.toggle('view-lean', on);
-    var b = document.getElementById('viewBtn');
-    if(b){
-      b.textContent = on ? '🔎 전체 보기' : '🔎 간편 보기';
-      b.classList.toggle('on', on);
-    }
+  function showTab(t){
+    curTab = t;
+    document.querySelectorAll('main > [data-tab]').forEach(function(el){
+      el.classList.toggle('show', el.getAttribute('data-tab') === t);
+    });
+    document.querySelectorAll('#mainTabs .tab').forEach(function(b){
+      b.classList.toggle('on', b.getAttribute('data-t') === t);
+    });
+    try{ localStorage.setItem('salesTab', t); }catch(e){}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function toggleLeanView(){
-    var on = !document.body.classList.contains('view-lean');
-    applyLeanView(on);
-    try{ localStorage.setItem('salesViewLean', on ? '1' : '0'); }catch(e){}
-  }
-
-  function initLeanView(){
+  function initTabs(){
     tagSections();
-    var saved = '0';
-    try{ saved = localStorage.getItem('salesViewLean') || '0'; }catch(e){}
-    applyLeanView(saved === '1');
+    var saved = 'now';
+    try{ saved = localStorage.getItem('salesTab') || 'now'; }catch(e){}
+    if(['now','sales','daily','log'].indexOf(saved) === -1) saved = 'now';
+    showTab(saved);
+  }
+
+  // 목표 → 달성 → 부족 → 확보 예정 → 남은 부족 (한 줄 요약)
+  function renderChain(goal, done, gap, plan){
+    var el = function(id){ return document.getElementById(id); };
+    if(!el('chGoal')) return;
+    el('chGoal').textContent = fmtShort(goal) + '원';
+    el('chDone').textContent = fmtShort(done) + '원';
+    el('chDoneRate').textContent = goal > 0 ? (Math.round(done / goal * 100) + '%') : '';
+    el('chGap').textContent = fmtShort(Math.max(gap, 0)) + '원';
+    el('chPlan').textContent = fmtShort(plan) + '원';
+    el('chCover').textContent = gap > 0 ? ('부족액의 ' + Math.round(plan / gap * 100) + '%') : '';
+    var left = gap - plan;
+    var lf = el('chLeft');
+    lf.textContent = (gap <= 0) ? '목표 달성' : (left > 0 ? (fmtShort(left) + '원') : '계획 충족');
+    lf.className = 'v ' + (gap <= 0 || left <= 0 ? 'ok' : 'warn');
   }
 
   // ---------- 중요 일정 ----------
@@ -2776,6 +2839,7 @@
   // ---------- recalculation ----------
   // 계획표 집계에 쓸 매출 기록 목록
 
+  var lastGoal = 0, lastDone = 0;
   function recalcAll(){
     var goal = toNum(document.getElementById('goalInput').value);
     var rows = document.querySelectorAll('#logBody tr.log-row');
@@ -2807,6 +2871,7 @@
     document.getElementById('fsGoal').textContent = fmt(goal)+'원';
 
     var gap = Math.max(goal - total, 0);
+    lastGoal = goal; lastDone = total;
     document.getElementById('fsGap').textContent = fmt(gap);
 
     var pct = goal > 0 ? Math.min(100, (total/goal*100)) : 0;
@@ -3182,7 +3247,7 @@
     goStratToday();
     loadStratList();
     initTodos();
-    initLeanView();
+    initTabs();
     setDbFilter('all');
     document.getElementById('tdText').addEventListener('keydown', function(e){ if(e.key === 'Enter') addTodo(); });
     document.getElementById('tdDate').value = localISO(new Date());
