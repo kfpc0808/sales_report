@@ -570,7 +570,8 @@
   .pltable input:focus{ border-color:var(--brass); background:#fff; outline:none; }
   .pl-act{ font-variant-numeric:tabular-nums; font-weight:700; color:var(--green); }
   .pl-n{ font-size:12px; font-weight:800; color:var(--navy); }
-  .pl-a{ font-size:11.5px; color:var(--muted); font-variant-numeric:tabular-nums; margin-left:6px; }
+  .pl-a{ font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums; margin-left:7px; }
+  .plrow > div{ gap:0; }
   .pl-none{ color:#C4BFB1; }
   .pl-link{ font-size:10px; font-weight:800; padding:1px 6px; border-radius:20px; background:#EFEAE0; color:#6B5122; margin-left:6px; }
   .pl-cov{ flex-direction:column; align-items:stretch !important; gap:4px; }
@@ -908,11 +909,11 @@
     <span class="section-num" contenteditable="true">01</span>
     <h2 class="section-title" contenteditable="true">이번 달 계획 (목표 · 전략 · 근거)</h2>
   </div>
-  <div class="section-desc" contenteditable="true">아이템별 목표를 세우면, 같은 이름의 전략(03)과 대상 DB(06)가 자동으로 묶여 근거가 채워졌는지 보여줍니다.</div>
+  <div class="section-desc" contenteditable="true">아이템별 목표를 세우면, 05 영업 대상 &amp; 전략에 같은 이름으로 적은 대상이 자동으로 묶입니다. 근거가 채워졌는지 한 줄로 확인하세요.</div>
 
   <div class="log-tools">
     <button class="mini-toggle" onclick="copyPlanTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
-    <button class="mini-toggle" onclick="syncPlanItems()">↻ 전략·DB에서 아이템 가져오기</button>
+    <button class="mini-toggle" onclick="syncPlanItems()">↻ 05에서 아이템 가져오기</button>
     <span class="chip-cnt" id="planCount"></span>
   </div>
 
@@ -922,8 +923,8 @@
         <div>아이템</div>
         <div class="g-num">월 목표(원)</div>
         <div class="g-num">실적(자동)</div>
-        <div>대상 (05)</div>
-        <div>예상일 잡힌 건</div>
+        <div>등록 대상</div>
+        <div>예상일 확정</div>
         <div>커버율</div>
         <div></div>
       </div>
@@ -1864,13 +1865,13 @@
       r.querySelector('.pl-act').textContent = fmt(act);
       var lk = linkOf[nm] ? '<span class="pl-link">연계 ' + linkOf[nm] + '</span>' : '';
       r.querySelector('.pl-st').innerHTML = (dc
-        ? '<span class="pl-n">' + dc + '명</span><span class="pl-a">' + fmt(ds) + '</span>'
-        : '<span class="pl-none">—</span>') + lk;
+        ? '<span class="pl-n">' + dc + '명</span><span class="pl-a">' + fmt(ds) + '원</span>'
+        : '<span class="pl-none">아직 없음</span>') + lk;
       r.querySelector('.pl-db').innerHTML = sc
-        ? '<span class="pl-n">' + sc + '건</span><span class="pl-a">' + fmt(ss) + '</span>'
-        : '<span class="pl-none">—</span>';
+        ? '<span class="pl-n">' + sc + '건</span><span class="pl-a">' + fmt(ss) + '원</span>'
+        : (dc ? '<span class="pl-none">날짜 미정</span>' : '<span class="pl-none">—</span>');
 
-      var cov = goal > 0 ? ((act + ss) / goal * 100) : null;
+      var cov = goal > 0 ? ((act + ds) / goal * 100) : null;
       var cls = cov === null ? '' : (cov >= 100 ? 'ok' : (cov >= 50 ? 'mid' : 'low'));
       r.querySelector('.pl-cov').innerHTML = cov === null ? '<span class="pl-none">목표 미입력</span>' :
         '<span class="pl-rate ' + cls + '">' + Math.round(cov) + '%</span>' +
@@ -1879,9 +1880,9 @@
 
     document.getElementById('plGoal').textContent = fmt(sumGoal);
     document.getElementById('plAct').textContent = fmt(sumAct);
-    document.getElementById('plStrat').innerHTML = '<span class="pl-n">' + sumDbCnt + '명</span><span class="pl-a">' + fmt(sumDb) + '</span>';
-    document.getElementById('plDb').innerHTML = '<span class="pl-n">' + sumStCnt + '건</span><span class="pl-a">' + fmt(sumSt) + '</span>';
-    var tCov = sumGoal > 0 ? Math.round((sumAct + sumSt) / sumGoal * 100) : null;
+    document.getElementById('plStrat').innerHTML = '<span class="pl-n">' + sumDbCnt + '명</span><span class="pl-a">' + fmt(sumDb) + '원</span>';
+    document.getElementById('plDb').innerHTML = '<span class="pl-n">' + sumStCnt + '건</span><span class="pl-a">' + fmt(sumSt) + '원</span>';
+    var tCov = sumGoal > 0 ? Math.round((sumAct + sumDb) / sumGoal * 100) : null;
     document.getElementById('plCover').innerHTML = tCov === null ? '—' :
       '<span class="pl-rate ' + (tCov >= 100 ? 'ok' : (tCov >= 50 ? 'mid' : 'low')) + '">' + tCov + '%</span>';
 
@@ -1890,24 +1891,30 @@
 
     var note = document.getElementById('planNote');
     if(note){
-      var weak = [];
+      var weak = [], empty = [];
       rows.forEach(function(r){
         var nm = r.querySelector('.pl-name').value.trim();
         var goal = toNum(r.querySelector('.pl-goal').value);
         if(!nm || goal <= 0) return;
-        var gap = goal - (actBy[nm]||0) - (stSum[nm]||0);
+        var gap = goal - (actBy[nm]||0) - (dbSum[nm]||0);
         if(gap > 0) weak.push({ nm:nm, gap:gap, db:dbCnt[nm]||0 });
+        if(!(dbCnt[nm]||0)) empty.push(nm);
       });
       weak.sort(function(a,b){ return b.gap - a.gap; });
       var html;
       if(!rows.length){
-        html = '아이템을 추가하면 목표·전략·근거 대상이 한 줄로 정리됩니다. <b>↻ 전략·DB에서 아이템 가져오기</b>를 누르면 이미 쓰고 계신 이름을 그대로 불러옵니다.';
+        html = '아이템을 추가하면 목표와 대상이 한 줄로 정리됩니다. <b>↻ 05에서 아이템 가져오기</b>를 누르면 이미 쓰고 계신 이름을 그대로 불러옵니다.';
+      } else if(empty.length === rows.length){
+        html = '아직 등록된 대상이 없습니다. <b>05 영업 대상 &amp; 전략</b>에서 아이템 이름을 똑같이 적어 대상을 등록하면 여기에 채워집니다.';
       } else if(weak.length){
         var w = weak[0];
-        html = '가장 모자란 곳은 <b>' + escapeHtml(w.nm) + '</b>입니다. <b>' + fmt(w.gap) + '원</b>이 더 필요하고, 현재 등록된 대상은 <b>' + w.db + '명</b>입니다.' +
-               (weak.length > 1 ? ' 이어서 ' + weak.slice(1,3).map(function(x){ return escapeHtml(x.nm) + ' ' + fmt(x.gap) + '원'; }).join(', ') + '이 부족합니다.' : '');
+        html = '가장 모자란 곳은 <b>' + escapeHtml(w.nm) + '</b>입니다. ' +
+               (w.db ? ('대상 <b>' + w.db + '명</b>을 등록했지만 <b>' + fmt(w.gap) + '원</b>이 더 필요합니다.')
+                     : ('등록된 대상이 없어 <b>' + fmt(w.gap) + '원</b> 전부가 비어 있습니다.'));
+        var rest = empty.filter(function(x){ return x !== w.nm; });
+        if(rest.length) html += ' <b>' + escapeHtml(rest.slice(0,3).join(', ')) + '</b>' + (rest.length > 3 ? ' 외 ' + (rest.length-3) + '개' : '') + '도 대상이 비어 있습니다.';
       } else {
-        html = '<b>모든 아이템이 목표를 덮고 있습니다.</b> 실적과 전략 예상액의 합이 목표 이상입니다.';
+        html = '<b>모든 아이템이 목표를 덮고 있습니다.</b> 실적과 등록 대상 예상액의 합이 목표 이상입니다.';
       }
       if(unmatched > 0) html += '<br><span class="pl-warn">매출 기록 중 ' + fmt(unmatched) + '원은 아이템 이름과 맞지 않아 아이템별로 집계되지 않았습니다.</span>';
       note.innerHTML = html;
