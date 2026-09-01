@@ -410,6 +410,7 @@
     border:1px solid var(--line); border-radius:9px; background:#fff; color:var(--navy); cursor:pointer;
   }
   #slListBox{ border:1px solid var(--line); border-radius:12px; background:#fff; }
+  #slListBox.folded{ display:none; }
   .sl-item{ padding:12px 15px; border-bottom:1px solid #F0EEE7; cursor:pointer; }
   .sl-item:last-child{ border-bottom:none; }
   .sl-item:hover{ background:#FBF6EC; }
@@ -433,6 +434,15 @@
   .td-add input[type="text"]{ flex:1; min-width:180px; font-family:'Pretendard',sans-serif; font-size:13.5px;
         padding:7px 11px; border:1px solid var(--line); border-radius:8px; background:#FBFAF7; color:var(--ink); }
   .td-add input:focus{ outline:none; border-color:var(--brass); background:#fff; }
+  .td-slot-sel{ font-family:'Pretendard',sans-serif; font-size:12.5px; font-weight:600; padding:7px 8px;
+                border:1px solid var(--line); border-radius:9px; background:#FBFAF7; color:var(--navy); cursor:pointer; }
+  .td-slot{ flex:0 0 auto; min-width:34px; text-align:center; font-size:10.5px; font-weight:800; padding:2px 6px; border-radius:20px;
+            background:#F2F0EA; color:#A9A497; letter-spacing:.02em; }
+  .td-slot.am{ background:#E6ECF5; color:var(--navy); }
+  .td-slot.pm{ background:#FBF0E4; color:var(--brass); }
+  .td-slot.all{ background:var(--green-bg); color:var(--green); }
+  .td-slot.clickable{ cursor:pointer; }
+  .td-slot.clickable:hover{ filter:brightness(.94); }
   .td-list{ display:flex; flex-direction:column; max-height:410px; overflow-y:auto; }
   .td-list.expanded{ max-height:none; overflow-y:visible; }
   .td-list::-webkit-scrollbar{ width:8px; }
@@ -682,6 +692,12 @@
     </div>
     <div class="td-add" id="tdAdd">
       <input type="date" id="tdDate">
+      <select id="tdSlot" class="td-slot-sel" title="시간 구분">
+        <option value="">구분 없음</option>
+        <option value="am">오전</option>
+        <option value="pm">오후</option>
+        <option value="all">종일</option>
+      </select>
       <input type="text" id="tdText" placeholder="예: 9월 전략회의 이너서클 프로그램 보고 (Enter로 추가)" autocomplete="off">
       <button class="mini-toggle" onclick="addTodo()">+ 추가</button>
     </div>
@@ -943,6 +959,7 @@
       <option value="lastyear">작년 전체</option>
     </select>
     <span class="sl-status" id="slListCount"></span>
+    <button class="mini-toggle" id="slFoldBtn" style="margin-left:auto;" onclick="toggleStratList()">▾ 접기</button>
   </div>
   <div class="log-scroll scroll-y" id="slListBox">
     <div id="slList"></div>
@@ -1645,9 +1662,10 @@
     if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
     var dt = document.getElementById('tdDate').value;
     var tx = document.getElementById('tdText').value.trim();
+    var slot = document.getElementById('tdSlot') ? document.getElementById('tdSlot').value : '';
     if(!tx){ document.getElementById('tdText').focus(); return; }
     if(!dt) dt = localISO(new Date());
-    db.collection(TODOS).add({ date: dt, text: tx, done: false, createdAt: new Date().toISOString() })
+    db.collection(TODOS).add({ date: dt, slot: slot, text: tx, done: false, createdAt: new Date().toISOString() })
       .then(function(){
         document.getElementById('tdText').value = '';
         document.getElementById('tdText').focus();
@@ -1727,7 +1745,8 @@
 
     // 특정 날짜만 보기
     if(filter){
-      var day = todoList.filter(function(x){ return x.date === filter && (showDone || !x.done); });
+      var day = todoList.filter(function(x){ return x.date === filter && (showDone || !x.done); })
+                        .sort(function(a,b){ return slotOrder(a.slot) - slotOrder(b.slot); });
       addSection(box, shortDate(filter) + ' 일정 ' + day.length + '건' + (filter === today ? ' (오늘)' : ''), '');
       if(!day.length){ box.appendChild(emptyRow('이 날짜에 등록된 일정이 없습니다.')); return; }
       day.forEach(function(x){ box.appendChild(todoRow(x, today)); });
@@ -1735,7 +1754,10 @@
     }
 
     // 오늘 → 기한 지남 → 예정 → 완료 순
-    var byDate = function(a,b){ return String(a.date).localeCompare(String(b.date)); };
+    var byDate = function(a,b){
+      var c = String(a.date).localeCompare(String(b.date));
+      return c !== 0 ? c : (slotOrder(a.slot) - slotOrder(b.slot));
+    };
     var g1 = todoList.filter(function(x){ return !x.done && x.date === today; }).sort(byDate);
     var g2 = todoList.filter(function(x){ return !x.done && x.date < today; }).sort(byDate);
     var g3 = todoList.filter(function(x){ return !x.done && x.date > today; }).sort(byDate);
@@ -1771,6 +1793,7 @@
     row.className = 'td-row' + (x.done ? ' done' : '');
     row.innerHTML =
       '<span class="td-dday ' + (x.done ? '' : d.cls) + '">' + (x.done ? '완료' : escapeHtml(d.txt)) + '</span>' +
+      '<span class="td-slot ' + slotCls(x.slot) + (canEdit ? ' clickable' : '') + '" title="' + (canEdit ? '클릭: 구분 없음 → 오전 → 오후 → 종일' : '') + '">' + slotLabel(x.slot) + '</span>' +
       (canEdit
         ? '<input type="date" class="td-editdate" value="' + escapeAttr(x.date || '') + '">' +
           '<input type="text" class="td-text td-edit" value="' + escapeAttr(x.text || '') + '">'
@@ -1787,9 +1810,18 @@
       te.onchange = function(){ saveTodoField(x.id, 'text', te.value.trim(), x.text || ''); };
       te.onkeydown = function(e){ if(e.key === 'Enter') te.blur(); };
       de.onchange = function(){ saveTodoField(x.id, 'date', de.value, x.date || ''); };
+      var se = row.querySelector('.td-slot');
+      se.onclick = function(){ saveTodoField(x.id, 'slot', nextSlot(x.slot), '__force__'); };
     }
     return row;
   }
+
+  // 시간 구분 (오전/오후/종일)
+  var SLOT_SEQ = ['', 'am', 'pm', 'all'];
+  function slotOrder(v){ return { am:0, pm:1, all:2 }[v] !== undefined ? { am:0, pm:1, all:2 }[v] : 3; }
+  function slotLabel(v){ return { am:'오전', pm:'오후', all:'종일' }[v] || '－'; }
+  function slotCls(v){ return (v === 'am' || v === 'pm' || v === 'all') ? v : ''; }
+  function nextSlot(v){ var i = SLOT_SEQ.indexOf(v || ''); return SLOT_SEQ[(i + 1) % SLOT_SEQ.length]; }
 
   // ---------- 일자별 전략 일지 ----------
   var SLOGS = 'strategyLogs';
@@ -1871,8 +1903,23 @@
     });
   }
 
+  function toggleStratList(force){
+    var box = document.getElementById('slListBox');
+    var btn = document.getElementById('slFoldBtn');
+    var folded = (typeof force === 'boolean') ? force : !box.classList.contains('folded');
+    box.classList.toggle('folded', folded);
+    if(btn) btn.textContent = folded ? '▸ 펼치기' : '▾ 접기';
+    try{ localStorage.setItem('slListFolded', folded ? '1' : '0'); }catch(e){}
+  }
+  function initStratListFold(){
+    var v = '0';
+    try{ v = localStorage.getItem('slListFolded') || '0'; }catch(e){}
+    if(v === '1') toggleStratList(true);
+  }
+
   function loadStratList(){
     if(!firebaseReady) return;
+    if(document.getElementById('slListBox').classList.contains('folded')) toggleStratList(false);  // 기간 변경 시 자동 펼침
     var kind = document.getElementById('slRange').value;
     var t = new Date(), q = db.collection(SLOGS);
     var from = null, to = null;
@@ -2638,6 +2685,7 @@
     loadStratList();
     initTodos();
     initTabs();
+    initStratListFold();
     setStratRange('rest');
     document.getElementById('tdText').addEventListener('keydown', function(e){ if(e.key === 'Enter') addTodo(); });
     document.getElementById('tdDate').value = localISO(new Date());
