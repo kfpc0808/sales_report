@@ -49,7 +49,7 @@
   header.hero{
     background:linear-gradient(160deg,var(--navy) 0%, var(--navy-2) 60%, #0C1830 100%);
     color:#EDEEF3; position:relative; overflow:hidden;
-    padding:48px max(clamp(16px,2.5vw,40px), calc((100vw - 1320px) / 2 + 40px)) 36px;
+    padding:36px max(clamp(16px,2.5vw,40px), calc((100vw - 1320px) / 2 + 40px)) 28px;
   }
   header.hero::after{
     content:""; position:absolute; right:-10%; top:-30%; width:520px; height:520px; border-radius:50%;
@@ -59,7 +59,7 @@
   h1.title{ font-family:'Noto Serif KR',serif; font-weight:900; font-size:clamp(22px,4vw,36px); margin:0 0 8px; line-height:1.3; outline:none; }
   .subtitle{ color:#B9BFCF; font-size:14px; max-width:680px; outline:none; }
 
-  .goal-row{ margin-top:26px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .goal-row{ margin-top:18px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
   .goal-row label{ font-size:12.5px; color:#B9BFCF; }
   .goal-input{
     font-family:'Noto Serif KR',serif; font-weight:900; font-size:20px; color:#fff;
@@ -68,23 +68,14 @@
   }
   .goal-row .unit{ color:#B9BFCF; font-size:13px; }
 
-  .gauge-wrap{ margin-top:20px; }
+  .gauge-wrap{ margin-top:14px; }
   .gauge-top{ display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px; margin-bottom:8px;}
   .gauge-top .pct{ font-family:'Noto Serif KR',serif; font-weight:900; font-size:34px; }
   .gauge-top .cur{ font-size:13px; color:#B9BFCF; }
   .gauge-track{ width:100%; height:16px; border-radius:10px; background:rgba(255,255,255,0.12); overflow:hidden; }
   .gauge-fill{ height:100%; background:linear-gradient(90deg,var(--brass),var(--brass-light)); transition:width .3s; }
 
-  .pace-box{
-    margin-top:20px; padding:16px 18px; border-radius:12px; background:rgba(255,255,255,0.06);
-    border:1px solid rgba(255,255,255,0.15); font-size:13.5px; color:#EDEEF3;
-  }
-  .pace-box b{ color:var(--brass-light); }
-  .pace-box .pace-line{ margin-top:6px; }
-  .pace-good{ color:#9FD8B8; }
-  .pace-bad{ color:#E6A88B; }
-
-  main{ padding:40px clamp(16px,2.5vw,40px) 90px; max-width:1320px; margin:0 auto; }
+  main{ padding:32px clamp(16px,2.5vw,40px) 90px; max-width:1320px; margin:0 auto; }
 
   .section-head{ display:flex; align-items:baseline; gap:14px; margin:50px 0 18px; }
   .section-head:first-child{ margin-top:0; }
@@ -561,11 +552,12 @@
   .storage-card code{ background:#F0EBDD; padding:1px 5px; border-radius:4px; font-size:12px; }
 
   .footer-summary{
-    margin:0 0 42px; padding:26px 28px; border-radius:16px; background:var(--navy); color:#EDEEF3;
+    margin:18px 0 0; padding:18px 22px; border-radius:14px; background:rgba(255,255,255,0.06); color:#EDEEF3;
+    border:1px solid rgba(255,255,255,0.15);
     display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
   }
   .footer-summary .fs-label{ font-size:12px; color:#B9BFCF; letter-spacing:.05em; text-transform:uppercase; }
-  .footer-summary .fs-num{ font-family:'Noto Serif KR',serif; font-weight:900; font-size:22px; }
+  .footer-summary .fs-num{ font-family:'Noto Serif KR',serif; font-weight:900; font-size:20px; }
   .fs-gap .fs-num{ color:#E6A88B; }
 
   [contenteditable="true"]{ cursor:text; border-radius:5px; transition:background .15s; }
@@ -620,12 +612,15 @@
 
     .toolbar{ padding:8px 14px; }
     .toolbar button{ font-size:12px; padding:7px 11px; }
-    header.hero{ padding:30px 5vw 24px; }
+    header.hero{ padding:24px 5vw 20px; }
     h1.title{ font-size:20px; }
     .gauge-top .pct{ font-size:26px; }
     main{ padding:30px 4.5vw 60px; max-width:none; }
     .card{ padding:16px 14px; border-radius:12px; }
-    .footer-summary{ flex-direction:column; align-items:flex-start; }
+    .footer-summary{ flex-direction:column; align-items:stretch; gap:0; padding:4px 14px; }
+    .footer-summary > div{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:9px 0; border-top:1px solid rgba(255,255,255,0.12); }
+    .footer-summary > div:first-child{ border-top:none; }
+    .footer-summary .fs-num{ font-size:17px; }
   }
 </style>
 </head>
@@ -663,18 +658,14 @@
     <div class="gauge-track"><div class="gauge-fill" id="gaugeFill" style="width:0%"></div></div>
   </div>
 
-  <div class="pace-box" id="paceBox">
-    항목을 입력하면 진행 상황과 필요한 페이스가 여기 표시됩니다.
-  </div>
-</header>
-
-<main>
-
   <div class="footer-summary">
     <div><div class="fs-label">현재 확보 매출</div><div class="fs-num"><span id="fsCur">0</span>원</div></div>
     <div><div class="fs-label">목표 매출</div><div class="fs-num" id="fsGoal">0원</div></div>
     <div class="fs-gap"><div class="fs-label">부족 금액</div><div class="fs-num"><span id="fsGap">0</span>원</div></div>
   </div>
+</header>
+
+<main>
 
   <!-- 중요 일정 -->
   <div class="td-strip">
@@ -2437,7 +2428,7 @@
     recalcItems(total);
 
     // daily goal table
-    var goalStats = recalcGoalTable(actualByDate, weeks, weekMap);
+    recalcGoalTable(actualByDate, weeks, weekMap);
     var undated = document.getElementById('undatedNote');
     if(undatedCnt > 0){
       undated.textContent = '⚠ 날짜가 비어 있는 매출 기록 '+undatedCnt+'건 ('+fmt(undatedAmt)+'원)은 일자별 실적에 반영되지 않았습니다. 01 매출 기록에서 날짜를 지정해주세요.';
@@ -2445,58 +2436,8 @@
       undated.textContent = '';
     }
 
-    // pace calculator
-    updatePace(goal, total, gap, goalStats);
   }
 
-  // 해당 월의 from~to일 사이 영업일 수 (토·일 제외, 공휴일 미반영)
-  function bizDays(year, monthIndex, from, to){
-    var cnt = 0;
-    for(var d = from; d <= to; d++){
-      var w = new Date(year, monthIndex, d).getDay();
-      if(w !== 0 && w !== 6) cnt++;
-    }
-    return cnt;
-  }
-
-  function updatePace(goal, total, gap, stats){
-    var box = document.getElementById('paceBox');
-    var cumLine = '';
-    if(stats && stats.cum > 0){
-      var d = total - stats.cum;
-      cumLine = '<div class="pace-line '+(d >= 0 ? 'pace-good' : 'pace-bad')+'">오늘까지 누계 목표 <b>'+fmt(stats.cum)+'원</b> 대비 '+(d >= 0 ? '+' : '')+fmt(d)+'원 '+(d >= 0 ? '앞서 있습니다.' : '뒤처져 있습니다.')+'</div>';
-    }
-    if(goal <= 0){
-      box.innerHTML = (cumLine ? '월 목표 매출을 입력하면 전체 페이스가 계산됩니다.' + cumLine : '목표 매출을 입력하면 필요한 페이스가 계산됩니다.');
-      return;
-    }
-    var today = new Date();
-    var endOfMonth = new Date(today.getFullYear(), today.getMonth()+1, 0);
-    var lastDay = endOfMonth.getDate();
-
-    // 영업일(주말 제외) 기준 계산 — 공휴일은 반영하지 않음
-    var elapsedDays = bizDays(today.getFullYear(), today.getMonth(), 1, today.getDate());
-    var remainingDays = bizDays(today.getFullYear(), today.getMonth(), today.getDate(), lastDay);
-    if(remainingDays < 1) remainingDays = 1;
-
-    var currentDailyAvg = elapsedDays > 0 ? (total/elapsedDays) : 0;
-    var neededDailyAvg = gap > 0 ? (gap/remainingDays) : 0;
-
-    var todayStr = today.getFullYear()+'.'+(today.getMonth()+1)+'.'+today.getDate();
-    var html = '진행 현황: <b>'+fmt(total)+'원</b> / 목표 <b>'+fmt(goal)+'원</b> 확보 (오늘 '+todayStr+' 기준)';
-    html += '<div class="pace-line">이번 달 남은 <b>영업일 '+remainingDays+'일</b>(주말 제외) 동안, 부족한 <b>'+fmt(gap)+'원</b>을 채우려면 영업일 하루 평균 <b>'+fmt(neededDailyAvg)+'원</b>이 필요합니다. <span style="opacity:.7">※ 공휴일은 반영되지 않았습니다.</span></div>';
-
-    if(gap <= 0){
-      html += '<div class="pace-line pace-good">✓ 이미 목표를 달성했습니다.</div>';
-    } else if(neededDailyAvg <= currentDailyAvg){
-      html += '<div class="pace-line pace-good">✓ 지금까지의 페이스(영업일 하루 평균 '+fmt(currentDailyAvg)+'원)를 유지하면 목표 달성이 가능한 속도입니다.</div>';
-    } else {
-      var diff = neededDailyAvg - currentDailyAvg;
-      html += '<div class="pace-line pace-bad">▲ 지금까지 페이스(영업일 하루 평균 '+fmt(currentDailyAvg)+'원)보다 영업일 하루 평균 '+fmt(diff)+'원 더 필요합니다. 남은 기간 추가 설명회·추천 전환에 집중이 필요합니다.</div>';
-    }
-    html += cumLine;
-    box.innerHTML = html;
-  }
 
   // ---------- save / load ----------
   function collectState(){
