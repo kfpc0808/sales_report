@@ -507,40 +507,6 @@
     .td-list{ max-height:none !important; overflow:visible !important; }
   }
 
-  /* 주별 막대 · 누적 선 그래프 */
-  .wc-legend{ display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin-bottom:14px; }
-  .wc-legend span{ display:flex; align-items:center; gap:5px; }
-  .sw{ width:11px; height:11px; border-radius:3px; display:inline-block; }
-  .sw-goal{ background:#DCD7C9; }
-  .sw-act{ background:var(--brass); }
-  .sw-done{ background:var(--green); }
-  .sw-cgoal{ background:#BDB7A6; }
-  .sw-cact{ background:var(--navy); }
-  .wchart{ display:flex; align-items:flex-end; gap:10px; min-height:210px; }
-  .wc-col{ flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; }
-  .wc-val{ font-size:11.5px; font-weight:800; color:var(--navy); font-variant-numeric:tabular-nums; margin-bottom:5px; white-space:nowrap; }
-  .wc-val .pct{ font-size:10.5px; font-weight:700; color:var(--muted); margin-left:3px; }
-  .wc-val .pct.ok{ color:var(--green); }
-  .wc-track{ width:100%; max-width:64px; background:#DCD7C9; border-radius:5px 5px 0 0; position:relative; display:flex; align-items:flex-end; }
-  .wc-fill{ width:100%; background:var(--brass); border-radius:5px 5px 0 0; transition:height .3s; }
-  .wc-fill.done{ background:var(--green); }
-  .wc-base{ width:100%; height:2px; background:var(--line); }
-  .wc-lab{ font-size:11.5px; font-weight:700; color:var(--navy); margin-top:7px; text-align:center; line-height:1.35; }
-  .wc-lab span{ display:block; font-size:10.5px; font-weight:600; color:var(--brass); }
-  .wc-lab em{ display:block; font-size:10px; font-style:normal; color:var(--muted); }
-  .wc-note{ margin-top:12px; font-size:12.5px; color:var(--muted); }
-  .wc-note b{ color:var(--navy); }
-  .wc-note .warn{ color:var(--red); font-weight:700; }
-  .wc-note .ok{ color:var(--green); font-weight:700; }
-  .wc-empty{ text-align:center; color:var(--muted); font-size:13px; padding:22px 0; width:100%; }
-  @media (max-width:768px){
-    .wchart{ gap:5px; min-height:180px; }
-    .wc-val{ font-size:10px; }
-    .wc-val .pct{ display:none; }
-    .wc-lab{ font-size:10px; }
-    .wc-lab span{ font-size:9.5px; }
-  }
-
   .range-box{ margin-top:16px; background:#FBF9F4; border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
   .range-line{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .range-line .lbl2{ font-size:11px; font-weight:800; letter-spacing:.1em; color:var(--brass); }
@@ -922,25 +888,6 @@
   <div class="sub-title">주별 목표 합계</div>
   <div class="week-grid" id="goalWeekGrid"></div>
 
-  <div class="sub-title">주별 목표 대비 실적</div>
-  <div class="card chart-card">
-    <div class="wc-legend">
-      <span><i class="sw sw-goal"></i>목표</span>
-      <span><i class="sw sw-act"></i>실적</span>
-      <span><i class="sw sw-done"></i>목표 달성</span>
-    </div>
-    <div class="wchart" id="weekChart"></div>
-  </div>
-
-  <div class="sub-title">누적 진행 (월 목표 착지 예측)</div>
-  <div class="card chart-card">
-    <div class="wc-legend">
-      <span><i class="sw sw-cgoal"></i>누적 목표</span>
-      <span><i class="sw sw-cact"></i>누적 실적</span>
-    </div>
-    <div id="cumChart"></div>
-    <div class="wc-note" id="cumNote"></div>
-  </div>
   <div class="goal-note" id="goalNote"></div>
   <div class="undated-note" id="undatedNote"></div>
 
@@ -2116,104 +2063,6 @@
   }
   function esc2(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
 
-  // A. 주차별 목표 위에 실적을 겹친 막대
-  function renderWeekChart(weeks){
-    var box = document.getElementById('weekChart');
-    if(!box) return;
-    var max = 0;
-    weeks.forEach(function(w){ max = Math.max(max, w.goal, w.actual); });
-    if(max <= 0){
-      box.innerHTML = '<div class="wc-empty">목표를 입력하면 주차별 막대가 그려집니다.</div>';
-      renderCumChart(weeks);
-      return;
-    }
-    var H = 150;
-    box.innerHTML = '';
-    weeks.forEach(function(w){
-      var base = Math.max(w.goal, w.actual);
-      var trackH = Math.round(base / max * H);
-      var fillPct = base > 0 ? Math.min(100, w.actual / base * 100) : 0;
-      var rate = w.goal > 0 ? Math.round(w.actual / w.goal * 100) : null;
-      var done = rate !== null && rate >= 100;
-      var col = document.createElement('div');
-      col.className = 'wc-col';
-      col.innerHTML =
-        '<div class="wc-val">' + fmtShort(w.actual) +
-          (rate !== null ? '<span class="pct' + (done ? ' ok' : '') + '">' + rate + '%</span>' : '') + '</div>' +
-        '<div class="wc-track" style="height:' + Math.max(trackH, 3) + 'px">' +
-          '<div class="wc-fill' + (done ? ' done' : '') + '" style="height:' + fillPct + '%"></div>' +
-        '</div>' +
-        '<div class="wc-base"></div>' +
-        '<div class="wc-lab">' + w.label + '<span>' + w.range + '</span><em>목표 ' + fmtShort(w.goal) + '</em></div>';
-      col.title = w.label + ' ' + w.range + '\n목표 ' + fmt(w.goal) + '원 / 실적 ' + fmt(w.actual) + '원';
-      box.appendChild(col);
-    });
-    renderCumChart(weeks);
-  }
-
-  // 금액을 만·천만 단위로 짧게
-  function fmtShort(n){
-    n = Math.round(n || 0);
-    if(n === 0) return '0';
-    if(n >= 100000000) return (n/100000000).toFixed(n % 100000000 ? 1 : 0) + '억';
-    if(n >= 10000) return Math.round(n/10000).toLocaleString('ko-KR') + '만';
-    return n.toLocaleString('ko-KR');
-  }
-
-  // C. 누적 목표 vs 누적 실적
-  function renderCumChart(weeks){
-    var box = document.getElementById('cumChart');
-    var note = document.getElementById('cumNote');
-    if(!box) return;
-    var cg = [], ca = [], g = 0, a = 0;
-    weeks.forEach(function(w){ g += w.goal; a += w.actual; cg.push(g); ca.push(a); });
-    var max = Math.max(g, a);
-    if(max <= 0){
-      box.innerHTML = '<div class="wc-empty">목표를 입력하면 누적 곡선이 그려집니다.</div>';
-      if(note) note.innerHTML = '';
-      return;
-    }
-    var W = 620, H = 190, L = 8, R = 8, T = 14, B = 44;
-    var n = weeks.length;
-    var x = function(i){ return n > 1 ? L + i * (W - L - R) / (n - 1) : W / 2; };
-    var y = function(v){ return T + (H - T - B) * (1 - v / max); };
-    var line = function(arr){ return arr.map(function(v,i){ return x(i) + ',' + y(v); }).join(' '); };
-
-    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" style="display:block" role="img" aria-label="누적 목표 대비 누적 실적">';
-    [0, 0.5, 1].forEach(function(f){
-      svg += '<line x1="' + L + '" y1="' + y(max*f) + '" x2="' + (W-R) + '" y2="' + y(max*f) + '" stroke="#E4E0D6" stroke-width="1"/>';
-    });
-    svg += '<polyline points="' + line(cg) + '" fill="none" stroke="#BDB7A6" stroke-width="2" stroke-dasharray="5 4" stroke-linejoin="round"/>';
-    svg += '<polyline points="' + line(ca) + '" fill="none" stroke="#101E36" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
-    weeks.forEach(function(w,i){
-      svg += '<circle cx="' + x(i) + '" cy="' + y(ca[i]) + '" r="3.5" fill="#101E36"/>';
-      svg += '<text x="' + x(i) + '" y="' + (H-24) + '" text-anchor="middle" font-size="11" font-weight="700" fill="#101E36" font-family="Pretendard">' + w.label + '</text>';
-      svg += '<text x="' + x(i) + '" y="' + (H-10) + '" text-anchor="middle" font-size="10" fill="#5A5F6E" font-family="Pretendard">' + w.range + '</text>';
-    });
-    svg += '<text x="' + L + '" y="' + (y(max)-4) + '" font-size="10.5" fill="#5A5F6E" font-family="Pretendard">' + fmtShort(max) + '원</text>';
-    svg += '</svg>';
-    box.innerHTML = svg;
-
-    if(note){
-      // 오늘까지 잡힌 목표와 실제 실적을 견줘 월말 착지를 추정
-      var todayISO2 = localISO(new Date());
-      var gToDate = 0;
-      goalDaily.forEach(function(r){ if(r.date && r.date <= todayISO2) gToDate += r.goal; });
-      var gap = a - gToDate;
-      var html = '누적 목표 <b>' + fmt(g) + '원</b> · 현재 실적 <b>' + fmt(a) + '원</b>';
-      if(gToDate > 0){
-        var pace = a / gToDate;
-        var landing = Math.round(g * pace);
-        html += '<br>오늘까지 잡힌 목표 <b>' + fmt(gToDate) + '원</b> 대비 ' +
-          (gap >= 0 ? '<span class="ok">' + fmt(gap) + '원 앞섬</span>' : '<span class="warn">' + fmt(-gap) + '원 뒤처짐</span>') +
-          ' · 이 페이스가 이어지면 월말 착지 <b>' + fmt(landing) + '원</b> (월 목표의 ' + Math.round(pace*100) + '%)';
-      } else {
-        html += '<br>오늘까지 잡힌 목표가 없어 착지 예측은 계산되지 않습니다.';
-      }
-      note.innerHTML = html;
-    }
-  }
-
   function renderGoalWeeks(weeks){
     var box = document.getElementById('goalWeekGrid');
     box.innerHTML = '';
@@ -2442,7 +2291,6 @@
     goalDaily = dailyTmp;
     renderRange();
     renderGoalWeeks(weeks);
-    renderWeekChart(weeks);
 
     var totalDiff = act - sum;
     document.getElementById('gSumCell').textContent = fmt(sum);
