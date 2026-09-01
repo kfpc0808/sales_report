@@ -305,24 +305,6 @@
                 flex:1 1 100%; margin-top:2px; }
   .tl-pick-out b{ color:var(--brass-light); font-weight:800; font-size:15px; }
 
-  /* bar chart */
-  .chart-card{ margin-top:16px; }
-  .chart{ display:flex; flex-direction:column; gap:15px; }
-  .chart-row .chart-top{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:5px; }
-  .chart-name{ font-size:13px; font-weight:700; color:var(--navy); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .chart-val{ font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap; }
-  .chart-val b{ color:var(--green); }
-  .chart-track{ height:15px; border-radius:8px; background:#EFEAE0; overflow:hidden; }
-  .chart-fill{ height:100%; border-radius:8px; background:linear-gradient(90deg,var(--brass),var(--brass-light)); transition:width .35s; }
-  .chart-fill.reached{ background:linear-gradient(90deg,#3C7A5C,#7FB79A); }
-  .chart-pct{ font-size:12px; font-weight:800; color:var(--brass); font-variant-numeric:tabular-nums; }
-  .chart-pct.reached{ color:var(--green); }
-  .chart-total{ margin-top:6px; padding-top:16px; border-top:1px solid var(--line); }
-  .chart-empty{ text-align:center; color:var(--muted); font-size:13px; padding:16px 0; }
-  .cross-note{ margin-top:12px; font-size:12.5px; color:var(--muted); background:#FBF9F4; border:1px solid var(--line); border-radius:10px; padding:11px 14px; }
-  .cross-note b{ color:var(--navy); }
-  .cross-note.warn{ background:var(--red-bg); border-color:#E8CFCB; color:#7C382E; }
-  .cross-note.warn b{ color:#7C382E; }
 
   /* daily goal board (grid layout) */
   .gtable{
@@ -611,11 +593,9 @@
 
     .ghead > div, .ihead > div, .shead > div, table.log th{ font-size:10.5px; letter-spacing:0; }
     .lead-main{ font-size:15px; }
-    .chart-name{ font-size:12.5px; }
-    .chart-val{ font-size:11.5px; color:#5A5F6E; }
     .section-desc{ font-size:12.5px; color:#5A5F6E; }
     .ghead > div, .ihead > div, .shead > div, table.log th{ color:#5A5F6E; }
-    .goal-note, .cross-note, .undated-note{ font-size:12.5px; }
+    .goal-note, .undated-note{ font-size:12.5px; }
 
     .toolbar{ padding:8px 14px; }
     .toolbar button{ font-size:12px; padding:7px 11px; }
@@ -740,12 +720,6 @@
   <div class="goal-tools">
     <button class="add-row" onclick="addItemRow()">+ 아이템 추가</button>
   </div>
-  <div class="cross-note" id="crossNote"></div>
-
-  <div class="card chart-card">
-    <div class="chart" id="itemChart"></div>
-  </div>
-
   <!-- 목표 달성 전략 & 대상 -->
   <div class="section-head">
     <span class="section-num" contenteditable="true">03</span>
@@ -1517,7 +1491,6 @@
   function recalcItems(logTotal){
     var rows = document.querySelectorAll('#itemBody .item-row');
     var sumGoal = 0, sumDone = 0;
-    var chartData = [];
 
     rows.forEach(function(row){
       var name = row.querySelector('.i-name').value;
@@ -1539,7 +1512,6 @@
       leftCell.textContent = (left < 0 ? '+' : '') + fmt(Math.abs(left));
       leftCell.className = 'g-num i-left ' + (left <= 0 ? 'rate-good' : '');
 
-      if(name || g > 0 || dn > 0){ chartData.push({ name: name || '(이름 없음)', goal: g, done: dn }); }
     });
 
     document.getElementById('iGoalCell').textContent = fmt(sumGoal);
@@ -1547,27 +1519,12 @@
     document.getElementById('iRateCell').textContent = sumGoal > 0 ? (sumDone/sumGoal*100).toFixed(0)+'%' : '-';
     document.getElementById('iLeftCell').textContent = fmt(Math.max(sumGoal - sumDone, 0));
 
-    renderChart(chartData, sumGoal, sumDone);
-
     var itemMap = {};
     rows.forEach(function(row){
       var nm = row.querySelector('.i-name').value.trim();
       if(nm) itemMap[nm] = toNum(row.querySelector('.i-goal').value);
     });
     recalcTargets(itemMap);
-
-    // 02 매출 기록 합계와 대조
-    var note = document.getElementById('crossNote');
-    if(rows.length === 0){
-      note.className = 'cross-note';
-      note.innerHTML = '<b>+ 아이템 추가</b>를 눌러 주력 아이템을 등록하세요. 목표와 달성 금액을 넣으면 아래 그래프가 그려집니다.';
-    } else if(sumDone !== logTotal){
-      note.className = 'cross-note warn';
-      note.innerHTML = '아이템 달성 합계 <b>'+fmt(sumDone)+'원</b>이 02 매출 기록 합계 <b>'+fmt(logTotal)+'원</b>과 '+fmt(Math.abs(sumDone-logTotal))+'원 차이 납니다. (이 칸은 수기 입력이라 자동으로 맞춰지지 않습니다)';
-    } else {
-      note.className = 'cross-note';
-      note.innerHTML = '아이템 달성 합계 <b>'+fmt(sumDone)+'원</b> · 02 매출 기록 합계와 일치합니다.';
-    }
   }
 
   // ---------- 04 매출 기록 도구 ----------
@@ -2044,32 +2001,6 @@
         '<div class="wk-line">실적 <b>' + fmt(w.actual) + '원</b> · ' + rateHtml + '</div>';
       box.appendChild(div);
     });
-  }
-
-  function renderChart(data, sumGoal, sumDone){
-    var box = document.getElementById('itemChart');
-    box.innerHTML = '';
-    if(data.length === 0){
-      box.innerHTML = '<div class="chart-empty">아이템을 등록하면 목표 대비 달성 그래프가 여기 표시됩니다.</div>';
-      return;
-    }
-    data.forEach(function(d){ box.appendChild(chartRow(d.name, d.goal, d.done, false)); });
-    if(data.length > 1){ box.appendChild(chartRow('전체 합계', sumGoal, sumDone, true)); }
-  }
-
-  function chartRow(name, goal, done, isTotal){
-    var pct = goal > 0 ? (done / goal * 100) : 0;
-    var width = Math.min(100, Math.max(0, pct));
-    var reached = pct >= 100 ? ' reached' : '';
-    var div = document.createElement('div');
-    div.className = 'chart-row' + (isTotal ? ' chart-total' : '');
-    div.innerHTML =
-      '<div class="chart-top">' +
-        '<span class="chart-name">'+escapeHtml(name)+'</span>' +
-        '<span class="chart-val"><b>'+fmt(done)+'</b> / '+fmt(goal)+'원 &nbsp;<span class="chart-pct'+reached+'">'+(goal>0?pct.toFixed(0)+'%':'-')+'</span></span>' +
-      '</div>' +
-      '<div class="chart-track"><div class="chart-fill'+reached+'" style="width:'+width+'%"></div></div>';
-    return div;
   }
 
   function escapeHtml(s){
