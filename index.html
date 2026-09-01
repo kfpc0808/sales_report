@@ -551,45 +551,40 @@
 
   .db-empty{ text-align:center; color:var(--muted); font-size:14px; padding:34px 0; }
 
-  /* 01 이번 달 계획 */
-  .pltable{
-    display:grid; grid-template-columns:minmax(110px,170px) 132px 122px minmax(120px,150px) minmax(120px,150px) 128px 44px;
-    align-items:stretch; min-width:830px; font-size:13.5px;
-  }
-  .plrow, #planBody{ display:contents; }
-  .plrow > div{ min-width:0; padding:8px 9px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
-  .plhead > div{ position:sticky; top:0; z-index:3; background:#F8F6F1; border-bottom:1px solid var(--line);
-                 font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:#5A5F6E; font-weight:600; white-space:nowrap; }
-  .plfoot > div{ background:#F8F6F1; border-top:2px solid var(--line); border-bottom:none; font-weight:800; color:var(--navy);
-                 position:sticky; bottom:0; z-index:3; box-shadow:0 -1px 0 var(--line); }
-  .pltable input{ width:100%; min-width:0; border:1px solid transparent; background:transparent; border-radius:5px;
-        padding:6px 7px; font-size:13.5px; font-family:'Pretendard',sans-serif; color:var(--ink); }
-  .pltable input.pl-name{ font-weight:700; color:var(--navy); }
-  .pltable input.amt{ text-align:right; font-variant-numeric:tabular-nums; font-weight:700; color:var(--navy); }
-  .pltable input:hover{ border-color:var(--line); background:#FBFAF7; }
-  .pltable input:focus{ border-color:var(--brass); background:#fff; outline:none; }
-  .pl-act{ font-variant-numeric:tabular-nums; font-weight:700; color:var(--green); }
-  .pl-n{ font-size:12px; font-weight:800; color:var(--navy); }
-  .pl-a{ font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums; margin-left:7px; }
-  .plrow > div{ gap:0; }
-  .pl-none{ color:#C4BFB1; }
-  .pl-link{ font-size:10px; font-weight:800; padding:1px 6px; border-radius:20px; background:#EFEAE0; color:#6B5122; margin-left:6px; }
-  .pl-cov{ flex-direction:column; align-items:stretch !important; gap:4px; }
-  .pl-rate{ font-size:13px; font-weight:800; font-variant-numeric:tabular-nums; }
-  .pl-rate.ok{ color:var(--green); }
-  .pl-rate.mid{ color:var(--brass); }
-  .pl-rate.low{ color:var(--red); }
-  .pl-track{ display:block; height:5px; background:#F0EDE5; border-radius:5px; overflow:hidden; }
-  .pl-track i{ display:block; height:100%; background:var(--brass); border-radius:5px; }
-  .pl-track i.ok{ background:var(--green); }
-  .pl-track i.low{ background:var(--red); }
-  .plan-note{ margin-top:12px; font-size:12.5px; color:var(--muted); background:#FBF9F4; border:1px solid var(--line);
-              border-radius:10px; padding:11px 14px; line-height:1.7; }
-  .plan-note b{ color:var(--navy); }
-  .pl-warn{ color:var(--red); }
-  @media (max-width:768px){
-    .pltable{ min-width:700px; grid-template-columns:minmax(88px,1fr) 108px 100px 104px 104px 96px 26px; }
-  }
+  /* 아이템 카드 */
+  .item-cards{ display:grid; grid-template-columns:repeat(auto-fill,minmax(196px,1fr)); gap:11px; margin-bottom:20px; }
+  .item-card{ position:relative; text-align:left; font-family:'Pretendard',sans-serif; background:#fff;
+              border:1.5px solid var(--line); border-radius:14px; padding:13px 15px; cursor:pointer; }
+  .item-card:hover{ border-color:var(--brass); }
+  .item-card.on{ border-color:var(--navy); box-shadow:0 0 0 2px rgba(16,30,54,0.08); }
+  .item-card.all{ display:flex; flex-direction:column; justify-content:center; gap:5px; }
+  .item-card.all .ic-name{ font-size:15px; }
+  .item-card.add{ border-style:dashed; border-color:var(--brass-light); color:var(--brass);
+                  display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; }
+  .item-card.add:hover{ background:#FBF6EC; }
+  .ic-top{ display:flex; align-items:center; gap:7px; }
+  .ic-name{ font-family:'Noto Serif KR',serif; font-size:15.5px; font-weight:700; color:var(--navy);
+            overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .ic-cnt{ font-size:12px; font-weight:700; color:var(--muted); white-space:nowrap; }
+  .ic-x{ margin-left:auto; background:none; border:none; cursor:pointer; font-size:12px; color:#C9C3B4; padding:2px 3px; }
+  .ic-x:hover{ color:var(--red); }
+  .ic-goal{ display:flex; align-items:center; gap:6px; margin-top:9px; }
+  .ic-goal .lab{ font-size:11.5px; font-weight:700; color:var(--muted); }
+  .ic-input{ flex:1; min-width:0; font-family:'Pretendard',sans-serif; font-size:14.5px; font-weight:700;
+             text-align:right; color:var(--navy); border:1px solid transparent; background:#FBFAF7;
+             border-radius:7px; padding:5px 8px; font-variant-numeric:tabular-nums; }
+  .ic-input:hover{ border-color:var(--line); }
+  .ic-input:focus{ border-color:var(--brass); background:#fff; outline:none; }
+  .ic-plan{ font-size:12.5px; color:var(--muted); margin-top:7px; }
+  .ic-plan b{ color:var(--brass); font-weight:800; font-variant-numeric:tabular-nums; }
+  .ic-bar{ height:6px; background:#F0EDE5; border-radius:6px; margin-top:8px; overflow:hidden; }
+  .ic-bar i{ display:block; height:100%; border-radius:6px; background:#D19A86; transition:width .3s; }
+  .ic-bar i.mid{ background:var(--brass); }
+  .ic-bar i.ok{ background:var(--green); }
+  .ic-rate{ font-size:12.5px; font-weight:800; margin-top:5px; font-variant-numeric:tabular-nums; color:var(--red); }
+  .ic-rate.mid{ color:var(--brass); }
+  .ic-rate.ok{ color:var(--green); }
+  .ic-rate:empty{ display:none; }
 
   /* 중요 일정 */
   .td-strip{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:26px;
@@ -904,51 +899,9 @@
     상단 <b>전체 보기</b>를 누르면 다시 나타납니다.
   </div>
 
-  <!-- 이번 달 계획 -->
-  <div class="section-head">
-    <span class="section-num" contenteditable="true">01</span>
-    <h2 class="section-title" contenteditable="true">이번 달 계획 (목표 · 전략 · 근거)</h2>
-  </div>
-  <div class="section-desc" contenteditable="true">아이템별 목표를 세우면, 05 영업 대상 &amp; 전략에 같은 이름으로 적은 대상이 자동으로 묶입니다. 근거가 채워졌는지 한 줄로 확인하세요.</div>
-
-  <div class="log-tools">
-    <button class="mini-toggle" onclick="copyPlanTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
-    <button class="mini-toggle" onclick="syncPlanItems()">↻ 05에서 아이템 가져오기</button>
-    <span class="chip-cnt" id="planCount"></span>
-  </div>
-
-  <div class="log-scroll scroll-y">
-    <div class="pltable" id="planTable">
-      <div class="plrow plhead">
-        <div>아이템</div>
-        <div class="g-num">월 목표(원)</div>
-        <div class="g-num">실적(자동)</div>
-        <div>등록 대상</div>
-        <div>예상일 확정</div>
-        <div>커버율</div>
-        <div></div>
-      </div>
-      <div id="planBody"></div>
-      <div class="plrow plfoot">
-        <div>합계</div>
-        <div class="g-num" id="plGoal">0</div>
-        <div class="g-num" id="plAct">0</div>
-        <div id="plStrat">—</div>
-        <div id="plDb">—</div>
-        <div id="plCover">—</div>
-        <div></div>
-      </div>
-    </div>
-  </div>
-  <datalist id="planItemList"></datalist>
-  <div class="goal-tools">
-    <button class="add-row" onclick="addPlanRow()">+ 아이템 추가</button>
-  </div>
-  <div class="plan-note" id="planNote"></div>
-
   <!-- 주별 요약 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">02</span>
+    <span class="section-num" contenteditable="true">01</span>
     <h2 class="section-title" contenteditable="true">주별 요약</h2>
   </div>
   <div class="section-desc" contenteditable="true">아래 매출 기록의 날짜를 달력 주(월~일) 단위로 자동 집계합니다.</div>
@@ -956,7 +909,7 @@
 
   <!-- 매출 기록 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">03</span>
+    <span class="section-num" contenteditable="true">02</span>
     <h2 class="section-title" contenteditable="true">매출 기록 (일자별 · 아이템별)</h2>
   </div>
   <div class="section-desc" contenteditable="true">날짜와 판매 아이템, 금액을 입력하세요. 주차는 날짜를 기준으로 자동 계산됩니다.</div>
@@ -994,7 +947,7 @@
 
   <!-- 일자별 매출 목표 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">04</span>
+    <span class="section-num" contenteditable="true">03</span>
     <h2 class="section-title" contenteditable="true">일자별 매출 목표</h2>
   </div>
   <div class="section-desc" contenteditable="true">날짜와 목표 금액만 입력하세요. 실적 · 차이 · 달성률은 매출 기록에서 같은 날짜끼리 자동 집계됩니다. 메모는 각 날짜 아래 한 줄에 길게 적으실 수 있습니다. 표가 길어지면 표 안에서 스크롤되며 헤더와 합계 줄은 고정됩니다.</div>
@@ -1075,7 +1028,7 @@
 
   <!-- 영업 대상 & 전략 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">05</span>
+    <span class="section-num" contenteditable="true">04</span>
     <h2 class="section-title" contenteditable="true">영업 대상 &amp; 전략</h2>
     <button class="primary-btn" id="dbAddBtn" onclick="addTargetRowTop()">＋ 대상 등록</button>
   </div>
@@ -1122,7 +1075,8 @@
     </span>
   </div>
 
-  <div class="db-tabs" id="dbTabs"></div>
+  <div class="sub-title">아이템별 목표 &amp; 확보</div>
+  <div class="item-cards" id="dbTabs"></div>
   <datalist id="dbItemSuggest"></datalist>
   <datalist id="dbRefSuggest"></datalist>
 
@@ -1172,7 +1126,7 @@
 
   <!-- 일자별 전략 일지 -->
   <div class="section-head">
-    <span class="section-num" contenteditable="true">06</span>
+    <span class="section-num" contenteditable="true">05</span>
     <h2 class="section-title" contenteditable="true">전략 일지 &amp; 메모</h2>
   </div>
   <div class="section-desc" contenteditable="true">날짜별로 전략을 기록해 계속 쌓아둡니다. 달이 바뀌어도 지워지지 않고, 지난 주·지난 달·지난 해 전략을 그대로 찾아볼 수 있습니다.</div>
@@ -1483,30 +1437,13 @@
       countBy[it] = (countBy[it] || 0) + 1;
     });
 
-    if(currentDbItem && order.indexOf(currentDbItem) === -1) currentDbItem = '';
-
-    var tabs = document.getElementById('dbTabs');
-    tabs.innerHTML = '';
-    if(order.length){
-      var all = document.createElement('button');
-      all.className = 'db-tab' + (currentDbItem === '' ? ' on' : '');
-      all.innerHTML = '아이템 전체<span class="cnt">' + order.reduce(function(a,k){ return a + countBy[k]; }, 0) + '</span>';
-      all.onclick = function(){ currentDbItem = ''; recalcNow(); };
-      tabs.appendChild(all);
-      order.forEach(function(name){
-        var b = document.createElement('button');
-        b.className = 'db-tab' + (name === currentDbItem ? ' on' : '');
-        b.innerHTML = escapeHtml(name) + '<span class="cnt">' + countBy[name] + '</span>';
-        b.onclick = function(){ currentDbItem = (name === currentDbItem) ? '' : name; recalcNow(); };
-        tabs.appendChild(b);
-      });
-    }
+    if(currentDbItem && order.indexOf(currentDbItem) === -1 && !planItems.some(function(x){ return x.name === currentDbItem; })) currentDbItem = '';
 
     var dl = document.getElementById('dbItemSuggest');
     if(dl){
       dl.innerHTML = '';
       var seen = {};
-      order.concat(Object.keys(itemMap || {})).forEach(function(n){
+      order.concat(planItems.map(function(x){ return x.name; })).forEach(function(n){
         if(n && n !== '(아이템 없음)' && !seen[n]){
           seen[n] = 1; var o = document.createElement('option'); o.value = n; dl.appendChild(o);
         }
@@ -1663,7 +1600,7 @@
     var wEnd = weekEndISO(), mEnd = monthEndISO();
     var q = (document.getElementById('dbSearch').value || '').trim().toLowerCase();
 
-    var planSum = 0, planCnt = 0;
+    var planSum = 0, planCnt = 0, byItem = {};
     var lateN = 0, lateA = 0, todayN = 0, todayA = 0, weekN = 0, weekA = 0;
     var shownSum = 0, shownCnt = 0;
     var dated = [];
@@ -1687,6 +1624,11 @@
       // 전체 집계 (완료 제외)
       if(!row._done){
         planSum += amt; planCnt++;
+        var head = itemParts(f.item.value)[0];
+        if(head){
+          if(!byItem[head]) byItem[head] = { cnt:0, amt:0 };
+          byItem[head].cnt++; byItem[head].amt += amt;
+        }
         if(due){
           dated.push({ due:due, amt:amt });
           if(due < t){ lateN++; lateA += amt; }
@@ -1734,6 +1676,8 @@
       ? ('확보 예정 <b>' + fmt(planSum) + '원</b> / 목표 부족액 <b>' + fmt(gap) + '원</b> · 등록 대상 ' + planCnt + '명')
       : ('<b>이번 달 목표를 이미 달성했습니다.</b> 등록 대상 ' + planCnt + '명 · 예상 ' + fmt(planSum) + '원');
 
+    renderItemCards(byItem, planCnt);
+
     // 지금 확인할 대상
     document.getElementById('fcLateN').textContent = lateN + '건';
     document.getElementById('fcLateA').textContent = fmt(lateA) + '원';
@@ -1767,190 +1711,6 @@
     }
   }
 
-
-  // ---------- 01 이번 달 계획 ----------  // ---------- 01 이번 달 계획 ----------
-  function buildPlanRow(data){
-    data = data || {};
-    var row = document.createElement('div');
-    row.className = 'plrow plan-row';
-    row.innerHTML =
-      '<div><input type="text" class="pl-name" list="planItemList" placeholder="예: 스타19 / 자비아 / 지사분납" value="'+escapeAttr(data.name||'')+'" oninput="onRowChange(this)"></div>' +
-      '<div><input type="text" inputmode="numeric" class="pl-goal amt" placeholder="0" value="'+(data.goal?fmt(data.goal):'')+'" oninput="onAmountInput(this)"></div>' +
-      '<div class="g-num pl-act">0</div>' +
-      '<div class="pl-st"></div>' +
-      '<div class="pl-db"></div>' +
-      '<div class="pl-cov"></div>' +
-      '<div class="g-mid"><button class="del-x" onclick="removePlanRow(this)">✕</button></div>';
-    return row;
-  }
-
-  function addPlanRow(data){
-    document.getElementById('planBody').appendChild(buildPlanRow(data));
-    recalcNow(); scheduleSave();
-  }
-  function removePlanRow(btn){
-    btn.closest('.plan-row').remove();
-    recalcNow(); scheduleSave();
-  }
-
-  // 「자비아,스타19」처럼 여러 아이템이면 배열로 (첫 아이템이 대표)
-  function itemParts(txt){
-    return String(txt||'').split(/[,/·]/).map(function(x){ return x.trim(); }).filter(Boolean);
-  }
-
-  // 전략(03)·대상 DB(06)에서 아이템 이름 가져오기
-  function syncPlanItems(){
-    var have = {};
-    document.querySelectorAll('#planBody .pl-name').forEach(function(el){
-      var v = el.value.trim(); if(v) have[v] = 1;
-    });
-    var found = [];
-    document.querySelectorAll('#dbBody .target-row').forEach(function(r){
-      if(rowIsEmpty(r)) return;
-      var v = rowItem(r);
-      if(!v) return;
-      itemParts(v).forEach(function(x){ if(x && !have[x]){ have[x] = 1; found.push(x); } });
-    });
-    if(!found.length){ alert('가져올 새 아이템이 없습니다.'); return; }
-    found.forEach(function(v){ document.getElementById('planBody').appendChild(buildPlanRow({ name:v })); });
-    recalcNow(); scheduleSave();
-  }
-
-  function recalcPlan(logRows){
-    var rows = document.querySelectorAll('#planBody .plan-row');
-    var names = [];
-    rows.forEach(function(r){
-      var v = r.querySelector('.pl-name').value.trim();
-      if(v) names.push(v);
-    });
-
-    // 영업 대상 & 전략(05) — 아이템 여러 개면 대표 아이템에 전액, 나머지는 연계 표시
-    var stCnt = {}, stSum = {}, linkOf = {}, dbCnt = {}, dbSum = {};
-    document.querySelectorAll('#dbBody .target-row').forEach(function(r){
-      if(rowIsEmpty(r)) return;
-      var f = tf(r);
-      var parts = itemParts(f.item.value.trim());
-      if(!parts.length) return;
-      var amt = toNum(f.amt.value);
-      var head = parts[0];
-      dbCnt[head] = (dbCnt[head]||0) + 1;
-      dbSum[head] = (dbSum[head]||0) + amt;
-      if(f.due.value){
-        stCnt[head] = (stCnt[head]||0) + 1;
-        stSum[head] = (stSum[head]||0) + amt;
-      }
-      parts.slice(1).forEach(function(p){ linkOf[p] = (linkOf[p]||0) + 1; });
-    });
-
-    // 매출 기록(04) — 아이템 이름이 들어간 줄을 자동 집계
-    var actBy = {}, matched = {};
-    names.forEach(function(nm){
-      var sum = 0;
-      (logRows||[]).forEach(function(x, i){
-        if(nm && String(x.item||'').indexOf(nm) > -1){ sum += x.amount; matched[i] = 1; }
-      });
-      actBy[nm] = sum;
-    });
-    var unmatched = 0;
-    (logRows||[]).forEach(function(x, i){ if(!matched[i]) unmatched += x.amount; });
-
-    var sumGoal = 0, sumAct = 0, sumSt = 0, sumStCnt = 0, sumDb = 0, sumDbCnt = 0;
-    rows.forEach(function(r){
-      var nm = r.querySelector('.pl-name').value.trim();
-      var goal = toNum(r.querySelector('.pl-goal').value);
-      var act = actBy[nm] || 0, sc = stCnt[nm] || 0, ss = stSum[nm] || 0;
-      var dc = dbCnt[nm] || 0, ds = dbSum[nm] || 0;
-      sumGoal += goal; sumAct += act; sumSt += ss; sumStCnt += sc; sumDb += ds; sumDbCnt += dc;
-
-      r.querySelector('.pl-act').textContent = fmt(act);
-      var lk = linkOf[nm] ? '<span class="pl-link">연계 ' + linkOf[nm] + '</span>' : '';
-      r.querySelector('.pl-st').innerHTML = (dc
-        ? '<span class="pl-n">' + dc + '명</span><span class="pl-a">' + fmt(ds) + '원</span>'
-        : '<span class="pl-none">아직 없음</span>') + lk;
-      r.querySelector('.pl-db').innerHTML = sc
-        ? '<span class="pl-n">' + sc + '건</span><span class="pl-a">' + fmt(ss) + '원</span>'
-        : (dc ? '<span class="pl-none">날짜 미정</span>' : '<span class="pl-none">—</span>');
-
-      var cov = goal > 0 ? ((act + ds) / goal * 100) : null;
-      var cls = cov === null ? '' : (cov >= 100 ? 'ok' : (cov >= 50 ? 'mid' : 'low'));
-      r.querySelector('.pl-cov').innerHTML = cov === null ? '<span class="pl-none">목표 미입력</span>' :
-        '<span class="pl-rate ' + cls + '">' + Math.round(cov) + '%</span>' +
-        '<span class="pl-track"><i class="' + cls + '" style="width:' + Math.min(100, cov) + '%"></i></span>';
-    });
-
-    document.getElementById('plGoal').textContent = fmt(sumGoal);
-    document.getElementById('plAct').textContent = fmt(sumAct);
-    document.getElementById('plStrat').innerHTML = '<span class="pl-n">' + sumDbCnt + '명</span><span class="pl-a">' + fmt(sumDb) + '원</span>';
-    document.getElementById('plDb').innerHTML = '<span class="pl-n">' + sumStCnt + '건</span><span class="pl-a">' + fmt(sumSt) + '원</span>';
-    var tCov = sumGoal > 0 ? Math.round((sumAct + sumDb) / sumGoal * 100) : null;
-    document.getElementById('plCover').innerHTML = tCov === null ? '—' :
-      '<span class="pl-rate ' + (tCov >= 100 ? 'ok' : (tCov >= 50 ? 'mid' : 'low')) + '">' + tCov + '%</span>';
-
-    var pc = document.getElementById('planCount');
-    if(pc) pc.textContent = rows.length + '개 · 목표 ' + fmt(sumGoal) + '원';
-
-    var note = document.getElementById('planNote');
-    if(note){
-      var weak = [], empty = [];
-      rows.forEach(function(r){
-        var nm = r.querySelector('.pl-name').value.trim();
-        var goal = toNum(r.querySelector('.pl-goal').value);
-        if(!nm || goal <= 0) return;
-        var gap = goal - (actBy[nm]||0) - (dbSum[nm]||0);
-        if(gap > 0) weak.push({ nm:nm, gap:gap, db:dbCnt[nm]||0 });
-        if(!(dbCnt[nm]||0)) empty.push(nm);
-      });
-      weak.sort(function(a,b){ return b.gap - a.gap; });
-      var html;
-      if(!rows.length){
-        html = '아이템을 추가하면 목표와 대상이 한 줄로 정리됩니다. <b>↻ 05에서 아이템 가져오기</b>를 누르면 이미 쓰고 계신 이름을 그대로 불러옵니다.';
-      } else if(empty.length === rows.length){
-        html = '아직 등록된 대상이 없습니다. <b>05 영업 대상 &amp; 전략</b>에서 아이템 이름을 똑같이 적어 대상을 등록하면 여기에 채워집니다.';
-      } else if(weak.length){
-        var w = weak[0];
-        html = '가장 모자란 곳은 <b>' + escapeHtml(w.nm) + '</b>입니다. ' +
-               (w.db ? ('대상 <b>' + w.db + '명</b>을 등록했지만 <b>' + fmt(w.gap) + '원</b>이 더 필요합니다.')
-                     : ('등록된 대상이 없어 <b>' + fmt(w.gap) + '원</b> 전부가 비어 있습니다.'));
-        var rest = empty.filter(function(x){ return x !== w.nm; });
-        if(rest.length) html += ' <b>' + escapeHtml(rest.slice(0,3).join(', ')) + '</b>' + (rest.length > 3 ? ' 외 ' + (rest.length-3) + '개' : '') + '도 대상이 비어 있습니다.';
-      } else {
-        html = '<b>모든 아이템이 목표를 덮고 있습니다.</b> 실적과 등록 대상 예상액의 합이 목표 이상입니다.';
-      }
-      if(unmatched > 0) html += '<br><span class="pl-warn">매출 기록 중 ' + fmt(unmatched) + '원은 아이템 이름과 맞지 않아 아이템별로 집계되지 않았습니다.</span>';
-      note.innerHTML = html;
-    }
-
-    var dl = document.getElementById('planItemList');
-    if(dl){
-      var seen = {}; dl.innerHTML = '';
-      names.concat(Object.keys(stCnt), Object.keys(dbCnt)).forEach(function(n){
-        if(n && !seen[n]){ seen[n] = 1; var o = document.createElement('option'); o.value = n; dl.appendChild(o); }
-      });
-    }
-
-    var map = {};
-    rows.forEach(function(r){
-      var nm = r.querySelector('.pl-name').value.trim();
-      if(nm) map[nm] = toNum(r.querySelector('.pl-goal').value);
-    });
-    recalcTargets(map);
-  }
-
-  function copyPlanTable(btn){
-    recalcNow();
-    var pick = function(r, sel, def){ var e = r.querySelector(sel); return e ? e.textContent : def; };
-    var out = [['아이템','월 목표(원)','실적(원)','전략 건수','전략 예상액','근거 대상(명)','대상 예상액','커버율']];
-    document.querySelectorAll('#planBody .plan-row').forEach(function(r){
-      out.push([r.querySelector('.pl-name').value, toNum(r.querySelector('.pl-goal').value),
-                toNum(r.querySelector('.pl-act').textContent),
-                pick(r,'.pl-st .pl-n','0').replace('건',''), pick(r,'.pl-st .pl-a','0'),
-                pick(r,'.pl-db .pl-n','0').replace('명',''), pick(r,'.pl-db .pl-a','0'),
-                pick(r,'.pl-rate','-')]);
-    });
-    out.push(['합계', document.getElementById('plGoal').textContent, document.getElementById('plAct').textContent,
-              '', '', '', '', (document.querySelector('#plCover .pl-rate')||{textContent:'-'}).textContent]);
-    copyTsv(out, btn);
-  }
 
   // ---------- 04 매출 기록 구간 조회 ----------
   function setLogRange(kind){
@@ -2053,6 +1813,101 @@
     copyTsv(out, btn);
   }
 
+  // ---------- 아이템 카드 (목표 · 확보 · 커버율) ----------
+  var planItems = [];   // [{name, goal}] — 목표를 세워둔 아이템
+
+  function itemParts(txt){
+    return String(txt||'').split(/[,/·]/).map(function(x){ return x.trim(); }).filter(Boolean);
+  }
+
+  function addItemCard(){
+    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    var nm = prompt('아이템 이름을 입력하세요. (예: 스타19, 자비아, 지사분납)');
+    if(nm === null) return;
+    nm = String(nm).trim();
+    if(!nm) return;
+    if(planItems.some(function(x){ return x.name === nm; })){ alert('이미 있는 아이템입니다.'); return; }
+    planItems.push({ name: nm, goal: 0 });
+    currentDbItem = nm;
+    recalcNow();
+    scheduleSave();
+  }
+
+  function setItemGoal(name, val){
+    var v = toNum(val);
+    var hit = planItems.filter(function(x){ return x.name === name; })[0];
+    if(hit) hit.goal = v;
+    else planItems.push({ name: name, goal: v });
+    recalcSoon();
+    scheduleSave();
+  }
+
+  function removeItemCard(name){
+    var used = Array.prototype.slice.call(document.querySelectorAll('#dbBody .target-row'))
+      .filter(function(r){ return !rowIsEmpty(r) && itemParts(rowItem(r))[0] === name; });
+    if(used.length){
+      if(!confirm('「' + name + '」에 등록된 대상 ' + used.length + '명이 있습니다.\n목표만 지우고 대상은 그대로 둘까요?')) return;
+    }
+    planItems = planItems.filter(function(x){ return x.name !== name; });
+    if(currentDbItem === name) currentDbItem = '';
+    recalcNow();
+    scheduleSave();
+  }
+
+  // 카드 그리기 — sums: {아이템: {cnt, amt, dueCnt, dueAmt}}
+  function renderItemCards(sums, totalCnt){
+    var box = document.getElementById('dbTabs');
+    if(!box) return;
+
+    // 목표를 세운 아이템 + 대상에 등장한 아이템
+    var names = planItems.map(function(x){ return x.name; });
+    Object.keys(sums).forEach(function(n){ if(n && names.indexOf(n) === -1) names.push(n); });
+
+    var goalOf = {};
+    planItems.forEach(function(x){ goalOf[x.name] = x.goal || 0; });
+
+    var html = '<button class="item-card all' + (currentDbItem === '' ? ' on' : '') + '" data-n="">' +
+      '<span class="ic-name">아이템 전체</span><span class="ic-cnt">' + totalCnt + '명</span></button>';
+
+    names.forEach(function(nm){
+      var s2 = sums[nm] || { cnt:0, amt:0 };
+      var goal = goalOf[nm] || 0;
+      var cov = goal > 0 ? Math.min(999, s2.amt / goal * 100) : null;
+      var cls = cov === null ? '' : (cov >= 100 ? 'ok' : (cov >= 50 ? 'mid' : 'low'));
+      html += '<div class="item-card' + (nm === currentDbItem ? ' on' : '') + '" data-n="' + escapeAttr(nm) + '">' +
+        '<div class="ic-top"><span class="ic-name">' + escapeHtml(nm) + '</span>' +
+          '<span class="ic-cnt">' + s2.cnt + '명</span>' +
+          (canEdit ? '<button class="ic-x" title="목표 삭제">✕</button>' : '') + '</div>' +
+        '<div class="ic-goal"><span class="lab">목표</span>' +
+          '<input type="text" inputmode="numeric" class="ic-input amt" value="' + (goal ? fmt(goal) : '') + '" placeholder="0"' + (canEdit ? '' : ' readonly') + '></div>' +
+        '<div class="ic-plan">확보 <b>' + fmt(s2.amt) + '원</b></div>' +
+        '<div class="ic-bar"><i class="' + cls + '" style="width:' + (cov === null ? 0 : Math.min(100, cov)) + '%"></i></div>' +
+        '<div class="ic-rate ' + cls + '">' + (cov === null ? '목표 미입력' : Math.round(cov) + '%') + '</div>' +
+        '</div>';
+    });
+
+    if(canEdit) html += '<button class="item-card add" onclick="addItemCard()">＋ 아이템</button>';
+    box.innerHTML = html;
+
+    // 카드 클릭 = 아이템 필터, 입력칸·삭제는 별도 처리
+    box.querySelectorAll('.item-card').forEach(function(card){
+      var nm = card.getAttribute('data-n');
+      if(nm === null) return;
+      card.addEventListener('click', function(e){
+        if(e.target.closest('.ic-input') || e.target.closest('.ic-x')) return;
+        currentDbItem = (nm === currentDbItem) ? '' : nm;
+        recalcNow();
+      });
+      var inp = card.querySelector('.ic-input');
+      if(inp){
+        inp.addEventListener('input', function(){ onAmountInput(inp); setItemGoal(nm, inp.value); });
+        inp.addEventListener('click', function(e){ e.stopPropagation(); });
+      }
+      var x = card.querySelector('.ic-x');
+      if(x) x.addEventListener('click', function(e){ e.stopPropagation(); removeItemCard(nm); });
+    });
+  }
+
   function copyDbTable(btn){
     recalcNow();
     var out = [['상태','대상','추천인','아이템 · 전략','메모','예상일','예상 금액(원)','등록일']], sum = 0;
@@ -2100,7 +1955,7 @@
 
   // ---------- 간편 / 전체 보기 ----------
   // 간편 보기에 남길 섹션 (0 = 섹션 제목 이전의 요약·중요일정)
-  var LEAN_SECTIONS = [0, 1, 3, 5, 6];
+  var LEAN_SECTIONS = [0, 2, 4, 5];
 
   function tagSections(){
     var main = document.querySelector('main');
@@ -2920,13 +2775,6 @@
 
   // ---------- recalculation ----------
   // 계획표 집계에 쓸 매출 기록 목록
-  function logRowsForPlan(){
-    var out = [];
-    document.querySelectorAll('#logBody tr.log-row').forEach(function(row){
-      out.push({ item: row.querySelector('.log-item').value, amount: toNum(row.querySelector('.log-amt').value) });
-    });
-    return out;
-  }
 
   function recalcAll(){
     var goal = toNum(document.getElementById('goalInput').value);
@@ -2978,10 +2826,10 @@
     });
 
     // strategy board
+    recalcTargets();
     recalcStrategy(gap);
 
-    // 이번 달 계획 (아이템별 목표 · 전략 · 근거)
-    recalcPlan(logRowsForPlan());
+
 
     // daily goal table
     var goalStats = recalcGoalTable(actualByDate, weeks, weekMap);
@@ -3032,13 +2880,7 @@
       });
     });
     var strategies = legacyStrategies;   // 05로 옮기기 전까지 원본 보존
-    var items = [];
-    document.querySelectorAll('#planBody .plan-row').forEach(function(row){
-      items.push({
-        name: row.querySelector('.pl-name').value,
-        goal: toNum(row.querySelector('.pl-goal').value)
-      });
-    });
+    var items = planItems.filter(function(x){ return x.name && x.name.trim(); });
     var goals = [];
     document.querySelectorAll('#goalBody .goal-row').forEach(function(row){
       goals.push({
@@ -3079,9 +2921,8 @@
     legacyStrategies = (state.strategies || []).filter(function(st){
       return (st.name || st.target || st.memo || Number(st.amount||0) > 0);
     });
-    var pbody = document.getElementById('planBody');
-    pbody.innerHTML = '';
-    (state.items || []).forEach(function(it){ pbody.appendChild(buildPlanRow(it)); });
+    planItems = (state.items || []).filter(function(it){ return it && it.name; })
+      .map(function(it){ return { name: String(it.name).trim(), goal: Number(it.goal||0) }; });
     var gbody = document.getElementById('goalBody');
     gbody.innerHTML = '';
     (state.goals || []).forEach(function(g){ gbody.appendChild(buildGoalRow(g)); });
@@ -3246,7 +3087,7 @@
   function applyEditMode(){
     var editable = canEdit && !isSnapshotFile;
     document.querySelectorAll('[contenteditable]').forEach(function(el){ el.setAttribute('contenteditable', editable ? 'true' : 'false'); });
-    document.querySelectorAll('#goalInput, #dbBody input, #planBody input, #logBody input, #goalBody input').forEach(function(el){ el.disabled = !editable; });
+    document.querySelectorAll('#goalInput, #dbBody input, #logBody input, #goalBody input').forEach(function(el){ el.disabled = !editable; });
     // 메모는 잠그지 않고 '수정 불가'로 둠 — 읽기 전용으로 보는 사람도 눌러서 전체를 볼 수 있어야 함
     var slt = document.getElementById('slText');
     if(slt) slt.readOnly = !editable;
@@ -3388,24 +3229,7 @@
     if(slSrc && slDst) slDst.textContent = slSrc.value;
 
     // bake plan rows
-    var srcPlan = document.getElementById('planBody');
-    var dstPlan = clone.querySelector('#planBody');
-    if(srcPlan && dstPlan){
-      dstPlan.innerHTML = '';
-      srcPlan.querySelectorAll('.plan-row').forEach(function(row){
-        var r = document.createElement('div');
-        r.className = 'plrow plan-row';
-        r.innerHTML =
-          '<div><input type="text" class="pl-name" list="planItemList" value="'+escapeAttr(row.querySelector('.pl-name').value)+'" oninput="onRowChange(this)"></div>' +
-          '<div><input type="text" inputmode="numeric" class="pl-goal amt" value="'+escapeAttr(row.querySelector('.pl-goal').value)+'" oninput="onAmountInput(this)"></div>' +
-          '<div class="g-num pl-act">'+escapeHtml(row.querySelector('.pl-act').textContent)+'</div>' +
-          '<div class="pl-st">'+row.querySelector('.pl-st').innerHTML+'</div>' +
-          '<div class="pl-db">'+row.querySelector('.pl-db').innerHTML+'</div>' +
-          '<div class="pl-cov">'+row.querySelector('.pl-cov').innerHTML+'</div>' +
-          '<div class="g-mid"><button class="del-x" onclick="removePlanRow(this)">✕</button></div>';
-        dstPlan.appendChild(r);
-      });
-    }
+
 
     // bake strategy rows
 
