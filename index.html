@@ -764,7 +764,8 @@
   <div class="log-tools">
     <button class="mini-toggle" id="stratExpandBtn" onclick="toggleBoxById('stratScrollBox',this)">⤢ 전체 펼치기</button>
     <button class="mini-toggle" onclick="copyStratTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
-    <button class="mini-toggle" onclick="sortStratRows()">⇅ 오늘부터 정렬</button>
+    <button class="mini-toggle" onclick="sortStratRows('date')">⇅ 날짜순 정렬</button>
+    <button class="mini-toggle" onclick="sortStratRows('today')">⇅ 오늘부터 정렬</button>
     <span class="chip-cnt" id="stratCount"></span>
   </div>
   <div class="log-scroll scroll-y" id="stratScrollBox">
@@ -1314,8 +1315,11 @@
     scheduleSave();
   }
 
-  // 예상일 순으로 재배열 (오늘 → 앞으로 다가올 날짜 → 지난 건 → 미정)
-  function sortStratRows(){
+  // 예상일 순으로 재배열
+  //   'today' : 오늘 → 앞으로 다가올 날짜 → 지난 건 → 미정
+  //   'date'  : 1일부터 날짜 순서대로 (지난 건도 제자리, 미정은 맨 아래)
+  function sortStratRows(mode){
+    mode = mode || 'today';
     var body = document.getElementById('stratBody');
     var rows = Array.prototype.slice.call(body.querySelectorAll('.strat-row'));
     var today = localISO(new Date());
@@ -1327,6 +1331,12 @@
     };
     rows.sort(function(a, b){
       var da = a.querySelector('.s-due').value, dbv = b.querySelector('.s-due').value;
+      if(mode === 'date'){
+        if(!da && !dbv) return 0;
+        if(!da) return 1;       // 미정만 맨 아래
+        if(!dbv) return -1;
+        return String(da).localeCompare(String(dbv));
+      }
       var ba = bucket(da), bb = bucket(dbv);
       if(ba !== bb) return ba - bb;
       return String(da).localeCompare(String(dbv));
