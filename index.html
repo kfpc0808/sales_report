@@ -623,6 +623,95 @@
     .footer-summary{ gap:4px 16px; }
     .footer-summary .fs-num{ font-size:14px; }
   }
+
+  /* ===== SIMPLE DASHBOARD ===== */
+  body{ background:#F3F5F8; }
+  .toolbar{ background:rgba(255,255,255,.94); }
+  header.hero{ padding-top:20px; padding-bottom:20px; }
+  .hero-top{ align-items:flex-end; }
+  .goal-row{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); border-radius:10px; padding:7px 10px; }
+  .goal-input{ border:0; background:transparent; padding:2px 4px; width:128px; }
+  .gauge-wrap{ margin-top:14px; }
+  .gauge-track{ height:8px; }
+  .footer-summary{ margin-top:12px; }
+  main{ padding-top:22px; }
+  .tabs{ position:sticky; top:59px; z-index:45; background:#F3F5F8; padding-top:4px; }
+  .tab-btn{ flex-direction:row; justify-content:center; gap:7px; }
+  .tab-btn .tab-no{ font-family:'Pretendard',sans-serif; background:#E7E2D8; color:#765B2F; border-radius:20px; min-width:22px; padding:1px 6px; letter-spacing:0; }
+  .tab-btn.active .tab-no{ background:var(--brass); color:#fff; }
+  .dash-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin:2px 0 14px; }
+  .dash-kicker{ color:var(--brass); font-weight:800; font-size:11px; letter-spacing:.12em; }
+  .dash-title{ font-family:'Noto Serif KR',serif; color:var(--navy); font-size:21px; margin:2px 0 0; }
+  .dash-date{ color:var(--muted); font-size:12.5px; }
+  .kpi-grid{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+  .kpi-card{ background:#fff; border:1px solid #E2E6EC; border-radius:13px; padding:15px 16px; box-shadow:0 2px 10px rgba(16,30,54,.035); min-width:0; }
+  .kpi-card.primary{ background:var(--navy); border-color:var(--navy); color:#fff; }
+  .kpi-label{ font-size:11.5px; color:var(--muted); font-weight:700; }
+  .primary .kpi-label{ color:#BFC7D6; }
+  .kpi-value{ margin-top:5px; color:var(--navy); font-family:'Noto Serif KR',serif; font-size:21px; line-height:1.25; font-weight:900; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .primary .kpi-value{ color:#fff; }
+  .kpi-sub{ margin-top:4px; color:var(--muted); font-size:11.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .primary .kpi-sub{ color:#AEB8CA; }
+  .kpi-card.good .kpi-value{ color:var(--green); }
+  .kpi-card.bad .kpi-value{ color:var(--red); }
+  .dash-grid{ display:grid; grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr); gap:14px; margin-top:14px; align-items:start; }
+  .dash-panel{ background:#fff; border:1px solid #E2E6EC; border-radius:14px; padding:17px 18px; box-shadow:0 2px 10px rgba(16,30,54,.035); }
+  .dash-panel-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+  .dash-panel-title{ color:var(--navy); font-family:'Noto Serif KR',serif; font-size:15px; font-weight:700; }
+  .dash-panel-hint{ color:var(--muted); font-size:11.5px; }
+  .pace-row{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .pace-box{ background:#F7F8FA; border-radius:10px; padding:11px 12px; }
+  .pace-box .l{ font-size:10.5px; color:var(--muted); font-weight:700; }
+  .pace-box .v{ margin-top:3px; color:var(--navy); font-size:15px; font-weight:800; }
+  .item-snapshot{ display:flex; flex-direction:column; gap:11px; }
+  .snap-row{ display:grid; grid-template-columns:minmax(90px,1fr) 2.2fr 70px; gap:10px; align-items:center; }
+  .snap-name{ color:var(--navy); font-size:12.5px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .snap-track{ height:7px; border-radius:8px; background:#ECEFF3; overflow:hidden; }
+  .snap-fill{ height:100%; background:var(--brass); border-radius:8px; }
+  .snap-val{ text-align:right; color:var(--muted); font-size:11.5px; font-variant-numeric:tabular-nums; }
+  .dash-empty{ color:var(--muted); font-size:12.5px; padding:8px 0; }
+  .quick-form{ display:grid; grid-template-columns:118px minmax(120px,1fr) 130px minmax(140px,1.25fr) auto; gap:7px; }
+  .quick-form input{ min-width:0; width:100%; font-family:'Pretendard',sans-serif; font-size:13px; padding:9px 10px; border:1px solid var(--line); border-radius:8px; background:#FBFAF7; }
+  .quick-form input:focus{ outline:none; border-color:var(--brass); background:#fff; }
+  .quick-add{ border:0; border-radius:8px; background:var(--navy); color:#fff; font-family:'Pretendard',sans-serif; font-size:12.5px; font-weight:700; padding:9px 14px; cursor:pointer; white-space:nowrap; }
+  .quick-add:hover{ opacity:.88; }
+  .exec-snapshot{ display:flex; flex-direction:column; gap:8px; }
+  .exec-row{ border:1px solid #E6E8EC; border-radius:10px; padding:10px 11px; background:#FAFBFC; }
+  .exec-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .exec-name{ min-width:0; color:var(--navy); font-size:12.5px; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .exec-amt{ flex:0 0 auto; color:var(--green); font-size:12.5px; font-weight:800; }
+  .exec-meta{ margin-top:3px; color:var(--muted); font-size:11.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .exec-chip{ display:inline-block; margin-right:5px; border-radius:20px; padding:1px 6px; background:#EFEAE0; color:#6B5122; font-size:10px; font-weight:800; }
+  .dashboard-todo .td-strip{ border:0; padding:0; box-shadow:none; margin:0; }
+  .dashboard-todo .td-filter,.dashboard-todo .td-chk{ display:none; }
+  .dashboard-todo .td-exp{ margin-left:auto; }
+  .dashboard-todo .td-list{ max-height:270px; }
+  .detail-intro{ margin:0 0 18px; padding:13px 15px; border-radius:11px; background:#F7F3EA; color:#5C513D; font-size:12.5px; border:1px solid #E7DDC9; }
+  @media (max-width:900px){
+    .kpi-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .dash-grid{ grid-template-columns:1fr; }
+    .quick-form{ grid-template-columns:1fr 1fr; }
+    .quick-form input:nth-child(4){ grid-column:1 / -1; }
+    .quick-add{ grid-column:1 / -1; }
+  }
+  @media (max-width:560px){
+    .toolbar-right .ghost:nth-of-type(2){ display:none; }
+    .tabs{ top:55px; }
+    .tab-btn .tab-no{ display:none; }
+    .kpi-grid{ grid-template-columns:1fr 1fr; gap:7px; }
+    .kpi-card{ padding:12px; }
+    .kpi-value{ font-size:17px; }
+    .dash-grid{ gap:10px; }
+    .dash-panel{ padding:14px; }
+    .quick-form{ grid-template-columns:1fr; }
+    .quick-form input:nth-child(4),.quick-add{ grid-column:auto; }
+    .snap-row{ grid-template-columns:82px 1fr 58px; gap:7px; }
+  }
+  @media print{
+    .dash-head,.quick-form,.detail-intro{ display:none !important; }
+    .kpi-grid{ grid-template-columns:repeat(4,1fr); }
+    .dash-grid{ grid-template-columns:1.3fr .7fr; }
+  }
 </style>
 </head>
 <body>
@@ -669,13 +758,57 @@
 <main>
 
   <nav class="tabs" id="tabBar">
-    <button class="tab-btn" data-tab="1" onclick="showTab(1)"><span class="tab-no">01</span><span class="tab-lb">중요 업무</span></button>
-    <button class="tab-btn" data-tab="2" onclick="showTab(2)"><span class="tab-no">02·03</span><span class="tab-lb">목표 &amp; 전략</span></button>
-    <button class="tab-btn" data-tab="3" onclick="showTab(3)"><span class="tab-no">04·05·06</span><span class="tab-lb">매출 관리</span></button>
-    <button class="tab-btn" data-tab="4" onclick="showTab(4)"><span class="tab-no">07·08</span><span class="tab-lb">전략 일지 &amp; 메모</span></button>
+    <button class="tab-btn" data-tab="1" onclick="showTab(1)"><span class="tab-no">1</span><span class="tab-lb">오늘의 현황</span></button>
+    <button class="tab-btn" data-tab="2" onclick="showTab(2)"><span class="tab-no">2</span><span class="tab-lb">목표와 실행</span></button>
+    <button class="tab-btn" data-tab="3" onclick="showTab(3)"><span class="tab-no">3</span><span class="tab-lb">상세 기록</span></button>
   </nav>
 
   <section class="tab-pane" data-pane="1">
+  <div class="dash-head">
+    <div>
+      <div class="dash-kicker">MONTHLY CONTROL BOARD</div>
+      <h2 class="dash-title">이번 달, 지금 필요한 것만</h2>
+    </div>
+    <div class="dash-date" id="dashDate"></div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card primary">
+      <div class="kpi-label">목표 달성률</div>
+      <div class="kpi-value" id="dashRate">0%</div>
+      <div class="kpi-sub" id="dashRateSub">목표를 입력해주세요</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">확정 매출</div>
+      <div class="kpi-value" id="dashActual">0원</div>
+      <div class="kpi-sub" id="dashActualSub">이번 달 누적</div>
+    </div>
+    <div class="kpi-card bad" id="dashGapCard">
+      <div class="kpi-label">목표까지 남은 금액</div>
+      <div class="kpi-value" id="dashGap">0원</div>
+      <div class="kpi-sub" id="dashPace">남은 영업일 기준 계산</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">확보 예정</div>
+      <div class="kpi-value" id="dashPipeline">0원</div>
+      <div class="kpi-sub" id="dashForecast">확정 + 예정 0원</div>
+    </div>
+  </div>
+
+  <div class="dash-grid">
+    <div>
+      <div class="dash-panel">
+        <div class="dash-panel-head">
+          <span class="dash-panel-title">오늘의 실행</span>
+          <span class="dash-panel-hint" id="todayStatus">오늘 목표와 실적</span>
+        </div>
+        <div class="pace-row">
+          <div class="pace-box"><div class="l">오늘 목표</div><div class="v" id="todayGoal">0원</div></div>
+          <div class="pace-box"><div class="l">오늘 실적</div><div class="v" id="todayActual">0원</div></div>
+        </div>
+      </div>
+
+      <div class="dash-panel dashboard-todo" style="margin-top:14px;">
   <!-- 중요 일정 -->
   <div class="td-strip">
     <div class="td-head">
@@ -703,9 +836,45 @@
     </div>
     <div class="td-list" id="tdList"></div>
   </div>
+      </div>
+
+      <div class="dash-panel" style="margin-top:14px;">
+        <div class="dash-panel-head">
+          <span class="dash-panel-title">매출 바로 기록</span>
+          <span class="dash-panel-hint">입력 즉시 전체 현황에 반영됩니다</span>
+        </div>
+        <div class="quick-form">
+          <input type="date" id="quickDate">
+          <input type="text" id="quickItem" placeholder="아이템 / 대상">
+          <input type="text" inputmode="numeric" id="quickAmount" placeholder="금액" oninput="formatQuickAmount(this)">
+          <input type="text" id="quickMemo" placeholder="메모 (선택)">
+          <button class="quick-add" onclick="addQuickSale()">+ 실적 반영</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="dash-panel">
+        <div class="dash-panel-head">
+          <span class="dash-panel-title">아이템별 진행</span>
+          <span class="dash-panel-hint">목표 대비 확정 실적</span>
+        </div>
+        <div class="item-snapshot" id="itemSnapshot"><div class="dash-empty">목표와 아이템을 등록해주세요.</div></div>
+      </div>
+
+      <div class="dash-panel" style="margin-top:14px;">
+        <div class="dash-panel-head">
+          <span class="dash-panel-title">핵심 실행계획</span>
+          <span class="dash-panel-hint">예상일이 가까운 순서</span>
+        </div>
+        <div class="exec-snapshot" id="execSnapshot"><div class="dash-empty">실행계획을 등록해주세요.</div></div>
+      </div>
+    </div>
+  </div>
   </section>
 
   <section class="tab-pane" data-pane="2">
+  <div class="detail-intro"><b>월 목표를 아이템별로 나누고, 부족 금액을 메울 실행 계획만 관리합니다.</b> 매일 수정할 필요 없이 계획이 바뀔 때만 손보면 됩니다.</div>
   <!-- 아이템별 목표 & 달성 -->
   <div class="section-head">
     <span class="section-num" contenteditable="true">02</span>
@@ -795,6 +964,7 @@
   </section>
 
   <section class="tab-pane" data-pane="3">
+  <div class="detail-intro"><b>상세 근거가 필요할 때만 여는 화면입니다.</b> 일자별 목표·매출 원장·대상 DB·전략 일지를 한곳에 모았습니다.</div>
   <!-- 일자별 매출 목표 -->
   <div class="section-head">
     <span class="section-num" contenteditable="true">04</span>
@@ -924,7 +1094,7 @@
   <div class="db-note" id="dbNote"></div>
   </section>
 
-  <section class="tab-pane" data-pane="4">
+  <section class="tab-pane" data-pane="3">
   <!-- 일자별 전략 일지 -->
   <div class="section-head">
     <span class="section-num" contenteditable="true">07</span>
@@ -976,7 +1146,7 @@
       <button class="mini-toggle" id="memoToggleBtn" onclick="toggleMemoBox()">⤢ 전체 펼치기</button>
       <span class="memo-hint" id="memoHint"></span>
     </div>
-    <div class="memo-body" contenteditable="true" id="memoEl">부족 자금을 채우기 위한 전략과 대표님 보고용 메모를 자유롭게 기록하세요.</div>
+    <div class="memo-body" contenteditable="true" id="memoEl">부족 금액을 채우기 위한 판단 근거와 다음 액션을 기록하세요.</div>
   </div>
   </section>
 
@@ -1750,6 +1920,7 @@
         (lateCnt ? ' · 기한 지남 ' + lateCnt : '') +
         (doneCnt ? ' · 완료 ' + doneCnt : '');
     }
+    setTimeout(function(){ refreshSimpleDashboard(); },0);
 
     box.innerHTML = '';
 
@@ -2336,6 +2507,143 @@
     scheduleSave();
   }
 
+  // ---------- simple dashboard ----------
+  var simpleActualByDate = {};
+
+  function compactWon(n){
+    n = Math.round(Number(n) || 0);
+    if(n >= 100000000){
+      var uk = n / 100000000;
+      return (Math.round(uk * 10) / 10).toLocaleString('ko-KR') + '억 원';
+    }
+    if(n >= 10000) return Math.round(n / 10000).toLocaleString('ko-KR') + '만 원';
+    return n.toLocaleString('ko-KR') + '원';
+  }
+
+  function remainingBusinessDays(){
+    var now = new Date();
+    var y = parseInt((currentMonth || monthKeyNow()).slice(0,4),10);
+    var m = parseInt((currentMonth || monthKeyNow()).slice(5,7),10) - 1;
+    var start = (now.getFullYear() === y && now.getMonth() === m) ? new Date(now.getFullYear(),now.getMonth(),now.getDate()) : new Date(y,m,1);
+    var end = new Date(y,m+1,0);
+    if(start > end) return 0;
+    var count = 0;
+    for(var d = new Date(start); d <= end; d.setDate(d.getDate()+1)){
+      if(d.getDay() !== 0 && d.getDay() !== 6) count++;
+    }
+    return count;
+  }
+
+  function dashboardStrategies(){
+    var today = localISO(new Date());
+    var list = [];
+    document.querySelectorAll('#stratBody .strat-row').forEach(function(row){
+      var name = row.querySelector('.s-name').value.trim();
+      var target = row.querySelector('.s-target').value.trim();
+      var due = row.querySelector('.s-due').value;
+      var amount = toNum(row.querySelector('.s-amt').value);
+      if(!name && !target && !amount) return;
+      list.push({name:name || '실행 계획', target:target, due:due, amount:amount});
+    });
+    list.sort(function(a,b){
+      var ad = a.due || '9999-12-31', bd = b.due || '9999-12-31';
+      if(ad < today && bd >= today) return 1;
+      if(bd < today && ad >= today) return -1;
+      return ad.localeCompare(bd);
+    });
+    return list.slice(0,4);
+  }
+
+  function refreshSimpleDashboard(goal,total,gap,actualByDate){
+    if(!document.getElementById('dashRate')) return;
+    goal = (goal === undefined) ? toNum(document.getElementById('goalInput').value) : goal;
+    total = (total === undefined) ? toNum((document.getElementById('fsCur').textContent || '0')) : total;
+    gap = (gap === undefined) ? Math.max(goal-total,0) : gap;
+    actualByDate = actualByDate || simpleActualByDate || {};
+
+    var today = localISO(new Date());
+    var todayGoal = 0;
+    document.querySelectorAll('#goalBody .goal-row').forEach(function(row){
+      if(row.querySelector('.g-date').value === today) todayGoal += toNum(row.querySelector('.g-amt').value);
+    });
+    var todayActual = actualByDate[today] || 0;
+    var pipeline = 0;
+    document.querySelectorAll('#stratBody .strat-row').forEach(function(row){
+      var due = row.querySelector('.s-due').value;
+      if(!due || due >= today) pipeline += toNum(row.querySelector('.s-amt').value);
+    });
+    var rate = goal > 0 ? total/goal*100 : 0;
+    var biz = remainingBusinessDays();
+    var dailyNeed = biz > 0 ? gap/biz : gap;
+
+    document.getElementById('dashDate').textContent = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+    document.getElementById('dashRate').textContent = rate.toFixed(1)+'%';
+    document.getElementById('dashRateSub').textContent = goal ? compactWon(goal)+' 중 '+compactWon(total) : '월 목표를 입력해주세요';
+    document.getElementById('dashActual').textContent = compactWon(total);
+    document.getElementById('dashGap').textContent = compactWon(gap);
+    document.getElementById('dashPipeline').textContent = compactWon(pipeline);
+    document.getElementById('dashForecast').textContent = '확정 + 예정 '+compactWon(total+pipeline);
+    document.getElementById('dashPace').textContent = gap > 0 ? '영업일 '+biz+'일 · 하루 '+compactWon(dailyNeed) : '목표를 달성했습니다';
+    document.getElementById('dashGapCard').className = 'kpi-card ' + (gap > 0 ? 'bad' : 'good');
+    document.getElementById('todayGoal').textContent = compactWon(todayGoal);
+    document.getElementById('todayActual').textContent = compactWon(todayActual);
+    document.getElementById('todayStatus').textContent = todayGoal > 0 ? '달성률 '+(todayActual/todayGoal*100).toFixed(0)+'%' : '오늘 목표를 설정해주세요';
+
+    var snap = document.getElementById('itemSnapshot');
+    var itemRows = [];
+    document.querySelectorAll('#itemBody .item-row').forEach(function(row){
+      var name = row.querySelector('.i-name').value.trim();
+      var g = toNum(row.querySelector('.i-goal').value);
+      var done = toNum(row.querySelector('.i-done').value);
+      if(name || g || done) itemRows.push({name:name || '미지정', goal:g, done:done});
+    });
+    if(!itemRows.length){
+      snap.innerHTML = '<div class="dash-empty">「목표와 실행」에서 아이템별 목표를 등록해주세요.</div>';
+    } else {
+      snap.innerHTML = itemRows.slice(0,6).map(function(x){
+        var r = x.goal > 0 ? x.done/x.goal*100 : 0;
+        return '<div class="snap-row"><div class="snap-name">'+escapeHtml(x.name)+'</div>'+
+          '<div class="snap-track"><div class="snap-fill" style="width:'+Math.min(100,r)+'%"></div></div>'+
+          '<div class="snap-val">'+r.toFixed(0)+'%</div></div>';
+      }).join('');
+    }
+
+    var execBox = document.getElementById('execSnapshot');
+    var execs = dashboardStrategies();
+    if(!execs.length){
+      execBox.innerHTML = '<div class="dash-empty">「목표와 실행」에서 실행계획을 등록해주세요.</div>';
+    } else {
+      execBox.innerHTML = execs.map(function(x){
+        var due = x.due ? ddayLabel(x.due) : {txt:'일정 미정',cls:''};
+        var meta = x.target ? escapeHtml(x.target) : '대상 미정';
+        return '<div class="exec-row"><div class="exec-top"><div class="exec-name">'+escapeHtml(x.name)+'</div>'+
+          '<div class="exec-amt">'+compactWon(x.amount)+'</div></div>'+
+          '<div class="exec-meta"><span class="exec-chip">'+escapeHtml(due.txt)+'</span>'+meta+'</div></div>';
+      }).join('');
+    }
+  }
+
+  function formatQuickAmount(el){
+    var pos = el.selectionStart;
+    el.value = fmt(toNum(el.value));
+    try{ el.setSelectionRange(el.value.length,el.value.length); }catch(e){}
+  }
+
+  function addQuickSale(){
+    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    var date = document.getElementById('quickDate').value || localISO(new Date());
+    var item = document.getElementById('quickItem').value.trim();
+    var amount = toNum(document.getElementById('quickAmount').value);
+    var memo = document.getElementById('quickMemo').value.trim();
+    if(!item){ document.getElementById('quickItem').focus(); return; }
+    if(!amount){ document.getElementById('quickAmount').focus(); return; }
+    addLogRow({date:date,item:item,amount:amount,memo:memo});
+    document.getElementById('quickItem').value = '';
+    document.getElementById('quickAmount').value = '';
+    document.getElementById('quickMemo').value = '';
+    document.getElementById('quickItem').focus();
+  }
+
   // ---------- recalculation ----------
   function recalcAll(){
     var goal = toNum(document.getElementById('goalInput').value);
@@ -2372,6 +2680,7 @@
     var pct = goal > 0 ? Math.min(100, (total/goal*100)) : 0;
     document.getElementById('pctText').textContent = pct.toFixed(1)+'%';
     document.getElementById('gaugeFill').style.width = pct+'%';
+    simpleActualByDate = actualByDate;
 
     // strategy board
     recalcStrategy(gap);
@@ -2387,6 +2696,8 @@
     } else {
       undated.textContent = '';
     }
+
+    refreshSimpleDashboard(goal,total,gap,actualByDate);
 
   }
 
@@ -2527,7 +2838,7 @@
     return {
       title: mm+'월 매출 진행 현황',
       subtitle: '목표 대비 진행률과, 남은 기간 동안 달성에 필요한 페이스를 실시간으로 확인합니다.',
-      memo: '부족 자금을 채우기 위한 전략과 대표님 보고용 메모를 자유롭게 기록하세요.',
+      memo: '부족 금액을 채우기 위한 판단 근거와 다음 액션을 기록하세요.',
       goal: 0, targets: [], strategies: [], items: [], rows: [], goals: []
     };
   }
@@ -2608,7 +2919,7 @@
   function applyEditMode(){
     var editable = canEdit && !isSnapshotFile;
     document.querySelectorAll('[contenteditable]').forEach(function(el){ el.setAttribute('contenteditable', editable ? 'true' : 'false'); });
-    document.querySelectorAll('#goalInput, #stratBody input, #dbBody input, #itemBody input, #logBody input, #goalBody input').forEach(function(el){ el.disabled = !editable; });
+    document.querySelectorAll('#goalInput, #stratBody input, #dbBody input, #itemBody input, #logBody input, #goalBody input, #quickDate, #quickItem, #quickAmount, #quickMemo, .quick-add').forEach(function(el){ el.disabled = !editable; });
     // 메모는 잠그지 않고 '수정 불가'로 둠 — 읽기 전용으로 보는 사람도 눌러서 전체를 볼 수 있어야 함
     var slt = document.getElementById('slText');
     if(slt) slt.readOnly = !editable;
@@ -2629,6 +2940,7 @@
   // ---------- init ----------
   function loadInitial(){
     document.getElementById('monthPicker').value = monthFromUrl();
+    document.getElementById('quickDate').value = localISO(new Date());
 
     if(isSnapshotFile){
       setSaveStatus('snapshot');
