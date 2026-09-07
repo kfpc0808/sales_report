@@ -682,6 +682,21 @@
   .exec-amt{ flex:0 0 auto; color:var(--green); font-size:12.5px; font-weight:800; }
   .exec-meta{ margin-top:3px; color:var(--muted); font-size:11.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .exec-chip{ display:inline-block; margin-right:5px; border-radius:20px; padding:1px 6px; background:#EFEAE0; color:#6B5122; font-size:10px; font-weight:800; }
+  .strategy-quick{ margin:14px 0 16px; padding:15px 16px; background:#FFFDF8; border:1px solid #DED2B9; border-radius:13px; box-shadow:0 2px 9px rgba(16,30,54,.025); }
+  .sq-head{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:11px; }
+  .sq-title{ color:var(--navy); font-family:'Noto Serif KR',serif; font-size:14px; font-weight:700; }
+  .sq-hint{ color:var(--muted); font-size:11.5px; }
+  .sq-form{ display:grid; grid-template-columns:1.1fr 1.15fr 118px 128px 1.25fr auto; gap:8px; align-items:end; }
+  .sq-field{ min-width:0; }
+  .sq-field label{ display:block; margin:0 0 4px 2px; color:#7C7465; font-size:10.5px; font-weight:700; }
+  .sq-field input{ width:100%; min-width:0; height:39px; padding:8px 9px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); font-family:'Pretendard',sans-serif; font-size:12.5px; }
+  .sq-field input:focus{ outline:none; border-color:var(--brass); box-shadow:0 0 0 3px rgba(176,141,87,.12); }
+  .sq-field input.sq-amount{ text-align:right; font-weight:700; color:var(--navy); }
+  .sq-add{ height:39px; padding:0 16px; border:1px solid var(--navy); border-radius:8px; background:var(--navy); color:#fff; cursor:pointer; white-space:nowrap; font-family:'Pretendard',sans-serif; font-size:12.5px; font-weight:700; }
+  .sq-add:hover{ opacity:.88; }
+  .sq-add:disabled{ opacity:.45; cursor:not-allowed; }
+  .strat-row.just-added > div{ animation:newStrategy 1.5s ease; }
+  @keyframes newStrategy{ 0%,55%{ background:#FFF5DC; } 100%{ background:transparent; } }
   .dashboard-todo .td-strip{ border:0; padding:0; box-shadow:none; margin:0; }
   .dashboard-todo .td-filter,.dashboard-todo .td-chk{ display:none; }
   .dashboard-todo .td-exp{ margin-left:auto; }
@@ -693,6 +708,9 @@
     .quick-form{ grid-template-columns:1fr 1fr; }
     .quick-form input:nth-child(4){ grid-column:1 / -1; }
     .quick-add{ grid-column:1 / -1; }
+    .sq-form{ grid-template-columns:1fr 1fr; }
+    .sq-field:nth-child(5){ grid-column:1 / -1; }
+    .sq-add{ grid-column:1 / -1; }
   }
   @media (max-width:560px){
     .toolbar-right .ghost:nth-of-type(2){ display:none; }
@@ -706,9 +724,14 @@
     .quick-form{ grid-template-columns:1fr; }
     .quick-form input:nth-child(4),.quick-add{ grid-column:auto; }
     .snap-row{ grid-template-columns:82px 1fr 58px; gap:7px; }
+    .strategy-quick{ padding:13px; }
+    .sq-head{ display:block; }
+    .sq-hint{ display:block; margin-top:2px; }
+    .sq-form{ grid-template-columns:1fr; }
+    .sq-field:nth-child(5),.sq-add{ grid-column:auto; }
   }
   @media print{
-    .dash-head,.quick-form,.detail-intro{ display:none !important; }
+    .dash-head,.quick-form,.detail-intro,.strategy-quick{ display:none !important; }
     .kpi-grid{ grid-template-columns:repeat(4,1fr); }
     .dash-grid{ grid-template-columns:1.3fr .7fr; }
   }
@@ -930,6 +953,36 @@
     </div>
   </div>
 
+  <div class="strategy-quick">
+    <div class="sq-head">
+      <span class="sq-title">빠른 전략 등록</span>
+      <span class="sq-hint">여기서 바로 입력하면 새 전략이 목록 맨 위에 추가됩니다.</span>
+    </div>
+    <div class="sq-form">
+      <div class="sq-field">
+        <label for="sqName">전략 / 활동</label>
+        <input type="text" id="sqName" placeholder="예: 내부 설명회" onkeydown="quickStrategyEnter(event)">
+      </div>
+      <div class="sq-field">
+        <label for="sqTarget">대상</label>
+        <input type="text" id="sqTarget" placeholder="예: 참석 예정자 8명" onkeydown="quickStrategyEnter(event)">
+      </div>
+      <div class="sq-field">
+        <label for="sqDue">예상일</label>
+        <input type="date" id="sqDue" onkeydown="quickStrategyEnter(event)">
+      </div>
+      <div class="sq-field">
+        <label for="sqAmount">예상 금액</label>
+        <input type="text" inputmode="numeric" class="sq-amount" id="sqAmount" placeholder="0" oninput="formatQuickAmount(this)" onkeydown="quickStrategyEnter(event)">
+      </div>
+      <div class="sq-field">
+        <label for="sqMemo">메모</label>
+        <input type="text" id="sqMemo" placeholder="인원·회차·특이사항" onkeydown="quickStrategyEnter(event)">
+      </div>
+      <button class="sq-add" type="button" onclick="addQuickStrategy()">+ 전략 등록</button>
+    </div>
+  </div>
+
   <div class="log-tools">
     <button class="mini-toggle" id="stratExpandBtn" onclick="toggleBoxById('stratScrollBox',this)">⤢ 전체 펼치기</button>
     <button class="mini-toggle" onclick="copyStratTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
@@ -957,9 +1010,6 @@
         <div></div>
       </div>
     </div>
-  </div>
-  <div class="goal-tools">
-    <button class="add-row" onclick="addStratRow()">+ 전략 추가</button>
   </div>
   </section>
 
@@ -1479,6 +1529,38 @@
     scheduleSave();
   }
 
+  function quickStrategyEnter(e){
+    if(e.key !== 'Enter') return;
+    e.preventDefault();
+    addQuickStrategy();
+  }
+
+  function addQuickStrategy(){
+    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    var nameEl = document.getElementById('sqName');
+    var name = nameEl.value.trim();
+    if(!name){ nameEl.focus(); return; }
+    var data = {
+      name: name,
+      target: document.getElementById('sqTarget').value.trim(),
+      due: document.getElementById('sqDue').value,
+      amount: toNum(document.getElementById('sqAmount').value),
+      memo: document.getElementById('sqMemo').value.trim()
+    };
+    var body = document.getElementById('stratBody');
+    var row = buildStratRow(data);
+    row.classList.add('just-added');
+    body.insertBefore(row, body.firstChild);
+    document.getElementById('sqName').value = '';
+    document.getElementById('sqTarget').value = '';
+    document.getElementById('sqAmount').value = '';
+    document.getElementById('sqMemo').value = '';
+    recalcAll();
+    scheduleSave();
+    nameEl.focus();
+    setTimeout(function(){ row.classList.remove('just-added'); },1600);
+  }
+
   function removeStratRow(btn){
     btn.closest('.strat-row').remove();
     recalcAll();
@@ -1822,6 +1904,7 @@
   function initTabs(){
     var saved = '1';
     try{ saved = localStorage.getItem('salesTab') || '1'; }catch(e){}
+    if(['1','2','3'].indexOf(String(saved)) === -1) saved = '1';
     showTab(saved);
   }
 
@@ -2919,7 +3002,7 @@
   function applyEditMode(){
     var editable = canEdit && !isSnapshotFile;
     document.querySelectorAll('[contenteditable]').forEach(function(el){ el.setAttribute('contenteditable', editable ? 'true' : 'false'); });
-    document.querySelectorAll('#goalInput, #stratBody input, #dbBody input, #itemBody input, #logBody input, #goalBody input, #quickDate, #quickItem, #quickAmount, #quickMemo, .quick-add').forEach(function(el){ el.disabled = !editable; });
+    document.querySelectorAll('#goalInput, #stratBody input, #dbBody input, #itemBody input, #logBody input, #goalBody input, #quickDate, #quickItem, #quickAmount, #quickMemo, .quick-add, .strategy-quick input, .strategy-quick button').forEach(function(el){ el.disabled = !editable; });
     // 메모는 잠그지 않고 '수정 불가'로 둠 — 읽기 전용으로 보는 사람도 눌러서 전체를 볼 수 있어야 함
     var slt = document.getElementById('slText');
     if(slt) slt.readOnly = !editable;
@@ -2941,6 +3024,7 @@
   function loadInitial(){
     document.getElementById('monthPicker').value = monthFromUrl();
     document.getElementById('quickDate').value = localISO(new Date());
+    document.getElementById('sqDue').value = localISO(new Date());
 
     if(isSnapshotFile){
       setSaveStatus('snapshot');
