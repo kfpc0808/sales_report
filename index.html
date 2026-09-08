@@ -663,6 +663,17 @@
   .pace-box{ background:#F7F8FA; border-radius:10px; padding:11px 12px; }
   .pace-box .l{ font-size:10.5px; color:var(--muted); font-weight:700; }
   .pace-box .v{ margin-top:3px; color:var(--navy); font-size:15px; font-weight:800; }
+  .today-strategy{ margin-top:13px; padding-top:12px; border-top:1px solid #ECEEF1; }
+  .today-strategy-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:5px; }
+  .today-strategy-title{ color:var(--navy); font-size:12px; font-weight:800; }
+  .today-strategy-count{ color:var(--brass); font-size:11px; font-weight:700; }
+  .today-strategy-list{ display:flex; flex-direction:column; }
+  .today-strategy-row{ display:grid; grid-template-columns:minmax(110px,.8fr) minmax(150px,1.45fr) auto; gap:12px; align-items:center; padding:8px 2px; border-top:1px solid #F0F1F3; }
+  .today-strategy-row:first-child{ border-top:0; }
+  .today-strategy-name{ min-width:0; color:var(--navy); font-size:12.5px; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .today-strategy-detail{ min-width:0; color:var(--muted); font-size:11.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .today-strategy-amount{ color:var(--green); font-size:12.5px; font-weight:800; white-space:nowrap; }
+  .today-strategy-empty{ padding:7px 0 2px; color:var(--muted); font-size:11.5px; }
   .item-snapshot{ display:flex; flex-direction:column; gap:11px; }
   .snap-row{ display:grid; grid-template-columns:minmax(90px,1fr) 2.2fr 70px; gap:10px; align-items:center; }
   .snap-name{ color:var(--navy); font-size:12.5px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -724,6 +735,8 @@
     .quick-form{ grid-template-columns:1fr; }
     .quick-form input:nth-child(4),.quick-add{ grid-column:auto; }
     .snap-row{ grid-template-columns:82px 1fr 58px; gap:7px; }
+    .today-strategy-row{ grid-template-columns:minmax(90px,.8fr) 1fr auto; gap:7px; }
+    .today-strategy-detail{ font-size:11px; }
     .strategy-quick{ padding:13px; }
     .sq-head{ display:block; }
     .sq-hint{ display:block; margin-top:2px; }
@@ -828,6 +841,15 @@
         <div class="pace-row">
           <div class="pace-box"><div class="l">오늘 목표</div><div class="v" id="todayGoal">0원</div></div>
           <div class="pace-box"><div class="l">오늘 실적</div><div class="v" id="todayActual">0원</div></div>
+        </div>
+        <div class="today-strategy">
+          <div class="today-strategy-head">
+            <span class="today-strategy-title">오늘의 주요전략</span>
+            <span class="today-strategy-count" id="todayStrategyCount"></span>
+          </div>
+          <div class="today-strategy-list" id="todayStrategyList">
+            <div class="today-strategy-empty">오늘로 등록된 전략이 없습니다.</div>
+          </div>
         </div>
       </div>
 
@@ -2671,6 +2693,32 @@
     document.getElementById('todayGoal').textContent = compactWon(todayGoal);
     document.getElementById('todayActual').textContent = compactWon(todayActual);
     document.getElementById('todayStatus').textContent = todayGoal > 0 ? '달성률 '+(todayActual/todayGoal*100).toFixed(0)+'%' : '오늘 목표를 설정해주세요';
+
+    var todayStrategies = [], todayStrategyTotal = 0;
+    document.querySelectorAll('#stratBody .strat-row').forEach(function(row){
+      if(row.querySelector('.s-due').value !== today) return;
+      var x = {
+        name: row.querySelector('.s-name').value.trim() || '전략 미지정',
+        target: row.querySelector('.s-target').value.trim(),
+        memo: row.querySelector('.s-memo').value.trim(),
+        amount: toNum(row.querySelector('.s-amt').value)
+      };
+      todayStrategyTotal += x.amount;
+      todayStrategies.push(x);
+    });
+    var todayStrategyList = document.getElementById('todayStrategyList');
+    var todayStrategyCount = document.getElementById('todayStrategyCount');
+    todayStrategyCount.textContent = todayStrategies.length ? todayStrategies.length+'건 · '+compactWon(todayStrategyTotal) : '0건';
+    if(!todayStrategies.length){
+      todayStrategyList.innerHTML = '<div class="today-strategy-empty">「목표와 실행」에서 예상일을 오늘로 등록하면 여기에 표시됩니다.</div>';
+    } else {
+      todayStrategyList.innerHTML = todayStrategies.slice(0,4).map(function(x){
+        var detail = [x.target,x.memo].filter(Boolean).join(' · ') || '대상·메모 미정';
+        return '<div class="today-strategy-row"><div class="today-strategy-name">'+escapeHtml(x.name)+'</div>'+
+          '<div class="today-strategy-detail">'+escapeHtml(detail)+'</div>'+
+          '<div class="today-strategy-amount">'+(x.amount ? compactWon(x.amount) : '금액 미정')+'</div></div>';
+      }).join('') + (todayStrategies.length > 4 ? '<div class="today-strategy-empty">외 '+(todayStrategies.length-4)+'건은 「목표와 실행」에서 확인할 수 있습니다.</div>' : '');
+    }
 
     var snap = document.getElementById('itemSnapshot');
     var itemRows = [];
