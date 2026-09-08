@@ -355,6 +355,62 @@
     .lrow > div:nth-child(5), .lrow > div:nth-child(6){ display:none; }
     .search-wrap input{ min-width:0; flex:1; }
   }
+
+  /* ---------- 간편 기록 UX ---------- */
+  .chip.warn{ background:var(--red-bg); color:var(--red); }
+  .quick{ padding:17px 18px; }
+  .quick-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:12px; }
+  .quick-label{ margin:0; }
+  .quick-step{ color:#AEB7C8; font-size:11.5px; }
+  .quick-core{ display:grid; grid-template-columns:minmax(150px,.9fr) minmax(260px,1.7fr) minmax(220px,1.35fr) 88px; gap:8px; align-items:end; }
+  .q-field{ min-width:0; }
+  .q-field label{ display:block; margin:0 0 4px 2px; color:var(--brass-light); font-size:10.5px; font-weight:700; }
+  .q-field label em{ color:#fff; font-style:normal; }
+  .quick-core input{ height:41px; }
+  .quick-core .go{ height:41px; }
+  .quick-actions{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:11px; }
+  .quick-actions .action-label{ color:#9AA3B5; font-size:10.5px; font-weight:700; margin-right:2px; }
+  .quick-actions .prod-row{ margin:0; }
+  .quick-actions .consult-row{ margin:0 0 0 auto; }
+  .quick-tool{ font-family:'Pretendard',sans-serif; font-size:11.5px; font-weight:700; padding:5px 10px; border-radius:20px; cursor:pointer; border:1px solid rgba(216,195,154,.42); background:transparent; color:var(--brass-light); }
+  .quick-tool:hover,.quick-tool.on{ background:rgba(255,255,255,.12); color:#fff; }
+  .quick-detail{ display:none; grid-template-columns:76px 118px 118px 92px 118px; gap:7px; margin-top:11px; padding-top:11px; border-top:1px solid rgba(255,255,255,.14); }
+  .quick-detail.on{ display:grid; }
+  .quick-detail .q-field label{ color:#AEB7C8; }
+  .quick-rules{ display:none; margin-top:11px; padding:10px 12px; border:1px solid rgba(216,195,154,.28); border-radius:9px; background:rgba(255,255,255,.06); color:#C8CFDB; font-size:11.5px; line-height:1.65; }
+  .quick-rules.on{ display:block; }
+  .quick-rules b{ color:var(--brass-light); }
+  .quick-saved{ min-height:18px; margin-top:7px; color:#9FD8B8; font-size:11.5px; }
+  .carry{ margin-bottom:12px; }
+  .ltable{ grid-template-columns:70px 148px 100px minmax(220px,1fr) minmax(210px,.9fr) 54px 30px; min-width:850px; }
+  .ltable .detail-col{ display:none; }
+  .ltable.show-detail{ grid-template-columns:70px 148px 96px 100px minmax(190px,1fr) minmax(220px,.9fr) 54px 30px; min-width:952px; }
+  .ltable.show-detail .detail-col{ display:flex; }
+  @media (max-width:900px){
+    .quick-core{ grid-template-columns:1fr 1fr; }
+    .quick-core .q-field:nth-child(2),.quick-core .q-field:nth-child(3){ grid-column:1 / -1; }
+    .quick-core .go{ grid-column:1 / -1; }
+    .quick-actions .consult-row{ margin-left:0; }
+    .quick-detail.on{ grid-template-columns:1fr 1fr; }
+  }
+  @media (max-width:768px){
+    .quick{ padding:14px; }
+    .quick-head{ display:block; }
+    .quick-step{ display:block; margin-top:2px; }
+    .quick-core{ grid-template-columns:1fr; }
+    .quick-core .q-field:nth-child(2),.quick-core .q-field:nth-child(3),.quick-core .go{ grid-column:auto; }
+    .quick-actions{ align-items:flex-start; }
+    .quick-actions .prod-row{ flex:1 1 100%; }
+    .quick-detail.on{ grid-template-columns:1fr 1fr; }
+    .ltable{ min-width:740px; grid-template-columns:58px 122px 86px minmax(190px,1fr) minmax(160px,.9fr) 52px 28px; }
+    .ltable.show-detail{ min-width:840px; grid-template-columns:58px 122px 90px 86px minmax(180px,1fr) minmax(150px,.9fr) 52px 28px; }
+    .lrow > div:nth-child(5), .lrow > div:nth-child(6){ display:flex; }
+    .ltable .detail-col{ display:none; }
+    .ltable.show-detail .detail-col{ display:flex; }
+  }
+  @media print{
+    .quick,.quick-rules,.quick-detail{ display:none !important; }
+  }
 </style>
 </head>
 <body>
@@ -398,30 +454,57 @@
       <button class="mini" onclick="moveDay(1)">다음 ▶</button>
       <button class="mini" onclick="goToday()">오늘</button>
       <span class="chip" id="dayCount">0건</span>
-      <span class="chip g" id="dayDone">완료 0</span>
+      <span class="chip warn" id="dayPending">후속 미완 0</span>
+      <span class="chip g" id="dayDone">후속 완료 0</span>
     </div>
 
     <div class="ro-note" id="roNote" style="display:none;">
       열람 전용 계정으로 접속하셨습니다. 기록을 보고 검색하실 수 있으며, 내용은 수정되지 않습니다.
     </div>
+
+    <div class="carry" id="carryBox" style="display:none;"></div>
+
     <div class="quick" id="quickBox">
-      <div class="quick-label">빠른 입력</div>
-      <div class="quick-grid">
-        <input type="text" id="qTime" placeholder="09:30" maxlength="5">
-        <input type="text" id="qName" list="memberList" placeholder="대상" autocomplete="off">
-        <input type="text" id="qCompany" list="companyList" placeholder="소속사" autocomplete="off">
-        <input type="text" id="qJob" list="jobList" placeholder="직함" autocomplete="off">
-        <input type="text" id="qRef" list="memberList" placeholder="추천인" autocomplete="off">
-        <input type="text" id="qProduct" list="productList" placeholder="상품" autocomplete="off">
-        <input type="text" id="qContent" class="wide" placeholder="업무 내용 (Enter로 저장)" autocomplete="off">
-        <button class="go" onclick="addEntry()">추가</button>
+      <div class="quick-head">
+        <div class="quick-label">오늘 업무 빠른 기록</div>
+        <span class="quick-step">대상 → 업무 내용 → 다음 액션 → 저장</span>
       </div>
-      <div class="prod-row" id="prodRow"></div>
-      <div class="consult-row">
-        <button class="cs-toggle" id="csToggle" onclick="toggleConsultMode()">🗣 상담 건으로 기록</button>
-        <span class="cs-hint" id="csHint"></span>
+      <div class="quick-core">
+        <div class="q-field">
+          <label for="qName"><em>대상</em></label>
+          <input type="text" id="qName" list="memberList" placeholder="이름" autocomplete="off">
+        </div>
+        <div class="q-field">
+          <label for="qContent"><em>업무 내용</em></label>
+          <input type="text" id="qContent" placeholder="무슨 일을 했는지 입력" autocomplete="off">
+        </div>
+        <div class="q-field">
+          <label for="qFollowUp">다음 액션 <span style="font-weight:400;opacity:.75;">(선택)</span></label>
+          <input type="text" id="qFollowUp" placeholder="예: 9/10 전화 · 자료 발송" autocomplete="off">
+        </div>
+        <button class="go" id="qSaveBtn" onclick="addEntry()">저장</button>
       </div>
-      <div class="quick-hint" id="qHint">대상을 입력하면 이전 기록에서 등급을 찾아 자동으로 붙입니다. 내용 칸에서 Enter를 누르면 저장되고 커서가 대상 칸으로 돌아갑니다.</div>
+      <div class="quick-actions">
+        <span class="action-label">업무 분류</span>
+        <div class="prod-row" id="prodRow"></div>
+        <div class="consult-row">
+          <button class="cs-toggle" id="csToggle" onclick="toggleConsultMode()">🗣 상담으로 등록</button>
+          <span class="cs-hint" id="csHint"></span>
+        </div>
+        <button class="quick-tool" id="quickDetailBtn" onclick="toggleQuickDetail()">＋ 세부정보</button>
+        <button class="quick-tool" id="quickRulesBtn" onclick="toggleQuickRules()">? 입력 규칙</button>
+      </div>
+      <div class="quick-detail" id="quickDetail">
+        <div class="q-field"><label for="qTime">시간</label><input type="text" id="qTime" placeholder="09:30" maxlength="5"></div>
+        <div class="q-field"><label for="qProduct">분류 직접입력</label><input type="text" id="qProduct" list="productList" placeholder="상품·업무" autocomplete="off"></div>
+        <div class="q-field"><label for="qCompany">소속사</label><input type="text" id="qCompany" list="companyList" placeholder="자동 연결" autocomplete="off"></div>
+        <div class="q-field"><label for="qJob">직함</label><input type="text" id="qJob" list="jobList" placeholder="자동 연결" autocomplete="off"></div>
+        <div class="q-field"><label for="qRef">추천인</label><input type="text" id="qRef" list="memberList" placeholder="선택 입력" autocomplete="off"></div>
+      </div>
+      <div class="quick-rules" id="quickRules">
+        <b>입력 규칙</b> · 기존 대상은 소속사·직함·등급이 자동 연결됩니다. · 다음 액션을 적으면 미완 후속으로 등록되어 완료할 때까지 이월됩니다. · 상담으로 등록하면 상담 관리에도 자동 접수됩니다. · 이름의 띄어쓰기가 달라도 같은 대상으로 연결됩니다.
+      </div>
+      <div class="quick-saved" id="qSaved"></div>
     </div>
     <datalist id="memberList"></datalist>
     <datalist id="productList"></datalist>
@@ -432,10 +515,9 @@
 
     <div class="peek" id="peekBox" style="display:none;"></div>
 
-    <div class="carry" id="carryBox" style="display:none;"></div>
-
     <div class="tbl-tools">
       <button class="mini-toggle" id="dayExpandBtn" onclick="toggleBoxById('dayScrollBox',this)">⤢ 전체 펼치기</button>
+      <button class="mini-toggle" id="dayDetailBtn" onclick="toggleDayDetails()">＋ 추천인 보기</button>
       <button class="mini-toggle" onclick="copyDayTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
     </div>
     <div class="scroll" id="dayScrollBox">
@@ -443,7 +525,7 @@
         <div class="lrow lhead">
           <div>시간</div>
           <div>대상</div>
-          <div>추천인</div>
+          <div class="detail-col">추천인</div>
           <div>상품</div>
           <div>업무 내용</div>
           <div>후속 액션</div>
@@ -605,6 +687,7 @@
   var db=null, auth=null, unsubDay=null, unsubMembers=null, unsubCarry=null;
   var currentDate='', members={}, dayRows=[], currentMemberKey='';
   var canEdit=false, myEmail='';
+  var entrySaving=false;
 
   // ---------- 유틸 ----------
   function localISO(d){
@@ -681,6 +764,24 @@
       document.getElementById('tab-'+n).classList.toggle('on', n===name);
       document.getElementById('panel-'+n).classList.toggle('on', n===name);
     });
+  }
+
+  function toggleQuickDetail(){
+    var box=document.getElementById('quickDetail'), btn=document.getElementById('quickDetailBtn');
+    var on=box.classList.toggle('on');
+    btn.classList.toggle('on',on);
+    btn.textContent=on?'－ 세부정보 닫기':'＋ 세부정보';
+  }
+  function toggleQuickRules(){
+    var box=document.getElementById('quickRules'), btn=document.getElementById('quickRulesBtn');
+    var on=box.classList.toggle('on');
+    btn.classList.toggle('on',on);
+    btn.textContent=on?'규칙 닫기':'? 입력 규칙';
+  }
+  function toggleDayDetails(){
+    var tb=document.getElementById('logTable'), btn=document.getElementById('dayDetailBtn');
+    var on=tb.classList.toggle('show-detail');
+    btn.textContent=on?'－ 추천인 숨기기':'＋ 추천인 보기';
   }
 
   // ---------- 날짜 ----------
@@ -761,7 +862,7 @@
             (sub? '<span class="name-sub">'+esc(sub)+'</span>':'') +
             (r.isConsult? '<span class="name-sub" style="color:var(--brass);font-weight:700;">🗣 상담 · '+esc(csStatus(r))+'</span>':'') +
           '</span></div>' +
-        '<div>' + (r.refKey ? '<span class="ref-cell" onclick="openMember(\''+esc(r.refKey)+'\')">'+esc(r.refName||'')+'</span>' : '<input type="text" value="" list="memberList" placeholder="추천인" onchange="editRef(\''+r.id+'\',this.value)">') + '</div>' +
+        '<div class="detail-col">' + (r.refKey ? '<span class="ref-cell" onclick="openMember(\''+esc(r.refKey)+'\')">'+esc(r.refName||'')+'</span>' : '<input type="text" value="" list="memberList" placeholder="추천인" onchange="editRef(\''+r.id+'\',this.value)">') + '</div>' +
         '<div><input type="text" value="'+esc(r.product)+'" list="productList" onchange="editField(\''+r.id+'\',\'product\',this.value)"></div>' +
         '<div><input type="text" value="'+esc(r.content)+'" onchange="editField(\''+r.id+'\',\'content\',this.value)"></div>' +
         '<div><input type="text" value="'+esc(r.followUp)+'" placeholder="후속" onchange="editField(\''+r.id+'\',\'followUp\',this.value)"></div>' +
@@ -770,8 +871,13 @@
       body.appendChild(div);
     });
     applyEditMode();
-    document.getElementById('dayCount').textContent = dayRows.length+'건';
-    document.getElementById('dayDone').textContent = '완료 '+dayRows.filter(function(r){return r.done;}).length;
+    var pending=dayRows.filter(function(r){return String(r.followUp||'').trim() && !r.done;}).length;
+    var followDone=dayRows.filter(function(r){return String(r.followUp||'').trim() && r.done;}).length;
+    document.getElementById('dayCount').textContent = '기록 '+dayRows.length+'건';
+    document.getElementById('dayPending').textContent = '후속 미완 '+pending;
+    document.getElementById('dayPending').style.display = pending ? '' : 'none';
+    document.getElementById('dayDone').textContent = '후속 완료 '+followDone;
+    document.getElementById('dayDone').style.display = followDone ? '' : 'none';
     document.getElementById('dayEmpty').style.display = dayRows.length? 'none':'block';
   }
 
@@ -1254,7 +1360,7 @@
     consultMode = !consultMode;
     var b = document.getElementById('csToggle');
     b.classList.toggle('on', consultMode);
-    b.textContent = consultMode ? '🗣 상담 건 (켜짐)' : '🗣 상담 건으로 기록';
+    b.textContent = consultMode ? '🗣 상담 등록 ON' : '🗣 상담으로 등록';
     document.getElementById('csHint').textContent = consultMode
       ? '이 상태로 저장하면 상담 관리 탭에 접수됩니다.' : '';
   }
@@ -1506,15 +1612,20 @@
     var job=document.getElementById('qJob').value.trim();
     var refName=document.getElementById('qRef').value.trim();
     var refKey=nameKey(refName);
+    var followUp=document.getElementById('qFollowUp').value.trim();
     if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
     if(!name && !content){ document.getElementById('qName').focus(); return; }
+    if(entrySaving) return;
     var key=nameKey(name);
     var rec={ date:currentDate, time:time, memberKey:key, memberName:name,
               refKey:refKey, refName:refName,
               isConsult:consultMode, csStatus:consultMode?'접수':'',
               csField:'', csWay:'', csExpert:'', csResult:'', csDoneAt:'',
-              product:product, content:content, followUp:'', done:false,
+              product:product, content:content, followUp:followUp, done:!followUp,
               gradeAt:key? gradeOf(key):'', createdAt:new Date().toISOString() };
+    entrySaving=true;
+    var saveBtn=document.getElementById('qSaveBtn');
+    saveBtn.disabled=true; saveBtn.textContent='저장 중';
     setStatus('busy');
     db.collection(LOGS).add(rec)
       .then(function(){
@@ -1523,21 +1634,27 @@
         if(refKey) touchMember(refKey, refName);   // 추천인도 대상으로 등록해 이력을 이어감
         refreshPeekFor(key);                       // 방금 저장한 기록까지 미리보기에 반영
         if(consultMode) loadConsults();            // 상담 건이면 상담 관리에도 반영
+        var saved=document.getElementById('qSaved');
+        saved.textContent=(name||'업무')+' 기록이 저장되었습니다.';
+        setTimeout(function(){ if(saved) saved.textContent=''; },1600);
+        document.getElementById('qName').value='';
+        document.getElementById('qCompany').value='';
+        document.getElementById('qJob').value='';
+        document.getElementById('qRef').value='';
+        document.getElementById('qContent').value='';
+        document.getElementById('qFollowUp').value='';
+        document.getElementById('qProduct').value='';
+        document.getElementById('qTime').value=nowHM();
+        clearProdButtons();
+        document.getElementById('qName').focus();
       })
-      .catch(function(e){ setStatus('err', e.code||e.message); });
-    document.getElementById('qName').value='';
-    document.getElementById('qCompany').value='';
-    document.getElementById('qJob').value='';
-    document.getElementById('qRef').value='';
-
-    document.getElementById('qContent').value='';
-    document.getElementById('qTime').value=nowHM();
-    clearProdButtons();
-    document.getElementById('qName').focus();
+      .catch(function(e){ setStatus('err', e.code||e.message); })
+      .then(function(){ entrySaving=false; saveBtn.disabled=false; saveBtn.textContent='저장'; });
   }
   function editField(id, field, val){
     if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
     var patch={}; patch[field]=val;
+    if(field==='followUp') patch.done=!String(val||'').trim();
     setStatus('busy');
     db.collection(LOGS).doc(id).update(patch)
       .then(function(){ setStatus('ok'); })
@@ -1897,7 +2014,8 @@
     buildProdButtons();
     document.getElementById('qTime').value=nowHM();
 
-    document.getElementById('qContent').addEventListener('keydown', function(e){ if(e.key==='Enter') addEntry(); });
+    document.getElementById('qContent').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); document.getElementById('qFollowUp').focus(); } });
+    document.getElementById('qFollowUp').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); addEntry(); } });
     document.getElementById('qName').addEventListener('input', function(){ fillMemberInfo(); schedulePeek(); });
     document.getElementById('qName').addEventListener('keydown', function(e){ if(e.key==='Enter'){ fillMemberInfo(); runPeek(); document.getElementById('qContent').focus(); } });
     ['qCompany','qJob','qRef'].forEach(function(id){
