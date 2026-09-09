@@ -92,6 +92,12 @@
   .peek-none{ font-size:12.5px; color:var(--muted); }
   .peek-ref{ font-size:12px; color:var(--brass); margin-top:7px; }
   .peek-ref b{ color:var(--navy); }
+  .peek-dock{ position:relative; height:0; z-index:25; }
+  .peek-dock .peek{ position:absolute; top:0; left:0; right:0; margin:0; max-height:250px; overflow:auto;
+                    box-shadow:0 14px 34px rgba(16,30,54,.18); }
+  .peek-close{ flex:0 0 auto; width:28px; height:28px; border:1px solid var(--line); border-radius:50%;
+               background:#fff; color:var(--muted); cursor:pointer; font-size:15px; line-height:1; }
+  .peek-close:hover{ color:var(--red); border-color:#E8CFCB; }
   /* 이월된 미완 후속 액션 */
   .carry{ background:#FFF9F0; border:1px solid #EAD9B8; border-radius:12px; padding:11px 15px; margin-bottom:14px; }
   .carry-head{ display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:6px; }
@@ -427,6 +433,7 @@
     .lrow > div:nth-child(5), .lrow > div:nth-child(6){ display:flex; }
     .ltable .detail-col{ display:none; }
     .ltable.show-detail .detail-col{ display:flex; }
+    .peek-dock .peek{ max-height:42vh; }
   }
   @media print{
     .quick,.quick-rules,.quick-detail{ display:none !important; }
@@ -552,7 +559,7 @@
     <datalist id="csExpertList"></datalist>
     <datalist id="jobList"></datalist>
 
-    <div class="peek" id="peekBox" style="display:none;"></div>
+    <div class="peek-dock"><div class="peek" id="peekBox" style="display:none;" aria-live="polite"></div></div>
 
     <div class="tbl-tools">
       <button class="mini-toggle" id="dayExpandBtn" onclick="toggleBoxById('dayScrollBox',this)">⤢ 전체 펼치기</button>
@@ -1596,6 +1603,7 @@
   }
 
   function runPeek(){
+    peekTimer = null;
     var key = nameKey(document.getElementById('qName').value);
     if(!key){ clearPeek(); return; }
     if(key === peekKey) return;          // 같은 이름이면 다시 조회하지 않음
@@ -1612,7 +1620,8 @@
     var box = document.getElementById('peekBox');
     peekKey = key;
     box.style.display = '';
-    box.innerHTML = '<div class="peek-none">' + esc(key) + ' 기록을 찾는 중...</div>';
+    box.innerHTML = '<div class="peek-head"><span class="peek-none">' + esc(key) + ' 기록을 찾는 중...</span>' +
+      '<button class="peek-close" onclick="clearPeek()" aria-label="이력 미리보기 닫기">×</button></div>';
 
     Promise.all([
       db.collection(LOGS).where('memberKey','==',key).get(),
@@ -1624,6 +1633,7 @@
       res[1].forEach(function(d){ refd.push(d.data()); });
       renderPeek(key, list, refd);
     }).catch(function(e){
+      if(peekKey !== key) return;
       box.innerHTML = '<div class="peek-none">조회 실패 (' + esc(e.code||'') + ')</div>';
     });
   }
@@ -1637,7 +1647,8 @@
 
     if(!list.length && !refd.length){
       box.innerHTML = '<div class="peek-head"><span class="peek-name">' + esc(disp) + '</span>' +
-        '<span class="peek-sub">이전 기록이 없습니다 · 새 대상입니다</span></div>';
+        '<span class="peek-sub">이전 기록이 없습니다 · 새 대상입니다</span>' +
+        '<button class="peek-close" style="margin-left:auto;" onclick="clearPeek()" aria-label="이력 미리보기 닫기">×</button></div>';
       return;
     }
     list.sort(function(a,b){ return String(b.date+(b.time||'')).localeCompare(String(a.date+(a.time||''))); });
@@ -1653,6 +1664,7 @@
       (list.length ? '<span class="peek-sub">최근 ' + esc(list[0].date) + '</span>' : '') +
       (pending.length ? '<span class="peek-stat warn">미완 후속 ' + pending.length + '</span>' : '') +
       '<button class="peek-more" onclick="openMemberFromPeek(\'' + esc(key) + '\')">전체 이력 →</button>' +
+      '<button class="peek-close" onclick="clearPeek()" aria-label="이력 미리보기 닫기">×</button>' +
       '</div>';
 
     list.slice(0, 5).forEach(function(r){
@@ -1675,6 +1687,7 @@
   }
 
   function clearPeek(){
+    if(peekTimer){ clearTimeout(peekTimer); peekTimer=null; }
     peekKey = '';
     var box = document.getElementById('peekBox');
     if(box){ box.style.display = 'none'; box.innerHTML = ''; }
@@ -2121,7 +2134,10 @@
     document.getElementById('qContent').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); document.getElementById('qFollowUp').focus(); } });
     document.getElementById('qFollowUp').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); addEntry(); } });
     document.getElementById('qName').addEventListener('input', function(){ fillMemberInfo(); schedulePeek(); });
-    document.getElementById('qName').addEventListener('keydown', function(e){ if(e.key==='Enter'){ fillMemberInfo(); runPeek(); document.getElementById('qContent').focus(); } });
+    document.getElementById('qName').addEventListener('keydown', function(e){
+      if(e.key==='Escape'){ clearPeek(); return; }
+      if(e.key==='Enter'){ fillMemberInfo(); runPeek(); document.getElementById('qContent').focus(); }
+    });
     ['qCompany','qJob','qRef'].forEach(function(id){
       document.getElementById(id).addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('qContent').focus(); });
     });
