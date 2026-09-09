@@ -309,8 +309,8 @@
   .rep-summary .k{ font-size:10.5px; letter-spacing:.1em; color:var(--brass-light); font-weight:700; }
   .rep-summary .v{ font-size:15px; font-weight:700; }
   .rep-summary .brk{ margin-top:10px; font-size:12.5px; color:#B9BFCF; }
-  .rtable{ display:grid; grid-template-columns:92px 58px 152px 76px 92px minmax(220px,1fr) 140px 54px;
-           align-items:stretch; min-width:900px; font-size:13px; }
+  .rtable{ display:grid; grid-template-columns:92px 58px 142px 66px 82px 68px 82px minmax(220px,1fr) 140px 54px;
+           align-items:stretch; min-width:1040px; font-size:13px; }
   .rrow, #repBody{ display:contents; }
   .rrow > div{ min-width:0; padding:7px 8px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
   .rhead > div{ position:sticky; top:0; z-index:3; background:#F8F6F1; border-bottom:1px solid var(--line);
@@ -323,7 +323,7 @@
     #panel-report{ display:block !important; border:none; padding:0; }
     body{ background:#fff; }
     .scroll{ max-height:none !important; overflow:visible !important; border:none; }
-    .rtable{ min-width:0; font-size:10.5px; grid-template-columns:74px 44px 78px 58px 72px minmax(180px,1fr) 110px 40px; }
+    .rtable{ min-width:0; font-size:9.5px; grid-template-columns:66px 38px 70px 42px 54px 46px 56px minmax(145px,1fr) 90px 34px; }
     .rhead > div{ position:static !important; }
     .rep-summary{ background:#fff !important; color:#000 !important; border:1px solid #999; }
     .rep-summary .k{ color:#666 !important; }
@@ -370,22 +370,41 @@
   .quick-core .go{ height:41px; }
   .quick-actions{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:11px; }
   .quick-actions .action-label{ color:#9AA3B5; font-size:10.5px; font-weight:700; margin-right:2px; }
-  .quick-actions .prod-row{ margin:0; }
   .quick-actions .consult-row{ margin:0 0 0 auto; }
+  .contact-choices{ display:flex; gap:12px; flex-wrap:wrap; margin-top:11px; padding-top:11px; border-top:1px solid rgba(255,255,255,.14); }
+  .choice-set{ display:flex; align-items:center; gap:5px; flex-wrap:wrap; }
+  .choice-label{ color:#9AA3B5; font-size:10.5px; font-weight:700; margin-right:2px; }
+  .choice-btn{ font-family:'Pretendard',sans-serif; font-size:11.5px; font-weight:700; padding:5px 11px; border-radius:20px; cursor:pointer;
+               border:1px solid rgba(216,195,154,.42); background:transparent; color:var(--brass-light); }
+  .choice-btn:hover{ background:rgba(255,255,255,.08); }
+  .choice-btn.on{ background:var(--brass); border-color:var(--brass); color:#fff; }
+  .choice-set.status .choice-btn.on[data-value="연락 전"]{ background:#667085; border-color:#667085; }
+  .choice-set.status .choice-btn.on[data-value="접촉 시도"]{ background:#9B6B2F; border-color:#9B6B2F; }
+  .choice-set.status .choice-btn.on[data-value="소통 완료"]{ background:var(--green); border-color:var(--green); }
   .quick-tool{ font-family:'Pretendard',sans-serif; font-size:11.5px; font-weight:700; padding:5px 10px; border-radius:20px; cursor:pointer; border:1px solid rgba(216,195,154,.42); background:transparent; color:var(--brass-light); }
   .quick-tool:hover,.quick-tool.on{ background:rgba(255,255,255,.12); color:#fff; }
   .quick-detail{ display:none; grid-template-columns:76px 118px 118px 92px 118px; gap:7px; margin-top:11px; padding-top:11px; border-top:1px solid rgba(255,255,255,.14); }
   .quick-detail.on{ display:grid; }
   .quick-detail .q-field label{ color:#AEB7C8; }
+  .detail-products{ grid-column:1 / -1; display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+  .detail-products .prod-row{ margin:0; }
   .quick-rules{ display:none; margin-top:11px; padding:10px 12px; border:1px solid rgba(216,195,154,.28); border-radius:9px; background:rgba(255,255,255,.06); color:#C8CFDB; font-size:11.5px; line-height:1.65; }
   .quick-rules.on{ display:block; }
   .quick-rules b{ color:var(--brass-light); }
   .quick-saved{ min-height:18px; margin-top:7px; color:#9FD8B8; font-size:11.5px; }
   .carry{ margin-bottom:12px; }
-  .ltable{ grid-template-columns:70px 148px 100px minmax(220px,1fr) minmax(210px,.9fr) 54px 30px; min-width:850px; }
+  .ltable{ grid-template-columns:70px 148px 78px 98px minmax(220px,1fr) minmax(190px,.8fr) 62px 30px; min-width:930px; }
   .ltable .detail-col{ display:none; }
-  .ltable.show-detail{ grid-template-columns:70px 148px 96px 100px minmax(190px,1fr) minmax(220px,.9fr) 54px 30px; min-width:952px; }
+  .ltable.show-detail{ grid-template-columns:70px 148px 78px 98px 96px 96px minmax(190px,1fr) minmax(180px,.8fr) 62px 30px; min-width:1120px; }
   .ltable.show-detail .detail-col{ display:flex; }
+  .ltable select{ width:100%; min-width:0; border:1px solid var(--line); background:#FBFAF7; border-radius:20px; padding:5px 6px;
+                  font:600 11.5px 'Pretendard'; color:var(--navy); }
+  .ltable select:focus{ outline:none; border-color:var(--brass); background:#fff; }
+  .contact-pill{ display:inline-flex; align-items:center; justify-content:center; width:100%; border-radius:20px; padding:4px 6px;
+                 font-size:11px; font-weight:800; white-space:nowrap; }
+  .contact-pill.plan{ background:#EEF0F3; color:#667085; }
+  .contact-pill.try{ background:#F8EFE2; color:#8A5B22; }
+  .contact-pill.done{ background:var(--green-bg); color:var(--green); }
   @media (max-width:900px){
     .quick-core{ grid-template-columns:1fr 1fr; }
     .quick-core .q-field:nth-child(2),.quick-core .q-field:nth-child(3){ grid-column:1 / -1; }
@@ -400,10 +419,11 @@
     .quick-core{ grid-template-columns:1fr; }
     .quick-core .q-field:nth-child(2),.quick-core .q-field:nth-child(3),.quick-core .go{ grid-column:auto; }
     .quick-actions{ align-items:flex-start; }
-    .quick-actions .prod-row{ flex:1 1 100%; }
+    .contact-choices{ display:block; }
+    .choice-set + .choice-set{ margin-top:8px; }
     .quick-detail.on{ grid-template-columns:1fr 1fr; }
-    .ltable{ min-width:740px; grid-template-columns:58px 122px 86px minmax(190px,1fr) minmax(160px,.9fr) 52px 28px; }
-    .ltable.show-detail{ min-width:840px; grid-template-columns:58px 122px 90px 86px minmax(180px,1fr) minmax(150px,.9fr) 52px 28px; }
+    .ltable{ min-width:820px; grid-template-columns:58px 122px 70px 88px minmax(180px,1fr) minmax(150px,.8fr) 54px 28px; }
+    .ltable.show-detail{ min-width:1020px; grid-template-columns:58px 122px 70px 88px 86px 86px minmax(170px,1fr) minmax(140px,.8fr) 54px 28px; }
     .lrow > div:nth-child(5), .lrow > div:nth-child(6){ display:flex; }
     .ltable .detail-col{ display:none; }
     .ltable.show-detail .detail-col{ display:flex; }
@@ -437,7 +457,7 @@
 </div>
 
 <div class="tabs">
-  <div class="tab on" id="tab-day" onclick="switchTab('day')">오늘 기록</div>
+  <div class="tab on" id="tab-day" onclick="switchTab('day')">오늘의 컨택트</div>
   <div class="tab" id="tab-member" onclick="switchTab('member')">대상별 이력</div>
   <div class="tab" id="tab-consult" onclick="switchTab('consult')">상담 관리<span class="tab-badge" id="csBadge"></span></div>
   <div class="tab" id="tab-arrear" onclick="switchTab('arrear')">미결 관리<span class="tab-badge" id="arBadge"></span></div>
@@ -446,16 +466,18 @@
 </div>
 
 <main>
-  <!-- ===== 오늘 기록 ===== -->
+  <!-- ===== 오늘의 컨택트 ===== -->
   <div class="panel on" id="panel-day">
     <div class="row-line">
       <button class="mini" onclick="moveDay(-1)">◀ 어제</button>
       <input type="date" class="date-input" id="dayPicker" onchange="onDayChange()">
       <button class="mini" onclick="moveDay(1)">다음 ▶</button>
       <button class="mini" onclick="goToday()">오늘</button>
-      <span class="chip" id="dayCount">0건</span>
+      <span class="chip" id="dayCount">오늘 대상 0명</span>
+      <span class="chip" id="dayPlanned">연락 전 0</span>
+      <span class="chip" id="dayAttempted">접촉 시도 0</span>
+      <span class="chip g" id="dayContactDone">소통 완료 0</span>
       <span class="chip warn" id="dayPending">후속 미완 0</span>
-      <span class="chip g" id="dayDone">후속 완료 0</span>
     </div>
 
     <div class="ro-note" id="roNote" style="display:none;">
@@ -466,8 +488,8 @@
 
     <div class="quick" id="quickBox">
       <div class="quick-head">
-        <div class="quick-label">오늘 업무 빠른 기록</div>
-        <span class="quick-step">대상 → 업무 내용 → 다음 액션 → 저장</span>
+        <div class="quick-label">오늘 연락할 사람</div>
+        <span class="quick-step">대상 등록 → 접촉 → 대화 기록 → 다음 행동</span>
       </div>
       <div class="quick-core">
         <div class="q-field">
@@ -475,18 +497,34 @@
           <input type="text" id="qName" list="memberList" placeholder="이름" autocomplete="off">
         </div>
         <div class="q-field">
-          <label for="qContent"><em>업무 내용</em></label>
-          <input type="text" id="qContent" placeholder="무슨 일을 했는지 입력" autocomplete="off">
+          <label for="qContent"><em>연락 목적·소통 내용</em></label>
+          <input type="text" id="qContent" placeholder="연락 전에는 목적, 소통 후에는 대화 요약" autocomplete="off">
         </div>
         <div class="q-field">
-          <label for="qFollowUp">다음 액션 <span style="font-weight:400;opacity:.75;">(선택)</span></label>
-          <input type="text" id="qFollowUp" placeholder="예: 9/10 전화 · 자료 발송" autocomplete="off">
+          <label for="qFollowUp">다음 행동 <span style="font-weight:400;opacity:.75;">(선택)</span></label>
+          <input type="text" id="qFollowUp" placeholder="예: 9/10 재통화 · 자료 발송" autocomplete="off">
         </div>
-        <button class="go" id="qSaveBtn" onclick="addEntry()">저장</button>
+        <button class="go" id="qSaveBtn" onclick="addEntry()">대상 추가</button>
+      </div>
+      <div class="contact-choices">
+        <div class="choice-set" id="methodChoices">
+          <span class="choice-label">접촉 방법</span>
+          <button class="choice-btn on" data-value="전화" onclick="selectQuickChoice('method','전화',this)">전화</button>
+          <button class="choice-btn" data-value="문자" onclick="selectQuickChoice('method','문자',this)">문자</button>
+          <button class="choice-btn" data-value="카톡" onclick="selectQuickChoice('method','카톡',this)">카톡</button>
+          <button class="choice-btn" data-value="대면" onclick="selectQuickChoice('method','대면',this)">대면</button>
+          <button class="choice-btn" data-value="기타" onclick="selectQuickChoice('method','기타',this)">기타</button>
+          <input type="hidden" id="qContactMethod" value="전화">
+        </div>
+        <div class="choice-set status" id="statusChoices">
+          <span class="choice-label">현재 상태</span>
+          <button class="choice-btn on" data-value="연락 전" onclick="selectQuickChoice('status','연락 전',this)">연락 전</button>
+          <button class="choice-btn" data-value="접촉 시도" onclick="selectQuickChoice('status','접촉 시도',this)">접촉 시도</button>
+          <button class="choice-btn" data-value="소통 완료" onclick="selectQuickChoice('status','소통 완료',this)">소통 완료</button>
+          <input type="hidden" id="qContactStatus" value="연락 전">
+        </div>
       </div>
       <div class="quick-actions">
-        <span class="action-label">업무 분류</span>
-        <div class="prod-row" id="prodRow"></div>
         <div class="consult-row">
           <button class="cs-toggle" id="csToggle" onclick="toggleConsultMode()">🗣 상담으로 등록</button>
           <span class="cs-hint" id="csHint"></span>
@@ -500,9 +538,10 @@
         <div class="q-field"><label for="qCompany">소속사</label><input type="text" id="qCompany" list="companyList" placeholder="자동 연결" autocomplete="off"></div>
         <div class="q-field"><label for="qJob">직함</label><input type="text" id="qJob" list="jobList" placeholder="자동 연결" autocomplete="off"></div>
         <div class="q-field"><label for="qRef">추천인</label><input type="text" id="qRef" list="memberList" placeholder="선택 입력" autocomplete="off"></div>
+        <div class="detail-products"><span class="choice-label">업무 분류</span><div class="prod-row" id="prodRow"></div></div>
       </div>
       <div class="quick-rules" id="quickRules">
-        <b>입력 규칙</b> · 기존 대상은 소속사·직함·등급이 자동 연결됩니다. · 다음 액션을 적으면 미완 후속으로 등록되어 완료할 때까지 이월됩니다. · 상담으로 등록하면 상담 관리에도 자동 접수됩니다. · 이름의 띄어쓰기가 달라도 같은 대상으로 연결됩니다.
+        <b>입력 규칙</b> · 먼저 오늘 연락할 대상을 ‘연락 전’으로 등록합니다. · 전화가 안 되거나 문자·카톡만 보낸 경우에는 ‘접촉 시도’, 실제 대화를 나눈 경우에는 ‘소통 완료’로 표시합니다. · 다음 행동을 적으면 별도의 미완 후속으로 등록되어 완료할 때까지 이월됩니다. · 기존 대상은 소속사·직함·등급이 자동 연결됩니다.
       </div>
       <div class="quick-saved" id="qSaved"></div>
     </div>
@@ -517,7 +556,7 @@
 
     <div class="tbl-tools">
       <button class="mini-toggle" id="dayExpandBtn" onclick="toggleBoxById('dayScrollBox',this)">⤢ 전체 펼치기</button>
-      <button class="mini-toggle" id="dayDetailBtn" onclick="toggleDayDetails()">＋ 추천인 보기</button>
+      <button class="mini-toggle" id="dayDetailBtn" onclick="toggleDayDetails()">＋ 분류·추천인 보기</button>
       <button class="mini-toggle" onclick="copyDayTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
     </div>
     <div class="scroll" id="dayScrollBox">
@@ -525,17 +564,19 @@
         <div class="lrow lhead">
           <div>시간</div>
           <div>대상</div>
+          <div>접촉</div>
+          <div>상태</div>
           <div class="detail-col">추천인</div>
-          <div>상품</div>
-          <div>업무 내용</div>
-          <div>후속 액션</div>
-          <div class="mid">완료</div>
+          <div class="detail-col">업무 분류</div>
+          <div>연락 목적·소통 내용</div>
+          <div>다음 행동</div>
+          <div class="mid">후속</div>
           <div></div>
         </div>
         <div id="logBody"></div>
       </div>
     </div>
-    <div class="empty" id="dayEmpty" style="display:none;">이 날짜에는 기록이 없습니다.</div>
+    <div class="empty" id="dayEmpty" style="display:none;">이 날짜에 등록된 연락 대상이 없습니다.</div>
   </div>
 
   <!-- ===== 대상별 이력 ===== -->
@@ -636,7 +677,7 @@
       <div class="row-line">
         <span class="lbl">조건</span>
         <input type="text" id="rName" list="memberList" placeholder="대상 (비우면 전체)" class="filter-in" autocomplete="off">
-        <input type="text" id="rProduct" list="productList" placeholder="상품 (비우면 전체)" class="filter-in" autocomplete="off">
+        <input type="text" id="rProduct" list="productList" placeholder="업무 분류 (비우면 전체)" class="filter-in" autocomplete="off">
         <label class="chk"><input type="checkbox" id="rPending"> 미완 후속만</label>
         <button class="btn" onclick="runReport()">조회</button>
       </div>
@@ -653,8 +694,8 @@
     <div class="scroll" id="repScrollBox" style="display:none;">
       <div class="rtable" id="repTable">
         <div class="rrow rhead">
-          <div>일자</div><div>시간</div><div>대상</div><div>등급</div>
-          <div>상품</div><div>업무 내용</div><div>후속</div><div class="mid">완료</div>
+          <div>일자</div><div>시간</div><div>대상</div><div>접촉</div><div>상태</div><div>등급</div>
+          <div>분류</div><div>연락 목적·소통 내용</div><div>다음 행동</div><div class="mid">후속</div>
         </div>
         <div id="repBody"></div>
       </div>
@@ -733,7 +774,7 @@
     if(ara) ara.style.display = canEdit ? '' : 'none';
     var pya=document.getElementById('payAdd');
     if(pya) pya.style.display = canEdit ? '' : 'none';
-    document.querySelectorAll('#logBody input').forEach(function(el){ el.disabled = !canEdit; });
+    document.querySelectorAll('#logBody input, #logBody select').forEach(function(el){ el.disabled = !canEdit; });
     document.querySelectorAll('#logBody .del, #logBody .done-btn').forEach(function(el){
       el.style.display = canEdit ? '' : 'none';
     });
@@ -781,7 +822,34 @@
   function toggleDayDetails(){
     var tb=document.getElementById('logTable'), btn=document.getElementById('dayDetailBtn');
     var on=tb.classList.toggle('show-detail');
-    btn.textContent=on?'－ 추천인 숨기기':'＋ 추천인 보기';
+    btn.textContent=on?'－ 분류·추천인 숨기기':'＋ 분류·추천인 보기';
+  }
+
+  function selectQuickChoice(kind, value, el){
+    var box=document.getElementById(kind==='method'?'methodChoices':'statusChoices');
+    var hidden=document.getElementById(kind==='method'?'qContactMethod':'qContactStatus');
+    hidden.value=value;
+    box.querySelectorAll('.choice-btn').forEach(function(b){ b.classList.toggle('on', b===el); });
+  }
+  function setQuickChoice(kind, value){
+    var box=document.getElementById(kind==='method'?'methodChoices':'statusChoices');
+    var hidden=document.getElementById(kind==='method'?'qContactMethod':'qContactStatus');
+    hidden.value=value;
+    box.querySelectorAll('.choice-btn').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-value')===value); });
+  }
+  function contactMethodOf(r){ return String(r.contactMethod||'').trim() || '기타'; }
+  function contactStatusOf(r){
+    var s=String(r.contactStatus||'').trim();
+    if(s) return s;
+    return String(r.content||'').trim() ? '소통 완료' : '연락 전';
+  }
+  function choiceOptions(values, current){
+    return values.map(function(v){ return '<option value="'+esc(v)+'"'+(v===current?' selected':'')+'>'+esc(v)+'</option>'; }).join('');
+  }
+  function contactStatusRank(r){
+    var rank={'연락 전':0,'접촉 시도':1,'소통 완료':2};
+    var s=contactStatusOf(r);
+    return rank[s]===undefined?3:rank[s];
   }
 
   // ---------- 날짜 ----------
@@ -803,7 +871,7 @@
     unsubDay = db.collection(LOGS).where('date','==',dateStr).onSnapshot(function(snap){
       dayRows=[];
       snap.forEach(function(doc){ var v=doc.data(); v.id=doc.id; dayRows.push(v); });
-      dayRows.sort(function(a,b){ return String(a.time||'').localeCompare(String(b.time||'')) || String(a.createdAt||'').localeCompare(String(b.createdAt||'')); });
+      dayRows.sort(function(a,b){ return contactStatusRank(a)-contactStatusRank(b) || String(a.time||'').localeCompare(String(b.time||'')) || String(a.createdAt||'').localeCompare(String(b.createdAt||'')); });
       renderDay();
       setStatus(canEdit ? 'ok' : 'off', canEdit ? null : '열람 전용 · ' + myEmail);
     }, function(e){ setStatus('err', e.code||'조회 실패'); });
@@ -852,6 +920,7 @@
       var g=gradeOf(r.memberKey);
       var m=members[r.memberKey]||{};
       var sub=[m.company||'', m.job||''].filter(Boolean).join(' · ');
+      var method=contactMethodOf(r), contactStatus=contactStatusOf(r);
       var div=document.createElement('div');
       div.className='lrow';
       div.innerHTML =
@@ -862,22 +931,31 @@
             (sub? '<span class="name-sub">'+esc(sub)+'</span>':'') +
             (r.isConsult? '<span class="name-sub" style="color:var(--brass);font-weight:700;">🗣 상담 · '+esc(csStatus(r))+'</span>':'') +
           '</span></div>' +
+        '<div><select aria-label="접촉 방법" onchange="editField(\''+r.id+'\',\'contactMethod\',this.value)">'+choiceOptions(['전화','문자','카톡','대면','기타'],method)+'</select></div>' +
+        '<div><select aria-label="접촉 상태" onchange="editField(\''+r.id+'\',\'contactStatus\',this.value)">'+choiceOptions(['연락 전','접촉 시도','소통 완료'],contactStatus)+'</select></div>' +
         '<div class="detail-col">' + (r.refKey ? '<span class="ref-cell" onclick="openMember(\''+esc(r.refKey)+'\')">'+esc(r.refName||'')+'</span>' : '<input type="text" value="" list="memberList" placeholder="추천인" onchange="editRef(\''+r.id+'\',this.value)">') + '</div>' +
-        '<div><input type="text" value="'+esc(r.product)+'" list="productList" onchange="editField(\''+r.id+'\',\'product\',this.value)"></div>' +
-        '<div><input type="text" value="'+esc(r.content)+'" onchange="editField(\''+r.id+'\',\'content\',this.value)"></div>' +
-        '<div><input type="text" value="'+esc(r.followUp)+'" placeholder="후속" onchange="editField(\''+r.id+'\',\'followUp\',this.value)"></div>' +
-        '<div class="mid"><button class="done-btn'+(r.done?' on':'')+'" onclick="toggleDone(\''+r.id+'\','+(r.done?'true':'false')+')">'+(r.done?'완료':'—')+'</button></div>' +
+        '<div class="detail-col"><input type="text" value="'+esc(r.product)+'" list="productList" onchange="editField(\''+r.id+'\',\'product\',this.value)"></div>' +
+        '<div><input type="text" value="'+esc(r.content)+'" placeholder="목적 또는 대화 요약" onchange="editField(\''+r.id+'\',\'content\',this.value)"></div>' +
+        '<div><input type="text" value="'+esc(r.followUp)+'" placeholder="다음 행동" onchange="editField(\''+r.id+'\',\'followUp\',this.value)"></div>' +
+        '<div class="mid">'+(String(r.followUp||'').trim()?'<button class="done-btn'+(r.done?' on':'')+'" onclick="toggleDone(\''+r.id+'\','+(r.done?'true':'false')+')">'+(r.done?'완료':'미완')+'</button>':'<span class="name-sub">—</span>')+'</div>' +
         '<div class="mid"><button class="del" onclick="removeEntry(\''+r.id+'\')">✕</button></div>';
       body.appendChild(div);
     });
     applyEditMode();
     var pending=dayRows.filter(function(r){return String(r.followUp||'').trim() && !r.done;}).length;
-    var followDone=dayRows.filter(function(r){return String(r.followUp||'').trim() && r.done;}).length;
-    document.getElementById('dayCount').textContent = '기록 '+dayRows.length+'건';
+    var planned=dayRows.filter(function(r){return contactStatusOf(r)==='연락 전';}).length;
+    var attempted=dayRows.filter(function(r){return contactStatusOf(r)==='접촉 시도';}).length;
+    var completed=dayRows.filter(function(r){return contactStatusOf(r)==='소통 완료';}).length;
+    var people={}; dayRows.forEach(function(r){ if(r.memberKey) people[r.memberKey]=1; });
+    document.getElementById('dayCount').textContent = '오늘 대상 '+Object.keys(people).length+'명';
+    document.getElementById('dayPlanned').textContent = '연락 전 '+planned;
+    document.getElementById('dayPlanned').style.display = planned ? '' : 'none';
+    document.getElementById('dayAttempted').textContent = '접촉 시도 '+attempted;
+    document.getElementById('dayAttempted').style.display = attempted ? '' : 'none';
+    document.getElementById('dayContactDone').textContent = '소통 완료 '+completed;
+    document.getElementById('dayContactDone').style.display = completed ? '' : 'none';
     document.getElementById('dayPending').textContent = '후속 미완 '+pending;
     document.getElementById('dayPending').style.display = pending ? '' : 'none';
-    document.getElementById('dayDone').textContent = '후속 완료 '+followDone;
-    document.getElementById('dayDone').style.display = followDone ? '' : 'none';
     document.getElementById('dayEmpty').style.display = dayRows.length? 'none':'block';
   }
 
@@ -1410,7 +1488,7 @@
       '전체 ' + csRows.length + '건 · ' + CS_STATES.map(function(st){ return st + ' ' + cnt[st]; }).join(' · ');
 
     if(!list.length){
-      box.innerHTML = '<div class="cs-empty">해당 상태의 상담 건이 없습니다.<br>오늘 기록 탭에서 <b>🗣 상담 건으로 기록</b>을 켜고 저장하면 여기에 쌓입니다.</div>';
+      box.innerHTML = '<div class="cs-empty">해당 상태의 상담 건이 없습니다.<br>오늘의 컨택트에서 <b>🗣 상담으로 등록</b>을 켜고 저장하면 여기에 쌓입니다.</div>';
       return;
     }
 
@@ -1613,14 +1691,20 @@
     var refName=document.getElementById('qRef').value.trim();
     var refKey=nameKey(refName);
     var followUp=document.getElementById('qFollowUp').value.trim();
+    var contactMethod=document.getElementById('qContactMethod').value || '전화';
+    var contactStatus=document.getElementById('qContactStatus').value || '연락 전';
     if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
-    if(!name && !content){ document.getElementById('qName').focus(); return; }
+    if(!name){
+      document.getElementById('qSaved').textContent='오늘 연락할 대상 이름을 먼저 입력해주세요.';
+      document.getElementById('qName').focus(); return;
+    }
     if(entrySaving) return;
     var key=nameKey(name);
     var rec={ date:currentDate, time:time, memberKey:key, memberName:name,
               refKey:refKey, refName:refName,
               isConsult:consultMode, csStatus:consultMode?'접수':'',
               csField:'', csWay:'', csExpert:'', csResult:'', csDoneAt:'',
+              contactMethod:contactMethod, contactStatus:contactStatus,
               product:product, content:content, followUp:followUp, done:!followUp,
               gradeAt:key? gradeOf(key):'', createdAt:new Date().toISOString() };
     entrySaving=true;
@@ -1630,12 +1714,12 @@
     db.collection(LOGS).add(rec)
       .then(function(){
         setStatus('ok');
-        if(key) touchMember(key, name, company, job);
+        if(key) touchMember(key, name, company, job, contactStatus!=='연락 전');
         if(refKey) touchMember(refKey, refName);   // 추천인도 대상으로 등록해 이력을 이어감
         refreshPeekFor(key);                       // 방금 저장한 기록까지 미리보기에 반영
         if(consultMode) loadConsults();            // 상담 건이면 상담 관리에도 반영
         var saved=document.getElementById('qSaved');
-        saved.textContent=(name||'업무')+' 기록이 저장되었습니다.';
+        saved.textContent=contactStatus==='연락 전' ? name+'님을 오늘 연락 대상으로 추가했습니다.' : name+'님의 소통 기록을 저장했습니다.';
         setTimeout(function(){ if(saved) saved.textContent=''; },1600);
         document.getElementById('qName').value='';
         document.getElementById('qCompany').value='';
@@ -1645,11 +1729,13 @@
         document.getElementById('qFollowUp').value='';
         document.getElementById('qProduct').value='';
         document.getElementById('qTime').value=nowHM();
+        setQuickChoice('method','전화');
+        setQuickChoice('status','연락 전');
         clearProdButtons();
         document.getElementById('qName').focus();
       })
       .catch(function(e){ setStatus('err', e.code||e.message); })
-      .then(function(){ entrySaving=false; saveBtn.disabled=false; saveBtn.textContent='저장'; });
+      .then(function(){ entrySaving=false; saveBtn.disabled=false; saveBtn.textContent='대상 추가'; });
   }
   function editField(id, field, val){
     if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
@@ -1657,7 +1743,13 @@
     if(field==='followUp') patch.done=!String(val||'').trim();
     setStatus('busy');
     db.collection(LOGS).doc(id).update(patch)
-      .then(function(){ setStatus('ok'); })
+      .then(function(){
+        setStatus('ok');
+        if(field==='contactStatus' && val!=='연락 전'){
+          var row=dayRows.filter(function(r){ return r.id===id; })[0];
+          if(row && row.memberKey) db.collection(MEMBERS).doc(row.memberKey).set({lastContact:row.date||currentDate},{merge:true});
+        }
+      })
       .catch(function(e){ setStatus('err', e.code||e.message); });
   }
   // 기존 기록에 추천인을 나중에 채워 넣을 때
@@ -1682,11 +1774,12 @@
   }
 
   // ---------- 대상 ----------
-  function touchMember(key, name, company, job){
+  function touchMember(key, name, company, job, markContact){
     if(!canEdit) return;
     var m=members[key];
     // 표시 이름은 처음 등록된 것을 유지 (「김희숙」/「김 희숙」이 섞여도 흔들리지 않음)
-    var payload={ name:(m && m.name) ? m.name : name, nameKey:key, lastContact:currentDate };
+    var payload={ name:(m && m.name) ? m.name : name, nameKey:key };
+    if(markContact!==false) payload.lastContact=currentDate;
     if(company) payload.company=company;   // 새로 입력한 값이 있으면 갱신
     if(job) payload.job=job;
     if(!m){
@@ -1772,6 +1865,8 @@
     var m=members[key]||{name:key};
     var g=m.grade||computeGrade(m);
     var pending=list.filter(function(r){ return r.followUp && !r.done; }).length;
+    var contacted=list.filter(function(r){ return contactStatusOf(r)!=='연락 전'; });
+    var completed=list.filter(function(r){ return contactStatusOf(r)==='소통 완료'; }).length;
     // 나를 추천해 준 사람 (가장 최근 기록 기준)
     var myRef=null;
     for(var i=0;i<list.length;i++){ if(list[i].refKey){ myRef=list[i]; break; } }
@@ -1783,9 +1878,10 @@
     html+='<h3>'+esc(m.name||key)+' <span class="grade-tag g-'+esc(g)+'">'+esc(g)+'</span></h3>';
     html+='<div class="sub">'+(m.company? esc(m.company)+' · ':'')+(m.job? esc(m.job)+' · ':'')+(m.referrer? '추천 '+esc(m.referrer):'')+'</div>';
     html+='<div class="facts">';
-    html+='<div class="fact"><div class="k">총 접촉</div><div class="v">'+list.length+'회</div></div>';
-    html+='<div class="fact"><div class="k">최근 접촉</div><div class="v">'+(list[0]? esc(list[0].date):'-')+'</div></div>';
-    html+='<div class="fact"><div class="k">첫 접촉</div><div class="v">'+(list.length? esc(list[list.length-1].date):'-')+'</div></div>';
+    html+='<div class="fact"><div class="k">총 접촉</div><div class="v">'+contacted.length+'회</div></div>';
+    html+='<div class="fact"><div class="k">소통 완료</div><div class="v">'+completed+'회</div></div>';
+    html+='<div class="fact"><div class="k">최근 접촉</div><div class="v">'+(contacted[0]? esc(contacted[0].date):'-')+'</div></div>';
+    html+='<div class="fact"><div class="k">첫 접촉</div><div class="v">'+(contacted.length? esc(contacted[contacted.length-1].date):'-')+'</div></div>';
     html+='<div class="fact"><div class="k">미완 후속</div><div class="v">'+pending+'건</div></div>';
     html+='<div class="fact"><div class="k">추천한 대상</div><div class="v">'+refPeople.length+'명</div></div>';
     if(myRef) html+='<div class="fact"><div class="k">추천인</div><div class="v"><span class="ref-link" onclick="openMember(\''+esc(myRef.refKey)+'\')">'+esc(myRef.refName||'')+'</span></div></div>';
@@ -1806,10 +1902,10 @@
       html+='<div class="timeline">';
       list.forEach(function(r){
         html+='<div class="tl-item">';
-        html+='<div class="tl-date">'+esc(r.date)+(r.time? ' '+esc(r.time):'')+(r.product? ' · '+esc(r.product):'')+
+        html+='<div class="tl-date">'+esc(r.date)+(r.time? ' '+esc(r.time):'')+' · '+esc(contactMethodOf(r))+' · '+esc(contactStatusOf(r))+(r.product? ' · '+esc(r.product):'')+
               (r.refName? ' · 추천 <span class="ref-link" onclick="openMember(\''+esc(r.refKey)+'\')">'+esc(r.refName)+'</span>':'')+'</div>';
         html+='<div class="tl-body">'+esc(r.content||'')+'</div>';
-        if(r.followUp) html+='<div class="tl-meta">후속: '+esc(r.followUp)+(r.done? ' · 완료':'')+'</div>';
+        if(r.followUp) html+='<div class="tl-meta">다음 행동: '+esc(r.followUp)+(r.done? ' · 완료':' · 미완')+'</div>';
         html+='</div>';
       });
       html+='</div>';
@@ -1843,20 +1939,20 @@
     document.body.removeChild(ta);
   }
   function copyDayTable(btn){
-    var out = [['시간','대상','추천인','소속사','직함','등급','상품','업무 내용','후속 액션','완료']];
+    var out = [['시간','대상','접촉 방법','접촉 상태','추천인','소속사','직함','등급','업무 분류','연락 목적·소통 내용','다음 행동','후속 완료']];
     dayRows.forEach(function(r){
       var m = members[r.memberKey] || {};
-      out.push([r.time||'', r.memberName||'', r.refName||'', m.company||'', m.job||'',
+      out.push([r.time||'', r.memberName||'', contactMethodOf(r), contactStatusOf(r), r.refName||'', m.company||'', m.job||'',
                 r.memberKey? gradeOf(r.memberKey):'', r.product||'',
                 (r.content||'').replace(/\n/g,' / '), r.followUp||'', r.done?'O':'']);
     });
     copyTsv(out, btn);
   }
   function copyReportTable(btn){
-    var out = [['일자','시간','대상','추천인','소속사','직함','등급','상품','업무 내용','후속','완료']];
+    var out = [['일자','시간','대상','접촉 방법','접촉 상태','추천인','소속사','직함','등급','업무 분류','연락 목적·소통 내용','다음 행동','후속 완료']];
     repRows.forEach(function(r){
       var m = members[r.memberKey] || {};
-      out.push([r.date||'', r.time||'', r.memberName||'', r.refName||'', m.company||'', m.job||'',
+      out.push([r.date||'', r.time||'', r.memberName||'', contactMethodOf(r), contactStatusOf(r), r.refName||'', m.company||'', m.job||'',
                 (r.memberKey? (r.gradeAt||gradeOf(r.memberKey)):''), r.product||'',
                 (r.content||'').replace(/\n/g,' / '), r.followUp||'', r.done?'O':'']);
     });
@@ -1906,14 +2002,18 @@
 
   function renderReport(from, to){
     var head=document.getElementById('repHead');
-    var people={}, prods={}, grades={}, pending=0, doneN=0;
+    var people={}, prods={}, grades={}, methods={}, pending=0, completed=0, attempted=0, planned=0;
     repRows.forEach(function(r){
       if(r.memberKey) people[r.memberKey]=1;
       if(r.product) prods[r.product]=(prods[r.product]||0)+1;
+      var method=contactMethodOf(r), contactStatus=contactStatusOf(r);
+      methods[method]=(methods[method]||0)+1;
       var g=r.gradeAt || gradeOf(r.memberKey);
       if(r.memberKey) grades[g]=(grades[g]||0)+1;
       if(r.followUp && !r.done) pending++;
-      if(r.done) doneN++;
+      if(contactStatus==='소통 완료') completed++;
+      else if(contactStatus==='접촉 시도') attempted++;
+      else if(contactStatus==='연락 전') planned++;
     });
     function top(o,n){
       return Object.keys(o).sort(function(a,b){return o[b]-o[a];}).slice(0,n)
@@ -1921,20 +2021,23 @@
     }
     var fName=document.getElementById('rName').value.trim();
     var fProd=document.getElementById('rProduct').value.trim();
-    var cond=[fName?('대상 '+fName):'', fProd?('상품 '+fProd):'',
+    var cond=[fName?('대상 '+fName):'', fProd?('분류 '+fProd):'',
               document.getElementById('rPending').checked?'미완 후속만':''].filter(Boolean).join(' · ');
     head.innerHTML =
       '<div class="rep-summary">' +
         '<div class="title">업무 히스토리 · '+esc(from)+' ~ '+esc(to)+'</div>' +
         (cond? '<div class="brk">조건: '+esc(cond)+'</div>':'') +
         '<div class="facts">' +
-          '<div><div class="k">총 기록</div><div class="v">'+repRows.length+'건</div></div>' +
+          '<div><div class="k">총 컨택트</div><div class="v">'+repRows.length+'건</div></div>' +
           '<div><div class="k">접촉 대상</div><div class="v">'+Object.keys(people).length+'명</div></div>' +
-          '<div><div class="k">완료</div><div class="v">'+doneN+'건</div></div>' +
+          '<div><div class="k">소통 완료</div><div class="v">'+completed+'건</div></div>' +
+          '<div><div class="k">접촉 시도</div><div class="v">'+attempted+'건</div></div>' +
+          '<div><div class="k">연락 전</div><div class="v">'+planned+'건</div></div>' +
           '<div><div class="k">미완 후속</div><div class="v">'+pending+'건</div></div>' +
         '</div>' +
+        '<div class="brk">접촉 방식별: '+esc(top(methods,5))+'</div>' +
         '<div class="brk">등급별: '+esc(top(grades,5))+'</div>' +
-        '<div class="brk">상품별: '+esc(top(prods,6))+'</div>' +
+        '<div class="brk">업무 분류별: '+esc(top(prods,6))+'</div>' +
       '</div>';
 
     var body=document.getElementById('repBody');
@@ -1945,9 +2048,10 @@
       var subInfo=[rm.company||'', rm.job||''].filter(Boolean).join(' · ');
       var div=document.createElement('div'); div.className='rrow';
       div.innerHTML='<div>'+esc(r.date)+'</div><div>'+esc(r.time)+'</div>' +
-        '<div>'+esc(r.memberName||'')+(subInfo?' <span class="name-sub">'+esc(subInfo)+'</span>':'')+'</div><div>'+esc(r.memberKey? g:'')+'</div>' +
+        '<div>'+esc(r.memberName||'')+(subInfo?' <span class="name-sub">'+esc(subInfo)+'</span>':'')+'</div>' +
+        '<div>'+esc(contactMethodOf(r))+'</div><div>'+esc(contactStatusOf(r))+'</div><div>'+esc(r.memberKey? g:'')+'</div>' +
         '<div>'+esc(r.product)+'</div><div>'+esc(r.content)+'</div>' +
-        '<div>'+esc(r.followUp)+'</div><div class="mid">'+(r.done?'O':'')+'</div>';
+        '<div>'+esc(r.followUp)+'</div><div class="mid">'+(r.followUp?(r.done?'O':'—'):'')+'</div>';
       body.appendChild(div);
     });
     document.getElementById('repScrollBox').style.display = repRows.length? '':'none';
@@ -1962,12 +2066,12 @@
 
   function exportCsv(){
     if(!repRows.length){ alert('먼저 조회해주세요.'); return; }
-    var head=['일자','시간','대상','추천인','소속사','직함','등급','상품','업무내용','후속액션','완료'];
+    var head=['일자','시간','대상','접촉방법','접촉상태','추천인','소속사','직함','등급','업무분류','연락목적·소통내용','다음행동','후속완료'];
     function cell(v){ return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'; }
     var lines=[head.map(cell).join(',')];
     repRows.forEach(function(r){
       var cm=members[r.memberKey]||{};
-      lines.push([r.date, r.time, r.memberName, r.refName||'', cm.company||'', cm.job||'',
+      lines.push([r.date, r.time, r.memberName, contactMethodOf(r), contactStatusOf(r), r.refName||'', cm.company||'', cm.job||'',
                   (r.memberKey? (r.gradeAt||gradeOf(r.memberKey)):''),
                   r.product, r.content, r.followUp, r.done?'O':''].map(cell).join(','));
     });
