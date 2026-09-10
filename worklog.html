@@ -300,6 +300,68 @@
     .ptable{ min-width:560px; grid-template-columns:110px minmax(96px,1fr) 104px 96px minmax(110px,1fr) 56px; }
   }
 
+  /* ---------- 내부 업무 요청 ---------- */
+  .req-digest{ width:100%; display:none; align-items:center; gap:9px; flex-wrap:wrap; margin:-2px 0 14px; padding:10px 13px;
+               border:1px solid #EAD9B8; border-radius:10px; background:#FFF9F0; color:var(--navy); cursor:pointer; text-align:left; font-family:'Pretendard'; }
+  .req-digest:hover{ border-color:var(--brass); background:#FFF6E8; }
+  .req-digest-title{ font-family:'Noto Serif KR',serif; font-size:13.5px; font-weight:700; margin-right:3px; }
+  .req-digest-chip{ font-size:11.5px; font-weight:800; padding:2px 9px; border-radius:20px; background:#EFEAE0; color:#6B5122; }
+  .req-digest-chip.late{ background:var(--red-bg); color:var(--red); }
+  .req-digest-chip.wait{ background:#EEF0F6; color:#425574; }
+  .req-digest-go{ margin-left:auto; font-size:11.5px; font-weight:700; color:var(--brass); }
+  .req-summary{ background:linear-gradient(160deg,#16294A,#101E36); color:#EDEEF3; border-radius:12px; padding:15px 17px; margin-bottom:14px; }
+  .req-summary-title{ font-family:'Noto Serif KR',serif; font-size:16px; font-weight:700; }
+  .req-summary-facts{ display:flex; gap:20px; flex-wrap:wrap; margin-top:9px; }
+  .req-summary-facts .k{ font-size:10.5px; font-weight:700; color:var(--brass-light); letter-spacing:.06em; }
+  .req-summary-facts .v{ font-size:16px; font-weight:800; margin-top:1px; }
+  .req-summary-facts .v.late{ color:#F1A899; }
+  .req-add{ display:grid; grid-template-columns:140px minmax(260px,1fr) 116px 86px 110px 82px; gap:7px; margin-bottom:12px; }
+  .req-add input,.req-add select,.req-card input,.req-card select{ width:100%; min-width:0; font:13px 'Pretendard'; color:var(--ink);
+      border:1px solid var(--line); border-radius:9px; background:#FBFAF7; padding:8px 9px; }
+  .req-add input:focus,.req-add select:focus,.req-card input:focus,.req-card select:focus{ outline:none; border-color:var(--brass); background:#fff; }
+  .req-add .go{ background:var(--brass); border:1px solid var(--brass); border-radius:9px; color:#fff; font-weight:800; cursor:pointer; }
+  .req-tools{ display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:13px; }
+  .req-sec{ display:flex; align-items:center; gap:8px; margin:15px 0 8px; }
+  .req-sec .lb{ font-size:11.5px; font-weight:800; color:var(--brass); white-space:nowrap; }
+  .req-sec .lb.late{ color:var(--red); }
+  .req-sec .lb.done{ color:var(--green); }
+  .req-sec .ln{ flex:1; height:1px; background:var(--line); }
+  .req-sec .count{ font-size:11px; color:var(--muted); }
+  .req-card{ border:1px solid var(--line); border-radius:12px; padding:11px 13px; margin-bottom:8px; background:#fff; }
+  .req-card.overdue{ border-color:#E8CFCB; background:#FDF7F5; box-shadow:inset 3px 0 0 var(--red); }
+  .req-card.today{ border-color:#EAD9B8; background:#FFFCF7; box-shadow:inset 3px 0 0 var(--brass); }
+  .req-card.completed{ background:#FAFAF8; opacity:.82; box-shadow:inset 3px 0 0 var(--green); }
+  .req-top{ display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:8px; }
+  .req-due{ flex:0 0 auto; font-size:11px; font-weight:800; padding:2px 9px; border-radius:20px; background:#EFEAE0; color:#6B5122; }
+  .req-due.late{ background:var(--red-bg); color:var(--red); }
+  .req-due.done{ background:var(--green-bg); color:var(--green); }
+  .req-who{ max-width:190px; font-weight:800 !important; color:var(--navy) !important; }
+  .req-kind{ max-width:100px; }
+  .req-meta{ font-size:11px; color:var(--muted); white-space:nowrap; }
+  .req-del{ margin-left:auto; border:none; background:none; color:#C4BFB4; cursor:pointer; font-size:15px; padding:4px; }
+  .req-del:hover{ color:var(--red); }
+  .req-content{ margin-bottom:8px; }
+  .req-content input{ font-size:13.5px; background:#fff; }
+  .req-bottom{ display:grid; grid-template-columns:112px 122px 86px minmax(220px,1fr) 78px; gap:7px; align-items:center; }
+  .req-complete,.req-reopen{ height:36px; border-radius:9px; cursor:pointer; font:700 12px 'Pretendard'; }
+  .req-complete{ border:1px solid #BFD9CB; background:var(--green-bg); color:var(--green); }
+  .req-reopen{ border:1px solid var(--line); background:#fff; color:var(--muted); }
+  .req-empty{ text-align:center; color:var(--muted); font-size:13px; padding:30px 0; }
+  @media (max-width:900px){
+    .req-add{ grid-template-columns:1fr 1fr; }
+    .req-add #reqContent{ grid-column:1 / -1; }
+    .req-bottom{ grid-template-columns:1fr 1fr; }
+    .req-bottom .req-result{ grid-column:1 / -1; }
+  }
+  @media (max-width:600px){
+    .req-add{ grid-template-columns:1fr; }
+    .req-add #reqContent{ grid-column:auto; }
+    .req-bottom{ grid-template-columns:1fr; }
+    .req-bottom .req-result{ grid-column:auto; }
+    .req-who,.req-kind{ max-width:none; }
+    .req-digest-go{ width:100%; margin-left:0; }
+  }
+
   /* ---------- 보고서 ---------- */
   .rep-controls{ background:#FBF9F4; border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin-bottom:16px; }
   .rep-controls .row-line{ margin-bottom:10px; }
@@ -465,6 +527,7 @@
 
 <div class="tabs">
   <div class="tab on" id="tab-day" onclick="switchTab('day')">오늘의 컨택트</div>
+  <div class="tab" id="tab-request" onclick="switchTab('request')">업무 요청<span class="tab-badge" id="reqBadge"></span></div>
   <div class="tab" id="tab-member" onclick="switchTab('member')">대상별 이력</div>
   <div class="tab" id="tab-consult" onclick="switchTab('consult')">상담 관리<span class="tab-badge" id="csBadge"></span></div>
   <div class="tab" id="tab-arrear" onclick="switchTab('arrear')">미결 관리<span class="tab-badge" id="arBadge"></span></div>
@@ -486,6 +549,8 @@
       <span class="chip g" id="dayContactDone">소통 완료 0</span>
       <span class="chip warn" id="dayPending">후속 미완 0</span>
     </div>
+
+    <button class="req-digest" id="requestDigest" onclick="switchTab('request')"></button>
 
     <div class="ro-note" id="roNote" style="display:none;">
       열람 전용 계정으로 접속하셨습니다. 기록을 보고 검색하실 수 있으며, 내용은 수정되지 않습니다.
@@ -584,6 +649,30 @@
       </div>
     </div>
     <div class="empty" id="dayEmpty" style="display:none;">이 날짜에 등록된 연락 대상이 없습니다.</div>
+  </div>
+
+  <!-- ===== 업무 요청 ===== -->
+  <div class="panel" id="panel-request">
+    <div class="req-summary" id="reqSummary"></div>
+
+    <div class="req-add" id="reqAdd">
+      <input type="text" id="reqWho" placeholder="요청자" autocomplete="off">
+      <input type="text" id="reqContent" placeholder="요청 내용" autocomplete="off">
+      <input type="date" id="reqDue">
+      <input type="time" id="reqDueTime" aria-label="처리 시간">
+      <select id="reqKind" aria-label="요청 분류">
+        <option value="확인">확인</option><option value="자료">자료</option><option value="일정">일정</option>
+        <option value="결제">결제</option><option value="연락">연락</option><option value="기타">기타</option>
+      </select>
+      <button class="go" id="reqAddBtn" onclick="addRequest()">요청 등록</button>
+    </div>
+
+    <div class="req-tools">
+      <label class="chk"><input type="checkbox" id="reqShowDone" onchange="renderRequests()"> 완료 포함</label>
+      <button class="mini" onclick="copyRequestTable(this)">⧉ 요청 목록 복사</button>
+      <span class="hint-sm">처리 결과를 남겨야 완료할 수 있습니다. 미완료 요청은 날짜가 지나도 계속 표시됩니다.</span>
+    </div>
+    <div id="reqList"></div>
   </div>
 
   <!-- ===== 대상별 이력 ===== -->
@@ -724,7 +813,7 @@
     messagingSenderId: "17480780068",
     appId: "1:17480780068:web:61b1a719ecfb0be9cd4bb1"
   };
-  var LOGS = 'workLogs', MEMBERS = 'members';
+  var LOGS = 'workLogs', MEMBERS = 'members', REQUESTS = 'managerRequests';
   // 이 이메일만 기록을 추가·수정·삭제할 수 있습니다. 나머지 계정은 열람만 가능합니다.
   var EDITORS = ['parkshinje@gmail.com'];
 
@@ -732,8 +821,9 @@
   var GRADE_RANK = { '비회원':0, '자비아':1, '이너서클':2, '지사장':3 };
   var QUICK_PRODUCTS = ['STAR','이너','지사','자비아','비즈라인','기홈','컨홈','컨설팅','IIP택스'];
 
-  var db=null, auth=null, unsubDay=null, unsubMembers=null, unsubCarry=null;
+  var db=null, auth=null, unsubDay=null, unsubMembers=null, unsubCarry=null, unsubRequests=null;
   var currentDate='', members={}, dayRows=[], currentMemberKey='';
+  var requestRows=[], requestSaving=false;
   var canEdit=false, myEmail='';
   var entrySaving=false;
 
@@ -781,8 +871,14 @@
     if(ara) ara.style.display = canEdit ? '' : 'none';
     var pya=document.getElementById('payAdd');
     if(pya) pya.style.display = canEdit ? '' : 'none';
+    var rqa=document.getElementById('reqAdd');
+    if(rqa) rqa.style.display = canEdit ? '' : 'none';
     document.querySelectorAll('#logBody input, #logBody select').forEach(function(el){ el.disabled = !canEdit; });
     document.querySelectorAll('#logBody .del, #logBody .done-btn').forEach(function(el){
+      el.style.display = canEdit ? '' : 'none';
+    });
+    document.querySelectorAll('#reqList input, #reqList select').forEach(function(el){ el.disabled = !canEdit; });
+    document.querySelectorAll('#reqList .req-complete, #reqList .req-reopen, #reqList .req-del').forEach(function(el){
       el.style.display = canEdit ? '' : 'none';
     });
     var ro=document.getElementById('roNote');
@@ -808,7 +904,7 @@
 
   // ---------- 탭 ----------
   function switchTab(name){
-    ['day','member','consult','arrear','pay','report'].forEach(function(n){
+    ['day','request','member','consult','arrear','pay','report'].forEach(function(n){
       document.getElementById('tab-'+n).classList.toggle('on', n===name);
       document.getElementById('panel-'+n).classList.toggle('on', n===name);
     });
@@ -964,6 +1060,184 @@
     document.getElementById('dayPending').textContent = '후속 미완 '+pending;
     document.getElementById('dayPending').style.display = pending ? '' : 'none';
     document.getElementById('dayEmpty').style.display = dayRows.length? 'none':'block';
+  }
+
+  // ---------- 내부 업무 요청 ----------
+  function requestIsOpen(r){ return String(r.status||'접수') !== '완료'; }
+  function parseLocalDate(s){
+    var p=String(s||'').split('-');
+    return p.length===3 ? new Date(Number(p[0]),Number(p[1])-1,Number(p[2])) : null;
+  }
+  function requestDayDiff(dateStr){
+    var d=parseLocalDate(dateStr), t=parseLocalDate(localISO(new Date()));
+    if(!d || isNaN(d.getTime())) return 99999;
+    return Math.round((d.getTime()-t.getTime())/86400000);
+  }
+  function requestGroup(r){
+    if(!requestIsOpen(r)) return 'completed';
+    var n=requestDayDiff(r.dueDate);
+    if(n<0) return 'overdue';
+    if(n===0) return 'today';
+    return 'upcoming';
+  }
+  function requestDueLabel(r){
+    if(!requestIsOpen(r)) return '완료';
+    var n=requestDayDiff(r.dueDate), time=r.dueTime ? ' '+r.dueTime : '';
+    if(n===99999) return '기한 없음';
+    if(n<0) return '기한 '+Math.abs(n)+'일 지남';
+    if(n===0) return '오늘'+time;
+    if(n===1) return '내일'+time;
+    return 'D-'+n+time;
+  }
+  function requestSort(a,b){
+    var order={overdue:0,today:1,upcoming:2,completed:3};
+    var ga=requestGroup(a), gb=requestGroup(b);
+    if(order[ga]!==order[gb]) return order[ga]-order[gb];
+    if(ga==='completed') return String(b.completedAt||b.updatedAt||'').localeCompare(String(a.completedAt||a.updatedAt||''));
+    return String((a.dueDate||'9999-12-31')+(a.dueTime||'23:59')+(a.createdAt||'')).localeCompare(String((b.dueDate||'9999-12-31')+(b.dueTime||'23:59')+(b.createdAt||'')));
+  }
+  function loadRequests(){
+    if(unsubRequests) unsubRequests();
+    unsubRequests=db.collection(REQUESTS).onSnapshot(function(snap){
+      requestRows=[];
+      snap.forEach(function(doc){ var v=doc.data(); v.id=doc.id; requestRows.push(v); });
+      requestRows.sort(requestSort);
+      renderRequests();
+    },function(e){
+      setStatus('err',e.code||'업무 요청 조회 실패');
+    });
+  }
+  function requestStats(){
+    var t=localISO(new Date()), open=0, overdue=0, today=0, waiting=0, completed=0;
+    requestRows.forEach(function(r){
+      if(requestIsOpen(r)){
+        open++;
+        if(r.dueDate && r.dueDate<t) overdue++;
+        if(r.dueDate===t) today++;
+        if(r.status==='회신 대기') waiting++;
+      }else completed++;
+    });
+    return {open:open,overdue:overdue,today:today,waiting:waiting,completed:completed};
+  }
+  function renderRequestIndicators(){
+    var s=requestStats(), badge=document.getElementById('reqBadge'), digest=document.getElementById('requestDigest');
+    badge.textContent=s.open ? s.open : '';
+    if(!s.open){ digest.style.display='none'; digest.innerHTML=''; return; }
+    digest.innerHTML='<span class="req-digest-title">오늘 처리할 업무 요청</span>'+
+      '<span class="req-digest-chip">미완 '+s.open+'</span>'+
+      (s.today?'<span class="req-digest-chip">오늘 '+s.today+'</span>':'')+
+      (s.overdue?'<span class="req-digest-chip late">기한 지남 '+s.overdue+'</span>':'')+
+      (s.waiting?'<span class="req-digest-chip wait">회신 대기 '+s.waiting+'</span>':'')+
+      '<span class="req-digest-go">요청 목록 보기 →</span>';
+    digest.style.display='flex';
+  }
+  function renderRequestSummary(){
+    var s=requestStats(), box=document.getElementById('reqSummary');
+    box.innerHTML='<div class="req-summary-title">업무 요청 현황</div><div class="req-summary-facts">'+
+      '<div><div class="k">미완료</div><div class="v">'+s.open+'건</div></div>'+
+      '<div><div class="k">오늘 처리</div><div class="v">'+s.today+'건</div></div>'+
+      '<div><div class="k">기한 지남</div><div class="v'+(s.overdue?' late':'')+'">'+s.overdue+'건</div></div>'+
+      '<div><div class="k">회신 대기</div><div class="v">'+s.waiting+'건</div></div>'+
+      '<div><div class="k">완료 누계</div><div class="v">'+s.completed+'건</div></div>'+
+      '</div>';
+  }
+  function requestCard(r){
+    var group=requestGroup(r), done=group==='completed';
+    var dueClass=done?' done':(group==='overdue'?' late':'');
+    var requested=[r.requestDate||'',r.requestTime||''].filter(Boolean).join(' ');
+    var status=String(r.status||'접수');
+    var html='<div class="req-card '+group+'">'+
+      '<div class="req-top">'+
+        '<span class="req-due'+dueClass+'">'+esc(requestDueLabel(r))+'</span>'+
+        '<input class="req-who" type="text" value="'+esc(r.requester||'')+'" placeholder="요청자" onchange="saveRequestField(\''+r.id+'\',\'requester\',this.value)">'+
+        '<select class="req-kind" onchange="saveRequestField(\''+r.id+'\',\'kind\',this.value)">'+choiceOptions(['확인','자료','일정','결제','연락','기타'],r.kind||'확인')+'</select>'+
+        (requested?'<span class="req-meta">요청 '+esc(requested)+'</span>':'')+
+        '<button class="req-del" onclick="removeRequest(\''+r.id+'\')" aria-label="요청 삭제">×</button>'+
+      '</div>'+
+      '<div class="req-content"><input type="text" value="'+esc(r.content||'')+'" placeholder="요청 내용" onchange="saveRequestField(\''+r.id+'\',\'content\',this.value)"></div>'+
+      '<div class="req-bottom">'+
+        (done?'<span class="contact-pill done">완료</span>':'<select onchange="saveRequestField(\''+r.id+'\',\'status\',this.value)">'+choiceOptions(['접수','진행','회신 대기'],status)+'</select>')+
+        '<input type="date" value="'+esc(r.dueDate||'')+'" aria-label="처리 기한" onchange="saveRequestField(\''+r.id+'\',\'dueDate\',this.value)">'+
+        '<input type="time" value="'+esc(r.dueTime||'')+'" aria-label="처리 시간" onchange="saveRequestField(\''+r.id+'\',\'dueTime\',this.value)">'+
+        '<input class="req-result" id="reqResult-'+r.id+'" type="text" value="'+esc(r.result||'')+'" placeholder="처리 결과·요청자 전달 내용" onchange="saveRequestField(\''+r.id+'\',\'result\',this.value)">'+
+        (done?'<button class="req-reopen" onclick="reopenRequest(\''+r.id+'\')">다시 열기</button>':'<button class="req-complete" onclick="completeRequest(\''+r.id+'\')">✓ 완료</button>')+
+      '</div></div>';
+    return html;
+  }
+  function renderRequests(){
+    renderRequestIndicators(); renderRequestSummary();
+    var showDone=document.getElementById('reqShowDone').checked;
+    var rows=requestRows.filter(function(r){ return showDone || requestIsOpen(r); });
+    var box=document.getElementById('reqList');
+    if(!rows.length){ box.innerHTML='<div class="req-empty">등록된 미완료 업무 요청이 없습니다.</div>'; return; }
+    var labels={overdue:'기한 지남',today:'오늘 처리',upcoming:'이후 예정',completed:'완료'}, html='', last='';
+    rows.forEach(function(r){
+      var group=requestGroup(r);
+      if(group!==last){
+        var count=rows.filter(function(x){ return requestGroup(x)===group; }).length;
+        html+='<div class="req-sec"><span class="lb '+(group==='overdue'?'late':group==='completed'?'done':'')+'">'+labels[group]+'</span><span class="count">'+count+'건</span><span class="ln"></span></div>';
+        last=group;
+      }
+      html+=requestCard(r);
+    });
+    box.innerHTML=html;
+    applyEditMode();
+  }
+  function addRequest(){
+    var requester=document.getElementById('reqWho').value.trim();
+    var content=document.getElementById('reqContent').value.trim();
+    var dueDate=document.getElementById('reqDue').value;
+    if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
+    if(!requester){ document.getElementById('reqWho').focus(); return; }
+    if(!content){ document.getElementById('reqContent').focus(); return; }
+    if(!dueDate){ document.getElementById('reqDue').focus(); return; }
+    if(requestSaving) return;
+    var rec={requester:requester,content:content,dueDate:dueDate,dueTime:document.getElementById('reqDueTime').value,
+      kind:document.getElementById('reqKind').value,status:'접수',result:'',requestDate:localISO(new Date()),requestTime:nowHM(),
+      createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),createdBy:myEmail,completedAt:''};
+    requestSaving=true;
+    var btn=document.getElementById('reqAddBtn'); btn.disabled=true; btn.textContent='등록 중'; setStatus('busy');
+    db.collection(REQUESTS).add(rec).then(function(){
+      setStatus('ok');
+      document.getElementById('reqWho').value=''; document.getElementById('reqContent').value=''; document.getElementById('reqDueTime').value='';
+      document.getElementById('reqKind').value='확인'; document.getElementById('reqWho').focus();
+    }).catch(function(e){ setStatus('err',e.code||e.message); })
+      .then(function(){ requestSaving=false; btn.disabled=false; btn.textContent='요청 등록'; });
+  }
+  function saveRequestField(id,field,val){
+    if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
+    var patch={updatedAt:new Date().toISOString()}; patch[field]=String(val||'').trim();
+    setStatus('busy');
+    db.collection(REQUESTS).doc(id).update(patch).then(function(){ setStatus('ok'); })
+      .catch(function(e){ setStatus('err',e.code||e.message); });
+  }
+  function completeRequest(id){
+    if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
+    var input=document.getElementById('reqResult-'+id), result=input?input.value.trim():'';
+    if(!result){ alert('처리 결과 또는 요청자에게 전달한 내용을 한 줄 남겨주세요.'); if(input) input.focus(); return; }
+    setStatus('busy');
+    db.collection(REQUESTS).doc(id).update({status:'완료',result:result,completedAt:new Date().toISOString(),updatedAt:new Date().toISOString()})
+      .then(function(){ setStatus('ok'); }).catch(function(e){ setStatus('err',e.code||e.message); });
+  }
+  function reopenRequest(id){
+    if(!canEdit) return;
+    db.collection(REQUESTS).doc(id).update({status:'진행',completedAt:'',updatedAt:new Date().toISOString()})
+      .then(function(){ setStatus('ok'); }).catch(function(e){ setStatus('err',e.code||e.message); });
+  }
+  function removeRequest(id){
+    if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
+    if(!confirm('이 업무 요청을 삭제할까요?')) return;
+    db.collection(REQUESTS).doc(id).delete().then(function(){ setStatus('ok'); })
+      .catch(function(e){ setStatus('err',e.code||e.message); });
+  }
+  function copyRequestTable(btn){
+    var showDone=document.getElementById('reqShowDone').checked;
+    var out=[['요청일','요청자','분류','요청 내용','처리기한','상태','처리 결과','완료일']];
+    requestRows.filter(function(r){ return showDone || requestIsOpen(r); }).forEach(function(r){
+      out.push([r.requestDate||'',r.requester||'',r.kind||'',(r.content||'').replace(/\n/g,' / '),
+        [r.dueDate||'',r.dueTime||''].filter(Boolean).join(' '),r.status||'접수',(r.result||'').replace(/\n/g,' / '),r.completedAt||'']);
+    });
+    copyTsv(out,btn);
   }
 
   // 이름을 넣으면 이전에 저장해 둔 소속사·직함을 자동으로 채웁니다
@@ -2130,6 +2404,7 @@
     db=firebase.firestore(); auth=firebase.auth();
     buildProdButtons();
     document.getElementById('qTime').value=nowHM();
+    document.getElementById('reqDue').value=localISO(new Date());
 
     document.getElementById('qContent').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); document.getElementById('qFollowUp').focus(); } });
     document.getElementById('qFollowUp').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); addEntry(); } });
@@ -2145,6 +2420,8 @@
     document.getElementById('gPw').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
     document.getElementById('gEmail').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('gPw').focus(); });
     document.getElementById('mSearch').addEventListener('keydown', function(e){ if(e.key==='Enter') openMemberByInput(); });
+    document.getElementById('reqWho').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); document.getElementById('reqContent').focus(); } });
+    document.getElementById('reqContent').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); addRequest(); } });
     ['rName','rProduct'].forEach(function(id){
       document.getElementById(id).addEventListener('keydown', function(e){ if(e.key==='Enter') runReport(); });
     });
@@ -2161,6 +2438,7 @@
         setStatus(canEdit ? 'ok' : 'off', canEdit ? null : '열람 전용 · '+myEmail);
         watchMembers();
         goToday();
+        loadRequests();
         loadConsults();          // 로그인 후 상담 건 조회
         initArrearUI(); loadArrears();
         initPayUI(); loadPayments();
@@ -2170,6 +2448,8 @@
         if(unsubDay){ unsubDay(); unsubDay=null; }
         if(unsubCarry){ unsubCarry(); unsubCarry=null; }
         if(unsubMembers){ unsubMembers(); unsubMembers=null; }
+        if(unsubRequests){ unsubRequests(); unsubRequests=null; }
+        requestRows=[]; renderRequests();
         csRows=[]; renderConsults();
         arRows=[]; renderArrears();
         payRows=[]; renderPayments();
