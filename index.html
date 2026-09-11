@@ -331,6 +331,13 @@
   .ghead > div{ background:#F8F6F1; border-bottom:1px solid var(--line); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .gfoot > div{ background:#F8F6F1; border-top:2px solid var(--line); border-bottom:none; font-weight:800; color:var(--navy); }
   .grow.today > div{ background:#FBF6EC; }
+  .goal-row.day-group-start > div:not(.g-memoline){ border-top:2px solid #DDD2BC; }
+  .goal-row.day-group-cont > div:not(.g-memoline){ background:#FCFBF8; }
+  .goal-row.day-group-cont.today > div:not(.g-memoline){ background:#FBF6EC; }
+  .goal-row.day-group-cont .g-date,.goal-row.day-group-cont .g-dow{ opacity:.34; transition:opacity .15s; }
+  .goal-row.day-group-cont:hover .g-date,.goal-row.day-group-cont:focus-within .g-date,
+  .goal-row.day-group-cont:hover .g-dow,.goal-row.day-group-cont:focus-within .g-dow{ opacity:1; }
+  .goal-row.day-group-cont .g-actual,.goal-row.day-group-cont .g-rate{ color:#C5C0B6; font-weight:400; }
   /* 03 전략: 헤더·합계 고정 */
   .stable .shead > div{ position:sticky; top:0; z-index:3; }
   .stable .sfoot > div{ position:sticky; bottom:0; z-index:3; box-shadow:0 -1px 0 var(--line); }
@@ -392,6 +399,7 @@
   .goal-primary{ margin-top:0; color:#fff; background:var(--brass); border-style:solid; border-color:var(--brass); font-weight:700; }
   .goal-primary:hover{ background:#9B7947; }
   .goal-view-toggle{ display:inline-flex; align-items:center; gap:6px; margin-left:auto; color:var(--muted); font-size:12.5px; cursor:pointer; }
+  .goal-view-toggle + .goal-view-toggle{ margin-left:0; }
   .goal-view-toggle input{ accent-color:var(--brass); }
   .goal-month-card{
     display:grid; grid-template-columns:repeat(4,minmax(0,1fr)) auto; gap:0; align-items:stretch;
@@ -413,6 +421,8 @@
   .log-tools{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .chip-cnt{ font-size:12px; font-weight:700; padding:4px 11px; border-radius:20px; background:#EFEAE0; color:#6B5122; }
   .log-scroll.expanded{ max-height:none !important; overflow-y:visible !important; }
+  #goalScrollBox.scroll-y{ max-height:none; overflow-y:visible; }
+  #goalScrollBox .gtable .ghead > div,#goalScrollBox .gtable .gfoot > div{ position:static; box-shadow:none; }
 
   /* 일자별 전략 일지 */
   .sl-bar{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
@@ -679,6 +689,10 @@
   .dash-action-btn{ font-family:'Pretendard',sans-serif; font-size:12px; font-weight:700; padding:8px 12px; border-radius:8px; cursor:pointer; border:1px solid var(--navy); background:#fff; color:var(--navy); }
   .dash-action-btn.primary{ background:var(--navy); color:#fff; }
   .dash-action-btn:hover{ opacity:.84; }
+  .dashboard-mode-btn{ font-family:'Pretendard',sans-serif; font-size:11.5px; font-weight:700; padding:7px 11px; border-radius:20px; cursor:pointer; border:1px solid #CBD2DC; background:#fff; color:#596273; white-space:nowrap; }
+  .dashboard-mode-btn:hover{ border-color:var(--navy); color:var(--navy); }
+  body.dashboard-report-mode .dashboard-mode-btn{ background:var(--navy); border-color:var(--navy); color:#fff; }
+  body.dashboard-report-mode .tab-pane[data-pane="1"] .goal-edit-only{ display:none !important; }
   .dash-kicker{ color:var(--brass); font-weight:800; font-size:11px; letter-spacing:.12em; }
   .dash-title{ font-family:'Noto Serif KR',serif; color:var(--navy); font-size:21px; margin:2px 0 0; }
   .dash-date{ color:var(--muted); font-size:12.5px; }
@@ -709,6 +723,20 @@
   .pace-box{ background:#F7F8FA; border-radius:10px; padding:11px 12px; }
   .pace-box .l{ font-size:10.5px; color:var(--muted); font-weight:700; }
   .pace-box .v{ margin-top:3px; color:var(--navy); font-size:15px; font-weight:800; }
+  .today-goal-quick{ margin-top:10px; padding:10px; border:1px solid #DFE5EC; border-radius:10px; background:#F7F9FC; }
+  .tg-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:7px; }
+  .tg-title{ color:var(--navy); font-size:11.5px; font-weight:800; }
+  .tg-feedback{ color:var(--green); font-size:10.5px; font-weight:700; }
+  .tg-form{ display:grid; grid-template-columns:minmax(125px,.95fr) minmax(130px,.9fr) 100px auto; gap:6px; align-items:end; }
+  .tg-field{ min-width:0; }
+  .tg-field label{ display:block; margin:0 0 4px 2px; color:#7C7465; font-size:10.5px; font-weight:700; }
+  .tg-field input{ width:100%; min-width:0; height:34px; padding:6px 8px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); font-family:'Pretendard',sans-serif; font-size:11.5px; }
+  .tg-field input:focus{ outline:none; border-color:var(--brass); box-shadow:0 0 0 3px rgba(176,141,87,.12); }
+  .tg-field input.tg-amount{ text-align:right; color:var(--navy); font-weight:700; }
+  .tg-memo-field{ grid-column:1 / -1; }
+  .tg-add{ height:34px; padding:0 12px; border:1px solid var(--brass); border-radius:8px; background:var(--brass); color:#fff; cursor:pointer; white-space:nowrap; font-family:'Pretendard',sans-serif; font-size:11.5px; font-weight:700; }
+  .tg-add:hover{ background:#9B7947; }
+  .tg-add:disabled{ opacity:.45; cursor:not-allowed; }
   .today-strategy{ margin-top:13px; padding-top:12px; border-top:1px solid #ECEEF1; }
   .today-strategy-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:9px; }
   .today-strategy-title{ color:var(--navy); font-size:12px; font-weight:800; }
@@ -791,6 +819,8 @@
     .today-strategy-input .sq-form{ grid-template-columns:1fr 1fr; }
     .today-strategy-input .sq-memo-field{ grid-column:1 / -1; }
     .today-strategy-input .sq-add{ grid-column:1 / -1; }
+    .tg-form{ grid-template-columns:1fr 1fr; }
+    .tg-memo-field,.tg-add{ grid-column:1 / -1; }
     .tower-strip{ grid-template-columns:1fr; }
     .tower-stat{ border-right:0; border-bottom:1px solid #E8EBEF; }
     .tower-stat:last-child{ border-bottom:0; }
@@ -807,6 +837,7 @@
     .dash-head-right{ align-items:flex-end; }
     .dash-actions{ width:100%; }
     .dash-action-btn{ flex:1; padding:7px 8px; font-size:11.5px; }
+    .dashboard-mode-btn{ padding:6px 9px; }
     .dash-panel{ padding:14px; }
     .quick-form{ grid-template-columns:1fr; }
     .quick-form input:nth-child(4),.quick-add{ grid-column:auto; }
@@ -821,9 +852,11 @@
     .sq-field:nth-child(5),.sq-add{ grid-column:auto; }
     .today-strategy-input .sq-form{ grid-template-columns:1fr; }
     .today-strategy-input .sq-memo-field,.today-strategy-input .sq-add{ grid-column:auto; }
+    .tg-form{ grid-template-columns:1fr; }
+    .tg-memo-field,.tg-add{ grid-column:auto; }
   }
   @media print{
-    .dash-actions,.quick-entry-drawer,.detail-intro,.strategy-quick,.td-add-toggle{ display:none !important; }
+    .dash-actions,.dashboard-mode-btn,.quick-entry-drawer,.detail-intro,.strategy-quick,.today-goal-quick,.td-add-toggle{ display:none !important; }
     .kpi-grid{ grid-template-columns:repeat(4,1fr); }
     .dash-grid{ grid-template-columns:1.3fr .7fr; }
     .tower-strip{ grid-template-columns:repeat(3,1fr); }
@@ -887,6 +920,7 @@
     </div>
     <div class="dash-head-right">
       <div class="dash-date" id="dashDate"></div>
+      <button class="dashboard-mode-btn" id="dashboardModeBtn" type="button" onclick="toggleDashboardMode()" aria-pressed="false">보고 보기</button>
       <div class="dash-actions goal-edit-only">
         <button class="dash-action-btn" onclick="showTab(2)">목표·전략 입력</button>
         <button class="dash-action-btn primary" onclick="showTab(3)">매출 기록 입력</button>
@@ -933,6 +967,31 @@
         <div class="pace-row">
           <div class="pace-box"><div class="l">오늘 목표</div><div class="v" id="todayGoal">0원</div></div>
           <div class="pace-box"><div class="l">오늘 실적</div><div class="v" id="todayActual">0원</div></div>
+        </div>
+        <div class="today-goal-quick goal-edit-only">
+          <div class="tg-head">
+            <span class="tg-title">+ 오늘 목표 바로 입력</span>
+            <span class="tg-feedback" id="tgFeedback">날짜는 오늘로 자동 등록</span>
+          </div>
+          <div class="tg-form">
+            <div class="tg-field">
+              <label for="tgItem">핵심 목표 *</label>
+              <input type="text" id="tgItem" placeholder="예: 스타19 추천 확인" onkeydown="quickTodayGoalEnter(event)">
+            </div>
+            <div class="tg-field">
+              <label for="tgTarget">대상</label>
+              <input type="text" id="tgTarget" placeholder="예: 정재원 추천자 외 2명" onkeydown="quickTodayGoalEnter(event)">
+            </div>
+            <div class="tg-field">
+              <label for="tgAmount">목표 금액</label>
+              <input type="text" inputmode="numeric" class="tg-amount" id="tgAmount" placeholder="예: 1,200,000" oninput="formatQuickAmount(this)" onkeydown="quickTodayGoalEnter(event)">
+            </div>
+            <button class="tg-add" type="button" onclick="addDashboardTodayGoal()">+ 추가</button>
+            <div class="tg-field tg-memo-field">
+              <label for="tgMemo">주요 행동</label>
+              <input type="text" id="tgMemo" placeholder="예: 오전 통화 → 안내문 발송 → 오후 신청 여부 확인" onkeydown="quickTodayGoalEnter(event)">
+            </div>
+          </div>
         </div>
         <div class="today-strategy">
           <div class="today-strategy-head">
@@ -1147,6 +1206,7 @@
     <button class="mini-toggle" id="goalExpandBtn" onclick="toggleBoxById('goalScrollBox',this)">⤢ 전체 펼치기</button>
     <button class="mini-toggle" onclick="copyGoalTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
     <span class="chip-cnt" id="goalCount"></span>
+    <label class="goal-view-toggle"><input type="checkbox" id="showPastGoals" onchange="togglePastGoals()"> 지난 기록 포함 <span id="pastGoalCount"></span></label>
     <label class="goal-view-toggle"><input type="checkbox" id="showBlankGoals" onchange="toggleBlankGoals()"> 빈 날짜 포함</label>
   </div>
   <div class="log-scroll scroll-y" id="goalScrollBox">
@@ -1392,6 +1452,8 @@
   var isSnapshotFile = (document.documentElement.getAttribute('data-snapshot') === '1');
   var firebaseReady = false;
   var showBlankGoalRows = false;
+  var showPastGoalRows = false;
+  var dashboardReportMode = false;
 
   // ---------- number formatting ----------
   function toNum(str){
@@ -1994,17 +2056,30 @@
 
   function copyGoalTable(btn){
     recalcNow();
-    var out = [['날짜','요일','핵심 목표','대상','주요 행동','목표(원)','실적(원)','차이','달성률']];
+    var out = [['날짜','요일','핵심 목표','대상','주요 행동','목표 항목(원)','일 실적(원)','일 차이','일 달성률']];
     var g = 0, a = 0;
-    document.querySelectorAll('#goalBody .goal-row').forEach(function(r){
-      if(goalRowIsBlank(r)) return;
+    var rows = Array.prototype.slice.call(document.querySelectorAll('#goalBody .goal-row'));
+    var dateGoals = {}, seenDate = {};
+    rows.forEach(function(r){
+      var d = r.querySelector('.g-date').value;
+      if(goalRowPlanIsBlank(r) && !(d && simpleActualByDate[d])) return;
+      if(d) dateGoals[d] = (dateGoals[d] || 0) + toNum(r.querySelector('.g-amt').value);
+    });
+    rows.forEach(function(r){
+      var d = r.querySelector('.g-date').value;
+      if(goalRowPlanIsBlank(r) && !(d && simpleActualByDate[d])) return;
       var gv = toNum(r.querySelector('.g-amt').value);
-      var av = toNum(r.querySelector('.g-actual').textContent);
-      g += gv; a += av;
-      out.push([r.querySelector('.g-date').value, r.querySelector('.g-dow').textContent,
+      var first = !d || !seenDate[d];
+      if(d) seenDate[d] = 1;
+      var av = first ? (d ? (simpleActualByDate[d] || 0) : 0) : '';
+      var dayGoal = d ? (dateGoals[d] || 0) : gv;
+      var dayRate = first && dayGoal > 0 ? Math.round(toNum(av)/dayGoal*100)+'%' : '';
+      g += gv;
+      if(first) a += toNum(av);
+      out.push([d, d ? dowLabel(d) : '-',
                 r.querySelector('.g-item').value, r.querySelector('.g-target').value,
-                r.querySelector('.g-memo').value.replace(/\n/g,' / '), gv, av, av-gv,
-                r.querySelector('.g-rate').textContent]);
+                r.querySelector('.g-memo').value.replace(/\n/g,' / '), gv, av,
+                first ? toNum(av)-dayGoal : '', dayRate]);
     });
     out.push(['합계','','','','',g,a,a-g, g>0? Math.round(a/g*100)+'%':'']);
     copyTsv(out, btn);
@@ -2575,18 +2650,82 @@
     return row;
   }
 
+  function insertGoalRowByDate(data){
+    var tbody = document.getElementById('goalBody');
+    var row = buildGoalRow(data || {});
+    var date = (data && data.date) || '';
+    var insertPoint = null;
+    Array.prototype.slice.call(tbody.querySelectorAll('.goal-row')).some(function(existing){
+      var existingDate = existing.querySelector('.g-date').value;
+      if(date && existingDate && existingDate >= date){ insertPoint = existing; return true; }
+      return false;
+    });
+    row.setAttribute('data-force-visible','1');
+    if(insertPoint) tbody.insertBefore(row, insertPoint);
+    else tbody.appendChild(row);
+    return row;
+  }
+
+  function goalRowPlanIsBlank(row){
+    return !row.querySelector('.g-item').value.trim() &&
+           !row.querySelector('.g-target').value.trim() &&
+           !row.querySelector('.g-memo').value.trim() &&
+           toNum(row.querySelector('.g-amt').value) === 0;
+  }
+
   function addTodayGoal(){
     if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
     var today = localISO(new Date());
-    var found = null;
-    document.querySelectorAll('#goalBody .goal-row').forEach(function(row){
-      if(row.querySelector('.g-date').value === today && !found) found = row;
+    var blankToday = null;
+    document.querySelectorAll('#goalBody .goal-row').forEach(function(existing){
+      var date = existing.querySelector('.g-date').value;
+      if(date !== today || blankToday) return;
+      if(goalRowPlanIsBlank(existing)) blankToday = existing;
     });
-    var row = found || addGoalRow({date:today});
+
+    // 작성 중인 빈 행만 재사용하고, 이미 작성된 오늘 목표는 절대 덮어쓰지 않습니다.
+    var row = blankToday || insertGoalRowByDate({date:today});
+    if(!blankToday) scheduleSave();
     row.setAttribute('data-force-visible','1');
     recalcAll();
     var input = row.querySelector('.g-item');
-    if(input){ input.focus(); input.select(); }
+    if(input){
+      requestAnimationFrame(function(){
+        input.focus({preventScroll:true});
+        row.scrollIntoView({behavior:'smooth',block:'center'});
+      });
+    }
+  }
+
+  function quickTodayGoalEnter(e){
+    if(e.key !== 'Enter') return;
+    e.preventDefault();
+    addDashboardTodayGoal();
+  }
+
+  function addDashboardTodayGoal(){
+    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    var itemEl = document.getElementById('tgItem');
+    var item = itemEl.value.trim();
+    if(!item){ itemEl.focus(); return; }
+    var row = insertGoalRowByDate({
+      date: localISO(new Date()),
+      item: item,
+      target: document.getElementById('tgTarget').value.trim(),
+      goal: toNum(document.getElementById('tgAmount').value),
+      memo: document.getElementById('tgMemo').value.trim()
+    });
+    document.getElementById('tgItem').value = '';
+    document.getElementById('tgTarget').value = '';
+    document.getElementById('tgAmount').value = '';
+    document.getElementById('tgMemo').value = '';
+    recalcAll();
+    scheduleSave();
+    var feedback = document.getElementById('tgFeedback');
+    feedback.textContent = '오늘 목표에 추가했습니다.';
+    setTimeout(function(){ if(feedback) feedback.textContent = '날짜는 오늘로 자동 등록'; },1600);
+    itemEl.focus();
+    row.removeAttribute('data-force-visible');
   }
 
   function addOtherGoal(){
@@ -2597,17 +2736,19 @@
   }
 
   function goalRowIsBlank(row){
-    var item = row.querySelector('.g-item').value.trim();
-    var target = row.querySelector('.g-target').value.trim();
-    var memo = row.querySelector('.g-memo').value.trim();
-    var goal = toNum(row.querySelector('.g-amt').value);
     var actual = toNum(row.querySelector('.g-actual').textContent);
-    return !item && !target && !memo && goal === 0 && actual === 0;
+    return goalRowPlanIsBlank(row) && actual === 0;
   }
 
   function toggleBlankGoals(){
     var chk = document.getElementById('showBlankGoals');
     showBlankGoalRows = !!(chk && chk.checked);
+    recalcAll();
+  }
+
+  function togglePastGoals(){
+    var chk = document.getElementById('showPastGoals');
+    showPastGoalRows = !!(chk && chk.checked);
     recalcAll();
   }
 
@@ -2701,39 +2842,83 @@
 
   function recalcGoalTable(actualByDate, weeks, weekMap){
     var todayISO = localISO(new Date());
-    var rows = document.querySelectorAll('#goalBody .goal-row');
-    var sum = 0, act = 0, cum = 0, activeCount = 0;
+    var rows = Array.prototype.slice.call(document.querySelectorAll('#goalBody .goal-row'));
+    var sum = 0, act = 0, cum = 0;
     var dailyTmp = [];
+    var dateInfo = {};
+    var planRowCount = 0;
 
     rows.forEach(function(row){
       var d = row.querySelector('.g-date').value;
       var g = toNum(row.querySelector('.g-amt').value);
-      var a = (d && actualByDate.hasOwnProperty(d)) ? actualByDate[d] : 0;
-      sum += g; act += a;
+      sum += g;
+      if(!goalRowPlanIsBlank(row)) planRowCount++;
       if(d && d <= todayISO) cum += g;
       if(d){
+        if(!dateInfo[d]) dateInfo[d] = {goal:0,actual:(actualByDate[d]||0),rows:0,planRows:0};
+        dateInfo[d].goal += g;
+        dateInfo[d].rows += 1;
+        if(!goalRowPlanIsBlank(row)) dateInfo[d].planRows += 1;
         var wo = weekMap[weekKeyForDate(d)];
-        if(wo){ wo.goal += g; wo.actual += a; }
+        if(wo) wo.goal += g;
       }
+    });
 
-      row.className = 'grow goal-row' + (d === todayISO ? ' today' : '');
-      if(d) dailyTmp.push({ date: d, goal: g, actual: a });
-      row.querySelector('.g-dow').textContent = dowLabel(d);
-      row.querySelector('.g-actual').textContent = fmt(a);
+    Object.keys(dateInfo).sort().forEach(function(d){
+      var info = dateInfo[d];
+      act += info.actual;
+      dailyTmp.push({date:d,goal:info.goal,actual:info.actual});
+      var wo = weekMap[weekKeyForDate(d)];
+      if(wo) wo.actual += info.actual;
+    });
 
+    var visibleLeader = {};
+    rows.forEach(function(row){
+      var d = row.querySelector('.g-date').value;
+      var info = d ? dateInfo[d] : null;
+      var a = info ? info.actual : 0;
+      var blankRow = goalRowPlanIsBlank(row) && a === 0;
+      var hideBlank = !showBlankGoalRows && !row.hasAttribute('data-force-visible') && blankRow;
+      var hidePast = !showPastGoalRows && d && d < todayISO && !row.hasAttribute('data-force-visible');
+      row.hidden = !!(hideBlank || hidePast);
+
+      var cls = 'grow goal-row' + (d === todayISO ? ' today' : '');
+      if(row.hidden){ row.className = cls; return; }
+
+      var firstOfDate = !!d && !visibleLeader[d];
+      if(d){
+        visibleLeader[d] = 1;
+      }
+      var groupCount = info ? Math.max(info.planRows, info.actual ? 1 : 0) : 0;
+      if(firstOfDate && groupCount > 1) cls += ' day-group-start';
+      else if(d && !firstOfDate) cls += ' day-group-cont';
+      row.className = cls;
+
+      var dow = row.querySelector('.g-dow');
+      var actualCell = row.querySelector('.g-actual');
       var rateCell = row.querySelector('.g-rate');
-      if(g > 0){
-        var r = a / g * 100;
-        rateCell.textContent = r.toFixed(0)+'%';
-        rateCell.className = 'g-num g-rate ' + (r >= 100 ? 'rate-good' : 'rate-bad');
+      if(d && firstOfDate){
+        dow.textContent = dowLabel(d) + (groupCount > 1 ? ' · '+groupCount+'건' : '');
+        actualCell.textContent = fmt(a);
+        if(info.goal > 0){
+          var dailyRate = a / info.goal * 100;
+          rateCell.textContent = dailyRate.toFixed(0)+'%';
+          rateCell.className = 'g-num g-rate ' + (dailyRate >= 100 ? 'rate-good' : 'rate-bad');
+        } else {
+          rateCell.textContent = '-';
+          rateCell.className = 'g-num g-rate';
+        }
+      } else if(d){
+        dow.textContent = '추가';
+        actualCell.textContent = '↳';
+        rateCell.textContent = '';
+        rateCell.className = 'g-num g-rate';
       } else {
+        dow.textContent = '-';
+        actualCell.textContent = '0';
         rateCell.textContent = '-';
         rateCell.className = 'g-num g-rate';
       }
-
-      var hideBlank = !showBlankGoalRows && !row.hasAttribute('data-force-visible') && goalRowIsBlank(row);
-      row.hidden = hideBlank;
-      if(!hideBlank) activeCount++;
     });
 
     goalDaily = dailyTmp;
@@ -2742,13 +2927,21 @@
 
     document.getElementById('gSumCell').textContent = fmt(sum);
     var gc = document.getElementById('goalCount');
-    if(gc) gc.textContent = activeCount + '일 · 목표 ' + fmt(sum) + '원 · 실적 ' + fmt(act) + '원';
+    var plannedDateCount = Object.keys(dateInfo).filter(function(d){
+      return dateInfo[d].planRows > 0 || dateInfo[d].actual !== 0;
+    }).length;
+    if(gc) gc.textContent = plannedDateCount + '일 · '+planRowCount+'개 목표 · 목표 ' + fmt(sum) + '원 · 실적 ' + fmt(act) + '원';
+    var pastCount = Object.keys(dateInfo).filter(function(d){
+      return d < todayISO && (dateInfo[d].planRows > 0 || dateInfo[d].actual !== 0);
+    }).length;
+    var pc = document.getElementById('pastGoalCount');
+    if(pc) pc.textContent = pastCount ? '('+pastCount+'일)' : '';
     document.getElementById('gActualCell').textContent = fmt(act);
     document.getElementById('gRateCell').textContent = sum > 0 ? (act/sum*100).toFixed(0)+'%' : '-';
 
     var monthGoal = toNum(document.getElementById('goalInput').value);
     var note = document.getElementById('goalNote');
-    if(activeCount === 0){
+    if(planRowCount === 0 && plannedDateCount === 0){
       note.className = 'goal-note';
       note.innerHTML = '아직 실행 날짜가 없습니다. <b>+ 오늘 목표 입력</b>을 눌러 오늘 할 일부터 등록해보세요.';
     } else if(monthGoal > 0 && sum > monthGoal){
@@ -2843,6 +3036,17 @@
 
   // ---------- simple dashboard ----------
   var simpleActualByDate = {};
+
+  function toggleDashboardMode(){
+    dashboardReportMode = !dashboardReportMode;
+    document.body.classList.toggle('dashboard-report-mode', dashboardReportMode);
+    var btn = document.getElementById('dashboardModeBtn');
+    if(btn){
+      btn.textContent = dashboardReportMode ? '입력 보기' : '보고 보기';
+      btn.setAttribute('aria-pressed', dashboardReportMode ? 'true' : 'false');
+      btn.title = dashboardReportMode ? '입력창을 다시 표시합니다.' : '입력창을 감추고 보고용으로 봅니다.';
+    }
+  }
 
   function compactWon(n){
     n = Math.round(Number(n) || 0);
@@ -3290,7 +3494,7 @@
     var editable = canEdit && !isSnapshotFile;
     if(!editable) closeGoalSetup();
     document.querySelectorAll('[contenteditable]').forEach(function(el){ el.setAttribute('contenteditable', editable ? 'true' : 'false'); });
-    document.querySelectorAll('#goalInput, #stratBody input, #dbBody input, #itemBody input, #logBody input, #goalBody input, #quickDate, #quickItem, #quickAmount, #quickMemo, .quick-add, .strategy-quick input, .strategy-quick button').forEach(function(el){ el.disabled = !editable; });
+    document.querySelectorAll('#goalInput, #stratBody input, #dbBody input, #itemBody input, #logBody input, #goalBody input, #quickDate, #quickItem, #quickAmount, #quickMemo, .quick-add, .strategy-quick input, .strategy-quick button, .today-goal-quick input, .today-goal-quick button').forEach(function(el){ el.disabled = !editable; });
     // 메모는 잠그지 않고 '수정 불가'로 둠 — 읽기 전용으로 보는 사람도 눌러서 전체를 볼 수 있어야 함
     var slt = document.getElementById('slText');
     if(slt) slt.readOnly = !editable;
@@ -3302,6 +3506,8 @@
       el.readOnly = !editable;
     });
     document.querySelectorAll('.add-row, .goal-edit-only, .del-x, .ord').forEach(function(el){ el.style.display = editable ? '' : 'none'; });
+    var modeBtn = document.getElementById('dashboardModeBtn');
+    if(modeBtn) modeBtn.style.display = editable ? '' : 'none';
     var btn = document.getElementById('authBtn');
     if(isSnapshotFile){ btn.style.display = 'none'; }
     else { btn.textContent = myEmail ? '🔓 로그아웃' : '🔑 편집 로그인'; }
