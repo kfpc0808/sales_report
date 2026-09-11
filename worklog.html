@@ -574,6 +574,101 @@
   @media print{
     .quick,.quick-rules,.quick-detail{ display:none !important; }
   }
+
+  /* ---------- 관계 복원 ---------- */
+  .rr-summary{ background:linear-gradient(150deg,#172B4D,#101E36); color:#F3F4F7; border-radius:14px; padding:18px 20px; margin-bottom:14px; }
+  .rr-summary-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+  .rr-summary-title{ font-family:'Noto Serif KR',serif; font-size:18px; font-weight:800; }
+  .rr-summary-copy{ margin-top:3px; color:#BFC7D6; font-size:12px; }
+  .rr-principle{ max-width:470px; padding:8px 12px; border:1px solid rgba(216,195,154,.35); border-radius:10px; color:var(--brass-light); font-size:12px; line-height:1.55; }
+  .rr-facts{ display:grid; grid-template-columns:repeat(7,minmax(86px,1fr)); gap:8px; margin-top:15px; }
+  .rr-fact{ padding:9px 10px; border-radius:10px; background:rgba(255,255,255,.07); }
+  .rr-fact .k{ color:#AEB7C8; font-size:10.5px; }
+  .rr-fact .v{ margin-top:1px; font-size:18px; font-weight:800; }
+  .rr-fact.warn .v{ color:#F1A899; }
+  .rr-add{ display:grid; grid-template-columns:minmax(140px,.8fr) 94px minmax(220px,1.35fr) 128px 86px; gap:7px; margin-bottom:10px; }
+  .rr-add input,.rr-add select,.rr-filter input,.rr-filter select,.rr-field input,.rr-field select,.rr-field textarea,.rr-contact input,.rr-contact select,.rr-contact textarea{
+    width:100%; min-width:0; border:1px solid var(--line); border-radius:9px; background:#FBFAF7; color:var(--ink); padding:8px 10px; font:500 13px 'Pretendard';
+  }
+  .rr-add input:focus,.rr-add select:focus,.rr-filter input:focus,.rr-filter select:focus,.rr-field input:focus,.rr-field select:focus,.rr-field textarea:focus,.rr-contact input:focus,.rr-contact select:focus,.rr-contact textarea:focus{
+    outline:none; border-color:var(--brass); background:#fff;
+  }
+  .rr-add button{ border:0; border-radius:9px; background:var(--brass); color:#fff; font:800 12px 'Pretendard'; cursor:pointer; }
+  .rr-toolbar{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rr-guide{ color:var(--muted); font-size:11.5px; }
+  .rr-group-guide{ display:flex; gap:6px; flex-wrap:wrap; margin:-1px 0 11px; }
+  .rr-group-guide span{ padding:3px 8px; border-radius:20px; background:#F2EFE8; color:#625B4E; font-size:10.5px; }
+  .rr-group-guide b{ color:#6B5122; }
+  .rr-bulk{ display:none; margin:-1px 0 12px; padding:12px; border:1px solid var(--line); border-radius:11px; background:#FBF9F4; }
+  .rr-bulk.on{ display:block; }
+  .rr-bulk textarea{ width:100%; min-height:110px; resize:vertical; border:1px solid var(--line); border-radius:9px; padding:10px; font:12.5px/1.6 'Pretendard'; }
+  .rr-bulk-actions{ display:flex; align-items:center; gap:8px; margin-top:8px; flex-wrap:wrap; }
+  .rr-filter{ display:grid; grid-template-columns:minmax(160px,1.2fr) 92px 132px 120px 126px; gap:7px; margin-bottom:12px; }
+  .rr-workspace{ display:grid; grid-template-columns:minmax(310px,.38fr) minmax(0,.62fr); min-height:520px; border:1px solid var(--line); border-radius:13px; overflow:hidden; background:#fff; }
+  .rr-queue{ min-width:0; border-right:1px solid var(--line); background:#FBFAF7; }
+  .rr-list-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding:11px 13px; border-bottom:1px solid var(--line); background:#F3EFE7; }
+  .rr-list-head b{ color:var(--navy); font-family:'Noto Serif KR',serif; font-size:13.5px; }
+  .rr-list-head span{ color:var(--muted); font-size:11px; }
+  .rr-list{ max-height:570px; overflow:auto; }
+  .rr-person{ width:100%; display:block; padding:11px 13px; border:0; border-bottom:1px solid #ECE8DF; background:#fff; text-align:left; cursor:pointer; }
+  .rr-person:hover{ background:#F8F5EE; }
+  .rr-person.on{ background:#F4ECDD; box-shadow:inset 3px 0 0 var(--brass); }
+  .rr-person-top{ display:flex; align-items:center; gap:7px; }
+  .rr-name{ min-width:0; color:var(--navy); font-size:13.5px; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .rr-group{ flex:0 0 auto; min-width:23px; padding:1px 7px; border-radius:20px; background:#E8DCC4; color:#6B5122; font-size:10px; font-weight:800; text-align:center; }
+  .rr-stage{ margin-left:auto; flex:0 0 auto; padding:2px 8px; border-radius:20px; background:#EEF0F3; color:#586275; font-size:10px; font-weight:800; }
+  .rr-stage.restored{ background:var(--green-bg); color:var(--green); }
+  .rr-stage.caution{ background:var(--red-bg); color:var(--red); }
+  .rr-person-meta{ margin-top:4px; color:var(--muted); font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .rr-person-next{ margin-top:3px; color:#765A2B; font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .rr-person-next.late{ color:var(--red); font-weight:700; }
+  .rr-detail{ min-width:0; padding:18px 20px; background:#fff; }
+  .rr-empty{ height:100%; min-height:450px; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:13px; text-align:center; line-height:1.75; }
+  .rr-detail-head{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding-bottom:12px; margin-bottom:13px; border-bottom:1px solid var(--line); }
+  .rr-detail-name{ color:var(--navy); font-family:'Noto Serif KR',serif; font-size:20px; font-weight:800; }
+  .rr-detail-sub{ color:var(--muted); font-size:11.5px; }
+  .rr-head-actions{ display:flex; gap:6px; margin-left:auto; }
+  .rr-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; }
+  .rr-field{ min-width:0; }
+  .rr-field.wide{ grid-column:span 2; }
+  .rr-field.full{ grid-column:1 / -1; }
+  .rr-field label,.rr-contact label{ display:block; margin:0 0 4px 2px; color:var(--muted); font-size:10.5px; font-weight:700; }
+  .rr-field textarea{ min-height:64px; resize:vertical; line-height:1.5; }
+  .rr-save-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:11px; padding-bottom:15px; border-bottom:1px solid var(--line); }
+  .rr-no-sale{ display:flex; align-items:center; gap:6px; color:#6B5122; font-size:11.5px; }
+  .rr-no-sale input{ width:auto; }
+  .rr-primary{ border:1px solid var(--navy); border-radius:9px; padding:8px 13px; background:var(--navy); color:#fff; font:800 12px 'Pretendard'; cursor:pointer; }
+  .rr-contact-title,.rr-history-title{ margin:14px 0 8px; color:var(--navy); font-family:'Noto Serif KR',serif; font-size:14px; font-weight:800; }
+  .rr-contact{ display:grid; grid-template-columns:94px 112px minmax(170px,1.4fr) minmax(150px,1fr) 120px; gap:7px; padding:11px; border-radius:11px; background:#F5F1E8; }
+  .rr-contact .full-action{ grid-column:1 / -1; display:flex; justify-content:flex-end; }
+  .rr-history{ max-height:220px; overflow:auto; border:1px solid var(--line); border-radius:10px; }
+  .rr-history-item{ padding:9px 11px; border-bottom:1px solid #EFECE5; }
+  .rr-history-item:last-child{ border-bottom:0; }
+  .rr-history-meta{ color:var(--brass); font-size:10.5px; font-weight:700; }
+  .rr-history-body{ margin-top:2px; color:#414652; font-size:12.5px; }
+  .rr-history-next{ margin-top:2px; color:var(--red); font-size:11px; }
+  .rr-permission{ display:none; margin-bottom:12px; padding:12px 14px; border:1px solid #E8CFCB; border-radius:10px; background:#FDF7F5; color:var(--red); font-size:12px; }
+  .rr-permission.on{ display:block; }
+  .rr-permission code{ display:block; margin-top:7px; color:#5E403B; white-space:pre-wrap; }
+  @media (max-width:1000px){
+    .rr-facts{ grid-template-columns:repeat(4,1fr); }
+    .rr-add{ grid-template-columns:1fr 100px 1.5fr 1fr 80px; }
+    .rr-contact{ grid-template-columns:1fr 1fr; }
+    .rr-contact .rr-field:nth-child(3),.rr-contact .rr-field:nth-child(4),.rr-contact .full-action{ grid-column:1 / -1; }
+  }
+  @media (max-width:768px){
+    .rr-facts{ grid-template-columns:repeat(2,1fr); }
+    .rr-add,.rr-filter{ grid-template-columns:1fr 1fr; }
+    .rr-add input:nth-child(3){ grid-column:1 / -1; }
+    .rr-add button{ min-height:40px; }
+    .rr-workspace{ grid-template-columns:1fr; }
+    .rr-queue{ border-right:0; border-bottom:1px solid var(--line); }
+    .rr-list{ max-height:300px; }
+    .rr-detail{ padding:15px; }
+    .rr-grid{ grid-template-columns:1fr 1fr; }
+    .rr-field.wide{ grid-column:1 / -1; }
+  }
+  @media print{ #panel-recovery .rr-add,#panel-recovery .rr-toolbar,#panel-recovery .rr-bulk,#panel-recovery .rr-filter,#panel-recovery .rr-contact{ display:none !important; } }
 </style>
 </head>
 <body>
@@ -601,6 +696,7 @@
 
 <div class="tabs">
   <div class="tab on" id="tab-day" onclick="switchTab('day')">오늘의 컨택트</div>
+  <div class="tab" id="tab-recovery" onclick="switchTab('recovery')">관계 복원<span class="tab-badge" id="rrBadge"></span></div>
   <div class="tab" id="tab-request" onclick="switchTab('request')">업무 요청<span class="tab-badge" id="reqBadge"></span></div>
   <div class="tab" id="tab-member" onclick="switchTab('member')">대상별 이력</div>
   <div class="tab" id="tab-consult" onclick="switchTab('consult')">상담 관리<span class="tab-badge" id="csBadge"></span></div>
@@ -775,6 +871,71 @@
     </div>
   </div>
 
+  <!-- ===== 관계 복원 ===== -->
+  <div class="panel" id="panel-recovery">
+    <div class="rr-summary">
+      <div class="rr-summary-head">
+        <div>
+          <div class="rr-summary-title">휴면관계 복원 프로젝트</div>
+          <div class="rr-summary-copy">과거 인연을 다시 만나 현재 상황을 파악하고, 필요한 자원을 연결합니다.</div>
+        </div>
+        <div class="rr-principle">첫 대화의 원칙 · 상품 설명보다 근황과 현재 고민을 먼저 듣습니다.</div>
+      </div>
+      <div class="rr-facts" id="rrFacts"></div>
+    </div>
+
+    <div class="rr-permission" id="rrPermission">
+      관계 복원 DB를 읽거나 저장할 권한이 없습니다. Firestore 규칙에 아래 항목을 추가해주세요.
+      <code>match /relationshipRecovery/{docId} {
+  allow read, write: if request.auth != null;
+}</code>
+    </div>
+
+    <div class="rr-add" id="rrAdd">
+      <input type="text" id="rrName" list="memberList" placeholder="이름" autocomplete="off">
+      <select id="rrGroup" aria-label="관계 그룹">
+        <option value="A">A · 과거 수강·참여</option><option value="B" selected>B · 관계 중단</option>
+        <option value="C">C · 불만 가능성</option><option value="D">D · 접점 약함</option><option value="E">E · 최근 반응</option>
+      </select>
+      <input type="text" id="rrPast" placeholder="과거 인연 · 예: 2018년 삼일 수료" autocomplete="off">
+      <input type="text" id="rrOwner" placeholder="담당자" autocomplete="off">
+      <button id="rrAddBtn" onclick="addRecoveryCase()">대상 추가</button>
+    </div>
+    <div class="rr-toolbar">
+      <button class="mini" onclick="toggleRecoveryBulk()">＋ 명단 붙여넣기</button>
+      <button class="mini" onclick="copyRecoveryTable(this)">⧉ 목록 복사</button>
+      <span class="rr-guide">처음에는 오래된 인연 100명, 담당자별 20명씩 시작하는 구성이 적합합니다.</span>
+    </div>
+    <div class="rr-group-guide"><span><b>A</b> 과거 수강·행사</span><span><b>B</b> 접촉 후 관계 중단</span><span><b>C</b> 불만 가능성·주의</span><span><b>D</b> 메시지만 받은 약한 접점</span><span><b>E</b> 최근에도 반응</span></div>
+    <div class="rr-bulk" id="rrBulk">
+      <textarea id="rrBulkText" placeholder="엑셀에서 복사해 붙여넣으세요. 열 순서: 이름 / 소속 / 직함 / 과거 인연 / 그룹(A~E) / 담당자"></textarea>
+      <div class="rr-bulk-actions">
+        <button class="rr-primary" onclick="importRecoveryCases()">명단 저장</button>
+        <span class="hint-sm">탭으로 구분된 최대 200명을 한 번에 저장합니다. 첫 줄이 제목이면 자동으로 제외합니다.</span>
+      </div>
+    </div>
+
+    <div class="rr-filter">
+      <input type="search" id="rrSearch" placeholder="이름·소속·과거 인연 검색" oninput="renderRecovery()">
+      <select id="rrFilterGroup" onchange="renderRecovery()"><option value="">모든 그룹</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option></select>
+      <select id="rrFilterStage" onchange="renderRecovery()">
+        <option value="">모든 단계</option><option>선정</option><option>첫 연락 전</option><option>연락 시도</option><option>대화 연결</option><option>상태 파악</option><option>도움 제공</option><option>관계 복원</option><option>보류·주의</option>
+      </select>
+      <input type="text" id="rrFilterOwner" placeholder="담당자" oninput="renderRecovery()">
+      <select id="rrFilterFocus" onchange="renderRecovery()"><option value="">전체 보기</option><option value="today">오늘 후속</option><option value="late">기한 지남</option><option value="none">다음 행동 없음</option></select>
+    </div>
+
+    <div class="rr-workspace">
+      <div class="rr-queue">
+        <div class="rr-list-head"><b>관계 대상</b><span id="rrListCount">0명</span></div>
+        <div class="rr-list" id="rrList"></div>
+      </div>
+      <div class="rr-detail" id="rrDetail">
+        <div class="rr-empty">왼쪽에서 대상을 선택하면<br>현재 상황과 다음 연락 이유를 한 화면에서 관리할 수 있습니다.</div>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== 업무 요청 ===== -->
   <div class="panel" id="panel-request">
     <div class="req-summary" id="reqSummary"></div>
@@ -933,7 +1094,7 @@
     messagingSenderId: "17480780068",
     appId: "1:17480780068:web:61b1a719ecfb0be9cd4bb1"
   };
-  var LOGS = 'workLogs', MEMBERS = 'members', REQUESTS = 'managerRequests';
+  var LOGS = 'workLogs', MEMBERS = 'members', REQUESTS = 'managerRequests', RECOVERY = 'relationshipRecovery';
   // 이 이메일만 기록을 추가·수정·삭제할 수 있습니다. 나머지 계정은 열람만 가능합니다.
   var EDITORS = ['parkshinje@gmail.com'];
 
@@ -941,12 +1102,14 @@
   var GRADE_RANK = { '비회원':0, '자비아':1, '이너서클':2, '지사장':3 };
   var QUICK_PRODUCTS = ['STAR','이너','지사','자비아','비즈라인','기홈','컨홈','컨설팅','IIP택스'];
 
-  var db=null, auth=null, unsubDay=null, unsubMembers=null, unsubCarry=null, unsubRequests=null;
+  var db=null, auth=null, unsubDay=null, unsubMembers=null, unsubCarry=null, unsubRequests=null, unsubRecovery=null;
   var currentDate='', members={}, dayRows=[], currentMemberKey='';
   var requestRows=[], requestSaving=false;
   var canEdit=false, myEmail='';
   var entrySaving=false, callSaving=false;
   var callFilter='pending', callPage=0, selectedCallId='', CALL_PAGE_SIZE=8;
+  var recoveryRows=[], selectedRecoveryId='', recoverySaving=false;
+  var RECOVERY_STAGES=['선정','첫 연락 전','연락 시도','대화 연결','상태 파악','도움 제공','관계 복원','보류·주의'];
 
   // ---------- 유틸 ----------
   function localISO(d){
@@ -996,6 +1159,9 @@
     if(rqa) rqa.style.display = canEdit ? '' : 'none';
     var cla=document.getElementById('callAdd');
     if(cla) cla.style.display = canEdit ? '' : 'none';
+    var rra=document.getElementById('rrAdd');
+    if(rra) rra.style.display = canEdit ? '' : 'none';
+    document.querySelectorAll('#rrDetail input, #rrDetail select, #rrDetail textarea, #rrDetail button, #rrBulk button').forEach(function(el){ el.disabled = !canEdit; });
     document.querySelectorAll('#logBody input, #logBody select, #fullLogBody input, #fullLogBody select').forEach(function(el){ el.disabled = !canEdit; });
     document.querySelectorAll('#callDetail textarea, #callDetail .call-action').forEach(function(el){ el.disabled = !canEdit; });
     document.querySelectorAll('#callList .call-del').forEach(function(el){ el.style.display = canEdit ? '' : 'none'; });
@@ -1029,10 +1195,11 @@
 
   // ---------- 탭 ----------
   function switchTab(name){
-    ['day','request','member','consult','arrear','pay','report'].forEach(function(n){
+    ['day','recovery','request','member','consult','arrear','pay','report'].forEach(function(n){
       document.getElementById('tab-'+n).classList.toggle('on', n===name);
       document.getElementById('panel-'+n).classList.toggle('on', n===name);
     });
+    if(name==='recovery') renderRecovery();
   }
 
   function toggleQuickDetail(){
@@ -1352,6 +1519,230 @@
     if(!confirm('이 콜 대상을 목록에서 삭제할까요?')) return;
     db.collection(LOGS).doc(id).delete().then(function(){ if(selectedCallId===id) selectedCallId=''; setStatus('ok'); })
       .catch(function(e){ setStatus('err',e.code||e.message); });
+  }
+
+  // ---------- 관계 복원 ----------
+  function recoveryRow(id){
+    return recoveryRows.filter(function(r){ return r.id===id; })[0] || null;
+  }
+  function recoveryStageClass(stage){
+    return stage==='관계 복원' ? ' restored' : stage==='보류·주의' ? ' caution' : '';
+  }
+  function recoveryDueState(r){
+    if(!r.nextDate) return '';
+    var today=localISO(new Date());
+    return r.nextDate<today ? 'late' : r.nextDate===today ? 'today' : '';
+  }
+  function recoveryFilteredRows(){
+    var q=String(document.getElementById('rrSearch').value||'').toLowerCase().replace(/\s+/g,'');
+    var group=document.getElementById('rrFilterGroup').value;
+    var stage=document.getElementById('rrFilterStage').value;
+    var owner=String(document.getElementById('rrFilterOwner').value||'').toLowerCase().replace(/\s+/g,'');
+    var focus=document.getElementById('rrFilterFocus').value;
+    var today=localISO(new Date());
+    return recoveryRows.filter(function(r){
+      var m=members[r.memberKey]||{};
+      var hay=[r.name,m.company,m.job,r.pastRelationship,r.currentActivity,r.concern,r.owner].join(' ').toLowerCase().replace(/\s+/g,'');
+      if(q && hay.indexOf(q)<0) return false;
+      if(group && r.group!==group) return false;
+      if(stage && (r.stage||'선정')!==stage) return false;
+      if(owner && String(r.owner||'').toLowerCase().replace(/\s+/g,'').indexOf(owner)<0) return false;
+      if(focus==='today' && r.nextDate!==today) return false;
+      if(focus==='late' && (!r.nextDate || r.nextDate>=today || r.stage==='관계 복원')) return false;
+      if(focus==='none' && String(r.nextAction||'').trim()) return false;
+      return true;
+    }).sort(function(a,b){
+      var ar=recoveryDueState(a)==='late'?0:recoveryDueState(a)==='today'?1:2;
+      var br=recoveryDueState(b)==='late'?0:recoveryDueState(b)==='today'?1:2;
+      return ar-br || String(a.nextDate||'9999').localeCompare(String(b.nextDate||'9999')) || String(a.name||'').localeCompare(String(b.name||''));
+    });
+  }
+  function watchRecovery(){
+    if(unsubRecovery) unsubRecovery();
+    document.getElementById('rrPermission').classList.remove('on');
+    unsubRecovery=db.collection(RECOVERY).onSnapshot(function(snap){
+      recoveryRows=[];
+      snap.forEach(function(doc){ var v=doc.data(); v.id=doc.id; recoveryRows.push(v); });
+      if(selectedRecoveryId && !recoveryRow(selectedRecoveryId)) selectedRecoveryId='';
+      renderRecovery();
+    },function(e){
+      recoveryRows=[]; renderRecovery();
+      document.getElementById('rrPermission').classList.add('on');
+      setStatus('err',e.code||'관계 복원 조회 실패');
+    });
+  }
+  function renderRecoveryFacts(){
+    var today=localISO(new Date());
+    var stats={all:recoveryRows.length,before:0,connected:0,known:0,helped:0,restored:0,late:0};
+    recoveryRows.forEach(function(r){
+      var s=r.stage||'선정';
+      if(s==='선정'||s==='첫 연락 전') stats.before++;
+      if(s==='대화 연결') stats.connected++;
+      if(s==='상태 파악') stats.known++;
+      if(s==='도움 제공') stats.helped++;
+      if(s==='관계 복원') stats.restored++;
+      if(r.nextDate && r.nextDate<today && s!=='관계 복원' && s!=='보류·주의') stats.late++;
+    });
+    var facts=[['전체',stats.all],['첫 연락 전',stats.before],['대화 연결',stats.connected],['상태 파악',stats.known],['도움 제공',stats.helped],['관계 복원',stats.restored],['후속 지연',stats.late]];
+    document.getElementById('rrFacts').innerHTML=facts.map(function(v,i){ return '<div class="rr-fact'+(i===6&&v[1]?' warn':'')+'"><div class="k">'+v[0]+'</div><div class="v">'+v[1]+'명</div></div>'; }).join('');
+    document.getElementById('rrBadge').textContent=stats.late ? stats.late : '';
+  }
+  function renderRecovery(){
+    renderRecoveryFacts();
+    var rows=recoveryFilteredRows(), box=document.getElementById('rrList');
+    document.getElementById('rrListCount').textContent=rows.length+'명';
+    box.innerHTML='';
+    if(!rows.length){
+      box.innerHTML='<div class="req-empty">조건에 맞는 관계 대상이 없습니다.</div>';
+      if(!selectedRecoveryId) renderRecoveryDetail();
+      return;
+    }
+    if(!selectedRecoveryId || !recoveryRow(selectedRecoveryId)) selectedRecoveryId=rows[0].id;
+    rows.forEach(function(r){
+      var m=members[r.memberKey]||{}, due=recoveryDueState(r);
+      var btn=document.createElement('button');
+      btn.className='rr-person'+(r.id===selectedRecoveryId?' on':'');
+      btn.innerHTML='<span class="rr-person-top"><span class="rr-group">'+esc(r.group||'B')+'</span><span class="rr-name">'+esc(r.name||r.memberKey)+'</span><span class="rr-stage'+recoveryStageClass(r.stage)+'">'+esc(r.stage||'선정')+'</span></span>'+
+        '<span class="rr-person-meta">'+esc([m.company||r.company||'',m.job||r.job||'',r.owner?('담당 '+r.owner):''].filter(Boolean).join(' · ')||r.pastRelationship||'과거 인연 미입력')+'</span>'+
+        '<span class="rr-person-next'+(due==='late'?' late':'')+'">'+(r.nextAction?((r.nextDate?esc(r.nextDate)+' · ':'')+esc(r.nextAction)):'다음 연락 이유를 정해주세요.')+'</span>';
+      btn.onclick=function(){ selectedRecoveryId=r.id; renderRecovery(); };
+      box.appendChild(btn);
+    });
+    renderRecoveryDetail();
+  }
+  function openSelectedRecoveryMember(){
+    var r=recoveryRow(selectedRecoveryId); if(r) openMember(r.memberKey);
+  }
+  function renderRecoveryDetail(){
+    var r=recoveryRow(selectedRecoveryId), box=document.getElementById('rrDetail');
+    if(!r){ box.innerHTML='<div class="rr-empty">관계 대상을 추가하거나 왼쪽에서 선택해주세요.<br>엑셀 명단은 ‘명단 붙여넣기’로 한 번에 등록할 수 있습니다.</div>'; return; }
+    var m=members[r.memberKey]||{};
+    box.innerHTML='<div class="rr-detail-head">'+
+      '<span class="rr-detail-name">'+esc(r.name||r.memberKey)+'</span><span class="rr-group">'+esc(r.group||'B')+'</span>'+
+      '<span class="rr-detail-sub">'+esc([m.company||r.company||'',m.job||r.job||'',r.lastContactDate?('최근 '+r.lastContactDate):''].filter(Boolean).join(' · '))+'</span>'+
+      '<span class="rr-head-actions"><button class="mini" onclick="openSelectedRecoveryMember()">전체 이력</button>'+(canEdit?'<button class="mini" onclick="removeRecoveryCase()">대상 삭제</button>':'')+'</span></div>'+
+      '<div class="rr-grid">'+
+        '<div class="rr-field"><label>관계 그룹</label><select id="rrDGroup">'+choiceOptions(['A','B','C','D','E'],r.group||'B')+'</select></div>'+
+        '<div class="rr-field"><label>복원 단계</label><select id="rrDStage">'+choiceOptions(RECOVERY_STAGES,r.stage||'선정')+'</select></div>'+
+        '<div class="rr-field"><label>담당자</label><input id="rrDOwner" value="'+esc(r.owner||'')+'" placeholder="내부 담당자"></div>'+
+        '<div class="rr-field wide"><label>과거 인연</label><input id="rrDPast" value="'+esc(r.pastRelationship||'')+'" placeholder="예: 2018년 삼일 수료 · 행사 참여"></div>'+
+        '<div class="rr-field"><label>관계 온도</label><select id="rrDTemp">'+choiceOptions(['차가움','조심','보통','따뜻함'],r.temperature||'보통')+'</select></div>'+
+        '<div class="rr-field wide"><label>현재 활동</label><input id="rrDActivity" value="'+esc(r.currentActivity||'')+'" placeholder="예: GA 팀장 · 개인영업 중심"></div>'+
+        '<div class="rr-field"><label>최근 결과</label><input value="'+esc(r.lastContactResult||'아직 접촉 없음')+'" disabled></div>'+
+        '<div class="rr-field wide"><label>현재 고민</label><textarea id="rrDConcern" placeholder="지금 가장 어려운 점 한 가지">'+esc(r.concern||'')+'</textarea></div>'+
+        '<div class="rr-field"><label>연결할 자원</label><input id="rrDResource" value="'+esc(r.matchingResource||'')+'" placeholder="자료·교육·서비스"></div>'+
+        '<div class="rr-field wide"><label>다음 행동</label><input id="rrDNext" value="'+esc(r.nextAction||'')+'" placeholder="예: 근황 확인 전화 · 사례 자료 전달"></div>'+
+        '<div class="rr-field"><label>다음 연락일</label><input type="date" id="rrDNextDate" value="'+esc(r.nextDate||'')+'"></div>'+
+        '<div class="rr-field full"><label>다음 연락 이유</label><input id="rrDNextReason" value="'+esc(r.nextReason||'')+'" placeholder="왜 다시 연락하는지 한 문장으로 적어두세요."></div>'+
+        '<div class="rr-field full"><label>주의 사항</label><input id="rrDCaution" value="'+esc(r.caution||'')+'" placeholder="불만 이력·연락 선호·피해야 할 제안"></div>'+
+      '</div>'+
+      '<div class="rr-save-row"><label class="rr-no-sale"><input type="checkbox" id="rrDNoSale"'+(r.noSale!==false?' checked':'')+'> 첫 관계 복원 대화에서 판매 제안하지 않기</label><button class="rr-primary" onclick="saveRecoveryDetail()">대상 정보 저장</button></div>'+
+      '<div class="rr-contact-title">접촉 기록 남기기</div>'+
+      '<div class="rr-contact">'+
+        '<div class="rr-field"><label>방법</label><select id="rrCMethod">'+choiceOptions(['전화','카톡','문자','대면','이메일'],r.lastContactMethod||'전화')+'</select></div>'+
+        '<div class="rr-field"><label>결과</label><select id="rrCResult">'+choiceOptions(['연결 안 됨','답변 받음','대화 완료','도움 제공','보류·거절'],'대화 완료')+'</select></div>'+
+        '<div class="rr-field"><label>대화 요약</label><input id="rrCSummary" placeholder="근황·현재 활동·고민 중심으로 간단히"></div>'+
+        '<div class="rr-field"><label>다음 행동</label><input id="rrCNext" value="'+esc(r.nextAction||'')+'" placeholder="다음에 할 일"></div>'+
+        '<div class="rr-field"><label>다음 연락일</label><input type="date" id="rrCNextDate" value="'+esc(r.nextDate||'')+'"></div>'+
+        '<div class="full-action"><button class="rr-primary" id="rrContactBtn" onclick="saveRecoveryContact()">업무 기록에도 저장</button></div>'+
+      '</div>'+
+      '<div class="rr-history-title">이 사람의 최근 업무 히스토리</div><div class="rr-history" id="rrHistory"><div class="req-empty">기록을 불러오는 중...</div></div>';
+    applyEditMode();
+    loadRecoveryHistory(r);
+  }
+  function loadRecoveryHistory(r){
+    var key=r.memberKey, selected=r.id;
+    db.collection(LOGS).where('memberKey','==',key).get().then(function(snap){
+      if(selectedRecoveryId!==selected) return;
+      var rows=[]; snap.forEach(function(doc){ var v=doc.data(); if(!isCallListItem(v)){ v.id=doc.id; rows.push(v); } });
+      rows.sort(function(a,b){ return String(b.date+(b.time||'')).localeCompare(String(a.date+(a.time||''))); });
+      var box=document.getElementById('rrHistory'); if(!box) return;
+      if(!rows.length){ box.innerHTML='<div class="req-empty">아직 업무 기록이 없습니다.</div>'; return; }
+      box.innerHTML=rows.slice(0,8).map(function(v){ return '<div class="rr-history-item"><div class="rr-history-meta">'+esc(v.date)+(v.time?' '+esc(v.time):'')+' · '+esc(contactMethodOf(v))+' · '+esc(contactStatusOf(v))+(v.product?' · '+esc(v.product):'')+'</div><div class="rr-history-body">'+esc(v.content||'')+'</div>'+(v.followUp?'<div class="rr-history-next">다음 행동 · '+esc(v.followUp)+(v.done?' (완료)':'')+'</div>':'')+'</div>'; }).join('');
+    }).catch(function(e){ var box=document.getElementById('rrHistory'); if(box) box.innerHTML='<div class="req-empty">이력 조회 실패 ('+esc(e.code||'')+')</div>'; });
+  }
+  function addRecoveryCase(){
+    if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
+    var name=document.getElementById('rrName').value.trim();
+    if(!name){ document.getElementById('rrName').focus(); return; }
+    var key=nameKey(name), old=recoveryRow(key), now=new Date().toISOString();
+    var rec={memberKey:key,name:name,group:document.getElementById('rrGroup').value,pastRelationship:document.getElementById('rrPast').value.trim(),owner:document.getElementById('rrOwner').value.trim(),updatedAt:now};
+    if(!old){ rec.stage='선정'; rec.temperature='보통'; rec.noSale=true; rec.createdAt=now; rec.campaign='오래된 인연 100명'; }
+    setStatus('busy');
+    db.collection(RECOVERY).doc(key).set(rec,{merge:true}).then(function(){
+      selectedRecoveryId=key; setStatus('ok');
+      document.getElementById('rrName').value=''; document.getElementById('rrPast').value=''; document.getElementById('rrName').focus();
+    }).catch(recoveryError);
+  }
+  function saveRecoveryDetail(){
+    if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
+    var r=recoveryRow(selectedRecoveryId); if(!r) return;
+    var patch={group:document.getElementById('rrDGroup').value,stage:document.getElementById('rrDStage').value,owner:document.getElementById('rrDOwner').value.trim(),pastRelationship:document.getElementById('rrDPast').value.trim(),temperature:document.getElementById('rrDTemp').value,currentActivity:document.getElementById('rrDActivity').value.trim(),concern:document.getElementById('rrDConcern').value.trim(),matchingResource:document.getElementById('rrDResource').value.trim(),nextAction:document.getElementById('rrDNext').value.trim(),nextDate:document.getElementById('rrDNextDate').value,nextReason:document.getElementById('rrDNextReason').value.trim(),caution:document.getElementById('rrDCaution').value.trim(),noSale:document.getElementById('rrDNoSale').checked,updatedAt:new Date().toISOString()};
+    setStatus('busy'); db.collection(RECOVERY).doc(r.id).update(patch).then(function(){ setStatus('ok'); }).catch(recoveryError);
+  }
+  function recoveryStageFromResult(result,current){
+    var map={'연결 안 됨':'연락 시도','답변 받음':'대화 연결','대화 완료':'대화 연결','도움 제공':'도움 제공','보류·거절':'보류·주의'};
+    var next=map[result]||current||'연락 시도';
+    if(current==='상태 파악' && (next==='대화 연결'||next==='연락 시도')) return current;
+    if(current==='도움 제공' && next!=='보류·주의') return current;
+    if(current==='관계 복원' && next!=='보류·주의') return current;
+    return next;
+  }
+  function saveRecoveryContact(){
+    if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
+    var r=recoveryRow(selectedRecoveryId); if(!r||recoverySaving) return;
+    var method=document.getElementById('rrCMethod').value, result=document.getElementById('rrCResult').value;
+    var summary=document.getElementById('rrCSummary').value.trim(), next=document.getElementById('rrCNext').value.trim(), nextDate=document.getElementById('rrCNextDate').value;
+    if(!summary){ document.getElementById('rrCSummary').focus(); return; }
+    var date=localISO(new Date()), now=new Date().toISOString(), status=result==='연결 안 됨'?'접촉 시도':'소통 완료';
+    var logRef=db.collection(LOGS).doc(), memberRef=db.collection(MEMBERS).doc(r.memberKey), caseRef=db.collection(RECOVERY).doc(r.id);
+    var m=members[r.memberKey]||{};
+    var log={date:date,time:nowHM(),memberKey:r.memberKey,memberName:r.name,refKey:'',refName:'',isConsult:false,csStatus:'',csField:'',csWay:'',csExpert:'',csResult:'',csDoneAt:'',contactMethod:method,contactStatus:status,product:'관계 복원',content:summary,followUp:next,done:!next,gradeAt:r.memberKey?gradeOf(r.memberKey):'',createdAt:now,recoveryCaseId:r.id,recoveryResult:result};
+    var casePatch={stage:recoveryStageFromResult(result,r.stage),lastContactAt:now,lastContactDate:date,lastContactMethod:method,lastContactResult:result,nextAction:next,nextDate:nextDate,updatedAt:now};
+    var memberPatch={name:m.name||r.name,nameKey:r.memberKey,lastContact:date,count:(m.count||0)+1};
+    if(!m.name){ memberPatch.contract=null; memberPatch.memberships=[]; memberPatch.products=[]; memberPatch.tags=[]; memberPatch.grade='비회원'; memberPatch.gradeLocked=false; }
+    recoverySaving=true; var btn=document.getElementById('rrContactBtn'); if(btn){ btn.disabled=true; btn.textContent='저장 중'; }
+    setStatus('busy');
+    var batch=db.batch(); batch.set(logRef,log); batch.update(caseRef,casePatch); batch.set(memberRef,memberPatch,{merge:true});
+    batch.commit().then(function(){ setStatus('ok'); }).catch(recoveryError).then(function(){ recoverySaving=false; });
+  }
+  function removeRecoveryCase(){
+    if(!canEdit||!selectedRecoveryId) return;
+    if(!confirm('이 대상을 관계 복원 목록에서 삭제할까요?\n기존 업무 히스토리는 삭제되지 않습니다.')) return;
+    var id=selectedRecoveryId; selectedRecoveryId='';
+    db.collection(RECOVERY).doc(id).delete().then(function(){ setStatus('ok'); }).catch(recoveryError);
+  }
+  function toggleRecoveryBulk(){ document.getElementById('rrBulk').classList.toggle('on'); }
+  function importRecoveryCases(){
+    if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
+    var raw=document.getElementById('rrBulkText').value.trim(); if(!raw) return;
+    var lines=raw.split(/\r?\n/).filter(function(v){return v.trim();});
+    if(lines[0] && /이름|성명/.test(lines[0])) lines.shift();
+    if(lines.length>200){ alert('한 번에 200명까지 저장할 수 있습니다. 명단을 나누어 주세요.'); return; }
+    var now=new Date().toISOString(), batch=db.batch(), count=0;
+    lines.forEach(function(line){
+      var c=line.split('\t'); if(c.length===1) c=line.split(',');
+      var name=String(c[0]||'').trim(); if(!name) return;
+      var key=nameKey(name), old=recoveryRow(key), company=String(c[1]||'').trim(), job=String(c[2]||'').trim();
+      var rec={memberKey:key,name:name,company:company,job:job,pastRelationship:String(c[3]||'').trim(),group:/^[A-E]$/i.test(String(c[4]||'').trim())?String(c[4]).trim().toUpperCase():'B',owner:String(c[5]||'').trim(),updatedAt:now};
+      if(!old){ rec.stage='선정'; rec.temperature='보통'; rec.noSale=true; rec.campaign='오래된 인연 100명'; rec.createdAt=now; }
+      batch.set(db.collection(RECOVERY).doc(key),rec,{merge:true});
+      var m=members[key], mp={name:m&&m.name?m.name:name,nameKey:key};
+      if(company) mp.company=company; if(job) mp.job=job;
+      if(!m){ mp.contract=null; mp.memberships=[]; mp.products=[]; mp.tags=[]; mp.grade='비회원'; mp.gradeLocked=false; mp.count=0; }
+      batch.set(db.collection(MEMBERS).doc(key),mp,{merge:true}); count++;
+    });
+    if(!count) return;
+    setStatus('busy'); batch.commit().then(function(){ document.getElementById('rrBulkText').value=''; document.getElementById('rrBulk').classList.remove('on'); setStatus('ok'); }).catch(recoveryError);
+  }
+  function recoveryError(e){
+    if(e && String(e.code||'').indexOf('permission-denied')>-1) document.getElementById('rrPermission').classList.add('on');
+    setStatus('err',(e&&e.code)||(e&&e.message)||'관계 복원 저장 실패');
+  }
+  function copyRecoveryTable(btn){
+    var out=[['이름','소속','직함','그룹','과거 인연','단계','관계 온도','현재 활동','현재 고민','연결할 자원','담당자','최근 접촉일','최근 결과','다음 행동','다음 연락일','다음 연락 이유','주의 사항']];
+    recoveryFilteredRows().forEach(function(r){ var m=members[r.memberKey]||{}; out.push([r.name||'',m.company||r.company||'',m.job||r.job||'',r.group||'',r.pastRelationship||'',r.stage||'',r.temperature||'',r.currentActivity||'',r.concern||'',r.matchingResource||'',r.owner||'',r.lastContactDate||'',r.lastContactResult||'',r.nextAction||'',r.nextDate||'',r.nextReason||'',r.caution||'']); });
+    copyTsv(out,btn);
   }
 
   // ---------- 내부 업무 요청 ----------
@@ -2421,6 +2812,7 @@
       snap.forEach(function(doc){ var v=doc.data(); v.id=doc.id; v.grade=computeGrade(v); members[doc.id]=v; });
       fillMemberList();
       renderDay();
+      if(recoveryRows.length) renderRecovery();
       if(currentMemberKey) openMember(currentMemberKey);
     }, function(e){ setStatus('err', e.code||'대상 조회 실패'); });
   }
@@ -2780,6 +3172,8 @@
     document.getElementById('mSearch').addEventListener('keydown', function(e){ if(e.key==='Enter') openMemberByInput(); });
     document.getElementById('reqWho').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); document.getElementById('reqContent').focus(); } });
     document.getElementById('reqContent').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); addRequest(); } });
+    document.getElementById('rrName').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); document.getElementById('rrPast').focus(); } });
+    document.getElementById('rrPast').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); addRecoveryCase(); } });
     ['rName','rProduct'].forEach(function(id){
       document.getElementById(id).addEventListener('keydown', function(e){ if(e.key==='Enter') runReport(); });
     });
@@ -2795,6 +3189,7 @@
         applyEditMode();
         setStatus(canEdit ? 'ok' : 'off', canEdit ? null : '열람 전용 · '+myEmail);
         watchMembers();
+        watchRecovery();
         goToday();
         loadRequests();
         loadConsults();          // 로그인 후 상담 건 조회
@@ -2807,7 +3202,9 @@
         if(unsubCarry){ unsubCarry(); unsubCarry=null; }
         if(unsubMembers){ unsubMembers(); unsubMembers=null; }
         if(unsubRequests){ unsubRequests(); unsubRequests=null; }
+        if(unsubRecovery){ unsubRecovery(); unsubRecovery=null; }
         requestRows=[]; renderRequests();
+        recoveryRows=[]; selectedRecoveryId=''; renderRecovery();
         csRows=[]; renderConsults();
         arRows=[]; renderArrears();
         payRows=[]; renderPayments();
