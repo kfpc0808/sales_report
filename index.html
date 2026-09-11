@@ -33,7 +33,7 @@
   .toolbar button.ghost{ background:transparent; color:var(--navy); }
   .toolbar button:hover{ opacity:.85; }
   @media print{
-    .toolbar,.add-row,.del-x,.ord{display:none !important;}
+    .toolbar,.add-row,.goal-edit-only,.del-x,.ord{display:none !important;}
     .tabs{ display:none !important; }
     .tab-pane{ display:block !important; }
     body{background:#fff;}
@@ -155,6 +155,17 @@
   .modal-btns button{ font-family:'Pretendard',sans-serif; font-size:13px; font-weight:600; padding:10px 18px; border-radius:9px; cursor:pointer; min-height:40px; }
   .btn-cancel{ border:1px solid var(--line); background:#fff; color:var(--muted); }
   .btn-go{ border:1px solid var(--navy); background:var(--navy); color:#fff; }
+  .modal.goal-setup{ max-width:460px; }
+  .goal-setup-label{ display:block; margin:14px 0 6px; font-size:12px; font-weight:700; color:var(--navy); }
+  .goal-setup-amount{ display:flex; align-items:center; gap:8px; }
+  .goal-setup-amount input{ margin:0; text-align:right; font-weight:800; color:var(--navy); }
+  .goal-setup-amount span{ color:var(--muted); font-size:13px; }
+  .goal-plan-options{ display:grid; gap:7px; margin-bottom:18px; }
+  .goal-plan-option{ display:flex; align-items:flex-start; gap:9px; border:1px solid var(--line); border-radius:9px; padding:10px 11px; cursor:pointer; }
+  .goal-plan-option:hover{ background:#FBF9F4; border-color:var(--brass-light); }
+  .goal-plan-option input{ width:auto; margin:3px 0 0; accent-color:var(--brass); }
+  .goal-plan-option b{ display:block; font-size:13px; color:var(--navy); }
+  .goal-plan-option small{ display:block; color:var(--muted); font-size:11.5px; margin-top:1px; }
 
   /* item goal board */
   .itable{
@@ -311,10 +322,11 @@
   /* daily goal board (grid layout) */
   .gtable{
     display:grid;
-    grid-template-columns:132px 52px minmax(180px,1fr) 112px 112px 100px 74px 40px;
-    align-items:stretch; min-width:760px; font-size:13.5px;
+    grid-template-columns:132px 52px minmax(180px,1.15fr) minmax(130px,.8fr) 112px 112px 74px 40px;
+    align-items:stretch; min-width:980px; font-size:13.5px;
   }
   .grow, #goalBody{ display:contents; }
+  .goal-row[hidden]{ display:none !important; }
   .grow > div{ min-width:0; padding:7px 8px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
   .ghead > div{ background:#F8F6F1; border-bottom:1px solid var(--line); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .gfoot > div{ background:#F8F6F1; border-top:2px solid var(--line); border-bottom:none; font-weight:800; color:var(--navy); }
@@ -375,6 +387,23 @@
   td.calc.rate-good{ color:var(--green); }
   td.calc.rate-bad{ color:var(--red); }
   .goal-tools{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .goal-section-action{ margin-left:auto; margin-top:0; color:#fff; background:var(--navy); border-style:solid; border-color:var(--navy); }
+  .goal-section-action:hover{ background:var(--navy-2); }
+  .goal-primary{ margin-top:0; color:#fff; background:var(--brass); border-style:solid; border-color:var(--brass); font-weight:700; }
+  .goal-primary:hover{ background:#9B7947; }
+  .goal-view-toggle{ display:inline-flex; align-items:center; gap:6px; margin-left:auto; color:var(--muted); font-size:12.5px; cursor:pointer; }
+  .goal-view-toggle input{ accent-color:var(--brass); }
+  .goal-month-card{
+    display:grid; grid-template-columns:repeat(4,minmax(0,1fr)) auto; gap:0; align-items:stretch;
+    margin-bottom:14px; border:1px solid var(--line); border-radius:12px; background:#fff; overflow:hidden;
+  }
+  .goal-month-kpi{ padding:14px 16px; border-right:1px solid var(--line); }
+  .goal-month-kpi .k{ color:var(--muted); font-size:11.5px; margin-bottom:2px; }
+  .goal-month-kpi .v{ color:var(--navy); font-family:'Noto Serif KR',serif; font-size:17px; font-weight:800; white-space:nowrap; }
+  .goal-month-kpi .v.good{ color:var(--green); }
+  .goal-month-kpi .v.bad{ color:var(--red); }
+  .goal-month-edit{ display:flex; align-items:center; justify-content:center; padding:10px 14px; }
+  .goal-month-edit button{ margin-top:0; white-space:nowrap; }
   .goal-note{ margin-top:12px; font-size:12.5px; color:var(--muted); background:#FBF9F4; border:1px solid var(--line); border-radius:10px; padding:11px 14px; }
   .goal-note b{ color:var(--navy); }
   .goal-note.warn{ background:var(--red-bg); border-color:#E8CFCB; color:#7C382E; }
@@ -584,10 +613,15 @@
     table.log input[type="date"]{ width:100%; min-width:0; font-size:13px; padding:5px 3px; }
     table.log input[type="text"]{ min-width:0; font-size:13px; }
 
-    /* 05 일자별 목표 — 차이·달성률·메모 접기 */
-    .gtable{ min-width:470px; grid-template-columns:106px 44px minmax(96px,1fr) 104px 104px 26px; }
+    /* 일자별 목표 — 모바일에서는 실적·달성률을 접고 입력 항목을 우선 표시 */
+    .gtable{ min-width:620px; grid-template-columns:106px 44px minmax(140px,1fr) minmax(110px,.8fr) 104px 26px; }
     .grow > div:nth-child(6), .grow > div:nth-child(7){ display:none; }
     .g-memoline{ padding:0 8px 8px 8px; }
+    .goal-month-card{ grid-template-columns:1fr 1fr; }
+    .goal-month-kpi:nth-child(2){ border-right:0; }
+    .goal-month-kpi:nth-child(-n+2){ border-bottom:1px solid var(--line); }
+    .goal-month-edit{ grid-column:1 / -1; border-top:1px solid var(--line); }
+    .goal-view-toggle{ width:100%; margin-left:0; }
     .scroll-y{ max-height:70vh; }
     .gtable input[type="date"]{ font-size:13px; padding:5px 3px; }
     .gtable input[type="text"]{ font-size:13px; }
@@ -1041,23 +1075,35 @@
   <div class="section-head">
     <span class="section-num" contenteditable="true">04</span>
     <h2 class="section-title" contenteditable="true">일자별 매출 목표</h2>
+    <button class="add-row goal-section-action" onclick="openGoalSetup()">이번 달 목표 설정</button>
   </div>
-  <div class="section-desc" contenteditable="true">날짜와 목표 금액만 입력하세요. 실적 · 차이 · 달성률은 매출 기록에서 같은 날짜끼리 자동 집계됩니다. 메모는 각 날짜 아래 한 줄에 길게 적으실 수 있습니다. 표가 길어지면 표 안에서 스크롤되며 헤더와 합계 줄은 고정됩니다.</div>
+  <div class="section-desc" contenteditable="true">월 목표를 먼저 정하고, 실제로 실행할 날짜에만 핵심 목표·대상·주요 행동을 입력하세요. 실적과 달성률은 매출 기록에서 자동 집계됩니다.</div>
+
+  <div class="goal-month-card">
+    <div class="goal-month-kpi"><div class="k">이번 달 목표</div><div class="v" id="goalMonthTarget">0원</div></div>
+    <div class="goal-month-kpi"><div class="k">현재 실적</div><div class="v good" id="goalMonthActual">0원</div></div>
+    <div class="goal-month-kpi"><div class="k">남은 목표</div><div class="v bad" id="goalMonthGap">0원</div></div>
+    <div class="goal-month-kpi"><div class="k">달성률</div><div class="v" id="goalMonthRate">0%</div></div>
+    <div class="goal-month-edit"><button class="add-row" onclick="openGoalSetup()">목표 수정</button></div>
+  </div>
 
   <div class="log-tools">
+    <button class="add-row goal-primary" onclick="addTodayGoal()">+ 오늘 목표 입력</button>
+    <button class="mini-toggle goal-edit-only" onclick="addOtherGoal()">다른 날짜 목표 입력</button>
     <button class="mini-toggle" id="goalExpandBtn" onclick="toggleBoxById('goalScrollBox',this)">⤢ 전체 펼치기</button>
     <button class="mini-toggle" onclick="copyGoalTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
     <span class="chip-cnt" id="goalCount"></span>
+    <label class="goal-view-toggle"><input type="checkbox" id="showBlankGoals" onchange="toggleBlankGoals()"> 빈 날짜 포함</label>
   </div>
   <div class="log-scroll scroll-y" id="goalScrollBox">
     <div class="gtable" id="goalTable">
       <div class="grow ghead">
         <div>날짜</div>
         <div class="g-mid">요일</div>
-        <div>아이템 / 대상</div>
+        <div>핵심 목표</div>
+        <div>대상</div>
         <div class="g-num">목표(원)</div>
         <div class="g-num">실적(원)</div>
-        <div class="g-num">차이</div>
         <div class="g-num">달성률</div>
         <div></div>
       </div>
@@ -1066,18 +1112,13 @@
         <div>합계</div>
         <div></div>
         <div></div>
+        <div></div>
         <div class="g-num" id="gSumCell">0</div>
         <div class="g-num" id="gActualCell">0</div>
-        <div class="g-num" id="gDiffCell">0</div>
         <div class="g-num" id="gRateCell">-</div>
         <div></div>
       </div>
     </div>
-  </div>
-  <div class="goal-tools">
-    <button class="add-row" onclick="addGoalRow()">+ 목표 행 추가</button>
-    <button class="add-row" onclick="genMonthGoals()">📅 이번 달 1일~말일 자동 생성</button>
-    <button class="add-row" onclick="applyGoalSumToMonth()">↑ 합계를 월 목표로 반영</button>
   </div>
 
   <div class="range-box">
@@ -1238,6 +1279,38 @@
   </div>
 </div>
 
+<div class="modal-back" id="goalSetupModal" onclick="if(event.target===this) closeGoalSetup()">
+  <div class="modal goal-setup">
+    <h3>이번 달 목표 설정</h3>
+    <p>월 목표를 정한 뒤, 필요한 경우 일자별 계획을 한 번에 배분할 수 있습니다.</p>
+    <label class="goal-setup-label" for="goalSetupAmount">월 목표 매출</label>
+    <div class="goal-setup-amount">
+      <input type="text" id="goalSetupAmount" inputmode="numeric" placeholder="예: 35,100,000" oninput="formatGoalSetupAmount(this)">
+      <span>원</span>
+    </div>
+    <span class="goal-setup-label">일자별 계획</span>
+    <div class="goal-plan-options">
+      <label class="goal-plan-option">
+        <input type="radio" name="goalPlanMode" value="manual" checked>
+        <span><b>필요한 날짜만 직접 입력</b><small>기존 계획은 그대로 두고 월 목표만 변경합니다.</small></span>
+      </label>
+      <label class="goal-plan-option">
+        <input type="radio" name="goalPlanMode" value="weekdays">
+        <span><b>평일에 동일 배분</b><small>이번 달 평일에 목표를 나누어 입력합니다.</small></span>
+      </label>
+      <label class="goal-plan-option">
+        <input type="radio" name="goalPlanMode" value="all">
+        <span><b>모든 날짜에 동일 배분</b><small>주말을 포함한 이번 달 전체 날짜에 나누어 입력합니다.</small></span>
+      </label>
+    </div>
+    <div class="modal-err" id="goalSetupErr"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeGoalSetup()">취소</button>
+      <button class="btn-go" onclick="saveGoalSetup()">저장</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1264,6 +1337,7 @@
   var pendingRemote = null;
   var isSnapshotFile = (document.documentElement.getAttribute('data-snapshot') === '1');
   var firebaseReady = false;
+  var showBlankGoalRows = false;
 
   // ---------- number formatting ----------
   function toNum(str){
@@ -1865,18 +1939,19 @@
 
   function copyGoalTable(btn){
     recalcNow();
-    var out = [['날짜','요일','아이템 / 대상','목표(원)','실적(원)','차이','달성률','메모']];
+    var out = [['날짜','요일','핵심 목표','대상','주요 행동','목표(원)','실적(원)','차이','달성률']];
     var g = 0, a = 0;
     document.querySelectorAll('#goalBody .goal-row').forEach(function(r){
+      if(goalRowIsBlank(r)) return;
       var gv = toNum(r.querySelector('.g-amt').value);
       var av = toNum(r.querySelector('.g-actual').textContent);
       g += gv; a += av;
       out.push([r.querySelector('.g-date').value, r.querySelector('.g-dow').textContent,
-                r.querySelector('.g-item').value, gv, av,
-                r.querySelector('.g-diff').textContent, r.querySelector('.g-rate').textContent,
-                r.querySelector('.g-memo').value.replace(/\n/g,' / ')]);
+                r.querySelector('.g-item').value, r.querySelector('.g-target').value,
+                r.querySelector('.g-memo').value.replace(/\n/g,' / '), gv, av, av-gv,
+                r.querySelector('.g-rate').textContent]);
     });
-    out.push(['합계','','',g,a,a-g, g>0? Math.round(a/g*100)+'%':'', '']);
+    out.push(['합계','','','','',g,a,a-g, g>0? Math.round(a/g*100)+'%':'']);
     copyTsv(out, btn);
   }
 
@@ -2349,14 +2424,14 @@
     row.innerHTML =
       '<div><input type="date" class="g-date" value="'+(data.date||'')+'" oninput="onRowChange(this)"></div>' +
       '<div class="g-mid"><span class="week-badge g-dow">-</span></div>' +
-      '<div><input type="text" class="g-item" placeholder="예: 스타19 - 김○○" value="'+escapeAttr(data.item||'')+'" oninput="onRowChange(this)"></div>' +
+      '<div><input type="text" class="g-item" placeholder="예: 스타19기 2명 등록" value="'+escapeAttr(data.item||'')+'" oninput="onRowChange(this)"></div>' +
+      '<div><input type="text" class="g-target" placeholder="예: 김○○ 외 2명" value="'+escapeAttr(data.target||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><input type="text" inputmode="numeric" class="g-amt amt" placeholder="0" value="'+(data.goal?fmt(data.goal):'')+'" oninput="onAmountInput(this)"></div>' +
       '<div class="g-num g-actual">0</div>' +
-      '<div class="g-num g-diff">0</div>' +
       '<div class="g-num g-rate">-</div>' +
       '<div class="g-mid"><button class="del-x" onclick="removeGoalRow(this)">✕</button></div>' +
-      '<div class="g-memoline"><span class="memo-tag" onclick="toggleMemoLine(this)" title="눌러서 전체 보기 / 접기">메모</span>' +
-        '<textarea class="g-memo" rows="1" placeholder="이 날의 활동 · 대상 · 특이사항을 자유롭게 기록하세요 (클릭하면 전체가 펼쳐집니다)" ' +
+      '<div class="g-memoline"><span class="memo-tag" onclick="toggleMemoLine(this)" title="눌러서 전체 보기 / 접기">주요 행동</span>' +
+        '<textarea class="g-memo" rows="1" placeholder="예: 오전 통화 → 안내문 발송 → 오후 4시 신청 여부 확인" ' +
         'onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(data.memo||'')+'</textarea></div>';
     return row;
   }
@@ -2425,10 +2500,47 @@
   function addGoalRow(data){
     var tbody = document.getElementById('goalBody');
     var row = buildGoalRow(data);
+    row.setAttribute('data-force-visible','1');
     tbody.appendChild(row);
     recalcAll();
     scheduleSave();
     return row;
+  }
+
+  function addTodayGoal(){
+    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    var today = localISO(new Date());
+    var found = null;
+    document.querySelectorAll('#goalBody .goal-row').forEach(function(row){
+      if(row.querySelector('.g-date').value === today && !found) found = row;
+    });
+    var row = found || addGoalRow({date:today});
+    row.setAttribute('data-force-visible','1');
+    recalcAll();
+    var input = row.querySelector('.g-item');
+    if(input){ input.focus(); input.select(); }
+  }
+
+  function addOtherGoal(){
+    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    var row = addGoalRow({date:''});
+    var input = row.querySelector('.g-date');
+    if(input){ input.focus(); try{ input.showPicker(); }catch(e){} }
+  }
+
+  function goalRowIsBlank(row){
+    var item = row.querySelector('.g-item').value.trim();
+    var target = row.querySelector('.g-target').value.trim();
+    var memo = row.querySelector('.g-memo').value.trim();
+    var goal = toNum(row.querySelector('.g-amt').value);
+    var actual = toNum(row.querySelector('.g-actual').textContent);
+    return !item && !target && !memo && goal === 0 && actual === 0;
+  }
+
+  function toggleBlankGoals(){
+    var chk = document.getElementById('showBlankGoals');
+    showBlankGoalRows = !!(chk && chk.checked);
+    recalcAll();
   }
 
   function removeGoalRow(btn){
@@ -2448,35 +2560,73 @@
     arr.forEach(function(tr){ tbody.appendChild(tr); });
   }
 
-  // 기존 행은 지우지 않고, 빠진 날짜만 채워 넣습니다.
-  function genMonthGoals(){
-    var tbody = document.getElementById('goalBody');
-    var existing = {};
-    tbody.querySelectorAll('.goal-row').forEach(function(row){
-      var v = row.querySelector('.g-date').value;
-      if(v) existing[v] = true;
-    });
-    var today = new Date();
-    var y = today.getFullYear(), m = today.getMonth();
-    var lastDay = new Date(y, m+1, 0).getDate();
-    var added = 0;
-    for(var d=1; d<=lastDay; d++){
-      var iso = localISO(new Date(y, m, d));
-      if(!existing[iso]){ tbody.appendChild(buildGoalRow({date: iso})); added++; }
-    }
-    sortGoalRows();
-    recalcAll();
-    scheduleSave();
-    if(added === 0) alert('이번 달 날짜가 이미 모두 있습니다.');
+  function formatGoalSetupAmount(el){
+    var digits = el.value.replace(/[^0-9]/g,'');
+    el.value = digits ? fmt(parseInt(digits,10)) : '';
   }
 
-  function applyGoalSumToMonth(){
-    var sum = 0;
-    document.querySelectorAll('#goalBody .goal-row').forEach(function(row){
-      sum += toNum(row.querySelector('.g-amt').value);
+  function openGoalSetup(){
+    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    document.getElementById('goalSetupAmount').value = fmt(toNum(document.getElementById('goalInput').value));
+    document.querySelector('input[name="goalPlanMode"][value="manual"]').checked = true;
+    document.getElementById('goalSetupErr').textContent = '';
+    document.getElementById('goalSetupModal').classList.add('on');
+    setTimeout(function(){ document.getElementById('goalSetupAmount').focus(); },50);
+  }
+
+  function closeGoalSetup(){
+    var modal = document.getElementById('goalSetupModal');
+    if(modal) modal.classList.remove('on');
+  }
+
+  function distributeMonthGoal(mode, amount){
+    var parts = String(currentMonth || monthKeyNow()).split('-');
+    var year = parseInt(parts[0],10), month = parseInt(parts[1],10);
+    var lastDay = new Date(year,month,0).getDate();
+    var dates = [];
+    for(var day=1; day<=lastDay; day++){
+      var dt = new Date(year,month-1,day);
+      if(mode === 'all' || (dt.getDay() !== 0 && dt.getDay() !== 6)) dates.push(localISO(dt));
+    }
+    if(!dates.length) return;
+
+    var tbody = document.getElementById('goalBody');
+    var byDate = {};
+    tbody.querySelectorAll('.goal-row').forEach(function(row){
+      var date = row.querySelector('.g-date').value;
+      if(date && !byDate[date]) byDate[date] = row;
+      if(date && date.slice(0,7) === currentMonth) row.querySelector('.g-amt').value = '';
     });
-    if(sum <= 0){ alert('일자별 목표 금액을 먼저 입력해주세요.'); return; }
-    document.getElementById('goalInput').value = fmt(sum);
+
+    var unit = amount >= 1000000 ? 10000 : 1;
+    var base = Math.floor(amount / dates.length / unit) * unit;
+    var remainder = amount - (base * dates.length);
+    dates.forEach(function(date,idx){
+      var row = byDate[date];
+      if(!row){ row = buildGoalRow({date:date}); tbody.appendChild(row); byDate[date] = row; }
+      var value = base + (idx === dates.length-1 ? remainder : 0);
+      row.querySelector('.g-amt').value = value ? fmt(value) : '';
+    });
+    sortGoalRows();
+  }
+
+  function saveGoalSetup(){
+    var amount = toNum(document.getElementById('goalSetupAmount').value);
+    var modeEl = document.querySelector('input[name="goalPlanMode"]:checked');
+    var mode = modeEl ? modeEl.value : 'manual';
+    var err = document.getElementById('goalSetupErr');
+    if(amount <= 0){ err.textContent = '월 목표 매출을 입력해주세요.'; return; }
+    if(mode !== 'manual'){
+      var hasGoals = false;
+      document.querySelectorAll('#goalBody .goal-row').forEach(function(row){
+        var d = row.querySelector('.g-date').value;
+        if(d && d.slice(0,7) === currentMonth && toNum(row.querySelector('.g-amt').value) > 0) hasGoals = true;
+      });
+      if(hasGoals && !confirm('기존 일자별 목표 금액을 새 배분으로 바꿀까요? 핵심 목표·대상·주요 행동은 그대로 유지됩니다.')) return;
+    }
+    document.getElementById('goalInput').value = fmt(amount);
+    if(mode !== 'manual') distributeMonthGoal(mode,amount);
+    closeGoalSetup();
     recalcAll();
     scheduleSave();
   }
@@ -2484,7 +2634,7 @@
   function recalcGoalTable(actualByDate, weeks, weekMap){
     var todayISO = localISO(new Date());
     var rows = document.querySelectorAll('#goalBody .goal-row');
-    var sum = 0, act = 0, cum = 0;
+    var sum = 0, act = 0, cum = 0, activeCount = 0;
     var dailyTmp = [];
 
     rows.forEach(function(row){
@@ -2503,11 +2653,6 @@
       row.querySelector('.g-dow').textContent = dowLabel(d);
       row.querySelector('.g-actual').textContent = fmt(a);
 
-      var diff = a - g;
-      var diffCell = row.querySelector('.g-diff');
-      diffCell.textContent = (diff > 0 ? '+' : '') + fmt(diff);
-      diffCell.className = 'g-num g-diff ' + (diff >= 0 ? 'rate-good' : 'rate-bad');
-
       var rateCell = row.querySelector('.g-rate');
       if(g > 0){
         var r = a / g * 100;
@@ -2517,34 +2662,50 @@
         rateCell.textContent = '-';
         rateCell.className = 'g-num g-rate';
       }
+
+      var hideBlank = !showBlankGoalRows && !row.hasAttribute('data-force-visible') && goalRowIsBlank(row);
+      row.hidden = hideBlank;
+      if(!hideBlank) activeCount++;
     });
 
     goalDaily = dailyTmp;
     renderRange();
     renderGoalWeeks(weeks);
 
-    var totalDiff = act - sum;
     document.getElementById('gSumCell').textContent = fmt(sum);
     var gc = document.getElementById('goalCount');
-    if(gc) gc.textContent = rows.length + '일 · 목표 ' + fmt(sum) + '원 · 실적 ' + fmt(act) + '원';
+    if(gc) gc.textContent = activeCount + '일 · 목표 ' + fmt(sum) + '원 · 실적 ' + fmt(act) + '원';
     document.getElementById('gActualCell').textContent = fmt(act);
-    document.getElementById('gDiffCell').textContent = (totalDiff > 0 ? '+' : '') + fmt(totalDiff);
     document.getElementById('gRateCell').textContent = sum > 0 ? (act/sum*100).toFixed(0)+'%' : '-';
 
     var monthGoal = toNum(document.getElementById('goalInput').value);
     var note = document.getElementById('goalNote');
-    if(rows.length === 0){
+    if(activeCount === 0){
       note.className = 'goal-note';
-      note.innerHTML = '아직 일자별 목표가 없습니다. <b>📅 이번 달 1일~말일 자동 생성</b>으로 날짜를 한 번에 만든 뒤, 금액만 채워 넣으세요.';
-    } else if(monthGoal > 0 && sum !== monthGoal){
+      note.innerHTML = '아직 실행 날짜가 없습니다. <b>+ 오늘 목표 입력</b>을 눌러 오늘 할 일부터 등록해보세요.';
+    } else if(monthGoal > 0 && sum > monthGoal){
       note.className = 'goal-note warn';
-      note.innerHTML = '일자별 목표 합계 <b>'+fmt(sum)+'원</b>이 상단 월 목표 <b>'+fmt(monthGoal)+'원</b>보다 '+fmt(Math.abs(sum-monthGoal))+'원 '+(sum > monthGoal ? '많습니다' : '적습니다')+'. 일자별 배분을 조정하거나, <b>↑ 합계를 월 목표로 반영</b>을 눌러 월 목표를 맞추세요.';
+      note.innerHTML = '일자별 계획 합계가 월 목표보다 <b>'+fmt(sum-monthGoal)+'원</b> 많습니다. 목표 금액을 한 번 확인해주세요.';
+    } else if(monthGoal > 0 && sum < monthGoal){
+      note.className = 'goal-note';
+      note.innerHTML = '월 목표 중 <b>'+fmt(sum)+'원</b>을 날짜별로 계획했습니다. 아직 배분하지 않은 목표는 <b>'+fmt(monthGoal-sum)+'원</b>입니다.';
     } else {
       note.className = 'goal-note';
-      note.innerHTML = '일자별 목표 합계 <b>'+fmt(sum)+'원</b> · 오늘까지 누계 목표 <b>'+fmt(cum)+'원</b> · 일자별 실적 합계 <b>'+fmt(act)+'원</b>';
+      note.innerHTML = '일자별 계획 <b>'+fmt(sum)+'원</b> · 오늘까지 누계 목표 <b>'+fmt(cum)+'원</b> · 계획 날짜 실적 <b>'+fmt(act)+'원</b>';
     }
 
     return { sum: sum, actual: act, cum: cum };
+  }
+
+  function updateGoalMonthCard(goal,total){
+    var gap = Math.max(goal-total,0);
+    var rate = goal > 0 ? total/goal*100 : 0;
+    document.getElementById('goalMonthTarget').textContent = fmt(goal)+'원';
+    document.getElementById('goalMonthActual').textContent = fmt(total)+'원';
+    document.getElementById('goalMonthGap').textContent = fmt(gap)+'원';
+    document.getElementById('goalMonthRate').textContent = rate.toFixed(0)+'%';
+    document.getElementById('goalMonthGap').className = 'v '+(gap > 0 ? 'bad' : 'good');
+    document.getElementById('goalMonthRate').className = 'v '+(goal > 0 && rate >= 100 ? 'good' : '');
   }
 
   // ---------- log rows ----------
@@ -2821,6 +2982,7 @@
 
     // daily goal table
     recalcGoalTable(actualByDate, weeks, weekMap);
+    updateGoalMonthCard(goal,total);
     var undated = document.getElementById('undatedNote');
     if(undatedCnt > 0){
       undated.textContent = '⚠ 날짜가 비어 있는 매출 기록 '+undatedCnt+'건 ('+fmt(undatedAmt)+'원)은 일자별 실적에 반영되지 않았습니다. 01 매출 기록에서 날짜를 지정해주세요.';
@@ -2876,9 +3038,11 @@
     });
     var goals = [];
     document.querySelectorAll('#goalBody .goal-row').forEach(function(row){
+      if(goalRowIsBlank(row)) return;
       goals.push({
         date: row.querySelector('.g-date').value,
         item: row.querySelector('.g-item').value,
+        target: row.querySelector('.g-target').value,
         goal: toNum(row.querySelector('.g-amt').value),
         memo: row.querySelector('.g-memo').value
       });
@@ -3049,6 +3213,7 @@
 
   function applyEditMode(){
     var editable = canEdit && !isSnapshotFile;
+    if(!editable) closeGoalSetup();
     document.querySelectorAll('[contenteditable]').forEach(function(el){ el.setAttribute('contenteditable', editable ? 'true' : 'false'); });
     document.querySelectorAll('#goalInput, #stratBody input, #dbBody input, #itemBody input, #logBody input, #goalBody input, #quickDate, #quickItem, #quickAmount, #quickMemo, .quick-add, .strategy-quick input, .strategy-quick button').forEach(function(el){ el.disabled = !editable; });
     // 메모는 잠그지 않고 '수정 불가'로 둠 — 읽기 전용으로 보는 사람도 눌러서 전체를 볼 수 있어야 함
@@ -3061,7 +3226,7 @@
       el.disabled = false;
       el.readOnly = !editable;
     });
-    document.querySelectorAll('.add-row, .del-x, .ord').forEach(function(el){ el.style.display = editable ? '' : 'none'; });
+    document.querySelectorAll('.add-row, .goal-edit-only, .del-x, .ord').forEach(function(el){ el.style.display = editable ? '' : 'none'; });
     var btn = document.getElementById('authBtn');
     if(isSnapshotFile){ btn.style.display = 'none'; }
     else { btn.textContent = myEmail ? '🔓 로그아웃' : '🔑 편집 로그인'; }
@@ -3132,6 +3297,12 @@
 
     document.getElementById('loginPw').addEventListener('keydown', function(e){ if(e.key === 'Enter') doLogin(); });
     document.getElementById('loginEmail').addEventListener('keydown', function(e){ if(e.key === 'Enter') document.getElementById('loginPw').focus(); });
+    var gsa = document.getElementById('goalSetupAmount');
+    if(gsa) gsa.addEventListener('keydown', function(e){ if(e.key === 'Enter') saveGoalSetup(); });
+    document.addEventListener('keydown', function(e){
+      var gsm = document.getElementById('goalSetupModal');
+      if(e.key === 'Escape' && gsm && gsm.classList.contains('on')) closeGoalSetup();
+    });
 
     openMonth(monthFromUrl());
     setGoalRange('rest');
@@ -3151,6 +3322,7 @@
     clone.setAttribute('data-snapshot','1');
     clone.querySelectorAll('script[src*="firebasejs"]').forEach(function(el){ el.remove(); });
     var lm = clone.querySelector('#loginModal'); if(lm) lm.remove();
+    var gsm = clone.querySelector('#goalSetupModal'); if(gsm) gsm.remove();
     var wb = clone.querySelector('#worklogBtn'); if(wb) wb.remove();
     var mp = clone.querySelector('#monthPicker'); if(mp) mp.setAttribute('value', document.getElementById('monthPicker').value);
 
@@ -3265,6 +3437,7 @@
       srcGoal.querySelectorAll('.goal-row').forEach(function(row){
         var date = row.querySelector('.g-date').value;
         var item = row.querySelector('.g-item').value;
+        var target = row.querySelector('.g-target').value;
         var amt = row.querySelector('.g-amt').value;
         var memo = row.querySelector('.g-memo').value;
         var tr = document.createElement('div');
@@ -3273,12 +3446,12 @@
           '<div><input type="date" class="g-date" value="'+date+'" oninput="onRowChange(this)"></div>' +
           '<div class="g-mid"><span class="week-badge g-dow">-</span></div>' +
           '<div><input type="text" class="g-item" value="'+escapeAttr(item)+'" oninput="onRowChange(this)"></div>' +
+          '<div><input type="text" class="g-target" value="'+escapeAttr(target)+'" oninput="onRowChange(this)"></div>' +
           '<div><input type="text" inputmode="numeric" class="g-amt amt" value="'+escapeAttr(amt)+'" oninput="onAmountInput(this)"></div>' +
           '<div class="g-num g-actual">0</div>' +
-          '<div class="g-num g-diff">0</div>' +
           '<div class="g-num g-rate">-</div>' +
           '<div class="g-mid"><button class="del-x" onclick="removeGoalRow(this)">✕</button></div>' +
-          '<div class="g-memoline"><span class="memo-tag" onclick="toggleMemoLine(this)" title="눌러서 전체 보기 / 접기">메모</span>' +
+          '<div class="g-memoline"><span class="memo-tag" onclick="toggleMemoLine(this)" title="눌러서 전체 보기 / 접기">주요 행동</span>' +
             '<textarea class="g-memo" rows="1" onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(memo)+'</textarea></div>';
         dstGoal.appendChild(tr);
       });
