@@ -806,6 +806,42 @@
   .dashboard-todo.adding .td-add{ display:flex; }
   .dashboard-todo .td-exp{ margin-left:auto; }
   .dashboard-todo .td-list{ max-height:270px; }
+  .today-command{ margin-bottom:14px; padding:0; overflow:hidden; }
+  .today-command-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:15px 18px; border-bottom:1px solid #E8EBEF; }
+  .today-command-title{ color:var(--navy); font-family:'Noto Serif KR',serif; font-size:16px; font-weight:800; }
+  .today-command-summary{ color:var(--muted); font-size:11.5px; font-weight:700; }
+  .today-command-grid{ display:grid; grid-template-columns:minmax(280px,.8fr) minmax(420px,1.2fr); }
+  .today-lane{ min-width:0; padding:15px 18px 16px; }
+  .today-lane + .today-lane{ border-left:1px solid #E8EBEF; }
+  .today-lane-head{ display:flex; align-items:baseline; justify-content:space-between; gap:9px; margin-bottom:9px; }
+  .today-lane-title{ color:var(--navy); font-size:13px; font-weight:800; }
+  .today-lane-hint{ color:var(--muted); font-size:10.5px; }
+  .today-quick-add{ display:grid; gap:6px; margin-bottom:9px; }
+  .schedule-add{ grid-template-columns:112px 82px minmax(150px,1fr) auto; }
+  .task-add{ grid-template-columns:112px 88px minmax(170px,1fr) auto; }
+  .today-quick-add input,.today-quick-add select{ min-width:0; width:100%; height:34px; box-sizing:border-box; border:1px solid var(--line); border-radius:8px; background:#FBFAF7; color:var(--ink); padding:6px 8px; font-family:'Pretendard',sans-serif; font-size:11.5px; }
+  .today-quick-add input:focus,.today-quick-add select:focus{ outline:none; border-color:var(--brass); background:#fff; }
+  .today-quick-add button{ height:34px; border:0; border-radius:8px; background:var(--navy); color:#fff; padding:0 11px; font-family:'Pretendard',sans-serif; font-size:11.5px; font-weight:800; cursor:pointer; white-space:nowrap; }
+  .today-lane-list{ display:flex; flex-direction:column; min-height:42px; }
+  .today-lane-row{ display:grid; align-items:center; gap:8px; min-height:36px; border-top:1px solid #F0F1F3; font-size:12px; }
+  .today-lane-row:first-child{ border-top:0; }
+  .schedule-row{ grid-template-columns:54px minmax(0,1fr) auto; }
+  .task-row{ grid-template-columns:auto 54px minmax(0,1fr) auto; }
+  .today-time{ color:var(--navy); font-weight:900; font-variant-numeric:tabular-nums; }
+  .today-time.passed{ color:#A8ADB6; }
+  .today-work-text{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--ink); }
+  .today-work-text.done{ color:#A8ADB6; text-decoration:line-through; }
+  .today-priority{ border-radius:20px; padding:2px 7px; background:#F1F2F4; color:#7A808C; font-size:10px; font-weight:800; text-align:center; }
+  .today-priority.important{ background:#FFF1D4; color:#8A6329; }
+  .today-priority.late{ background:var(--red-bg); color:var(--red); }
+  .today-check{ width:17px; height:17px; accent-color:var(--green); cursor:pointer; }
+  .today-row-del{ border:0; background:transparent; color:#C2BCB0; cursor:pointer; padding:4px; }
+  .today-row-del:hover{ color:var(--red); }
+  .today-more{ margin-top:7px; color:var(--brass); font-size:11px; font-weight:700; }
+  .today-all-toggle{ border:1px solid var(--line); border-radius:20px; background:#fff; color:var(--navy); padding:5px 10px; font-family:'Pretendard',sans-serif; font-size:11px; font-weight:700; cursor:pointer; }
+  .today-all{ display:none; padding:0 18px 15px; border-top:1px solid #E8EBEF; }
+  .today-all.open{ display:block; }
+  .today-all .td-list{ max-height:280px; margin-top:10px; }
   .detail-intro{ margin:0 0 18px; padding:13px 15px; border-radius:11px; background:#F7F3EA; color:#5C513D; font-size:12.5px; border:1px solid #E7DDC9; }
   @media (max-width:900px){
     .kpi-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
@@ -824,6 +860,8 @@
     .tower-strip{ grid-template-columns:1fr; }
     .tower-stat{ border-right:0; border-bottom:1px solid #E8EBEF; }
     .tower-stat:last-child{ border-bottom:0; }
+    .today-command-grid{ grid-template-columns:1fr; }
+    .today-lane + .today-lane{ border-left:0; border-top:1px solid #E8EBEF; }
   }
   @media (max-width:560px){
     .toolbar-right .ghost:nth-of-type(2){ display:none; }
@@ -854,12 +892,15 @@
     .today-strategy-input .sq-memo-field,.today-strategy-input .sq-add{ grid-column:auto; }
     .tg-form{ grid-template-columns:1fr; }
     .tg-memo-field,.tg-add{ grid-column:auto; }
+    .schedule-add,.task-add{ grid-template-columns:1fr 1fr; }
+    .schedule-add input[type="text"],.task-add input[type="text"],.today-quick-add button{ grid-column:1 / -1; }
   }
   @media print{
     .dash-actions,.dashboard-mode-btn,.quick-entry-drawer,.detail-intro,.strategy-quick,.today-goal-quick,.td-add-toggle{ display:none !important; }
     .kpi-grid{ grid-template-columns:repeat(4,1fr); }
     .dash-grid{ grid-template-columns:1.3fr .7fr; }
     .tower-strip{ grid-template-columns:repeat(3,1fr); }
+    .today-quick-add,.today-all-toggle,.today-row-del{ display:none !important; }
   }
 </style>
 </head>
@@ -928,6 +969,47 @@
     </div>
   </div>
 
+  <div class="dash-panel today-command">
+    <div class="today-command-head">
+      <div>
+        <div class="today-command-title">오늘 일정과 꼭 할 일</div>
+        <div class="today-command-summary" id="tdCount">시간 약속과 오늘 끝낼 일을 분리해 보여드립니다.</div>
+      </div>
+      <button class="today-all-toggle" type="button" onclick="toggleTodoBox()">전체 일정·할 일</button>
+    </div>
+    <div class="today-command-grid">
+      <section class="today-lane">
+        <div class="today-lane-head">
+          <span class="today-lane-title">오늘 일정</span>
+          <span class="today-lane-hint">정해진 시간이 있는 약속</span>
+        </div>
+        <div class="today-quick-add schedule-add goal-edit-only">
+          <input type="date" id="tdScheduleDate" aria-label="일정 날짜">
+          <input type="time" id="tdScheduleTime" aria-label="일정 시간">
+          <input type="text" id="tdScheduleText" placeholder="예: 14:00 설명회 미팅" autocomplete="off" onkeydown="todoQuickEnter(event,'schedule')">
+          <button type="button" onclick="addSchedule()">+ 일정</button>
+        </div>
+        <div class="today-lane-list" id="tdScheduleList"></div>
+      </section>
+      <section class="today-lane">
+        <div class="today-lane-head">
+          <span class="today-lane-title">오늘 꼭 할 일</span>
+          <span class="today-lane-hint">기한 지난 일 우선 · 최대 8건</span>
+        </div>
+        <div class="today-quick-add task-add goal-edit-only">
+          <input type="date" id="tdTaskDate" aria-label="할 일 날짜">
+          <select id="tdTaskPriority" aria-label="중요도"><option value="important">중요</option><option value="normal">일반</option></select>
+          <input type="text" id="tdTaskText" placeholder="예: 설명회 안내문 발송" autocomplete="off" onkeydown="todoQuickEnter(event,'task')">
+          <button type="button" onclick="addTask()">+ 할 일</button>
+        </div>
+        <div class="today-lane-list" id="tdTaskList"></div>
+      </section>
+    </div>
+    <div class="today-all" id="tdAllPanel">
+      <div class="td-list" id="tdList"></div>
+    </div>
+  </div>
+
   <div class="kpi-grid">
     <div class="kpi-card">
       <div class="kpi-label">이번 달 목표</div>
@@ -939,29 +1021,29 @@
       <div class="kpi-value" id="dashActual">0원</div>
       <div class="kpi-sub" id="dashActualSub">확정 매출 누적</div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-label">예상 매출</div>
+    <div class="kpi-card bad">
+      <div class="kpi-label">목표까지 남은 금액</div>
       <div class="kpi-value" id="dashForecastValue">0원</div>
-      <div class="kpi-sub" id="dashForecast">확정 + 실행계획</div>
+      <div class="kpi-sub" id="dashForecast">목표 − 현재 실적</div>
     </div>
     <div class="kpi-card primary" id="dashRateCard">
-      <div class="kpi-label">예상 달성률</div>
+      <div class="kpi-label">현재 달성률</div>
       <div class="kpi-value" id="dashRate">0%</div>
-      <div class="kpi-sub" id="dashRateSub">현재 달성률 0%</div>
+      <div class="kpi-sub" id="dashRateSub">현재 실적 ÷ 월 목표</div>
     </div>
   </div>
 
   <div class="tower-strip">
-    <div class="tower-stat alert" id="dashGapStat"><span class="l">현재 부족 금액</span><span class="v" id="dashGap">0원</span></div>
-    <div class="tower-stat"><span class="l">확보 예정</span><span class="v" id="dashPipeline">0원</span></div>
-    <div class="tower-stat"><span class="l">남은 기간 필요 페이스</span><span class="v" id="dashPace">-</span></div>
+    <div class="tower-stat alert" id="dashGapStat"><span class="l">남은 목표</span><span class="v" id="dashGap">0원</span></div>
+    <div class="tower-stat"><span class="l">남은 영업일</span><span class="v" id="dashPipeline">0일</span></div>
+    <div class="tower-stat"><span class="l">필요한 하루 실적</span><span class="v" id="dashPace">-</span></div>
   </div>
 
   <div class="dash-grid">
     <div>
       <div class="dash-panel">
         <div class="dash-panel-head">
-          <span class="dash-panel-title">오늘의 핵심 실행</span>
+          <span class="dash-panel-title">목표 달성을 위한 오늘의 실행</span>
           <span class="dash-panel-hint" id="todayStatus">오늘 목표와 실적</span>
         </div>
         <div class="pace-row">
@@ -1013,7 +1095,7 @@
                 <input type="text" id="sqTarget" placeholder="예: 정재원 추천자 외 2명" onkeydown="quickStrategyEnter(event)">
               </div>
               <div class="sq-field">
-                <label for="sqAmount">예상 금액</label>
+                <label for="sqAmount">목표 기여액</label>
                 <input type="text" inputmode="numeric" class="sq-amount" id="sqAmount" placeholder="예: 1,200,000" oninput="formatQuickAmount(this)" onkeydown="quickStrategyEnter(event)">
               </div>
               <input type="hidden" id="sqDue">
@@ -1028,37 +1110,6 @@
             <div class="today-strategy-empty">오늘로 등록된 전략이 없습니다.</div>
           </div>
         </div>
-      </div>
-
-      <div class="dash-panel dashboard-todo" style="margin-top:14px;">
-  <!-- 중요 일정 -->
-  <div class="td-strip">
-    <div class="td-head">
-      <span class="td-title">중요 일정 · 해야 할 일</span>
-      <span class="td-count" id="tdCount"></span>
-      <span class="td-filter">
-        <span class="td-flab">날짜 보기</span>
-        <input type="date" id="tdFilter" onchange="renderTodos()">
-        <button class="td-fbtn" onclick="setTodoFilter(0)">오늘</button>
-        <button class="td-fbtn" onclick="clearTodoFilter()">전체</button>
-      </span>
-      <button class="mini-toggle td-add-toggle goal-edit-only" onclick="toggleTodoAdd()">+ 일정 입력</button>
-      <button class="mini-toggle td-exp" id="tdExpandBtn" onclick="toggleTodoBox()">⤢ 전체 펼치기</button>
-      <label class="td-chk"><input type="checkbox" id="tdShowDone" onchange="renderTodos()"> 완료 포함</label>
-    </div>
-    <div class="td-add" id="tdAdd">
-      <input type="date" id="tdDate">
-      <select id="tdSlot" class="td-slot-sel" title="시간 구분">
-        <option value="">구분 없음</option>
-        <option value="am">오전</option>
-        <option value="pm">오후</option>
-        <option value="all">종일</option>
-      </select>
-      <input type="text" id="tdText" placeholder="예: 9월 전략회의 이너서클 프로그램 보고 (Enter로 추가)" autocomplete="off">
-      <button class="mini-toggle" onclick="addTodo()">+ 추가</button>
-    </div>
-    <div class="td-list" id="tdList"></div>
-  </div>
       </div>
 
       <details class="quick-entry-drawer goal-edit-only">
@@ -1086,8 +1137,8 @@
 
       <div class="dash-panel" style="margin-top:14px;">
         <div class="dash-panel-head">
-          <span class="dash-panel-title">핵심 매출 파이프라인</span>
-          <span class="dash-panel-hint">기한 경과·예정일 순서</span>
+          <span class="dash-panel-title">목표 달성을 위한 다음 실행</span>
+          <span class="dash-panel-hint">기한 경과·실행일 순서</span>
         </div>
         <div class="exec-snapshot" id="execSnapshot"><div class="dash-empty">실행계획을 등록해주세요.</div></div>
       </div>
@@ -2148,39 +2199,46 @@
     }, function(){ /* 조회 실패 시 조용히 넘어감 */ });
   }
 
-  function addTodo(){
+  function todoType(x){ return x && x.type === 'schedule' ? 'schedule' : 'task'; }
+
+  function todoQuickEnter(e, type){
+    if(e.key !== 'Enter') return;
+    e.preventDefault();
+    if(type === 'schedule') addSchedule(); else addTask();
+  }
+
+  function addSchedule(){
     if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
-    var dt = document.getElementById('tdDate').value;
-    var tx = document.getElementById('tdText').value.trim();
-    var slot = document.getElementById('tdSlot') ? document.getElementById('tdSlot').value : '';
-    if(!tx){ document.getElementById('tdText').focus(); return; }
-    if(!dt) dt = localISO(new Date());
-    db.collection(TODOS).add({ date: dt, slot: slot, text: tx, done: false, createdAt: new Date().toISOString() })
-      .then(function(){
-        document.getElementById('tdText').value = '';
-        document.getElementById('tdText').focus();
-      })
+    var dateEl = document.getElementById('tdScheduleDate');
+    var timeEl = document.getElementById('tdScheduleTime');
+    var textEl = document.getElementById('tdScheduleText');
+    var dt = dateEl.value || localISO(new Date());
+    var tm = timeEl.value;
+    var tx = textEl.value.trim();
+    if(!tm){ timeEl.focus(); return; }
+    if(!tx){ textEl.focus(); return; }
+    db.collection(TODOS).add({ type:'schedule', date:dt, time:tm, text:tx, done:false, createdAt:new Date().toISOString() })
+      .then(function(){ textEl.value=''; textEl.focus(); })
+      .catch(function(e){ alert('저장 실패 (' + (e.code || e.message) + ')'); });
+  }
+
+  function addTask(){
+    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    var dateEl = document.getElementById('tdTaskDate');
+    var textEl = document.getElementById('tdTaskText');
+    var prEl = document.getElementById('tdTaskPriority');
+    var dt = dateEl.value || localISO(new Date());
+    var tx = textEl.value.trim();
+    if(!tx){ textEl.focus(); return; }
+    db.collection(TODOS).add({ type:'task', date:dt, priority:prEl.value || 'normal', text:tx, done:false, createdAt:new Date().toISOString() })
+      .then(function(){ textEl.value=''; textEl.focus(); })
       .catch(function(e){ alert('저장 실패 (' + (e.code || e.message) + ')'); });
   }
 
   function toggleTodoBox(){
-    var box = document.getElementById('tdList');
-    var btn = document.getElementById('tdExpandBtn');
-    var on = box.classList.toggle('expanded');
-    if(btn) btn.textContent = on ? '⤡ 접기' : '⤢ 전체 펼치기';
-  }
-
-  function toggleTodoAdd(){
-    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
-    var panel = document.querySelector('.dashboard-todo');
+    var panel = document.getElementById('tdAllPanel');
     if(!panel) return;
-    var on = panel.classList.toggle('adding');
-    var btn = panel.querySelector('.td-add-toggle');
-    if(btn) btn.textContent = on ? '− 입력 닫기' : '+ 일정 입력';
-    if(on){
-      var input = document.getElementById('tdText');
-      if(input) setTimeout(function(){ input.focus(); },20);
-    }
+    panel.classList.toggle('open');
   }
 
   // 목록에서 날짜·내용을 직접 고쳐 저장
@@ -2215,68 +2273,78 @@
     return { txt: 'D-' + diff, cls: diff <= 7 ? 'soon' : '' };
   }
 
-  function setTodoFilter(offset){
-    var x = new Date(); x.setDate(x.getDate() + offset);
-    document.getElementById('tdFilter').value = localISO(x);
-    renderTodos();
-  }
-  function clearTodoFilter(){
-    document.getElementById('tdFilter').value = '';
-    renderTodos();
-  }
-
   function renderTodos(){
-    var box = document.getElementById('tdList');
-    if(!box) return;
+    var scheduleBox = document.getElementById('tdScheduleList');
+    var taskBox = document.getElementById('tdTaskList');
+    var allBox = document.getElementById('tdList');
+    if(!scheduleBox || !taskBox || !allBox) return;
     var today = localISO(new Date());
-    var showDone = document.getElementById('tdShowDone').checked;
-    var filter = document.getElementById('tdFilter') ? document.getElementById('tdFilter').value : '';
-
-    var openCnt = todoList.filter(function(x){ return !x.done; }).length;
-    var lateCnt = todoList.filter(function(x){ return !x.done && x.date < today; }).length;
-    var todayCnt = todoList.filter(function(x){ return !x.done && x.date === today; }).length;
-    var doneCnt = todoList.filter(function(x){ return x.done; }).length;
+    var schedules = todoList.filter(function(x){ return todoType(x)==='schedule' && x.date===today; })
+      .sort(function(a,b){ return String(a.time||'99:99').localeCompare(String(b.time||'99:99')); });
+    var tasks = todoList.filter(function(x){ return todoType(x)==='task' && (x.date===today || (!x.done && x.date<today)); })
+      .sort(function(a,b){
+        if(!!a.done !== !!b.done) return a.done ? 1 : -1;
+        if(a.date<today && b.date>=today) return -1;
+        if(b.date<today && a.date>=today) return 1;
+        if((a.priority==='important') !== (b.priority==='important')) return a.priority==='important' ? -1 : 1;
+        return String(a.createdAt||'').localeCompare(String(b.createdAt||''));
+      });
+    var lateCnt = tasks.filter(function(x){ return !x.done && x.date<today; }).length;
+    var openTaskCnt = tasks.filter(function(x){ return !x.done; }).length;
     var cc = document.getElementById('tdCount');
     if(cc){
-      cc.textContent = openCnt + '건' +
-        (todayCnt ? ' · 오늘 ' + todayCnt : '') +
-        (lateCnt ? ' · 기한 지남 ' + lateCnt : '') +
-        (doneCnt ? ' · 완료 ' + doneCnt : '');
+      cc.textContent = '일정 '+schedules.length+'건 · 할 일 '+openTaskCnt+'건' + (lateCnt ? ' · 기한 지남 '+lateCnt+'건' : '');
     }
     setTimeout(function(){ refreshSimpleDashboard(); },0);
 
-    box.innerHTML = '';
+    scheduleBox.innerHTML = '';
+    taskBox.innerHTML = '';
+    if(!schedules.length) scheduleBox.appendChild(emptyRow(canEdit ? '오늘 시간 약속을 왼쪽 입력칸에 추가하세요.' : '오늘 일정이 없습니다.'));
+    schedules.slice(0,5).forEach(function(x){ scheduleBox.appendChild(scheduleLaneRow(x)); });
+    if(schedules.length>5) scheduleBox.appendChild(moreRow('외 '+(schedules.length-5)+'건 · 전체 일정·할 일에서 확인'));
+    if(!tasks.length) taskBox.appendChild(emptyRow(canEdit ? '오늘 끝내야 할 일을 오른쪽 입력칸에 추가하세요.' : '오늘 할 일이 없습니다.'));
+    tasks.slice(0,8).forEach(function(x){ taskBox.appendChild(taskLaneRow(x,today)); });
+    if(tasks.length>8) taskBox.appendChild(moreRow('외 '+(tasks.length-8)+'건 · 전체 일정·할 일에서 확인'));
 
-    // 특정 날짜만 보기
-    if(filter){
-      var day = todoList.filter(function(x){ return x.date === filter && (showDone || !x.done); })
-                        .sort(function(a,b){ return slotOrder(a.slot) - slotOrder(b.slot); });
-      addSection(box, shortDate(filter) + ' 일정 ' + day.length + '건' + (filter === today ? ' (오늘)' : ''), '');
-      if(!day.length){ box.appendChild(emptyRow('이 날짜에 등록된 일정이 없습니다.')); return; }
-      day.forEach(function(x){ box.appendChild(todoRow(x, today)); });
-      return;
-    }
-
-    // 오늘 → 기한 지남 → 예정 → 완료 순
-    var byDate = function(a,b){
-      var c = String(a.date).localeCompare(String(b.date));
-      return c !== 0 ? c : (slotOrder(a.slot) - slotOrder(b.slot));
-    };
-    var g1 = todoList.filter(function(x){ return !x.done && x.date === today; }).sort(byDate);
-    var g2 = todoList.filter(function(x){ return !x.done && x.date < today; }).sort(byDate);
-    var g3 = todoList.filter(function(x){ return !x.done && x.date > today; }).sort(byDate);
-    var g4 = showDone ? todoList.filter(function(x){ return x.done; })
-              .sort(function(a,b){ return String(b.doneAt||b.date).localeCompare(String(a.doneAt||a.date)); }) : [];
-
-    if(!g1.length && !g2.length && !g3.length && !g4.length){
-      box.appendChild(emptyRow(canEdit ? '「일정 입력」을 눌러 중요한 일정을 등록하세요.' : '등록된 일정이 없습니다.'));
-      return;
-    }
-    [[g1,'오늘 ' + shortDate(today),''], [g2,'기한 지남','late'], [g3,'예정',''], [g4,'완료','done']].forEach(function(gp){
-      if(!gp[0].length) return;
-      addSection(box, gp[1] + ' ' + gp[0].length + '건', gp[2]);
-      gp[0].forEach(function(x){ box.appendChild(todoRow(x, today)); });
+    allBox.innerHTML='';
+    var all = todoList.slice().sort(function(a,b){
+      var c=String(a.date||'').localeCompare(String(b.date||''));
+      if(c!==0) return c;
+      if(todoType(a)!==todoType(b)) return todoType(a)==='schedule' ? -1 : 1;
+      return String(a.time||'99:99').localeCompare(String(b.time||'99:99'));
     });
+    if(!all.length){ allBox.appendChild(emptyRow('등록된 일정과 할 일이 없습니다.')); return; }
+    addSection(allBox,'전체 일정·할 일 '+all.length+'건','');
+    all.slice(0,50).forEach(function(x){ allBox.appendChild(todoRow(x,today)); });
+    if(all.length>50) allBox.appendChild(moreRow('최근 화면에는 50건까지만 표시합니다.'));
+  }
+
+  function moreRow(txt){ var e=document.createElement('div'); e.className='today-more'; e.textContent=txt; return e; }
+
+  function scheduleLaneRow(x){
+    var row=document.createElement('div');
+    var now=new Date();
+    var passed=x.date===localISO(now) && x.time && x.time < String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    row.className='today-lane-row schedule-row';
+    row.innerHTML='<span class="today-time '+(passed?'passed':'')+'">'+escapeHtml(x.time||'미정')+'</span><span class="today-work-text">'+escapeHtml(x.text||'')+'</span>'+
+      (canEdit?'<button class="today-row-del" title="삭제">✕</button>':'');
+    if(canEdit) row.querySelector('.today-row-del').onclick=function(){ removeTodo(x.id); };
+    return row;
+  }
+
+  function taskLaneRow(x,today){
+    var late=!x.done && x.date<today;
+    var row=document.createElement('div');
+    row.className='today-lane-row task-row';
+    row.innerHTML=(canEdit?'<input class="today-check" type="checkbox" '+(x.done?'checked':'')+' aria-label="완료 처리">':'<span></span>')+
+      '<span class="today-priority '+(late?'late':(x.priority==='important'?'important':''))+'">'+(late?'지남':(x.priority==='important'?'중요':'일반'))+'</span>'+
+      '<span class="today-work-text '+(x.done?'done':'')+'">'+escapeHtml(x.text||'')+'</span>'+
+      (canEdit?'<button class="today-row-del" title="삭제">✕</button>':'');
+    if(canEdit){
+      row.querySelector('.today-check').onchange=function(){ toggleTodo(x.id,!!x.done); };
+      row.querySelector('.today-row-del').onclick=function(){ removeTodo(x.id); };
+    }
+    return row;
   }
 
   function addSection(box, label, cls){
@@ -2293,11 +2361,12 @@
 
   function todoRow(x, today){
     var d = ddayLabel(x.date);
+    var type = todoType(x);
     var row = document.createElement('div');
     row.className = 'td-row' + (x.done ? ' done' : '');
     row.innerHTML =
       '<span class="td-dday ' + (x.done ? '' : d.cls) + '">' + (x.done ? '완료' : escapeHtml(d.txt)) + '</span>' +
-      '<span class="td-slot ' + slotCls(x.slot) + (canEdit ? ' clickable' : '') + '" title="' + (canEdit ? '클릭: 구분 없음 → 오전 → 오후 → 종일' : '') + '">' + slotLabel(x.slot) + '</span>' +
+      '<span class="td-slot ' + (type==='schedule'?'am':'') + '">' + (type==='schedule' ? escapeHtml(x.time||'일정') : '할 일') + '</span>' +
       (canEdit
         ? '<input type="date" class="td-editdate" value="' + escapeAttr(x.date || '') + '">' +
           '<input type="text" class="td-text td-edit" value="' + escapeAttr(x.text || '') + '">'
@@ -2314,18 +2383,9 @@
       te.onchange = function(){ saveTodoField(x.id, 'text', te.value.trim(), x.text || ''); };
       te.onkeydown = function(e){ if(e.key === 'Enter') te.blur(); };
       de.onchange = function(){ saveTodoField(x.id, 'date', de.value, x.date || ''); };
-      var se = row.querySelector('.td-slot');
-      se.onclick = function(){ saveTodoField(x.id, 'slot', nextSlot(x.slot), '__force__'); };
     }
     return row;
   }
-
-  // 시간 구분 (오전/오후/종일)
-  var SLOT_SEQ = ['', 'am', 'pm', 'all'];
-  function slotOrder(v){ return { am:0, pm:1, all:2 }[v] !== undefined ? { am:0, pm:1, all:2 }[v] : 3; }
-  function slotLabel(v){ return { am:'오전', pm:'오후', all:'종일' }[v] || '－'; }
-  function slotCls(v){ return (v === 'am' || v === 'pm' || v === 'all') ? v : ''; }
-  function nextSlot(v){ var i = SLOT_SEQ.indexOf(v || ''); return SLOT_SEQ[(i + 1) % SLOT_SEQ.length]; }
 
   // ---------- 일자별 전략 일지 ----------
   var SLOGS = 'strategyLogs';
@@ -3105,14 +3165,7 @@
       if(row.querySelector('.g-date').value === today) todayGoal += toNum(row.querySelector('.g-amt').value);
     });
     var todayActual = actualByDate[today] || 0;
-    var pipeline = 0;
-    document.querySelectorAll('#stratBody .strat-row').forEach(function(row){
-      var due = row.querySelector('.s-due').value;
-      if(!due || due >= today) pipeline += toNum(row.querySelector('.s-amt').value);
-    });
     var rate = goal > 0 ? total/goal*100 : 0;
-    var forecast = total + pipeline;
-    var forecastRate = goal > 0 ? forecast/goal*100 : 0;
     var biz = remainingBusinessDays();
     var dailyNeed = biz > 0 ? gap/biz : gap;
 
@@ -3121,13 +3174,13 @@
     document.getElementById('dashTitle').textContent = monthNum+'월 영업 관제탑';
     document.getElementById('dashGoal').textContent = compactWon(goal);
     document.getElementById('dashActual').textContent = compactWon(total);
-    document.getElementById('dashForecastValue').textContent = compactWon(forecast);
-    document.getElementById('dashRate').textContent = forecastRate.toFixed(1)+'%';
-    document.getElementById('dashRateSub').textContent = goal ? '현재 달성률 '+rate.toFixed(1)+'%' : '월 목표를 입력해주세요';
+    document.getElementById('dashForecastValue').textContent = compactWon(gap);
+    document.getElementById('dashRate').textContent = rate.toFixed(1)+'%';
+    document.getElementById('dashRateSub').textContent = goal ? '현재 실적 ÷ 월 목표' : '월 목표를 입력해주세요';
     document.getElementById('dashGap').textContent = compactWon(gap);
-    document.getElementById('dashPipeline').textContent = compactWon(pipeline);
-    document.getElementById('dashForecast').textContent = '확정 '+compactWon(total)+' + 예정 '+compactWon(pipeline);
-    document.getElementById('dashPace').textContent = gap > 0 ? '영업일 '+biz+'일 · 하루 '+compactWon(dailyNeed) : '목표를 달성했습니다';
+    document.getElementById('dashPipeline').textContent = biz+'일';
+    document.getElementById('dashForecast').textContent = goal ? '월 목표에서 현재 실적을 뺀 금액' : '월 목표를 입력해주세요';
+    document.getElementById('dashPace').textContent = gap > 0 ? '하루 '+compactWon(dailyNeed) : '목표 달성';
     document.getElementById('dashGapStat').className = 'tower-stat ' + (gap > 0 ? 'alert' : 'good');
     document.getElementById('dashRateCard').className = 'kpi-card primary';
     document.getElementById('todayGoal').textContent = compactWon(todayGoal);
@@ -3494,12 +3547,10 @@
     var editable = canEdit && !isSnapshotFile;
     if(!editable) closeGoalSetup();
     document.querySelectorAll('[contenteditable]').forEach(function(el){ el.setAttribute('contenteditable', editable ? 'true' : 'false'); });
-    document.querySelectorAll('#goalInput, #stratBody input, #dbBody input, #itemBody input, #logBody input, #goalBody input, #quickDate, #quickItem, #quickAmount, #quickMemo, .quick-add, .strategy-quick input, .strategy-quick button, .today-goal-quick input, .today-goal-quick button').forEach(function(el){ el.disabled = !editable; });
+    document.querySelectorAll('#goalInput, #stratBody input, #dbBody input, #itemBody input, #logBody input, #goalBody input, #quickDate, #quickItem, #quickAmount, #quickMemo, .quick-add, .strategy-quick input, .strategy-quick button, .today-goal-quick input, .today-goal-quick button, .today-quick-add input, .today-quick-add select, .today-quick-add button').forEach(function(el){ el.disabled = !editable; });
     // 메모는 잠그지 않고 '수정 불가'로 둠 — 읽기 전용으로 보는 사람도 눌러서 전체를 볼 수 있어야 함
     var slt = document.getElementById('slText');
     if(slt) slt.readOnly = !editable;
-    var tda = document.getElementById('tdAdd');
-    if(tda) tda.style.display = editable ? '' : 'none';
     renderTodos();
     document.querySelectorAll('#goalBody textarea.g-memo, #stratBody textarea.s-memo, #dbBody textarea.d-memo').forEach(function(el){
       el.disabled = false;
@@ -3519,6 +3570,8 @@
     document.getElementById('monthPicker').value = monthFromUrl();
     document.getElementById('quickDate').value = localISO(new Date());
     document.getElementById('sqDue').value = localISO(new Date());
+    document.getElementById('tdScheduleDate').value = localISO(new Date());
+    document.getElementById('tdTaskDate').value = localISO(new Date());
 
     if(isSnapshotFile){
       setSaveStatus('snapshot');
@@ -3593,8 +3646,6 @@
     initTabs();
     initStratListFold();
     setStratRange('rest');
-    document.getElementById('tdText').addEventListener('keydown', function(e){ if(e.key === 'Enter') addTodo(); });
-    document.getElementById('tdDate').value = localISO(new Date());
   }
 
   // ---------- export snapshot ----------
