@@ -473,17 +473,49 @@
   .contact-pill.plan{ background:#EEF0F3; color:#667085; }
   .contact-pill.try{ background:#F8EFE2; color:#8A5B22; }
   .contact-pill.done{ background:var(--green-bg); color:var(--green); }
+  .entry-mode-switch{ display:inline-flex; gap:4px; padding:3px; border:1px solid rgba(216,195,154,.35); border-radius:24px; background:rgba(255,255,255,.05); }
+  .entry-mode-btn{ border:0; border-radius:20px; padding:6px 12px; background:transparent; color:#AEB7C8; font:700 11.5px 'Pretendard'; cursor:pointer; }
+  .entry-mode-btn.on{ background:var(--brass); color:#fff; }
+  .day-balance{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:14px; margin:16px 0; }
+  .day-lane{ min-width:0; border:1px solid var(--line); border-radius:13px; background:#fff; overflow:hidden; }
+  .day-lane-head{ display:flex; align-items:center; gap:9px; padding:13px 15px; background:#F8F6F1; border-bottom:1px solid var(--line); }
+  .day-lane-kicker{ color:var(--brass); font-size:10px; font-weight:800; letter-spacing:.12em; }
+  .day-lane-title{ color:var(--navy); font-family:'Noto Serif KR',serif; font-size:15px; font-weight:800; }
+  .day-lane-count{ margin-left:auto; padding:2px 9px; border-radius:20px; background:#EFEAE0; color:#6B5122; font-size:11px; font-weight:800; }
+  .day-lane-list{ max-height:390px; overflow:auto; }
+  .plan-card,.history-card{ display:grid; align-items:center; gap:9px; padding:10px 13px; border-bottom:1px solid #F0EEE7; }
+  .plan-card:last-child,.history-card:last-child{ border-bottom:0; }
+  .plan-card{ grid-template-columns:minmax(92px,.7fr) minmax(130px,1.45fr) 66px 92px 50px; }
+  .history-card{ grid-template-columns:46px 52px minmax(82px,.65fr) minmax(150px,1.6fr); }
+  .lane-name{ min-width:0; font-weight:800; color:var(--navy); cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lane-main{ min-width:0; }
+  .lane-text{ color:#414653; font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lane-sub{ margin-top:2px; color:var(--muted); font-size:10.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lane-time{ color:var(--brass); font-size:11.5px; font-weight:800; }
+  .lane-method{ color:#6B5122; background:#F4EFE5; border-radius:20px; padding:3px 7px; font-size:10.5px; font-weight:800; text-align:center; white-space:nowrap; }
+  .lane-status{ width:100%; min-width:0; border:1px solid var(--line); border-radius:20px; padding:5px 7px; background:#FBFAF7; color:var(--navy); font:700 11px 'Pretendard'; }
+  .lane-record{ border:1px solid #BFD9CB; border-radius:18px; padding:5px 6px; background:var(--green-bg); color:var(--green); font:800 10.5px 'Pretendard'; cursor:pointer; white-space:nowrap; }
+  .lane-record:hover{ background:#D9EBDF; }
+  .lane-empty{ padding:30px 16px; text-align:center; color:var(--muted); font-size:12px; }
+  .history-detail{ margin-top:14px; border-top:1px solid var(--line); padding-top:10px; }
+  .history-detail summary{ display:flex; align-items:center; gap:9px; cursor:pointer; color:var(--navy); font-size:13px; font-weight:800; list-style:none; padding:8px 2px; }
+  .history-detail summary::-webkit-details-marker{ display:none; }
+  .history-detail summary::before{ content:'＋'; color:var(--brass); }
+  .history-detail[open] summary::before{ content:'－'; }
+  .history-detail summary span{ color:var(--muted); font-size:11.5px; font-weight:500; }
   @media (max-width:900px){
     .quick-core{ grid-template-columns:1fr 1fr; }
     .quick-core .q-field:nth-child(2),.quick-core .q-field:nth-child(3){ grid-column:1 / -1; }
     .quick-core .go{ grid-column:1 / -1; }
     .quick-actions .consult-row{ margin-left:0; }
     .quick-detail.on{ grid-template-columns:1fr 1fr; }
+    .day-balance{ grid-template-columns:1fr; }
   }
   @media (max-width:768px){
     .quick{ padding:14px; }
     .quick-head{ display:block; }
     .quick-step{ display:block; margin-top:2px; }
+    .entry-mode-switch{ margin-top:9px; }
     .quick-core{ grid-template-columns:1fr; }
     .quick-core .q-field:nth-child(2),.quick-core .q-field:nth-child(3),.quick-core .go{ grid-column:auto; }
     .quick-actions{ align-items:flex-start; }
@@ -496,6 +528,9 @@
     .ltable .detail-col{ display:none; }
     .ltable.show-detail .detail-col{ display:flex; }
     .peek-dock .peek{ max-height:42vh; }
+    .plan-card{ grid-template-columns:minmax(82px,.65fr) minmax(110px,1.3fr) 82px 48px; }
+    .plan-card .lane-method{ display:none; }
+    .history-card{ grid-template-columns:42px 48px minmax(76px,.6fr) minmax(130px,1.5fr); }
   }
   @media print{
     .quick,.quick-rules,.quick-detail{ display:none !important; }
@@ -560,8 +595,14 @@
 
     <div class="quick" id="quickBox">
       <div class="quick-head">
-        <div class="quick-label">오늘 연락할 사람</div>
-        <span class="quick-step">대상 등록 → 접촉 → 대화 기록 → 다음 행동</span>
+        <div>
+          <div class="quick-label" id="quickModeTitle">오늘 예정 콜 등록</div>
+          <span class="quick-step" id="quickModeHelp">아침에 연락할 대상을 먼저 올려두세요.</span>
+        </div>
+        <div class="entry-mode-switch" aria-label="입력 종류">
+          <button class="entry-mode-btn on" id="modePlanBtn" onclick="setQuickEntryMode('plan')">예정 콜 등록</button>
+          <button class="entry-mode-btn" id="modeActivityBtn" onclick="setQuickEntryMode('activity')">실제 업무 기록</button>
+        </div>
       </div>
       <div class="quick-core">
         <div class="q-field">
@@ -585,6 +626,7 @@
           <button class="choice-btn" data-value="문자" onclick="selectQuickChoice('method','문자',this)">문자</button>
           <button class="choice-btn" data-value="카톡" onclick="selectQuickChoice('method','카톡',this)">카톡</button>
           <button class="choice-btn" data-value="대면" onclick="selectQuickChoice('method','대면',this)">대면</button>
+          <button class="choice-btn" data-value="이메일" onclick="selectQuickChoice('method','이메일',this)">이메일</button>
           <button class="choice-btn" data-value="기타" onclick="selectQuickChoice('method','기타',this)">기타</button>
           <input type="hidden" id="qContactMethod" value="전화">
         </div>
@@ -613,7 +655,7 @@
         <div class="detail-products"><span class="choice-label">업무 분류</span><div class="prod-row" id="prodRow"></div></div>
       </div>
       <div class="quick-rules" id="quickRules">
-        <b>입력 규칙</b> · 먼저 오늘 연락할 대상을 ‘연락 전’으로 등록합니다. · 전화가 안 되거나 문자·카톡만 보낸 경우에는 ‘접촉 시도’, 실제 대화를 나눈 경우에는 ‘소통 완료’로 표시합니다. · 다음 행동을 적으면 별도의 미완 후속으로 등록되어 완료할 때까지 이월됩니다. · 기존 대상은 소속사·직함·등급이 자동 연결됩니다.
+        <b>입력 규칙</b> · 아침에는 ‘예정 콜 등록’으로 대상과 목적을 올립니다. · 예정 목록의 ‘기록’을 누르면 같은 대상의 실제 소통 내용을 바로 남길 수 있습니다. · 전화가 안 되거나 문자·카톡만 보낸 경우에는 ‘접촉 시도’, 실제 대화를 나눈 경우에는 ‘소통 완료’로 표시합니다. · 예정에 없던 전화·대면·카톡·이메일은 ‘실제 업무 기록’으로 바로 저장합니다. · 다음 행동을 적으면 완료할 때까지 이월됩니다.
       </div>
       <div class="quick-saved" id="qSaved"></div>
     </div>
@@ -626,29 +668,51 @@
 
     <div class="peek-dock"><div class="peek" id="peekBox" style="display:none;" aria-live="polite"></div></div>
 
-    <div class="tbl-tools">
-      <button class="mini-toggle" id="dayExpandBtn" onclick="toggleBoxById('dayScrollBox',this)">⤢ 전체 펼치기</button>
-      <button class="mini-toggle" id="dayDetailBtn" onclick="toggleDayDetails()">＋ 분류·추천인 보기</button>
-      <button class="mini-toggle" onclick="copyDayTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
-    </div>
-    <div class="scroll" id="dayScrollBox">
-      <div class="ltable" id="logTable">
-        <div class="lrow lhead">
-          <div>시간</div>
-          <div>대상</div>
-          <div>접촉</div>
-          <div>상태</div>
-          <div class="detail-col">추천인</div>
-          <div class="detail-col">업무 분류</div>
-          <div>연락 목적·소통 내용</div>
-          <div>다음 행동</div>
-          <div class="mid">후속</div>
-          <div></div>
+    <div class="day-balance">
+      <section class="day-lane" aria-labelledby="plannedCallTitle">
+        <div class="day-lane-head">
+          <span class="day-lane-kicker">PLAN</span>
+          <span class="day-lane-title" id="plannedCallTitle">오늘 예정 콜</span>
+          <span class="day-lane-count" id="plannedCallCount">0명</span>
         </div>
-        <div id="logBody"></div>
-      </div>
+        <div class="day-lane-list" id="plannedCallList"></div>
+      </section>
+      <section class="day-lane" aria-labelledby="actualHistoryTitle">
+        <div class="day-lane-head">
+          <span class="day-lane-kicker">ACTUAL</span>
+          <span class="day-lane-title" id="actualHistoryTitle">오늘 업무 히스토리</span>
+          <span class="day-lane-count" id="actualHistoryCount">0건</span>
+        </div>
+        <div class="day-lane-list" id="actualHistoryList"></div>
+      </section>
     </div>
-    <div class="empty" id="dayEmpty" style="display:none;">이 날짜에 등록된 연락 대상이 없습니다.</div>
+
+    <details class="history-detail" id="historyDetail">
+      <summary>전체 상세 기록 <span id="historyDetailCount">0건 · 차트형 기록 열람·수정</span></summary>
+      <div class="tbl-tools">
+        <button class="mini-toggle" id="dayExpandBtn" onclick="toggleBoxById('dayScrollBox',this)">⤢ 전체 펼치기</button>
+        <button class="mini-toggle" id="dayDetailBtn" onclick="toggleDayDetails()">＋ 분류·추천인 보기</button>
+        <button class="mini-toggle" onclick="copyDayTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
+      </div>
+      <div class="scroll" id="dayScrollBox">
+        <div class="ltable" id="logTable">
+          <div class="lrow lhead">
+            <div>시간</div>
+            <div>대상</div>
+            <div>접촉</div>
+            <div>상태</div>
+            <div class="detail-col">추천인</div>
+            <div class="detail-col">업무 분류</div>
+            <div>연락 목적·소통 내용</div>
+            <div>다음 행동</div>
+            <div class="mid">후속</div>
+            <div></div>
+          </div>
+          <div id="logBody"></div>
+        </div>
+      </div>
+      <div class="empty" id="dayEmpty" style="display:none;">이 날짜에 등록된 기록이 없습니다.</div>
+    </details>
   </div>
 
   <!-- ===== 업무 요청 ===== -->
@@ -826,6 +890,7 @@
   var requestRows=[], requestSaving=false;
   var canEdit=false, myEmail='';
   var entrySaving=false;
+  var quickEntryMode='plan', activePlanId='';
 
   // ---------- 유틸 ----------
   function localISO(d){
@@ -874,6 +939,7 @@
     var rqa=document.getElementById('reqAdd');
     if(rqa) rqa.style.display = canEdit ? '' : 'none';
     document.querySelectorAll('#logBody input, #logBody select').forEach(function(el){ el.disabled = !canEdit; });
+    document.querySelectorAll('#plannedCallList select').forEach(function(el){ el.disabled = !canEdit; });
     document.querySelectorAll('#logBody .del, #logBody .done-btn').forEach(function(el){
       el.style.display = canEdit ? '' : 'none';
     });
@@ -940,6 +1006,34 @@
     hidden.value=value;
     box.querySelectorAll('.choice-btn').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-value')===value); });
   }
+  function setQuickEntryMode(mode){
+    quickEntryMode = mode==='activity' ? 'activity' : 'plan';
+    activePlanId='';
+    var actual=quickEntryMode==='activity';
+    document.getElementById('modePlanBtn').classList.toggle('on',!actual);
+    document.getElementById('modeActivityBtn').classList.toggle('on',actual);
+    document.getElementById('quickModeTitle').textContent=actual?'실제 업무 기록':'오늘 예정 콜 등록';
+    document.getElementById('quickModeHelp').textContent=actual?'전화·대면·카톡·이메일 등 실제 소통을 남기세요.':'아침에 연락할 대상을 먼저 올려두세요.';
+    document.getElementById('qContent').placeholder=actual?'주고받은 내용이나 결과를 짧게 기록':'오늘 연락할 목적을 입력';
+    document.getElementById('qSaveBtn').textContent=actual?'기록 저장':'대상 추가';
+    setQuickChoice('status',actual?'소통 완료':'연락 전');
+  }
+  function startActualFromPlan(id){
+    var r=dayRows.filter(function(x){ return x.id===id; })[0];
+    if(!r) return;
+    setQuickEntryMode('activity');
+    activePlanId=id;
+    document.getElementById('qName').value=r.memberName||'';
+    document.getElementById('qProduct').value=r.product||'';
+    document.getElementById('qContent').value='';
+    document.getElementById('qFollowUp').value='';
+    document.getElementById('qTime').value=nowHM();
+    setQuickChoice('method',contactMethodOf(r));
+    fillMemberInfo();
+    clearPeek();
+    document.getElementById('quickBox').scrollIntoView({behavior:'smooth',block:'start'});
+    setTimeout(function(){ document.getElementById('qContent').focus(); },350);
+  }
   function contactMethodOf(r){ return String(r.contactMethod||'').trim() || '기타'; }
   function contactStatusOf(r){
     var s=String(r.contactStatus||'').trim();
@@ -953,6 +1047,58 @@
     var rank={'연락 전':0,'접촉 시도':1,'소통 완료':2};
     var s=contactStatusOf(r);
     return rank[s]===undefined?3:rank[s];
+  }
+  function isPlannedRecord(r){
+    return r.isPlanned!==false && String(r.entryType||'')!=='activity';
+  }
+
+  function renderTodayBalance(){
+    var planned=dayRows.filter(isPlannedRecord);
+    var linkedPlans={};
+    dayRows.forEach(function(r){ if(r.sourcePlanId) linkedPlans[r.sourcePlanId]=1; });
+    var actual=dayRows.filter(function(r){
+      return contactStatusOf(r)!=='연락 전' && !(isPlannedRecord(r) && linkedPlans[r.id]);
+    }).slice();
+    actual.sort(function(a,b){ return String(b.time||'').localeCompare(String(a.time||'')) || String(b.createdAt||'').localeCompare(String(a.createdAt||'')); });
+
+    var planBox=document.getElementById('plannedCallList');
+    var planDone=planned.filter(function(r){ return contactStatusOf(r)==='소통 완료'; }).length;
+    document.getElementById('plannedCallCount').textContent=planned.length ? planDone+'/'+planned.length+' 완료' : '0명';
+    if(!planned.length){
+      planBox.innerHTML='<div class="lane-empty">아침에 연락할 대상을 등록하면<br>여기에 오늘 콜 리스트가 만들어집니다.</div>';
+    } else {
+      planBox.innerHTML=planned.map(function(r){
+        var status=contactStatusOf(r);
+        var purpose=String(r.content||'').trim() || '연락 목적 미입력';
+        var next=String(r.followUp||'').trim();
+        return '<div class="plan-card">' +
+          '<div class="lane-name" onclick="openMember(\''+esc(r.memberKey)+'\')" title="대상별 이력 열기">'+esc(r.memberName||'-')+'</div>' +
+          '<div class="lane-main"><div class="lane-text" title="'+esc(purpose)+'">'+esc(purpose)+'</div>' +
+            '<div class="lane-sub">'+(next?'다음 행동 · '+esc(next):(status==='연락 전'?'아직 연락하지 않음':esc(status)))+'</div></div>' +
+          '<div class="lane-method">'+esc(contactMethodOf(r))+'</div>' +
+          '<select class="lane-status" aria-label="'+esc(r.memberName||'대상')+' 접촉 상태" onchange="editField(\''+r.id+'\',\'contactStatus\',this.value)">'+choiceOptions(['연락 전','접촉 시도','소통 완료'],status)+'</select>' +
+          (canEdit?'<button class="lane-record" onclick="startActualFromPlan(\''+r.id+'\')">기록</button>':'<span></span>') +
+        '</div>';
+      }).join('');
+    }
+
+    var historyBox=document.getElementById('actualHistoryList');
+    document.getElementById('actualHistoryCount').textContent=actual.length+'건';
+    if(!actual.length){
+      historyBox.innerHTML='<div class="lane-empty">실제 접촉한 건의 상태를 바꾸거나<br>‘실제 업무 기록’으로 저장하면 여기에 쌓입니다.</div>';
+    } else {
+      historyBox.innerHTML=actual.map(function(r){
+        var content=String(r.content||'').trim() || '내용 미입력';
+        var follow=String(r.followUp||'').trim();
+        return '<div class="history-card">' +
+          '<div class="lane-time">'+esc(r.time||'--:--')+'</div>' +
+          '<div class="lane-method">'+esc(contactMethodOf(r))+'</div>' +
+          '<div class="lane-name" onclick="openMember(\''+esc(r.memberKey)+'\')" title="대상별 이력 열기">'+esc(r.memberName||'-')+'</div>' +
+          '<div class="lane-main"><div class="lane-text" title="'+esc(content)+'">'+esc(content)+'</div>' +
+            '<div class="lane-sub">'+esc(contactStatusOf(r))+(follow?' · 다음 행동 '+esc(follow):'')+'</div></div>' +
+        '</div>';
+      }).join('');
+    }
   }
 
   // ---------- 날짜 ----------
@@ -1034,7 +1180,7 @@
             (sub? '<span class="name-sub">'+esc(sub)+'</span>':'') +
             (r.isConsult? '<span class="name-sub" style="color:var(--brass);font-weight:700;">🗣 상담 · '+esc(csStatus(r))+'</span>':'') +
           '</span></div>' +
-        '<div><select aria-label="접촉 방법" onchange="editField(\''+r.id+'\',\'contactMethod\',this.value)">'+choiceOptions(['전화','문자','카톡','대면','기타'],method)+'</select></div>' +
+        '<div><select aria-label="접촉 방법" onchange="editField(\''+r.id+'\',\'contactMethod\',this.value)">'+choiceOptions(['전화','문자','카톡','대면','이메일','기타'],method)+'</select></div>' +
         '<div><select aria-label="접촉 상태" onchange="editField(\''+r.id+'\',\'contactStatus\',this.value)">'+choiceOptions(['연락 전','접촉 시도','소통 완료'],contactStatus)+'</select></div>' +
         '<div class="detail-col">' + (r.refKey ? '<span class="ref-cell" onclick="openMember(\''+esc(r.refKey)+'\')">'+esc(r.refName||'')+'</span>' : '<input type="text" value="" list="memberList" placeholder="추천인" onchange="editRef(\''+r.id+'\',this.value)">') + '</div>' +
         '<div class="detail-col"><input type="text" value="'+esc(r.product)+'" list="productList" onchange="editField(\''+r.id+'\',\'product\',this.value)"></div>' +
@@ -1044,6 +1190,7 @@
         '<div class="mid"><button class="del" onclick="removeEntry(\''+r.id+'\')">✕</button></div>';
       body.appendChild(div);
     });
+    renderTodayBalance();
     applyEditMode();
     var pending=dayRows.filter(function(r){return String(r.followUp||'').trim() && !r.done;}).length;
     var planned=dayRows.filter(function(r){return contactStatusOf(r)==='연락 전';}).length;
@@ -1059,6 +1206,7 @@
     document.getElementById('dayContactDone').style.display = completed ? '' : 'none';
     document.getElementById('dayPending').textContent = '후속 미완 '+pending;
     document.getElementById('dayPending').style.display = pending ? '' : 'none';
+    document.getElementById('historyDetailCount').textContent = dayRows.length+'건 · 차트형 기록 열람·수정';
     document.getElementById('dayEmpty').style.display = dayRows.length? 'none':'block';
   }
 
@@ -1974,17 +2122,27 @@
     var followUp=document.getElementById('qFollowUp').value.trim();
     var contactMethod=document.getElementById('qContactMethod').value || '전화';
     var contactStatus=document.getElementById('qContactStatus').value || '연락 전';
+    var savedMode=quickEntryMode, sourcePlanId=activePlanId;
     if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
     if(!name){
       document.getElementById('qSaved').textContent='오늘 연락할 대상 이름을 먼저 입력해주세요.';
       document.getElementById('qName').focus(); return;
     }
+    if(savedMode==='activity' && contactStatus==='연락 전'){
+      document.getElementById('qSaved').textContent='실제 업무 기록은 ‘접촉 시도’ 또는 ‘소통 완료’를 선택해주세요.';
+      return;
+    }
     if(entrySaving) return;
     var key=nameKey(name);
+    if(sourcePlanId){
+      var sourcePlan=dayRows.filter(function(r){ return r.id===sourcePlanId; })[0];
+      if(!sourcePlan || sourcePlan.memberKey!==key) sourcePlanId='';
+    }
     var rec={ date:currentDate, time:time, memberKey:key, memberName:name,
               refKey:refKey, refName:refName,
               isConsult:consultMode, csStatus:consultMode?'접수':'',
               csField:'', csWay:'', csExpert:'', csResult:'', csDoneAt:'',
+              entryType:savedMode, isPlanned:savedMode==='plan', sourcePlanId:sourcePlanId||'',
               contactMethod:contactMethod, contactStatus:contactStatus,
               product:product, content:content, followUp:followUp, done:!followUp,
               gradeAt:key? gradeOf(key):'', createdAt:new Date().toISOString() };
@@ -1997,10 +2155,14 @@
         setStatus('ok');
         if(key) touchMember(key, name, company, job, contactStatus!=='연락 전');
         if(refKey) touchMember(refKey, refName);   // 추천인도 대상으로 등록해 이력을 이어감
+        if(savedMode==='activity' && sourcePlanId){
+          db.collection(LOGS).doc(sourcePlanId).update({contactStatus:contactStatus,contactMethod:contactMethod})
+            .catch(function(e){ console.error('예정 콜 상태 연결 실패:',e); });
+        }
         clearPeek();                               // 저장이 끝나면 직전 대상 이력도 자동으로 닫음
         if(consultMode) loadConsults();            // 상담 건이면 상담 관리에도 반영
         var saved=document.getElementById('qSaved');
-        saved.textContent=contactStatus==='연락 전' ? name+'님을 오늘 연락 대상으로 추가했습니다.' : name+'님의 소통 기록을 저장했습니다.';
+        saved.textContent=savedMode==='plan' ? name+'님을 오늘 예정 콜에 추가했습니다.' : name+'님의 실제 업무 기록을 저장했습니다.';
         setTimeout(function(){ if(saved) saved.textContent=''; },1600);
         document.getElementById('qName').value='';
         document.getElementById('qCompany').value='';
@@ -2011,12 +2173,12 @@
         document.getElementById('qProduct').value='';
         document.getElementById('qTime').value=nowHM();
         setQuickChoice('method','전화');
-        setQuickChoice('status','연락 전');
+        setQuickEntryMode(savedMode);
         clearProdButtons();
         document.getElementById('qName').focus();
       })
       .catch(function(e){ setStatus('err', e.code||e.message); })
-      .then(function(){ entrySaving=false; saveBtn.disabled=false; saveBtn.textContent='대상 추가'; });
+      .then(function(){ entrySaving=false; saveBtn.disabled=false; saveBtn.textContent=quickEntryMode==='activity'?'기록 저장':'대상 추가'; });
   }
   function editField(id, field, val){
     if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
@@ -2398,6 +2560,7 @@
     db=firebase.firestore(); auth=firebase.auth();
     buildProdButtons();
     document.getElementById('qTime').value=nowHM();
+    setQuickEntryMode('plan');
     document.getElementById('reqDue').value=localISO(new Date());
 
     document.getElementById('qContent').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); document.getElementById('qFollowUp').focus(); } });
