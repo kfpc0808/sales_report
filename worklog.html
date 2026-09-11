@@ -122,7 +122,7 @@
   .mini-toggle:hover{ background:#FBF6EC; }
   .ltable{ display:grid; grid-template-columns:70px 148px 96px 100px minmax(190px,1fr) minmax(240px,.9fr) 54px 30px;
            align-items:stretch; min-width:952px; font-size:13.5px; }
-  .lrow, #logBody{ display:contents; }
+  .lrow, #logBody, #fullLogBody{ display:contents; }
   .lrow > div{ min-width:0; padding:7px 8px; border-bottom:1px solid #F0EEE7; display:flex; align-items:center; }
   .lhead > div{ position:sticky; top:0; z-index:3; background:#F8F6F1; border-bottom:1px solid var(--line);
                 font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); font-weight:700; white-space:nowrap; }
@@ -479,19 +479,53 @@
   .call-desc{ color:var(--muted); font-size:11.5px; }
   .call-count{ margin-left:auto; padding:2px 9px; border-radius:20px; background:#fff; color:#6B5122; font-size:11px; font-weight:800; }
   .call-add{ display:grid; grid-template-columns:170px minmax(220px,1fr) 78px; gap:7px; padding:10px 12px; border-bottom:1px solid var(--line); }
-  .call-add input,.call-memo{ width:100%; min-width:0; border:1px solid var(--line); border-radius:7px; background:#fff; padding:7px 9px; color:var(--ink); font:500 12.5px 'Pretendard'; }
-  .call-add input:focus,.call-memo:focus{ outline:none; border-color:var(--brass); }
+  .call-add input,.call-detail textarea{ width:100%; min-width:0; border:1px solid var(--line); border-radius:7px; background:#fff; padding:7px 9px; color:var(--ink); font:500 12.5px 'Pretendard'; }
+  .call-add input:focus,.call-detail textarea:focus{ outline:none; border-color:var(--brass); }
   .call-add button{ border:0; border-radius:7px; background:var(--brass); color:#fff; font:800 12px 'Pretendard'; cursor:pointer; }
-  .call-list{ max-height:270px; overflow:auto; }
-  .call-item{ display:grid; grid-template-columns:150px minmax(220px,1fr) 84px 28px; gap:8px; align-items:center; padding:7px 12px; border-bottom:1px solid #ECE8DE; }
-  .call-item:last-child{ border-bottom:0; }
-  .call-name{ min-width:0; color:var(--navy); font-size:13px; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .call-check{ border:1px solid #E2C8C3; border-radius:20px; padding:5px 7px; background:var(--red-bg); color:var(--red); font:800 10.5px 'Pretendard'; cursor:pointer; white-space:nowrap; }
-  .call-check.done{ border-color:#BFD9CB; background:var(--green-bg); color:var(--green); }
+  .call-filters{ display:flex; gap:5px; margin-left:3px; }
+  .call-filter{ border:1px solid #D9D3C6; border-radius:20px; padding:4px 9px; background:#fff; color:var(--muted); font:700 10.5px 'Pretendard'; cursor:pointer; }
+  .call-filter.on{ border-color:var(--navy); background:var(--navy); color:#fff; }
+  .call-workspace{ display:grid; grid-template-columns:minmax(230px,.38fr) minmax(0,.62fr); height:306px; }
+  .call-queue{ display:flex; flex-direction:column; min-width:0; border-right:1px solid var(--line); background:#fff; }
+  .call-list{ flex:1; min-height:0; overflow:hidden; }
+  .call-person{ width:100%; display:grid; grid-template-columns:14px minmax(0,1fr) auto; align-items:center; gap:8px; min-height:32px; padding:6px 12px; border:0; border-bottom:1px solid #EFECE5; background:#fff; text-align:left; cursor:pointer; }
+  .call-person:hover{ background:#F8F6F1; }
+  .call-person.on{ background:#F4ECDD; box-shadow:inset 3px 0 0 var(--brass); }
+  .call-dot{ width:8px; height:8px; border-radius:50%; background:#C9C4B9; }
+  .call-dot.try{ background:#C18B42; }
+  .call-dot.done{ background:var(--green); }
+  .call-name{ min-width:0; color:var(--navy); font-size:12.5px; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .call-state{ color:var(--muted); font-size:10px; white-space:nowrap; }
+  .call-pager{ display:flex; align-items:center; justify-content:center; gap:8px; min-height:38px; padding:5px; border-top:1px solid var(--line); background:#F8F6F1; }
+  .call-pager button{ width:27px; height:27px; border:1px solid var(--line); border-radius:7px; background:#fff; color:var(--navy); cursor:pointer; }
+  .call-pager button:disabled{ opacity:.35; cursor:default; }
+  .call-page-info{ min-width:48px; text-align:center; color:var(--muted); font-size:11px; }
+  .call-detail{ min-width:0; padding:18px 20px; background:#FBFAF7; }
+  .call-detail-empty{ height:100%; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:12px; text-align:center; line-height:1.7; }
+  .call-detail-head{ display:flex; align-items:center; gap:8px; margin-bottom:13px; }
+  .call-detail-name{ color:var(--navy); font-family:'Noto Serif KR',serif; font-size:18px; font-weight:800; }
+  .call-status-badge{ padding:3px 8px; border-radius:20px; background:#EEF0F3; color:#667085; font-size:10.5px; font-weight:800; }
+  .call-status-badge.try{ background:#F8EFE2; color:#8A5B22; }
+  .call-status-badge.done{ background:var(--green-bg); color:var(--green); }
+  .call-detail-label{ display:block; margin-bottom:5px; color:var(--muted); font-size:10.5px; font-weight:700; }
+  .call-detail textarea{ min-height:74px; resize:vertical; line-height:1.55; }
+  .call-actions{ display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
+  .call-action{ border:1px solid var(--line); border-radius:8px; padding:7px 11px; background:#fff; color:var(--navy); font:800 11px 'Pretendard'; cursor:pointer; }
+  .call-action.primary{ border-color:var(--green); background:var(--green); color:#fff; }
+  .call-action.warn{ border-color:#D8BB86; background:#FFF7E8; color:#8A5B22; }
+  .call-action:disabled{ opacity:.45; cursor:default; }
   .call-del{ border:0; background:none; color:#B9B3A8; cursor:pointer; font-size:14px; }
   .call-empty{ padding:18px; text-align:center; color:var(--muted); font-size:12px; }
   .day-log-label{ display:flex; align-items:baseline; gap:9px; margin:2px 0 9px; color:var(--navy); font-family:'Noto Serif KR',serif; font-size:14px; font-weight:800; }
   .day-log-label span{ color:var(--muted); font:500 11.5px 'Pretendard'; }
+  .history-modal{ position:fixed; inset:0; z-index:1000; display:none; align-items:center; justify-content:center; padding:24px; background:rgba(11,28,53,.48); }
+  .history-modal.on{ display:flex; }
+  .history-modal-card{ width:min(1320px,96vw); max-height:90vh; display:flex; flex-direction:column; overflow:hidden; border-radius:14px; background:#fff; box-shadow:0 24px 70px rgba(11,28,53,.28); }
+  .history-modal-head{ display:flex; align-items:center; gap:10px; padding:14px 18px; border-bottom:1px solid var(--line); }
+  .history-modal-title{ color:var(--navy); font-family:'Noto Serif KR',serif; font-size:17px; font-weight:800; }
+  .history-modal-count{ color:var(--muted); font-size:11.5px; }
+  .history-close{ margin-left:auto; width:34px; height:34px; border:1px solid var(--line); border-radius:50%; background:#fff; color:var(--navy); font-size:18px; cursor:pointer; }
+  .history-modal .scroll{ max-height:calc(90vh - 64px); border:0; border-radius:0; }
   @media (max-width:900px){
     .quick-core{ grid-template-columns:1fr 1fr; }
     .quick-core .q-field:nth-child(2),.quick-core .q-field:nth-child(3){ grid-column:1 / -1; }
@@ -519,10 +553,14 @@
     .call-head{ align-items:flex-start; flex-wrap:wrap; }
     .call-desc{ flex-basis:100%; }
     .call-count{ margin-left:0; }
+    .call-filters{ margin-left:auto; }
     .call-add{ grid-template-columns:1fr 66px; }
     .call-add input:nth-child(2){ grid-column:1 / -1; grid-row:2; }
     .call-add button{ grid-column:2; grid-row:1; }
-    .call-item{ grid-template-columns:92px minmax(120px,1fr) 78px 24px; padding:7px 9px; }
+    .call-workspace{ grid-template-columns:42% 58%; height:320px; }
+    .call-detail{ padding:14px; }
+    .call-action{ padding:7px 8px; }
+    .history-modal{ padding:10px; }
   }
   @media print{
     .quick,.quick-rules,.quick-detail{ display:none !important; }
@@ -657,7 +695,12 @@
     <section class="call-board" aria-labelledby="callListTitle">
       <div class="call-head">
         <span class="call-title" id="callListTitle">오늘 콜 대상</span>
-        <span class="call-desc">이름과 짧은 메모만 적고, 통화 여부만 체크합니다.</span>
+        <span class="call-desc">대상을 고르고 결과를 처리하면 다음 대상으로 자동 이동합니다.</span>
+        <div class="call-filters" aria-label="콜 대상 필터">
+          <button class="call-filter on" id="callFilterPending" onclick="setCallFilter('pending')">미통화</button>
+          <button class="call-filter" id="callFilterDone" onclick="setCallFilter('done')">통화완료</button>
+          <button class="call-filter" id="callFilterAll" onclick="setCallFilter('all')">전체</button>
+        </div>
         <span class="call-count" id="callCount">0/0 통화</span>
       </div>
       <div class="call-add" id="callAdd">
@@ -665,12 +708,22 @@
         <input type="text" id="callMemo" placeholder="메모 · 통화할 이유나 확인할 내용" autocomplete="off">
         <button id="callAddBtn" onclick="addCallTarget()">추가</button>
       </div>
-      <div class="call-list" id="callList"></div>
+      <div class="call-workspace">
+        <div class="call-queue">
+          <div class="call-list" id="callList"></div>
+          <div class="call-pager">
+            <button id="callPrev" onclick="changeCallPage(-1)" aria-label="이전 콜 목록">‹</button>
+            <span class="call-page-info" id="callPageInfo">0 / 0</span>
+            <button id="callNext" onclick="changeCallPage(1)" aria-label="다음 콜 목록">›</button>
+          </div>
+        </div>
+        <div class="call-detail" id="callDetail"></div>
+      </div>
     </section>
 
-    <div class="day-log-label">오늘의 기록 내역 <span>시간순으로 누적되는 업무 차트</span></div>
+    <div class="day-log-label">오늘의 최근 업무 기록 <span id="recentLogCount">최근 5건</span></div>
     <div class="tbl-tools">
-      <button class="mini-toggle" id="dayExpandBtn" onclick="toggleBoxById('dayScrollBox',this)">⤢ 전체 펼치기</button>
+      <button class="mini-toggle" id="dayExpandBtn" onclick="openHistoryModal()">전체 기록 보기</button>
       <button class="mini-toggle" id="dayDetailBtn" onclick="toggleDayDetails()">＋ 분류·추천인 보기</button>
       <button class="mini-toggle" onclick="copyDayTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
     </div>
@@ -692,6 +745,25 @@
       </div>
     </div>
     <div class="empty" id="dayEmpty" style="display:none;">이 날짜에 등록된 업무 기록이 없습니다.</div>
+    <div class="history-modal" id="historyModal" onclick="closeHistoryModal()" role="dialog" aria-modal="true" aria-labelledby="historyModalTitle">
+      <div class="history-modal-card" onclick="event.stopPropagation()">
+        <div class="history-modal-head">
+          <span class="history-modal-title" id="historyModalTitle">오늘의 전체 업무 기록</span>
+          <span class="history-modal-count" id="fullLogCount">0건</span>
+          <button class="history-close" onclick="closeHistoryModal()" aria-label="전체 기록 닫기">×</button>
+        </div>
+        <div class="scroll">
+          <div class="ltable" id="fullLogTable">
+            <div class="lrow lhead">
+              <div>시간</div><div>대상</div><div>접촉</div><div>상태</div>
+              <div class="detail-col">추천인</div><div class="detail-col">업무 분류</div>
+              <div>연락 목적·소통 내용</div><div>다음 행동</div><div class="mid">후속</div><div></div>
+            </div>
+            <div id="fullLogBody"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ===== 업무 요청 ===== -->
@@ -869,6 +941,7 @@
   var requestRows=[], requestSaving=false;
   var canEdit=false, myEmail='';
   var entrySaving=false, callSaving=false;
+  var callFilter='pending', callPage=0, selectedCallId='', CALL_PAGE_SIZE=8;
 
   // ---------- 유틸 ----------
   function localISO(d){
@@ -918,10 +991,10 @@
     if(rqa) rqa.style.display = canEdit ? '' : 'none';
     var cla=document.getElementById('callAdd');
     if(cla) cla.style.display = canEdit ? '' : 'none';
-    document.querySelectorAll('#logBody input, #logBody select').forEach(function(el){ el.disabled = !canEdit; });
-    document.querySelectorAll('#callList input, #callList button').forEach(function(el){ el.disabled = !canEdit; });
+    document.querySelectorAll('#logBody input, #logBody select, #fullLogBody input, #fullLogBody select').forEach(function(el){ el.disabled = !canEdit; });
+    document.querySelectorAll('#callDetail textarea, #callDetail .call-action').forEach(function(el){ el.disabled = !canEdit; });
     document.querySelectorAll('#callList .call-del').forEach(function(el){ el.style.display = canEdit ? '' : 'none'; });
-    document.querySelectorAll('#logBody .del, #logBody .done-btn').forEach(function(el){
+    document.querySelectorAll('#logBody .del, #logBody .done-btn, #fullLogBody .del, #fullLogBody .done-btn').forEach(function(el){
       el.style.display = canEdit ? '' : 'none';
     });
     document.querySelectorAll('#reqList input, #reqList select').forEach(function(el){ el.disabled = !canEdit; });
@@ -970,8 +1043,9 @@
     btn.textContent=on?'규칙 닫기':'? 입력 규칙';
   }
   function toggleDayDetails(){
-    var tb=document.getElementById('logTable'), btn=document.getElementById('dayDetailBtn');
+    var tb=document.getElementById('logTable'), full=document.getElementById('fullLogTable'), btn=document.getElementById('dayDetailBtn');
     var on=tb.classList.toggle('show-detail');
+    if(full) full.classList.toggle('show-detail',on);
     btn.textContent=on?'－ 분류·추천인 숨기기':'＋ 분류·추천인 보기';
   }
 
@@ -1067,12 +1141,37 @@
 
   // ---------- 기록 목록 ----------
   function renderDay(){
-    var body=document.getElementById('logBody');
-    body.innerHTML='';
     var records=dayRows.filter(function(r){ return !isCallListItem(r); });
     var calls=dayRows.filter(isCallListItem);
+    records.sort(function(a,b){
+      return String((b.time||'')+(b.createdAt||'')).localeCompare(String((a.time||'')+(a.createdAt||'')));
+    });
     renderCallList(calls);
-    records.forEach(function(r){
+    renderLogRows(document.getElementById('logBody'),records.slice(0,5));
+    renderLogRows(document.getElementById('fullLogBody'),records);
+    document.getElementById('recentLogCount').textContent=records.length>5?'최근 5건 · 전체 '+records.length+'건':'전체 '+records.length+'건';
+    document.getElementById('fullLogCount').textContent=records.length+'건';
+    applyEditMode();
+    var pending=records.filter(function(r){return String(r.followUp||'').trim() && !r.done;}).length;
+    var planned=records.filter(function(r){return contactStatusOf(r)==='연락 전';}).length;
+    var attempted=records.filter(function(r){return contactStatusOf(r)==='접촉 시도';}).length;
+    var completed=records.filter(function(r){return contactStatusOf(r)==='소통 완료';}).length;
+    var people={}; records.forEach(function(r){ if(r.memberKey) people[r.memberKey]=1; });
+    document.getElementById('dayCount').textContent = '오늘 대상 '+Object.keys(people).length+'명';
+    document.getElementById('dayPlanned').textContent = '연락 전 '+planned;
+    document.getElementById('dayPlanned').style.display = planned ? '' : 'none';
+    document.getElementById('dayAttempted').textContent = '접촉 시도 '+attempted;
+    document.getElementById('dayAttempted').style.display = attempted ? '' : 'none';
+    document.getElementById('dayContactDone').textContent = '소통 완료 '+completed;
+    document.getElementById('dayContactDone').style.display = completed ? '' : 'none';
+    document.getElementById('dayPending').textContent = '후속 미완 '+pending;
+    document.getElementById('dayPending').style.display = pending ? '' : 'none';
+    document.getElementById('dayEmpty').style.display = records.length? 'none':'block';
+  }
+
+  function renderLogRows(body,rows){
+    body.innerHTML='';
+    rows.forEach(function(r){
       var g=gradeOf(r.memberKey);
       var m=members[r.memberKey]||{};
       var sub=[m.company||'', m.job||''].filter(Boolean).join(' · ');
@@ -1097,45 +1196,116 @@
         '<div class="mid"><button class="del" onclick="removeEntry(\''+r.id+'\')">✕</button></div>';
       body.appendChild(div);
     });
-    applyEditMode();
-    var pending=records.filter(function(r){return String(r.followUp||'').trim() && !r.done;}).length;
-    var planned=records.filter(function(r){return contactStatusOf(r)==='연락 전';}).length;
-    var attempted=records.filter(function(r){return contactStatusOf(r)==='접촉 시도';}).length;
-    var completed=records.filter(function(r){return contactStatusOf(r)==='소통 완료';}).length;
-    var people={}; records.forEach(function(r){ if(r.memberKey) people[r.memberKey]=1; });
-    document.getElementById('dayCount').textContent = '오늘 대상 '+Object.keys(people).length+'명';
-    document.getElementById('dayPlanned').textContent = '연락 전 '+planned;
-    document.getElementById('dayPlanned').style.display = planned ? '' : 'none';
-    document.getElementById('dayAttempted').textContent = '접촉 시도 '+attempted;
-    document.getElementById('dayAttempted').style.display = attempted ? '' : 'none';
-    document.getElementById('dayContactDone').textContent = '소통 완료 '+completed;
-    document.getElementById('dayContactDone').style.display = completed ? '' : 'none';
-    document.getElementById('dayPending').textContent = '후속 미완 '+pending;
-    document.getElementById('dayPending').style.display = pending ? '' : 'none';
-    document.getElementById('dayEmpty').style.display = records.length? 'none':'block';
   }
 
   function renderCallList(rows){
     var box=document.getElementById('callList');
     rows=rows.slice().sort(function(a,b){
-      return (contactStatusOf(a)==='소통 완료'?1:0)-(contactStatusOf(b)==='소통 완료'?1:0) ||
+      return callStateRank(a)-callStateRank(b) ||
              String(a.createdAt||'').localeCompare(String(b.createdAt||''));
     });
     var completed=rows.filter(function(r){ return contactStatusOf(r)==='소통 완료'; }).length;
+    var pending=rows.length-completed;
     document.getElementById('callCount').textContent=completed+'/'+rows.length+' 통화';
-    if(!rows.length){
-      box.innerHTML='<div class="call-empty">오늘 전화할 사람을 이름과 메모만 간단히 추가하세요.</div>';
-      return;
-    }
-    box.innerHTML=rows.map(function(r){
+    document.getElementById('callFilterPending').textContent='미통화 '+pending;
+    document.getElementById('callFilterDone').textContent='통화완료 '+completed;
+    document.getElementById('callFilterAll').textContent='전체 '+rows.length;
+    ['Pending','Done','All'].forEach(function(k){
+      document.getElementById('callFilter'+k).classList.toggle('on',callFilter===k.toLowerCase());
+    });
+    var filtered=rows.filter(function(r){
       var done=contactStatusOf(r)==='소통 완료';
-      return '<div class="call-item">' +
-        '<div class="call-name">'+esc(r.memberName||'-')+'</div>' +
-        '<input class="call-memo" type="text" value="'+esc(r.content||'')+'" placeholder="메모" onchange="editField(\''+r.id+'\',\'content\',this.value)">' +
-        '<button class="call-check'+(done?' done':'')+'" onclick="toggleCallDone(\''+r.id+'\','+(done?'true':'false')+')">'+(done?'✓ 통화함':'미통화')+'</button>' +
-        '<button class="call-del" onclick="removeCallTarget(\''+r.id+'\')" aria-label="콜 대상 삭제">×</button>' +
-      '</div>';
-    }).join('');
+      return callFilter==='all' || (callFilter==='done'?done:!done);
+    });
+    var pages=Math.ceil(filtered.length/CALL_PAGE_SIZE);
+    if(callPage>=pages) callPage=Math.max(0,pages-1);
+    var selectedIndex=filtered.map(function(r){return r.id;}).indexOf(selectedCallId);
+    if(selectedIndex<0 && filtered.length){ selectedCallId=filtered[0].id; selectedIndex=0; }
+    if(selectedIndex>=0) callPage=Math.floor(selectedIndex/CALL_PAGE_SIZE);
+    var pageRows=filtered.slice(callPage*CALL_PAGE_SIZE,(callPage+1)*CALL_PAGE_SIZE);
+    if(!pageRows.length){
+      box.innerHTML='<div class="call-empty">'+(rows.length?'이 조건에 해당하는 대상이 없습니다.':'오늘 전화할 사람을 이름과 메모만 간단히 추가하세요.')+'</div>';
+    } else {
+      box.innerHTML=pageRows.map(function(r){
+        var state=callState(r), label=state==='done'?'완료':state==='try'?'재통화':'대기';
+        return '<button class="call-person'+(r.id===selectedCallId?' on':'')+'" onclick="selectCall(\''+r.id+'\')">' +
+          '<span class="call-dot '+state+'"></span><span class="call-name">'+esc(r.memberName||'-')+'</span><span class="call-state">'+label+'</span></button>';
+      }).join('');
+    }
+    document.getElementById('callPageInfo').textContent=pages?(callPage+1)+' / '+pages:'0 / 0';
+    document.getElementById('callPrev').disabled=callPage<=0;
+    document.getElementById('callNext').disabled=!pages || callPage>=pages-1;
+    renderCallDetail(rows.filter(function(r){return r.id===selectedCallId;})[0]);
+    applyEditMode();
+  }
+
+  function callState(r){
+    var s=contactStatusOf(r);
+    return s==='소통 완료'?'done':s==='접촉 시도'?'try':'pending';
+  }
+  function callStateRank(r){ return callState(r)==='pending'?0:callState(r)==='try'?1:2; }
+  function filteredCallRows(){
+    var rows=dayRows.filter(isCallListItem).slice().sort(function(a,b){ return callStateRank(a)-callStateRank(b) || String(a.createdAt||'').localeCompare(String(b.createdAt||'')); });
+    return rows.filter(function(r){ var d=callState(r)==='done'; return callFilter==='all'||(callFilter==='done'?d:!d); });
+  }
+  function setCallFilter(kind){
+    callFilter=kind; callPage=0;
+    var rows=filteredCallRows(); selectedCallId=rows.length?rows[0].id:'';
+    renderCallList(dayRows.filter(isCallListItem));
+  }
+  function selectCall(id){ selectedCallId=id; renderCallList(dayRows.filter(isCallListItem)); }
+  function changeCallPage(delta){
+    var rows=filteredCallRows(), pages=Math.ceil(rows.length/CALL_PAGE_SIZE);
+    callPage=Math.max(0,Math.min(Math.max(0,pages-1),callPage+delta));
+    selectedCallId=rows[callPage*CALL_PAGE_SIZE]?rows[callPage*CALL_PAGE_SIZE].id:'';
+    renderCallList(dayRows.filter(isCallListItem));
+  }
+  function renderCallDetail(r){
+    var box=document.getElementById('callDetail');
+    if(!r){ box.innerHTML='<div class="call-detail-empty">왼쪽에서 대상을 선택하면<br>메모와 통화 처리 버튼이 표시됩니다.</div>'; return; }
+    var state=callState(r), label=state==='done'?'통화 완료':state==='try'?'부재·재통화':'미통화';
+    box.innerHTML='<div class="call-detail-head"><span class="call-detail-name">'+esc(r.memberName||'-')+'</span>'+
+      '<span class="call-status-badge '+state+'">'+label+'</span>'+
+      (canEdit?'<button class="call-del" style="margin-left:auto" onclick="removeCallTarget(\''+r.id+'\')" aria-label="콜 대상 삭제">×</button>':'')+'</div>'+
+      '<label class="call-detail-label" for="callDetailMemo">통화 목적·확인 메모</label>'+
+      '<textarea id="callDetailMemo" placeholder="통화할 이유나 확인할 내용을 적으세요" onchange="editField(\''+r.id+'\',\'content\',this.value)">'+esc(r.content||'')+'</textarea>'+
+      '<div class="call-actions">'+
+        (state==='done'?'<button class="call-action" onclick="updateCallStatus(\''+r.id+'\',\'연락 전\')">미통화로 변경</button>':'<button class="call-action primary" onclick="updateCallStatus(\''+r.id+'\',\'소통 완료\')">✓ 통화 완료</button><button class="call-action warn" onclick="updateCallStatus(\''+r.id+'\',\'접촉 시도\')">부재 · 재통화</button>')+
+        '<button class="call-action" onclick="loadCallIntoRecord(\''+r.id+'\')">업무 기록 작성</button>'+
+        '<button class="call-action" onclick="nextCallTarget()">다음 대상 →</button></div>';
+  }
+
+  function nextCallTarget(){
+    var rows=filteredCallRows(); if(!rows.length) return;
+    var i=rows.map(function(r){return r.id;}).indexOf(selectedCallId);
+    var next=rows[(i+1+rows.length)%rows.length];
+    selectedCallId=next.id; callPage=Math.floor(((i+1+rows.length)%rows.length)/CALL_PAGE_SIZE);
+    renderCallList(dayRows.filter(isCallListItem));
+  }
+
+  function updateCallStatus(id,status){
+    if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
+    var rows=filteredCallRows(), i=rows.map(function(r){return r.id;}).indexOf(id);
+    var next=rows.length>1?rows[(i+1+rows.length)%rows.length]:null;
+    var row=dayRows.filter(function(r){return r.id===id;})[0];
+    if(row) row.contactStatus=status;
+    if(status==='소통 완료' || status==='접촉 시도') selectedCallId=next?next.id:'';
+    setStatus('busy'); renderCallList(dayRows.filter(isCallListItem));
+    db.collection(LOGS).doc(id).update({contactStatus:status}).then(function(){
+      setStatus('ok');
+      if(status==='소통 완료' && row && row.memberKey && members[row.memberKey]){
+        db.collection(MEMBERS).doc(row.memberKey).set({lastContact:row.date||currentDate},{merge:true});
+      }
+    }).catch(function(e){ setStatus('err',e.code||e.message); openDay(currentDate); });
+  }
+
+  function loadCallIntoRecord(id){
+    var r=dayRows.filter(function(v){return v.id===id;})[0]; if(!r) return;
+    document.getElementById('qName').value=r.memberName||'';
+    fillMemberInfo(); clearPeek();
+    document.getElementById('qContent').value=r.content||'';
+    document.getElementById('quickBox').scrollIntoView({behavior:'smooth',block:'center'});
+    setTimeout(function(){ document.getElementById('qContent').focus(); },350);
   }
 
   function addCallTarget(){
@@ -1158,7 +1328,8 @@
           contactMethod:'전화', contactStatus:'연락 전', product:'', content:memo,
           followUp:'', done:true, gradeAt:key?gradeOf(key):'', createdAt:new Date().toISOString()
         });
-    work.then(function(){
+    work.then(function(ref){
+      selectedCallId=existing?existing.id:(ref&&ref.id?ref.id:selectedCallId);
       setStatus('ok');
       document.getElementById('callName').value='';
       document.getElementById('callMemo').value='';
@@ -1168,22 +1339,13 @@
   }
 
   function toggleCallDone(id,done){
-    if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
-    var next=done?'연락 전':'소통 완료';
-    setStatus('busy');
-    db.collection(LOGS).doc(id).update({contactStatus:next}).then(function(){
-      setStatus('ok');
-      var row=dayRows.filter(function(r){ return r.id===id; })[0];
-      if(!done && row && row.memberKey && members[row.memberKey]){
-        db.collection(MEMBERS).doc(row.memberKey).set({lastContact:row.date||currentDate},{merge:true});
-      }
-    }).catch(function(e){ setStatus('err',e.code||e.message); });
+    updateCallStatus(id,done?'연락 전':'소통 완료');
   }
 
   function removeCallTarget(id){
     if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
     if(!confirm('이 콜 대상을 목록에서 삭제할까요?')) return;
-    db.collection(LOGS).doc(id).delete().then(function(){ setStatus('ok'); })
+    db.collection(LOGS).doc(id).delete().then(function(){ if(selectedCallId===id) selectedCallId=''; setStatus('ok'); })
       .catch(function(e){ setStatus('err',e.code||e.message); });
   }
 
@@ -2333,6 +2495,19 @@
     var on = box.classList.toggle('expanded');
     if(btn) btn.textContent = on ? '⤡ 접기' : '⤢ 전체 펼치기';
   }
+  function openHistoryModal(){
+    var modal=document.getElementById('historyModal');
+    if(!modal) return;
+    modal.classList.add('on');
+    document.body.style.overflow='hidden';
+    var close=modal.querySelector('.history-close'); if(close) close.focus();
+  }
+  function closeHistoryModal(){
+    var modal=document.getElementById('historyModal');
+    if(!modal) return;
+    modal.classList.remove('on');
+    document.body.style.overflow='';
+  }
   function copyTsv(rows, btn){
     var text = rows.map(function(r){ return r.join('\t'); }).join('\n');
     var flash = function(){
@@ -2550,6 +2725,7 @@
     document.getElementById('callMemo').addEventListener('keydown', function(e){
       if(e.key==='Enter'){ e.preventDefault(); addCallTarget(); }
     });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape' && document.getElementById('historyModal').classList.contains('on')) closeHistoryModal(); });
     document.getElementById('gPw').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
     document.getElementById('gEmail').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('gPw').focus(); });
     document.getElementById('mSearch').addEventListener('keydown', function(e){ if(e.key==='Enter') openMemberByInput(); });
