@@ -806,6 +806,54 @@
   .dashboard-todo.adding .td-add{ display:flex; }
   .dashboard-todo .td-exp{ margin-left:auto; }
   .dashboard-todo .td-list{ max-height:270px; }
+  /* ===== GOAL & EXECUTION — simplified scorecard ===== */
+  .goal-exec-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:14px; margin:2px 0 14px; }
+  .goal-exec-title{ color:var(--navy); font-family:'Noto Serif KR',serif; font-size:21px; font-weight:800; }
+  .goal-exec-sub{ margin-top:4px; color:var(--muted); font-size:12.5px; }
+  .goal-exec-actions{ display:flex; gap:7px; flex-wrap:wrap; }
+  .goal-exec-kpis{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:14px; }
+  .goal-exec-card{ background:#fff; border:1px solid #E2E6EC; border-radius:14px; padding:17px 18px; box-shadow:0 2px 10px rgba(16,30,54,.035); margin-bottom:14px; }
+  .goal-exec-card-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:11px; }
+  .goal-exec-card-title{ color:var(--navy); font-family:'Noto Serif KR',serif; font-size:15px; font-weight:800; }
+  .goal-exec-card-hint{ color:var(--muted); font-size:11.5px; }
+  .ge-item-table{ grid-template-columns:minmax(150px,1.5fr) 135px 135px 135px 150px 42px; min-width:760px; }
+  .ge-auto-tag{ margin-left:5px; padding:1px 6px; border-radius:20px; background:var(--green-bg); color:var(--green); font-size:9.5px; font-weight:800; white-space:nowrap; }
+  .ge-item-table input.i-done[readonly]{ color:var(--green); background:#F5FAF7; cursor:default; }
+  .ge-item-table input.i-done[readonly]:hover{ border-color:transparent; }
+  .ge-item-progress{ width:100%; display:grid; grid-template-columns:minmax(70px,1fr) 38px; gap:8px; align-items:center; }
+  .ge-item-track{ height:7px; border-radius:10px; overflow:hidden; background:#ECEFF3; }
+  .ge-item-fill{ height:100%; border-radius:10px; background:var(--brass); }
+  .ge-item-rate{ color:var(--muted); font-size:11px; font-weight:800; text-align:right; }
+  .ge-exec-add{ display:grid; grid-template-columns:135px minmax(180px,1.35fr) minmax(140px,1fr) 76px 64px 118px auto; gap:7px; padding:11px; margin-bottom:12px; border:1px solid #DED2B9; border-radius:11px; background:#FFFDF8; }
+  .ge-exec-add input,.ge-exec-add select{ min-width:0; width:100%; height:36px; box-sizing:border-box; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); padding:6px 8px; font-family:'Pretendard',sans-serif; font-size:11.5px; }
+  .ge-exec-add input:focus,.ge-exec-add select:focus{ outline:none; border-color:var(--brass); box-shadow:0 0 0 3px rgba(176,141,87,.11); }
+  .ge-exec-add button{ height:36px; border:0; border-radius:8px; background:var(--navy); color:#fff; padding:0 13px; font-family:'Pretendard',sans-serif; font-size:11.5px; font-weight:800; cursor:pointer; white-space:nowrap; }
+  .ge-exec-summary{ display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:9px; color:var(--muted); font-size:11.5px; }
+  .ge-status-chip{ display:inline-flex; align-items:center; min-height:24px; padding:1px 8px; border-radius:20px; background:#F0F1F3; color:#687181; font-size:10.5px; font-weight:800; }
+  .ge-status-chip.doing{ background:#E7EEF8; color:var(--navy); }
+  .ge-status-chip.done{ background:var(--green-bg); color:var(--green); }
+  .ge-status-chip.late{ background:var(--red-bg); color:var(--red); }
+  .ge-exec-table{ min-width:940px; }
+  .ge-exec-head-row,.ge-exec-row{ display:grid; grid-template-columns:135px minmax(190px,1.4fr) minmax(135px,1fr) 155px 120px 100px 68px; align-items:stretch; }
+  .ge-exec-head-row > div{ padding:8px; background:#F8F6F1; border-bottom:1px solid var(--line); color:var(--muted); font-size:10.5px; font-weight:700; }
+  .ge-exec-row > div{ min-width:0; display:flex; align-items:center; padding:7px 8px; border-bottom:1px solid #F0EEE7; }
+  .ge-exec-row.overdue > div:first-child{ box-shadow:inset 3px 0 0 var(--red); }
+  .ge-exec-row.finished{ opacity:.68; }
+  .ge-exec-row input,.ge-exec-row select,.ge-exec-row textarea{ width:100%; min-width:0; box-sizing:border-box; border:1px solid transparent; border-radius:6px; background:transparent; color:var(--ink); padding:5px 6px; font-family:'Pretendard',sans-serif; font-size:12.5px; }
+  .ge-exec-row input:hover,.ge-exec-row select:hover,.ge-exec-row textarea:hover{ border-color:var(--line); background:#FBFAF7; }
+  .ge-exec-row input:focus,.ge-exec-row select:focus,.ge-exec-row textarea:focus{ outline:none; border-color:var(--brass); background:#fff; }
+  .ge-exec-row .s-item{ color:var(--navy); font-weight:800; }
+  .ge-exec-row .s-name{ font-weight:700; }
+  .ge-lead-group{ display:grid !important; grid-template-columns:42px 10px 42px 51px; gap:2px; align-items:center; }
+  .ge-lead-group input{ text-align:center; font-variant-numeric:tabular-nums; }
+  .ge-lead-slash{ color:var(--muted); text-align:center; }
+  .ge-row-ops{ justify-content:flex-end; gap:2px; }
+  .ge-detail-btn{ border:0; background:transparent; color:var(--brass); cursor:pointer; padding:3px 5px; font-size:11px; }
+  .ge-memo-line{ display:none !important; grid-column:1 / -1; padding:5px 9px 9px 143px !important; background:#FCFBF8; }
+  .ge-exec-row.detail-open .ge-memo-line{ display:flex !important; }
+  .ge-memo-line textarea{ min-height:40px; resize:vertical; border-color:var(--line); background:#fff; }
+  .ge-exec-empty{ padding:18px 8px; color:var(--muted); font-size:12.5px; text-align:center; }
+  .ge-footnote{ margin-top:10px; color:var(--muted); font-size:11.5px; }
   .today-command{ margin-bottom:14px; padding:0; overflow:hidden; }
   .today-command-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:15px 18px; border-bottom:1px solid #E8EBEF; }
   .today-command-title{ color:var(--navy); font-family:'Noto Serif KR',serif; font-size:16px; font-weight:800; }
@@ -862,6 +910,9 @@
     .tower-stat:last-child{ border-bottom:0; }
     .today-command-grid{ grid-template-columns:1fr; }
     .today-lane + .today-lane{ border-left:0; border-top:1px solid #E8EBEF; }
+    .goal-exec-kpis{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .ge-exec-add{ grid-template-columns:1fr 1fr; }
+    .ge-exec-add input:nth-child(2),.ge-exec-add input:nth-child(3),.ge-exec-add button{ grid-column:1 / -1; }
   }
   @media (max-width:560px){
     .toolbar-right .ghost:nth-of-type(2){ display:none; }
@@ -894,6 +945,9 @@
     .tg-memo-field,.tg-add{ grid-column:auto; }
     .schedule-add,.task-add{ grid-template-columns:1fr 1fr; }
     .schedule-add input[type="text"],.task-add input[type="text"],.today-quick-add button{ grid-column:1 / -1; }
+    .goal-exec-head{ align-items:flex-start; flex-direction:column; }
+    .goal-exec-actions{ width:100%; }
+    .goal-exec-actions button{ flex:1; }
   }
   @media print{
     .dash-actions,.dashboard-mode-btn,.quick-entry-drawer,.detail-intro,.strategy-quick,.today-goal-quick,.td-add-toggle{ display:none !important; }
@@ -901,6 +955,7 @@
     .dash-grid{ grid-template-columns:1.3fr .7fr; }
     .tower-strip{ grid-template-columns:repeat(3,1fr); }
     .today-quick-add,.today-all-toggle,.today-row-del{ display:none !important; }
+    .ge-exec-add,.goal-exec-actions,.ge-row-ops{ display:none !important; }
   }
 </style>
 </head>
@@ -1095,8 +1150,8 @@
                 <input type="text" id="sqTarget" placeholder="예: 정재원 추천자 외 2명" onkeydown="quickStrategyEnter(event)">
               </div>
               <div class="sq-field">
-                <label for="sqAmount">목표 기여액</label>
-                <input type="text" inputmode="numeric" class="sq-amount" id="sqAmount" placeholder="예: 1,200,000" oninput="formatQuickAmount(this)" onkeydown="quickStrategyEnter(event)">
+                <label for="sqAmount">실행 목표량(건)</label>
+                <input type="number" min="0" class="sq-amount" id="sqAmount" placeholder="예: 5" onkeydown="quickStrategyEnter(event)">
               </div>
               <input type="hidden" id="sqDue">
               <button class="sq-add" type="button" onclick="addQuickStrategy()">+ 추가</button>
@@ -1147,90 +1202,79 @@
   </section>
 
   <section class="tab-pane" data-pane="2">
-  <div class="detail-intro"><b>월 목표를 아이템별로 나누고, 부족 금액을 메울 실행 계획만 관리합니다.</b> 매일 수정할 필요 없이 계획이 바뀔 때만 손보면 됩니다.</div>
-  <!-- 아이템별 목표 & 달성 -->
-  <div class="section-head">
-    <span class="section-num" contenteditable="true">02</span>
-    <h2 class="section-title" contenteditable="true">아이템별 목표 &amp; 달성</h2>
-  </div>
-  <div class="section-desc" contenteditable="true">주력 아이템별로 이번 달 목표와 현재까지 달성한 금액을 직접 기록합니다. 아래 그래프에 즉시 반영됩니다.</div>
-
-  <div class="log-scroll">
-    <div class="itable" id="itemTable">
-      <div class="irow ihead">
-        <div>메인 아이템</div>
-        <div class="g-num">목표(원)</div>
-        <div class="g-num">달성(원)</div>
-        <div class="g-num">달성률</div>
-        <div class="g-num">잔여(원)</div>
-        <div></div>
+    <div class="goal-exec-head">
+      <div>
+        <div class="dash-kicker">MONTHLY GOAL &amp; EXECUTION</div>
+        <h2 class="goal-exec-title">목표와 실행</h2>
+        <div class="goal-exec-sub">이번 달 목표를 나누고, 목표를 움직이는 행동만 관리합니다.</div>
       </div>
-      <div id="itemBody"></div>
-      <div class="irow ifoot">
-        <div>합계</div>
-        <div class="g-num" id="iGoalCell">0</div>
-        <div class="g-num" id="iDoneCell">0</div>
-        <div class="g-num" id="iRateCell">-</div>
-        <div class="g-num" id="iLeftCell">0</div>
-        <div></div>
+      <div class="goal-exec-actions goal-edit-only">
+        <button class="dash-action-btn" type="button" onclick="addItemRowAndFocus()">+ 아이템 목표</button>
+        <button class="dash-action-btn primary" type="button" onclick="focusExecAdd()">+ 실행계획</button>
       </div>
     </div>
-  </div>
-  <div class="goal-tools">
-    <button class="add-row" onclick="addItemRow()">+ 아이템 추가</button>
-  </div>
-  <!-- 목표 달성 전략 & 대상 -->
-  <div class="section-head">
-    <span class="section-num" contenteditable="true">03</span>
-    <h2 class="section-title" contenteditable="true">목표 달성 전략 &amp; 대상</h2>
-  </div>
-  <div class="section-desc" contenteditable="true">부족 금액을 무엇으로, 누구를 대상으로 메울 것인지 먼저 정리합니다.</div>
 
-  <div class="lead-box">
-    <div class="lead-main" id="leadMain">전략을 등록하면 부족 금액 대비 확보 계획이 여기 요약됩니다.</div>
-    <div class="tl-cards" id="leadTimeline"></div>
-    <div class="tl-extra" id="leadExtra"></div>
-    <div class="tl-pick">
-      <span class="tl-pick-lab">구간 조회</span>
-      <input type="date" id="stratFrom" onchange="recalcNow()">
-      <span class="tl-tilde">~</span>
-      <input type="date" id="stratTo" onchange="recalcNow()">
-      <button class="tl-quick" onclick="setStratRange('rest')">오늘~말일</button>
-      <button class="tl-quick" onclick="setStratRange('week')">이번 주</button>
-      <button class="tl-quick" onclick="setStratRange('month')">이번 달</button>
-      <button class="tl-quick" onclick="setStratRange('all')">전체</button>
-      <span class="tl-pick-out" id="stratAsOfOut"></span>
+    <div class="goal-exec-kpis">
+      <div class="kpi-card"><div class="kpi-label">이번 달 목표</div><div class="kpi-value" id="geGoal">0원</div><div class="kpi-sub">월간 기준</div></div>
+      <div class="kpi-card good"><div class="kpi-label">현재 실적</div><div class="kpi-value" id="geActual">0원</div><div class="kpi-sub">매출 기록 자동 집계</div></div>
+      <div class="kpi-card bad"><div class="kpi-label">남은 목표</div><div class="kpi-value" id="geGap">0원</div><div class="kpi-sub">목표 − 실적</div></div>
+      <div class="kpi-card primary"><div class="kpi-label">현재 달성률</div><div class="kpi-value" id="geRate">0%</div><div class="kpi-sub">확정 실적 기준</div></div>
     </div>
-  </div>
 
-  <div class="log-tools">
-    <button class="mini-toggle" id="stratExpandBtn" onclick="toggleBoxById('stratScrollBox',this)">⤢ 전체 펼치기</button>
-    <button class="mini-toggle" onclick="copyStratTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
-    <button class="mini-toggle" onclick="sortStratRows('date')">⇅ 날짜순 정렬</button>
-    <button class="mini-toggle" onclick="sortStratRows('today')">⇅ 오늘부터 정렬</button>
-    <span class="chip-cnt" id="stratCount"></span>
-  </div>
-  <div class="log-scroll scroll-y" id="stratScrollBox">
-    <div class="stable" id="stratTable">
-      <div class="srow shead">
-        <div>전략 / 활동</div>
-        <div>대상</div>
-        <div>메모</div>
-        <div>예상일</div>
-        <div class="g-num">예상 금액(원)</div>
-        <div></div>
+    <section class="goal-exec-card">
+      <div class="goal-exec-card-head">
+        <span class="goal-exec-card-title">1. 아이템별 목표 구성</span>
+        <span class="goal-exec-card-hint">목표만 입력 · 실적은 상세 기록에서 자동 반영</span>
       </div>
-      <div id="stratBody"></div>
-      <div class="srow sfoot">
-        <div>합계</div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div class="g-num" id="sAmtCell">0</div>
-        <div></div>
+      <datalist id="itemGoalSuggest"></datalist>
+      <div class="log-scroll">
+        <div class="itable ge-item-table" id="itemTable">
+          <div class="irow ihead">
+            <div>아이템</div>
+            <div class="g-num">목표(원)</div>
+            <div class="g-num">현재 실적 <span class="ge-auto-tag">자동</span></div>
+            <div class="g-num">남은 금액</div>
+            <div>진행</div>
+            <div></div>
+          </div>
+          <div id="itemBody"></div>
+          <div class="irow ifoot">
+            <div>합계</div>
+            <div class="g-num" id="iGoalCell">0</div>
+            <div class="g-num" id="iDoneCell">0</div>
+            <div class="g-num" id="iLeftCell">0</div>
+            <div class="g-num" id="iRateCell">-</div>
+            <div></div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
+    </section>
+
+    <section class="goal-exec-card">
+      <div class="goal-exec-card-head">
+        <span class="goal-exec-card-title">2. 목표를 움직이는 핵심 실행</span>
+        <span class="goal-exec-card-hint">예상금액 대신 실제 실행량과 상태를 관리합니다.</span>
+      </div>
+      <div class="ge-exec-add goal-edit-only" id="execQuickAdd">
+        <input type="text" id="execItem" list="itemGoalSuggest" placeholder="연결 목표">
+        <input type="text" id="execAction" placeholder="다음 행동 *" onkeydown="execQuickEnter(event)">
+        <input type="text" id="execTarget" placeholder="대상">
+        <input type="number" min="0" id="execLeadTarget" placeholder="목표량">
+        <select id="execLeadUnit"><option value="명">명</option><option value="건">건</option><option value="회">회</option></select>
+        <input type="date" id="execDue">
+        <button type="button" onclick="addExecPlan()">+ 추가</button>
+      </div>
+      <div class="ge-exec-summary" id="execSummary">등록된 실행계획이 없습니다.</div>
+      <div class="log-scroll scroll-y" id="stratScrollBox">
+        <div class="ge-exec-table" id="stratTable">
+          <div class="ge-exec-head-row">
+            <div>연결 목표</div><div>다음 행동</div><div>대상</div><div>실행량</div><div>마감</div><div>상태</div><div></div>
+          </div>
+          <div id="stratBody"></div>
+        </div>
+      </div>
+      <div class="ge-footnote">행의 ▾를 누르면 메모와 기존 목표 기여액을 확인할 수 있습니다. 완료·보류된 계획은 아래로 자동 정렬됩니다.</div>
+    </section>
   </section>
 
   <section class="tab-pane" data-pane="3">
@@ -1768,21 +1812,33 @@
   }
 
   // ---------- strategy rows ----------
+  function strategyStatusOptions(current){
+    var options = [
+      {v:'planned',t:'예정'}, {v:'doing',t:'진행'}, {v:'done',t:'완료'}, {v:'hold',t:'보류'}
+    ];
+    return options.map(function(o){ return '<option value="'+o.v+'"'+(o.v===current?' selected':'')+'>'+o.t+'</option>'; }).join('');
+  }
+
   function buildStratRow(data){
     data = data || {};
-    // 기존에 「건수/인원」으로 넣어둔 값은 메모로 이어받습니다
     var memoVal = (data.memo !== undefined && data.memo !== null && data.memo !== '') ? data.memo : (data.count || '');
+    var status = data.status || 'planned';
+    var leadTarget = Number(data.leadTarget || 0);
+    var leadDone = Number(data.leadDone || 0);
+    var leadUnit = data.leadUnit || '건';
     var row = document.createElement('div');
-    row.className = 'srow strat-row';
+    row.className = 'ge-exec-row strat-row';
     row.innerHTML =
-      '<div><input type="text" class="s-name" placeholder="예: 외부설명회 5회" value="'+escapeAttr(data.name||'')+'" oninput="onRowChange(this)"></div>' +
-      '<div><input type="text" class="s-target" placeholder="대상 이름을 쉼표로 나열" value="'+escapeAttr(data.target||'')+'" oninput="onRowChange(this)"></div>' +
-      '<div><textarea class="s-memo" rows="1" placeholder="인원·회차·특이사항 (클릭하면 전체가 펼쳐집니다)" ' +
-        'onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(memoVal)+'</textarea></div>' +
+      '<div><input type="text" class="s-item" list="itemGoalSuggest" placeholder="목표 선택" value="'+escapeAttr(data.item||'')+'" oninput="onRowChange(this)"></div>' +
+      '<div><input type="text" class="s-name" placeholder="다음 행동" value="'+escapeAttr(data.name||'')+'" oninput="onRowChange(this)"></div>' +
+      '<div><input type="text" class="s-target" placeholder="대상" value="'+escapeAttr(data.target||'')+'" oninput="onRowChange(this)"></div>' +
+      '<div class="ge-lead-group"><input type="number" min="0" class="s-lead-done" aria-label="완료 실행량" value="'+leadDone+'" oninput="onRowChange(this)"><span class="ge-lead-slash">/</span><input type="number" min="0" class="s-lead-target" aria-label="목표 실행량" value="'+leadTarget+'" oninput="onRowChange(this)"><select class="s-lead-unit" aria-label="실행량 단위" onchange="onRowChange(this)"><option value="명"'+(leadUnit==='명'?' selected':'')+'>명</option><option value="건"'+(leadUnit==='건'?' selected':'')+'>건</option><option value="회"'+(leadUnit==='회'?' selected':'')+'>회</option></select></div>' +
       '<div class="due-cell"><span class="due-chip"></span>' +
         '<input type="date" class="s-due" value="'+escapeAttr(data.due||'')+'" oninput="onRowChange(this)"></div>' +
-      '<div><input type="text" inputmode="numeric" class="s-amt amt" placeholder="0" value="'+(data.amount?fmt(data.amount):'')+'" oninput="onAmountInput(this)"></div>' +
-      '<div class="g-mid"><button class="del-x" onclick="removeStratRow(this)">✕</button></div>';
+      '<div><select class="s-status" onchange="onRowChange(this)">'+strategyStatusOptions(status)+'</select></div>' +
+      '<div class="ge-row-ops"><button class="ge-detail-btn" type="button" onclick="toggleStrategyDetail(this)" title="메모 보기">▾</button><button class="del-x" onclick="removeStratRow(this)">✕</button></div>' +
+      '<div class="ge-memo-line"><textarea class="s-memo" rows="2" placeholder="판단 근거·특이사항·다음 확인 내용을 적어두세요." oninput="onMemoInput(this)">'+escapeHtml(memoVal)+'</textarea>'+
+        '<input type="text" inputmode="numeric" class="s-amt amt" aria-label="기존 목표 기여액" placeholder="기존 목표 기여액" value="'+(data.amount?fmt(data.amount):'')+'" oninput="onAmountInput(this)"></div>';
     return row;
   }
 
@@ -1790,6 +1846,46 @@
     document.getElementById('stratBody').appendChild(buildStratRow(data));
     recalcAll();
     scheduleSave();
+  }
+
+  function focusExecAdd(){
+    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    var el = document.getElementById('execAction');
+    if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(function(){ el.focus(); },250); }
+  }
+
+  function execQuickEnter(e){
+    if(e.key !== 'Enter') return;
+    e.preventDefault(); addExecPlan();
+  }
+
+  function addExecPlan(){
+    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    var actionEl = document.getElementById('execAction');
+    var action = actionEl.value.trim();
+    if(!action){ actionEl.focus(); return; }
+    addStratRow({
+      item: document.getElementById('execItem').value.trim(),
+      name: action,
+      target: document.getElementById('execTarget').value.trim(),
+      leadTarget: Number(document.getElementById('execLeadTarget').value || 0),
+      leadDone: 0,
+      leadUnit: document.getElementById('execLeadUnit').value || '건',
+      due: document.getElementById('execDue').value || localISO(new Date()),
+      status: 'planned', memo: '', amount: 0
+    });
+    document.getElementById('execAction').value='';
+    document.getElementById('execTarget').value='';
+    document.getElementById('execLeadTarget').value='';
+    actionEl.focus();
+  }
+
+  function toggleStrategyDetail(btn){
+    var row = btn.closest('.strat-row');
+    if(!row) return;
+    var on = row.classList.toggle('detail-open');
+    btn.textContent = on ? '▴' : '▾';
+    btn.title = on ? '메모 닫기' : '메모 보기';
   }
 
   function quickStrategyEnter(e){
@@ -1807,7 +1903,11 @@
       name: name,
       target: document.getElementById('sqTarget').value.trim(),
       due: document.getElementById('sqDue').value || localISO(new Date()),
-      amount: toNum(document.getElementById('sqAmount').value),
+      amount: 0,
+      leadDone: 0,
+      leadTarget: Number(document.getElementById('sqAmount').value || 0),
+      leadUnit: '건',
+      status: 'doing',
       memo: document.getElementById('sqMemo').value.trim()
     };
     var body = document.getElementById('stratBody');
@@ -1887,7 +1987,7 @@
     return p.length === 3 ? (Number(p[1]) + '/' + Number(p[2])) : iso;
   }
 
-  function recalcStrategy(gap){
+  function recalcStrategyLegacy(gap){
     var rows = document.querySelectorAll('#stratBody .strat-row');
     var sum = 0;
 
@@ -2005,31 +2105,118 @@
       '<span class="'+cls+'">(커버율 '+cover.toFixed(0)+'%)</span>';
   }
 
+  // 새 실행 점수판: 예상금액 합산 대신 실행량·상태·지연 여부를 보여줍니다.
+  function recalcStrategy(gap){
+    var body = document.getElementById('stratBody');
+    if(!body) return;
+    var today = localISO(new Date());
+    var rows = Array.prototype.slice.call(body.querySelectorAll('.strat-row'));
+    var counts = {planned:0,doing:0,done:0,hold:0,late:0};
+
+    rows.forEach(function(row){
+      var statusEl = row.querySelector('.s-status');
+      var status = statusEl ? statusEl.value : 'planned';
+      var due = row.querySelector('.s-due').value;
+      var target = Number(row.querySelector('.s-lead-target').value || 0);
+      var done = Number(row.querySelector('.s-lead-done').value || 0);
+      if(target > 0 && done >= target && status !== 'done'){
+        status='done'; statusEl.value='done';
+      }
+      var isLate = !!due && due < today && status !== 'done' && status !== 'hold';
+      counts[status] = (counts[status] || 0) + 1;
+      if(isLate) counts.late++;
+      row.classList.toggle('overdue',isLate);
+      row.classList.toggle('finished',status === 'done' || status === 'hold');
+      var chip = row.querySelector('.due-chip');
+      if(chip){
+        if(!due){ chip.textContent='미정'; chip.className='due-chip none'; }
+        else { var dl=ddayLabel(due); chip.textContent=dl.txt; chip.className='due-chip '+(dl.cls||''); }
+      }
+    });
+
+    var active = document.activeElement && document.activeElement.closest && document.activeElement.closest('#stratBody');
+    if(!active){
+      var bucket = function(row){
+        var st=row.querySelector('.s-status').value, due=row.querySelector('.s-due').value;
+        if(due && due<today && st!=='done' && st!=='hold') return 0;
+        return {doing:1,planned:2,hold:3,done:4}[st] === undefined ? 2 : {doing:1,planned:2,hold:3,done:4}[st];
+      };
+      rows.sort(function(a,b){ var ba=bucket(a),bb=bucket(b); if(ba!==bb)return ba-bb; return String(a.querySelector('.s-due').value||'9999-12-31').localeCompare(String(b.querySelector('.s-due').value||'9999-12-31')); });
+      rows.forEach(function(row){ body.appendChild(row); });
+    }
+
+    var summary = document.getElementById('execSummary');
+    if(summary){
+      if(!rows.length){ summary.innerHTML='등록된 실행계획이 없습니다. 위 입력칸에서 첫 실행을 추가하세요.'; }
+      else {
+        summary.innerHTML='<span class="ge-status-chip">전체 '+rows.length+'</span>'+
+          '<span class="ge-status-chip doing">진행 '+counts.doing+'</span>'+
+          '<span class="ge-status-chip">예정 '+counts.planned+'</span>'+
+          (counts.late?'<span class="ge-status-chip late">지연 '+counts.late+'</span>':'')+
+          '<span class="ge-status-chip done">완료 '+counts.done+'</span>'+
+          (counts.hold?'<span class="ge-status-chip">보류 '+counts.hold+'</span>':'');
+      }
+    }
+    var sc=document.getElementById('stratCount');
+    if(sc) sc.textContent=rows.length+'건';
+  }
+
   // ---------- item rows & chart ----------
   function buildItemRow(data){
     data = data || {};
+    var manualDone = (data.manualDone !== undefined) ? Number(data.manualDone||0) : Number(data.done||0);
     var row = document.createElement('div');
     row.className = 'irow item-row';
     row.innerHTML =
       '<div><input type="text" class="i-name" placeholder="예: 스타19 / 자비아 / 총판" value="'+escapeAttr(data.name||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><input type="text" inputmode="numeric" class="i-goal amt" placeholder="0" value="'+(data.goal?fmt(data.goal):'')+'" oninput="onAmountInput(this)"></div>' +
-      '<div><input type="text" inputmode="numeric" class="i-done amt done-amt" placeholder="0" value="'+(data.done?fmt(data.done):'')+'" oninput="onAmountInput(this)"></div>' +
-      '<div class="g-num i-rate">-</div>' +
+      '<div><input type="text" inputmode="numeric" class="i-done amt done-amt" data-manual="'+manualDone+'" placeholder="0" value="'+(data.done?fmt(data.done):'')+'" readonly></div>' +
       '<div class="g-num i-left">0</div>' +
+      '<div><div class="ge-item-progress"><div class="ge-item-track"><div class="ge-item-fill" style="width:0%"></div></div><span class="ge-item-rate i-rate">-</span></div></div>' +
       '<div class="g-mid"><button class="del-x" onclick="removeItemRow(this)">✕</button></div>';
     return row;
   }
 
   function addItemRow(data){
-    document.getElementById('itemBody').appendChild(buildItemRow(data));
+    var row = buildItemRow(data);
+    document.getElementById('itemBody').appendChild(row);
     recalcAll();
     scheduleSave();
+    return row;
+  }
+
+  function addItemRowAndFocus(){
+    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    var last = addItemRow({});
+    if(last){ last.scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(function(){ last.querySelector('.i-name').focus(); },250); }
+    return last;
   }
 
   function removeItemRow(btn){
     btn.closest('.item-row').remove();
     recalcAll();
     scheduleSave();
+  }
+
+  function itemActualFromLogs(itemName){
+    var key = String(itemName||'').trim().toLowerCase().replace(/\s+/g,'');
+    var result = {amount:0,matched:false};
+    if(!key) return result;
+    document.querySelectorAll('#logBody tr.log-row').forEach(function(row){
+      var label = String(row.querySelector('.log-item').value||'').trim().toLowerCase().replace(/\s+/g,'');
+      if(label && label.indexOf(key) !== -1){ result.amount += toNum(row.querySelector('.log-amt').value); result.matched=true; }
+    });
+    return result;
+  }
+
+  function refreshItemGoalSuggest(){
+    var dl=document.getElementById('itemGoalSuggest');
+    if(!dl) return;
+    dl.innerHTML='';
+    document.querySelectorAll('#itemBody .item-row .i-name').forEach(function(el){
+      var name=el.value.trim(); if(!name) return;
+      var op=document.createElement('option'); op.value=name; dl.appendChild(op);
+    });
   }
 
   function recalcItems(logTotal){
@@ -2039,7 +2226,11 @@
     rows.forEach(function(row){
       var name = row.querySelector('.i-name').value;
       var g = toNum(row.querySelector('.i-goal').value);
-      var dn = toNum(row.querySelector('.i-done').value);
+      var doneEl = row.querySelector('.i-done');
+      var auto = itemActualFromLogs(name);
+      var manual = Number(doneEl.getAttribute('data-manual') || 0);
+      var dn = auto.matched ? auto.amount : manual;
+      doneEl.value = dn ? fmt(dn) : '';
       sumGoal += g; sumDone += dn;
 
       var rateCell = row.querySelector('.i-rate');
@@ -2047,10 +2238,12 @@
       if(g > 0){
         var r = dn / g * 100;
         rateCell.textContent = r.toFixed(0)+'%';
-        rateCell.className = 'g-num i-rate ' + (r >= 100 ? 'rate-good' : 'rate-bad');
+        rateCell.className = 'ge-item-rate i-rate ' + (r >= 100 ? 'rate-good' : '');
+        row.querySelector('.ge-item-fill').style.width = Math.min(100,r)+'%';
       } else {
         rateCell.textContent = '-';
-        rateCell.className = 'g-num i-rate';
+        rateCell.className = 'ge-item-rate i-rate';
+        row.querySelector('.ge-item-fill').style.width = '0%';
       }
       var left = g - dn;
       leftCell.textContent = (left < 0 ? '+' : '') + fmt(Math.abs(left));
@@ -2062,6 +2255,7 @@
     document.getElementById('iDoneCell').textContent = fmt(sumDone);
     document.getElementById('iRateCell').textContent = sumGoal > 0 ? (sumDone/sumGoal*100).toFixed(0)+'%' : '-';
     document.getElementById('iLeftCell').textContent = fmt(Math.max(sumGoal - sumDone, 0));
+    refreshItemGoalSuggest();
 
     var itemMap = {};
     rows.forEach(function(row){
@@ -2094,14 +2288,15 @@
   }
 
   function copyStratTable(btn){
-    var out = [['전략 / 활동','대상','메모','예상일','예상 금액(원)']], sum = 0;
+    var out = [['연결 목표','다음 행동','대상','완료 실행량','목표 실행량','단위','마감','상태','메모']];
     document.querySelectorAll('#stratBody .strat-row').forEach(function(r){
-      var amt = toNum(r.querySelector('.s-amt').value); sum += amt;
-      out.push([r.querySelector('.s-name').value, r.querySelector('.s-target').value,
-                r.querySelector('.s-memo').value.replace(/\n/g,' / '),
-                r.querySelector('.s-due').value, amt]);
+      var status = {planned:'예정',doing:'진행',done:'완료',hold:'보류'}[r.querySelector('.s-status').value] || '예정';
+      out.push([r.querySelector('.s-item').value, r.querySelector('.s-name').value,
+                r.querySelector('.s-target').value, r.querySelector('.s-lead-done').value,
+                r.querySelector('.s-lead-target').value, r.querySelector('.s-lead-unit').value,
+                r.querySelector('.s-due').value, status,
+                r.querySelector('.s-memo').value.replace(/\n/g,' / ')]);
     });
-    out.push(['합계','','','',sum]);
     copyTsv(out, btn);
   }
 
@@ -3137,11 +3332,16 @@
     var list = [];
     document.querySelectorAll('#stratBody .strat-row').forEach(function(row){
       var name = row.querySelector('.s-name').value.trim();
+      var item = row.querySelector('.s-item') ? row.querySelector('.s-item').value.trim() : '';
       var target = row.querySelector('.s-target').value.trim();
       var due = row.querySelector('.s-due').value;
-      var amount = toNum(row.querySelector('.s-amt').value);
-      if(!name && !target && !amount) return;
-      list.push({name:name || '실행 계획', target:target, due:due, amount:amount});
+      var status = row.querySelector('.s-status') ? row.querySelector('.s-status').value : 'planned';
+      var leadDone = Number(row.querySelector('.s-lead-done') ? row.querySelector('.s-lead-done').value : 0);
+      var leadTarget = Number(row.querySelector('.s-lead-target') ? row.querySelector('.s-lead-target').value : 0);
+      var leadUnit = row.querySelector('.s-lead-unit') ? row.querySelector('.s-lead-unit').value : '건';
+      if(status === 'done' || status === 'hold') return;
+      if(!name && !target) return;
+      list.push({name:name || '실행 계획',item:item,target:target,due:due,status:status,leadDone:leadDone,leadTarget:leadTarget,leadUnit:leadUnit});
     });
     list.sort(function(a,b){
       var ad = a.due || '9999-12-31', bd = b.due || '9999-12-31';
@@ -3187,29 +3387,34 @@
     document.getElementById('todayActual').textContent = compactWon(todayActual);
     document.getElementById('todayStatus').textContent = todayGoal > 0 ? '달성률 '+(todayActual/todayGoal*100).toFixed(0)+'%' : '오늘 목표를 설정해주세요';
 
-    var todayStrategies = [], todayStrategyTotal = 0;
+    var todayStrategies = [];
     document.querySelectorAll('#stratBody .strat-row').forEach(function(row){
       if(row.querySelector('.s-due').value !== today) return;
+      var status = row.querySelector('.s-status') ? row.querySelector('.s-status').value : 'planned';
+      if(status === 'done' || status === 'hold') return;
       var x = {
         name: row.querySelector('.s-name').value.trim() || '전략 미지정',
+        item: row.querySelector('.s-item') ? row.querySelector('.s-item').value.trim() : '',
         target: row.querySelector('.s-target').value.trim(),
         memo: row.querySelector('.s-memo').value.trim(),
-        amount: toNum(row.querySelector('.s-amt').value)
+        leadDone: Number(row.querySelector('.s-lead-done') ? row.querySelector('.s-lead-done').value : 0),
+        leadTarget: Number(row.querySelector('.s-lead-target') ? row.querySelector('.s-lead-target').value : 0),
+        leadUnit: row.querySelector('.s-lead-unit') ? row.querySelector('.s-lead-unit').value : '건'
       };
-      todayStrategyTotal += x.amount;
       todayStrategies.push(x);
     });
     var todayStrategyList = document.getElementById('todayStrategyList');
     var todayStrategyCount = document.getElementById('todayStrategyCount');
-    todayStrategyCount.textContent = todayStrategies.length ? todayStrategies.length+'건 · '+compactWon(todayStrategyTotal) : '0건';
+    todayStrategyCount.textContent = todayStrategies.length ? todayStrategies.length+'건 실행 중' : '0건';
     if(!todayStrategies.length){
       todayStrategyList.innerHTML = '<div class="today-strategy-empty">위 입력칸에서 오늘 추진할 전략을 바로 추가하세요.</div>';
     } else {
       todayStrategyList.innerHTML = todayStrategies.slice(0,6).map(function(x){
-        var detail = [x.target,x.memo].filter(Boolean).join(' · ') || '대상·메모 미정';
+        var detail = [x.item,x.target,x.memo].filter(Boolean).join(' · ') || '대상·메모 미정';
+        var progress = x.leadTarget ? (x.leadDone+'/'+x.leadTarget+x.leadUnit) : '실행량 미정';
         return '<div class="today-strategy-row"><div class="today-strategy-name">'+escapeHtml(x.name)+'</div>'+
           '<div class="today-strategy-detail">'+escapeHtml(detail)+'</div>'+
-          '<div class="today-strategy-amount">'+(x.amount ? compactWon(x.amount) : '금액 미정')+'</div></div>';
+          '<div class="today-strategy-amount">'+escapeHtml(progress)+'</div></div>';
       }).join('') + (todayStrategies.length > 6 ? '<div class="today-strategy-empty">외 '+(todayStrategies.length-6)+'건은 「목표와 실행」에서 확인할 수 있습니다.</div>' : '');
     }
 
@@ -3239,9 +3444,10 @@
     } else {
       execBox.innerHTML = execs.map(function(x){
         var due = x.due ? ddayLabel(x.due) : {txt:'일정 미정',cls:''};
-        var meta = x.target ? escapeHtml(x.target) : '대상 미정';
+        var meta = [x.item,x.target].filter(Boolean).map(escapeHtml).join(' · ') || '대상 미정';
+        var progress = x.leadTarget ? (x.leadDone+'/'+x.leadTarget+x.leadUnit) : (x.status==='doing'?'진행 중':'예정');
         return '<div class="exec-row"><div class="exec-top"><div class="exec-name">'+escapeHtml(x.name)+'</div>'+
-          '<div class="exec-amt">'+compactWon(x.amount)+'</div></div>'+
+          '<div class="exec-amt">'+escapeHtml(progress)+'</div></div>'+
           '<div class="exec-meta"><span class="exec-chip '+escapeHtml(due.cls||'')+'">'+escapeHtml(due.txt)+'</span>'+meta+'</div></div>';
       }).join('');
     }
@@ -3305,6 +3511,13 @@
     document.getElementById('pctText').textContent = pct.toFixed(1)+'%';
     document.getElementById('gaugeFill').style.width = pct+'%';
     simpleActualByDate = actualByDate;
+    var geGoal=document.getElementById('geGoal'), geActual=document.getElementById('geActual'), geGap=document.getElementById('geGap'), geRate=document.getElementById('geRate');
+    if(geGoal){
+      geGoal.textContent=compactWon(goal);
+      geActual.textContent=compactWon(total);
+      geGap.textContent=compactWon(gap);
+      geRate.textContent=(goal>0 ? (total/goal*100).toFixed(1) : '0')+'%';
+    }
 
     // strategy board
     recalcStrategy(gap);
@@ -3353,11 +3566,16 @@
     var strategies = [];
     document.querySelectorAll('#stratBody .strat-row').forEach(function(row){
       strategies.push({
+        item: row.querySelector('.s-item') ? row.querySelector('.s-item').value : '',
         name: row.querySelector('.s-name').value,
         target: row.querySelector('.s-target').value,
         memo: row.querySelector('.s-memo').value,
         due: row.querySelector('.s-due').value,
-        amount: toNum(row.querySelector('.s-amt').value)
+        amount: toNum(row.querySelector('.s-amt').value),
+        leadDone: Number(row.querySelector('.s-lead-done') ? row.querySelector('.s-lead-done').value : 0),
+        leadTarget: Number(row.querySelector('.s-lead-target') ? row.querySelector('.s-lead-target').value : 0),
+        leadUnit: row.querySelector('.s-lead-unit') ? row.querySelector('.s-lead-unit').value : '건',
+        status: row.querySelector('.s-status') ? row.querySelector('.s-status').value : 'planned'
       });
     });
     var items = [];
@@ -3365,7 +3583,8 @@
       items.push({
         name: row.querySelector('.i-name').value,
         goal: toNum(row.querySelector('.i-goal').value),
-        done: toNum(row.querySelector('.i-done').value)
+        done: toNum(row.querySelector('.i-done').value),
+        manualDone: Number(row.querySelector('.i-done').getAttribute('data-manual') || 0)
       });
     });
     var goals = [];
@@ -3547,7 +3766,7 @@
     var editable = canEdit && !isSnapshotFile;
     if(!editable) closeGoalSetup();
     document.querySelectorAll('[contenteditable]').forEach(function(el){ el.setAttribute('contenteditable', editable ? 'true' : 'false'); });
-    document.querySelectorAll('#goalInput, #stratBody input, #dbBody input, #itemBody input, #logBody input, #goalBody input, #quickDate, #quickItem, #quickAmount, #quickMemo, .quick-add, .strategy-quick input, .strategy-quick button, .today-goal-quick input, .today-goal-quick button, .today-quick-add input, .today-quick-add select, .today-quick-add button').forEach(function(el){ el.disabled = !editable; });
+    document.querySelectorAll('#goalInput, #stratBody input, #stratBody select, #dbBody input, #itemBody input, #logBody input, #goalBody input, #quickDate, #quickItem, #quickAmount, #quickMemo, .quick-add, .strategy-quick input, .strategy-quick button, .today-goal-quick input, .today-goal-quick button, .today-quick-add input, .today-quick-add select, .today-quick-add button, #execQuickAdd input, #execQuickAdd select, #execQuickAdd button').forEach(function(el){ el.disabled = !editable; });
     // 메모는 잠그지 않고 '수정 불가'로 둠 — 읽기 전용으로 보는 사람도 눌러서 전체를 볼 수 있어야 함
     var slt = document.getElementById('slText');
     if(slt) slt.readOnly = !editable;
@@ -3572,6 +3791,7 @@
     document.getElementById('sqDue').value = localISO(new Date());
     document.getElementById('tdScheduleDate').value = localISO(new Date());
     document.getElementById('tdTaskDate').value = localISO(new Date());
+    document.getElementById('execDue').value = localISO(new Date());
 
     if(isSnapshotFile){
       setSaveStatus('snapshot');
@@ -3645,7 +3865,6 @@
     initTodos();
     initTabs();
     initStratListFold();
-    setStratRange('rest');
   }
 
   // ---------- export snapshot ----------
@@ -3696,16 +3915,15 @@
     if(srcStrat && dstStrat){
       dstStrat.innerHTML = '';
       srcStrat.querySelectorAll('.strat-row').forEach(function(row){
-        var r = document.createElement('div');
-        r.className = 'srow strat-row';
-        r.innerHTML =
-          '<div><input type="text" class="s-name" value="'+escapeAttr(row.querySelector('.s-name').value)+'" oninput="onRowChange(this)"></div>' +
-          '<div><input type="text" class="s-target" value="'+escapeAttr(row.querySelector('.s-target').value)+'" oninput="onRowChange(this)"></div>' +
-          '<div><textarea class="s-memo" rows="1" onfocus="expandMemo(this)" onblur="collapseMemo(this)" oninput="onMemoInput(this)">'+escapeHtml(row.querySelector('.s-memo').value)+'</textarea></div>' +
-          '<div class="due-cell"><span class="due-chip"></span>' +
-            '<input type="date" class="s-due" value="'+escapeAttr(row.querySelector('.s-due').value)+'" oninput="onRowChange(this)"></div>' +
-          '<div><input type="text" inputmode="numeric" class="s-amt amt" value="'+escapeAttr(row.querySelector('.s-amt').value)+'" oninput="onAmountInput(this)"></div>' +
-          '<div class="g-mid"><button class="del-x" onclick="removeStratRow(this)">✕</button></div>';
+        var r = row.cloneNode(true);
+        ['.s-item','.s-name','.s-target','.s-lead-done','.s-lead-target','.s-due','.s-amt'].forEach(function(sel){
+          var src=row.querySelector(sel), dst=r.querySelector(sel); if(src&&dst) dst.setAttribute('value',src.value);
+        });
+        ['.s-lead-unit','.s-status'].forEach(function(sel){
+          var src=row.querySelector(sel), dst=r.querySelector(sel); if(!src||!dst)return;
+          Array.prototype.forEach.call(dst.options,function(op){ if(op.value===src.value) op.setAttribute('selected','selected'); else op.removeAttribute('selected'); });
+        });
+        var sm=row.querySelector('.s-memo'), dm=r.querySelector('.s-memo'); if(sm&&dm) dm.textContent=sm.value;
         dstStrat.appendChild(r);
       });
     }
@@ -3719,18 +3937,8 @@
     if(srcItem && dstItem){
       dstItem.innerHTML = '';
       srcItem.querySelectorAll('.item-row').forEach(function(row){
-        var nm = row.querySelector('.i-name').value;
-        var gl = row.querySelector('.i-goal').value;
-        var dn = row.querySelector('.i-done').value;
-        var r = document.createElement('div');
-        r.className = 'irow item-row';
-        r.innerHTML =
-          '<div><input type="text" class="i-name" value="'+escapeAttr(nm)+'" oninput="onRowChange(this)"></div>' +
-          '<div><input type="text" inputmode="numeric" class="i-goal amt" value="'+escapeAttr(gl)+'" oninput="onAmountInput(this)"></div>' +
-          '<div><input type="text" inputmode="numeric" class="i-done amt done-amt" value="'+escapeAttr(dn)+'" oninput="onAmountInput(this)"></div>' +
-          '<div class="g-num i-rate">-</div>' +
-          '<div class="g-num i-left">0</div>' +
-          '<div class="g-mid"><button class="del-x" onclick="removeItemRow(this)">✕</button></div>';
+        var r = row.cloneNode(true);
+        ['.i-name','.i-goal','.i-done'].forEach(function(sel){ var src=row.querySelector(sel),dst=r.querySelector(sel); if(src&&dst) dst.setAttribute('value',src.value); });
         dstItem.appendChild(r);
       });
     }
