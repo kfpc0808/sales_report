@@ -932,11 +932,16 @@
   .today-lane-title{ color:var(--navy); font-size:13px; font-weight:800; }
   .today-lane-hint{ color:var(--muted); font-size:10.5px; }
   .today-quick-add{ display:grid; gap:6px; margin-bottom:9px; }
-  .schedule-add{ grid-template-columns:112px 82px minmax(150px,1fr) auto; }
+  .schedule-add{ grid-template-columns:112px 104px minmax(150px,1fr) auto; }
   .task-add{ grid-template-columns:112px 88px minmax(170px,1fr) auto; }
   .today-quick-add input,.today-quick-add select{ min-width:0; width:100%; height:34px; box-sizing:border-box; border:1px solid var(--line); border-radius:8px; background:#FBFAF7; color:var(--ink); padding:6px 8px; font-family:'Pretendard',sans-serif; font-size:11.5px; }
   .today-quick-add input:focus,.today-quick-add select:focus{ outline:none; border-color:var(--brass); background:#fff; }
   .today-quick-add button{ height:34px; border:0; border-radius:8px; background:var(--navy); color:#fff; padding:0 11px; font-family:'Pretendard',sans-serif; font-size:11.5px; font-weight:800; cursor:pointer; white-space:nowrap; }
+  .today-quick-add button:disabled{ opacity:.65; cursor:wait; }
+  .today-quick-add input.input-error{ border-color:#C95A4A; background:#FFF7F5; }
+  .today-quick-status{ min-height:16px; margin:-3px 0 5px; font-size:10.5px; color:var(--muted); }
+  .today-quick-status.error{ color:#B23D31; }
+  .today-quick-status.ok{ color:var(--green); }
   .today-lane-list{ display:flex; flex-direction:column; min-height:42px; }
   .today-lane-row{ display:grid; align-items:center; gap:8px; min-height:36px; border-top:1px solid #F0F1F3; font-size:12px; }
   .today-lane-row:first-child{ border-top:0; }
@@ -1116,10 +1121,11 @@
         </div>
         <div class="today-quick-add schedule-add goal-edit-only">
           <input type="date" id="tdScheduleDate" aria-label="일정 날짜">
-          <input type="text" id="tdScheduleTime" inputmode="numeric" maxlength="5" placeholder="시간 14:00" autocomplete="off" aria-label="일정 시간(24시간제)" oninput="formatScheduleTime(this)" onblur="normalizeScheduleTime(this)">
-          <input type="text" id="tdScheduleText" placeholder="예: 설명회 미팅" autocomplete="off" onkeydown="todoQuickEnter(event,'schedule')">
-          <button type="button" onclick="addSchedule()">+ 일정</button>
+          <input type="text" id="tdScheduleTime" inputmode="numeric" maxlength="5" placeholder="13:00" autocomplete="off" aria-label="일정 시간(24시간제)" oninput="formatScheduleTime(this); clearScheduleStatus()" onblur="normalizeScheduleTime(this)">
+          <input type="text" id="tdScheduleText" placeholder="일정 내용 입력" autocomplete="off" oninput="clearScheduleStatus()" onkeydown="todoQuickEnter(event,'schedule')">
+          <button type="button" id="tdScheduleAddBtn" onclick="addSchedule()">+ 일정</button>
         </div>
+        <div class="today-quick-status" id="tdScheduleStatus" aria-live="polite">시간은 24시간제로 입력합니다. 예: 오후 1시 → 13:00</div>
         <div class="today-lane-list" id="tdScheduleList"></div>
       </section>
       <section class="today-lane">
@@ -2435,6 +2441,28 @@
     return normalized;
   }
 
+  function setScheduleStatus(message, mode){
+    var el = document.getElementById('tdScheduleStatus');
+    if(!el) return;
+    el.textContent = message || '';
+    el.className = 'today-quick-status' + (mode ? ' ' + mode : '');
+  }
+
+  function clearScheduleStatus(){
+    var tm = document.getElementById('tdScheduleTime');
+    var tx = document.getElementById('tdScheduleText');
+    if(tm) tm.classList.remove('input-error');
+    if(tx) tx.classList.remove('input-error');
+    setScheduleStatus('시간은 24시간제로 입력합니다. 예: 오후 1시 → 13:00', '');
+  }
+
+  function setScheduleSaving(saving){
+    var btn = document.getElementById('tdScheduleAddBtn');
+    if(!btn) return;
+    btn.disabled = !!saving;
+    btn.textContent = saving ? '저장 중…' : '+ 일정';
+  }
+
   function todoWriteError(e, action){
     var code = String((e && e.code) || '');
     if(code.indexOf('permission-denied') > -1){
@@ -2447,18 +2475,48 @@
   }
 
   function addSchedule(){
-    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    if(!canEdit){ setScheduleStatus('편집 권한이 있는 계정으로 로그인해주세요.', 'error'); return; }
     var dateEl = document.getElementById('tdScheduleDate');
     var timeEl = document.getElementById('tdScheduleTime');
     var textEl = document.getElementById('tdScheduleText');
     var dt = dateEl.value || localISO(new Date());
     var tm = normalizeScheduleTime(timeEl, true);
     var tx = textEl.value.trim();
-    if(!tm){ timeEl.focus(); return; }
-    if(!tx){ textEl.focus(); return; }
+    if(!tm){
+      timeEl.classList.add('input-error');
+      setScheduleStatus(timeEl.value ? '시간을 확인해주세요. 예: 오후 1시는 13:00입니다.' : '일정 시간을 입력해주세요.', 'error');
+      timeEl.focus();
+      return;
+    }
+    if(!tx){
+      textEl.classList.add('input-error');
+      setScheduleStatus('일정 내용을 입력해주세요. 예: 설명회 미팅', 'error');
+      textEl.focus();
+      return;
+    }
+    if(!firebaseReady || !db){
+      setScheduleStatus('서버에 연결되지 않았습니다. 인터넷 연결 후 다시 시도해주세요.', 'error');
+      return;
+    }
+    setScheduleSaving(true);
+    setScheduleStatus('일정을 저장하고 있습니다.', '');
     db.collection(TODOS).add({ type:'schedule', date:dt, time:tm, text:tx, done:false, createdAt:new Date().toISOString() })
-      .then(function(){ timeEl.value=''; textEl.value=''; timeEl.focus(); setSaveStatus('saved'); })
-      .catch(function(e){ todoWriteError(e, '일정 저장'); });
+      .then(function(){
+        timeEl.value=''; textEl.value=''; timeEl.focus();
+        setScheduleSaving(false);
+        setScheduleStatus('일정을 저장했습니다.', 'ok');
+        setSaveStatus('saved');
+      })
+      .catch(function(e){
+        setScheduleSaving(false);
+        var code = String((e && e.code) || '');
+        if(code.indexOf('permission-denied') > -1){
+          setScheduleStatus('저장 권한이 없습니다. parkshinje@gmail.com 계정으로 다시 로그인해주세요.', 'error');
+        } else {
+          setScheduleStatus('저장에 실패했습니다. 잠시 후 다시 시도해주세요. (' + (code || '연결 오류') + ')', 'error');
+        }
+        todoWriteError(e, '일정 저장');
+      });
   }
 
   function addTask(){
