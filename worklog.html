@@ -1884,12 +1884,6 @@
     loadPeek(key);
   }
 
-  function refreshPeekFor(key){          // 기록을 저장한 뒤 강제로 다시 조회
-    if(!key) return;
-    peekKey = '';
-    loadPeek(key);
-  }
-
   function loadPeek(key){
     var box = document.getElementById('peekBox');
     peekKey = key;
@@ -2003,7 +1997,7 @@
         setStatus('ok');
         if(key) touchMember(key, name, company, job, contactStatus!=='연락 전');
         if(refKey) touchMember(refKey, refName);   // 추천인도 대상으로 등록해 이력을 이어감
-        refreshPeekFor(key);                       // 방금 저장한 기록까지 미리보기에 반영
+        clearPeek();                               // 저장이 끝나면 직전 대상 이력도 자동으로 닫음
         if(consultMode) loadConsults();            // 상담 건이면 상담 관리에도 반영
         var saved=document.getElementById('qSaved');
         saved.textContent=contactStatus==='연락 전' ? name+'님을 오늘 연락 대상으로 추가했습니다.' : name+'님의 소통 기록을 저장했습니다.';
