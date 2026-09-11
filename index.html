@@ -674,6 +674,11 @@
   .tab-btn .tab-no{ font-family:'Pretendard',sans-serif; background:#E7E2D8; color:#765B2F; border-radius:20px; min-width:22px; padding:1px 6px; letter-spacing:0; }
   .tab-btn.active .tab-no{ background:var(--brass); color:#fff; }
   .dash-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin:2px 0 14px; }
+  .dash-head-right{ display:flex; align-items:center; justify-content:flex-end; gap:8px; flex-wrap:wrap; }
+  .dash-actions{ display:flex; gap:7px; }
+  .dash-action-btn{ font-family:'Pretendard',sans-serif; font-size:12px; font-weight:700; padding:8px 12px; border-radius:8px; cursor:pointer; border:1px solid var(--navy); background:#fff; color:var(--navy); }
+  .dash-action-btn.primary{ background:var(--navy); color:#fff; }
+  .dash-action-btn:hover{ opacity:.84; }
   .dash-kicker{ color:var(--brass); font-weight:800; font-size:11px; letter-spacing:.12em; }
   .dash-title{ font-family:'Noto Serif KR',serif; color:var(--navy); font-size:21px; margin:2px 0 0; }
   .dash-date{ color:var(--muted); font-size:12.5px; }
@@ -688,6 +693,13 @@
   .primary .kpi-sub{ color:#AEB8CA; }
   .kpi-card.good .kpi-value{ color:var(--green); }
   .kpi-card.bad .kpi-value{ color:var(--red); }
+  .tower-strip{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:10px; border:1px solid #E2E6EC; border-radius:12px; background:#fff; overflow:hidden; }
+  .tower-stat{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:11px 15px; border-right:1px solid #E8EBEF; }
+  .tower-stat:last-child{ border-right:0; }
+  .tower-stat .l{ color:var(--muted); font-size:11.5px; font-weight:700; }
+  .tower-stat .v{ color:var(--navy); font-size:13.5px; font-weight:800; text-align:right; }
+  .tower-stat.alert .v{ color:var(--red); }
+  .tower-stat.good .v{ color:var(--green); }
   .dash-grid{ display:grid; grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr); gap:14px; margin-top:14px; align-items:start; }
   .dash-panel{ background:#fff; border:1px solid #E2E6EC; border-radius:14px; padding:17px 18px; box-shadow:0 2px 10px rgba(16,30,54,.035); }
   .dash-panel-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
@@ -727,6 +739,15 @@
   .exec-amt{ flex:0 0 auto; color:var(--green); font-size:12.5px; font-weight:800; }
   .exec-meta{ margin-top:3px; color:var(--muted); font-size:11.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .exec-chip{ display:inline-block; margin-right:5px; border-radius:20px; padding:1px 6px; background:#EFEAE0; color:#6B5122; font-size:10px; font-weight:800; }
+  .exec-chip.late{ background:var(--red-bg); color:var(--red); }
+  .exec-chip.today{ background:var(--brass); color:#fff; }
+  .exec-chip.soon{ background:#FBF0E4; color:#8A6329; }
+  .quick-entry-drawer{ margin-top:14px; border:1px dashed #D6CCB7; border-radius:11px; background:#FFFDF8; }
+  .quick-entry-drawer summary{ list-style:none; cursor:pointer; padding:10px 13px; color:#765B2F; font-size:12px; font-weight:800; }
+  .quick-entry-drawer summary::-webkit-details-marker{ display:none; }
+  .quick-entry-drawer summary::before{ content:'+ '; color:var(--brass); }
+  .quick-entry-drawer[open] summary::before{ content:'− '; }
+  .quick-entry-body{ padding:0 12px 12px; }
   .strategy-quick{ margin:14px 0 16px; padding:15px 16px; background:#FFFDF8; border:1px solid #DED2B9; border-radius:13px; box-shadow:0 2px 9px rgba(16,30,54,.025); }
   .sq-head{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:11px; }
   .sq-title{ color:var(--navy); font-family:'Noto Serif KR',serif; font-size:14px; font-weight:700; }
@@ -744,6 +765,8 @@
   @keyframes newStrategy{ 0%,55%{ background:#FFF5DC; } 100%{ background:transparent; } }
   .dashboard-todo .td-strip{ border:0; padding:0; box-shadow:none; margin:0; }
   .dashboard-todo .td-filter,.dashboard-todo .td-chk{ display:none; }
+  .dashboard-todo .td-add{ display:none; }
+  .dashboard-todo.adding .td-add{ display:flex; }
   .dashboard-todo .td-exp{ margin-left:auto; }
   .dashboard-todo .td-list{ max-height:270px; }
   .detail-intro{ margin:0 0 18px; padding:13px 15px; border-radius:11px; background:#F7F3EA; color:#5C513D; font-size:12.5px; border:1px solid #E7DDC9; }
@@ -756,6 +779,9 @@
     .sq-form{ grid-template-columns:1fr 1fr; }
     .sq-field:nth-child(5){ grid-column:1 / -1; }
     .sq-add{ grid-column:1 / -1; }
+    .tower-strip{ grid-template-columns:1fr; }
+    .tower-stat{ border-right:0; border-bottom:1px solid #E8EBEF; }
+    .tower-stat:last-child{ border-bottom:0; }
   }
   @media (max-width:560px){
     .toolbar-right .ghost:nth-of-type(2){ display:none; }
@@ -765,6 +791,10 @@
     .kpi-card{ padding:12px; }
     .kpi-value{ font-size:17px; }
     .dash-grid{ gap:10px; }
+    .dash-head{ align-items:flex-start; }
+    .dash-head-right{ align-items:flex-end; }
+    .dash-actions{ width:100%; }
+    .dash-action-btn{ flex:1; padding:7px 8px; font-size:11.5px; }
     .dash-panel{ padding:14px; }
     .quick-form{ grid-template-columns:1fr; }
     .quick-form input:nth-child(4),.quick-add{ grid-column:auto; }
@@ -778,9 +808,10 @@
     .sq-field:nth-child(5),.sq-add{ grid-column:auto; }
   }
   @media print{
-    .dash-head,.quick-form,.detail-intro,.strategy-quick{ display:none !important; }
+    .dash-actions,.quick-entry-drawer,.detail-intro,.strategy-quick,.td-add-toggle{ display:none !important; }
     .kpi-grid{ grid-template-columns:repeat(4,1fr); }
     .dash-grid{ grid-template-columns:1.3fr .7fr; }
+    .tower-strip{ grid-template-columns:repeat(3,1fr); }
   }
 </style>
 </head>
@@ -836,40 +867,52 @@
   <section class="tab-pane" data-pane="1">
   <div class="dash-head">
     <div>
-      <div class="dash-kicker">MONTHLY CONTROL BOARD</div>
-      <h2 class="dash-title">이번 달, 지금 필요한 것만</h2>
+      <div class="dash-kicker">SALES CONTROL TOWER</div>
+      <h2 class="dash-title" id="dashTitle">영업 관제탑</h2>
     </div>
-    <div class="dash-date" id="dashDate"></div>
+    <div class="dash-head-right">
+      <div class="dash-date" id="dashDate"></div>
+      <div class="dash-actions goal-edit-only">
+        <button class="dash-action-btn" onclick="showTab(2)">목표·전략 입력</button>
+        <button class="dash-action-btn primary" onclick="showTab(3)">매출 기록 입력</button>
+      </div>
+    </div>
   </div>
 
   <div class="kpi-grid">
-    <div class="kpi-card primary">
-      <div class="kpi-label">목표 달성률</div>
-      <div class="kpi-value" id="dashRate">0%</div>
-      <div class="kpi-sub" id="dashRateSub">목표를 입력해주세요</div>
+    <div class="kpi-card">
+      <div class="kpi-label">이번 달 목표</div>
+      <div class="kpi-value" id="dashGoal">0원</div>
+      <div class="kpi-sub">월간 목표 매출</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">확정 매출</div>
+      <div class="kpi-label">현재 실적</div>
       <div class="kpi-value" id="dashActual">0원</div>
-      <div class="kpi-sub" id="dashActualSub">이번 달 누적</div>
-    </div>
-    <div class="kpi-card bad" id="dashGapCard">
-      <div class="kpi-label">목표까지 남은 금액</div>
-      <div class="kpi-value" id="dashGap">0원</div>
-      <div class="kpi-sub" id="dashPace">남은 영업일 기준 계산</div>
+      <div class="kpi-sub" id="dashActualSub">확정 매출 누적</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">확보 예정</div>
-      <div class="kpi-value" id="dashPipeline">0원</div>
-      <div class="kpi-sub" id="dashForecast">확정 + 예정 0원</div>
+      <div class="kpi-label">예상 매출</div>
+      <div class="kpi-value" id="dashForecastValue">0원</div>
+      <div class="kpi-sub" id="dashForecast">확정 + 실행계획</div>
     </div>
+    <div class="kpi-card primary" id="dashRateCard">
+      <div class="kpi-label">예상 달성률</div>
+      <div class="kpi-value" id="dashRate">0%</div>
+      <div class="kpi-sub" id="dashRateSub">현재 달성률 0%</div>
+    </div>
+  </div>
+
+  <div class="tower-strip">
+    <div class="tower-stat alert" id="dashGapStat"><span class="l">현재 부족 금액</span><span class="v" id="dashGap">0원</span></div>
+    <div class="tower-stat"><span class="l">확보 예정</span><span class="v" id="dashPipeline">0원</span></div>
+    <div class="tower-stat"><span class="l">남은 기간 필요 페이스</span><span class="v" id="dashPace">-</span></div>
   </div>
 
   <div class="dash-grid">
     <div>
       <div class="dash-panel">
         <div class="dash-panel-head">
-          <span class="dash-panel-title">오늘의 실행</span>
+          <span class="dash-panel-title">오늘의 핵심 실행</span>
           <span class="dash-panel-hint" id="todayStatus">오늘 목표와 실적</span>
         </div>
         <div class="pace-row">
@@ -878,7 +921,7 @@
         </div>
         <div class="today-strategy">
           <div class="today-strategy-head">
-            <span class="today-strategy-title">오늘의 주요전략</span>
+            <span class="today-strategy-title">오늘 반드시 추진할 전략</span>
             <span class="today-strategy-count" id="todayStrategyCount"></span>
           </div>
           <div class="today-strategy-list" id="todayStrategyList">
@@ -899,6 +942,7 @@
         <button class="td-fbtn" onclick="setTodoFilter(0)">오늘</button>
         <button class="td-fbtn" onclick="clearTodoFilter()">전체</button>
       </span>
+      <button class="mini-toggle td-add-toggle goal-edit-only" onclick="toggleTodoAdd()">+ 일정 입력</button>
       <button class="mini-toggle td-exp" id="tdExpandBtn" onclick="toggleTodoBox()">⤢ 전체 펼치기</button>
       <label class="td-chk"><input type="checkbox" id="tdShowDone" onchange="renderTodos()"> 완료 포함</label>
     </div>
@@ -917,34 +961,33 @@
   </div>
       </div>
 
-      <div class="dash-panel" style="margin-top:14px;">
-        <div class="dash-panel-head">
-          <span class="dash-panel-title">매출 바로 기록</span>
-          <span class="dash-panel-hint">입력 즉시 전체 현황에 반영됩니다</span>
-        </div>
-        <div class="quick-form">
+      <details class="quick-entry-drawer goal-edit-only">
+        <summary>이 화면에서 매출을 바로 기록하려면 여기를 누르세요</summary>
+        <div class="quick-entry-body">
+          <div class="quick-form">
           <input type="date" id="quickDate">
           <input type="text" id="quickItem" placeholder="아이템 / 대상">
           <input type="text" inputmode="numeric" id="quickAmount" placeholder="금액" oninput="formatQuickAmount(this)">
           <input type="text" id="quickMemo" placeholder="메모 (선택)">
           <button class="quick-add" onclick="addQuickSale()">+ 실적 반영</button>
+          </div>
         </div>
-      </div>
+      </details>
     </div>
 
     <div>
       <div class="dash-panel">
         <div class="dash-panel-head">
-          <span class="dash-panel-title">아이템별 진행</span>
-          <span class="dash-panel-hint">목표 대비 확정 실적</span>
+          <span class="dash-panel-title">아이템별 목표 진행</span>
+          <span class="dash-panel-hint">목표 대비 현재 실적</span>
         </div>
         <div class="item-snapshot" id="itemSnapshot"><div class="dash-empty">목표와 아이템을 등록해주세요.</div></div>
       </div>
 
       <div class="dash-panel" style="margin-top:14px;">
         <div class="dash-panel-head">
-          <span class="dash-panel-title">핵심 실행계획</span>
-          <span class="dash-panel-hint">예상일이 가까운 순서</span>
+          <span class="dash-panel-title">핵심 매출 파이프라인</span>
+          <span class="dash-panel-hint">기한 경과·예정일 순서</span>
         </div>
         <div class="exec-snapshot" id="execSnapshot"><div class="dash-empty">실행계획을 등록해주세요.</div></div>
       </div>
@@ -2040,6 +2083,19 @@
     if(btn) btn.textContent = on ? '⤡ 접기' : '⤢ 전체 펼치기';
   }
 
+  function toggleTodoAdd(){
+    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    var panel = document.querySelector('.dashboard-todo');
+    if(!panel) return;
+    var on = panel.classList.toggle('adding');
+    var btn = panel.querySelector('.td-add-toggle');
+    if(btn) btn.textContent = on ? '− 입력 닫기' : '+ 일정 입력';
+    if(on){
+      var input = document.getElementById('tdText');
+      if(input) setTimeout(function(){ input.focus(); },20);
+    }
+  }
+
   // 목록에서 날짜·내용을 직접 고쳐 저장
   function saveTodoField(id, field, val, prev){
     if(!canEdit) return;
@@ -2126,7 +2182,7 @@
               .sort(function(a,b){ return String(b.doneAt||b.date).localeCompare(String(a.doneAt||a.date)); }) : [];
 
     if(!g1.length && !g2.length && !g3.length && !g4.length){
-      box.appendChild(emptyRow(canEdit ? '날짜와 내용을 적고 Enter를 누르면 추가됩니다.' : '등록된 일정이 없습니다.'));
+      box.appendChild(emptyRow(canEdit ? '「일정 입력」을 눌러 중요한 일정을 등록하세요.' : '등록된 일정이 없습니다.'));
       return;
     }
     [[g1,'오늘 ' + shortDate(today),''], [g2,'기한 지남','late'], [g3,'예정',''], [g4,'완료','done']].forEach(function(gp){
@@ -2813,8 +2869,8 @@
     });
     list.sort(function(a,b){
       var ad = a.due || '9999-12-31', bd = b.due || '9999-12-31';
-      if(ad < today && bd >= today) return 1;
-      if(bd < today && ad >= today) return -1;
+      if(ad < today && bd >= today) return -1;
+      if(bd < today && ad >= today) return 1;
       return ad.localeCompare(bd);
     });
     return list.slice(0,4);
@@ -2839,18 +2895,25 @@
       if(!due || due >= today) pipeline += toNum(row.querySelector('.s-amt').value);
     });
     var rate = goal > 0 ? total/goal*100 : 0;
+    var forecast = total + pipeline;
+    var forecastRate = goal > 0 ? forecast/goal*100 : 0;
     var biz = remainingBusinessDays();
     var dailyNeed = biz > 0 ? gap/biz : gap;
 
     document.getElementById('dashDate').textContent = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
-    document.getElementById('dashRate').textContent = rate.toFixed(1)+'%';
-    document.getElementById('dashRateSub').textContent = goal ? compactWon(goal)+' 중 '+compactWon(total) : '월 목표를 입력해주세요';
+    var monthNum = parseInt(String(currentMonth || monthKeyNow()).slice(5,7),10);
+    document.getElementById('dashTitle').textContent = monthNum+'월 영업 관제탑';
+    document.getElementById('dashGoal').textContent = compactWon(goal);
     document.getElementById('dashActual').textContent = compactWon(total);
+    document.getElementById('dashForecastValue').textContent = compactWon(forecast);
+    document.getElementById('dashRate').textContent = forecastRate.toFixed(1)+'%';
+    document.getElementById('dashRateSub').textContent = goal ? '현재 달성률 '+rate.toFixed(1)+'%' : '월 목표를 입력해주세요';
     document.getElementById('dashGap').textContent = compactWon(gap);
     document.getElementById('dashPipeline').textContent = compactWon(pipeline);
-    document.getElementById('dashForecast').textContent = '확정 + 예정 '+compactWon(total+pipeline);
+    document.getElementById('dashForecast').textContent = '확정 '+compactWon(total)+' + 예정 '+compactWon(pipeline);
     document.getElementById('dashPace').textContent = gap > 0 ? '영업일 '+biz+'일 · 하루 '+compactWon(dailyNeed) : '목표를 달성했습니다';
-    document.getElementById('dashGapCard').className = 'kpi-card ' + (gap > 0 ? 'bad' : 'good');
+    document.getElementById('dashGapStat').className = 'tower-stat ' + (gap > 0 ? 'alert' : 'good');
+    document.getElementById('dashRateCard').className = 'kpi-card primary';
     document.getElementById('todayGoal').textContent = compactWon(todayGoal);
     document.getElementById('todayActual').textContent = compactWon(todayActual);
     document.getElementById('todayStatus').textContent = todayGoal > 0 ? '달성률 '+(todayActual/todayGoal*100).toFixed(0)+'%' : '오늘 목표를 설정해주세요';
@@ -2910,7 +2973,7 @@
         var meta = x.target ? escapeHtml(x.target) : '대상 미정';
         return '<div class="exec-row"><div class="exec-top"><div class="exec-name">'+escapeHtml(x.name)+'</div>'+
           '<div class="exec-amt">'+compactWon(x.amount)+'</div></div>'+
-          '<div class="exec-meta"><span class="exec-chip">'+escapeHtml(due.txt)+'</span>'+meta+'</div></div>';
+          '<div class="exec-meta"><span class="exec-chip '+escapeHtml(due.cls||'')+'">'+escapeHtml(due.txt)+'</span>'+meta+'</div></div>';
       }).join('');
     }
   }
