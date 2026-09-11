@@ -1116,8 +1116,8 @@
         </div>
         <div class="today-quick-add schedule-add goal-edit-only">
           <input type="date" id="tdScheduleDate" aria-label="일정 날짜">
-          <input type="time" id="tdScheduleTime" aria-label="일정 시간">
-          <input type="text" id="tdScheduleText" placeholder="예: 14:00 설명회 미팅" autocomplete="off" onkeydown="todoQuickEnter(event,'schedule')">
+          <input type="text" id="tdScheduleTime" inputmode="numeric" maxlength="5" placeholder="시간 14:00" autocomplete="off" aria-label="일정 시간(24시간제)" oninput="formatScheduleTime(this)" onblur="normalizeScheduleTime(this)">
+          <input type="text" id="tdScheduleText" placeholder="예: 설명회 미팅" autocomplete="off" onkeydown="todoQuickEnter(event,'schedule')">
           <button type="button" onclick="addSchedule()">+ 일정</button>
         </div>
         <div class="today-lane-list" id="tdScheduleList"></div>
@@ -2406,19 +2406,59 @@
     if(type === 'schedule') addSchedule(); else addTask();
   }
 
+  // 브라우저마다 `오후 11시`처럼 다르게 보이는 기본 time 입력 대신
+  // 항상 24시간제(HH:MM)로 입력·저장합니다.
+  function formatScheduleTime(el){
+    var raw = String(el.value || '').replace(/[^0-9:]/g,'');
+    if(raw.indexOf(':') > -1){
+      var parts = raw.split(':');
+      el.value = parts[0].slice(0,2) + ':' + parts.slice(1).join('').slice(0,2);
+    } else {
+      var digits = raw.slice(0,4);
+      el.value = digits.length > 2 ? digits.slice(0,2) + ':' + digits.slice(2) : digits;
+    }
+    el.setCustomValidity('');
+  }
+
+  function normalizeScheduleTime(el, showMessage){
+    var raw = String(el.value || '').trim();
+    if(!raw){ el.setCustomValidity(''); return ''; }
+    var m = raw.match(/^(\d{1,2})(?::?(\d{2}))$/);
+    if(!m || Number(m[1]) > 23 || Number(m[2]) > 59){
+      el.setCustomValidity('시간을 24시간제로 입력해주세요. 예: 오후 2시 → 14:00');
+      if(showMessage) el.reportValidity();
+      return '';
+    }
+    var normalized = String(Number(m[1])).padStart(2,'0') + ':' + m[2];
+    el.value = normalized;
+    el.setCustomValidity('');
+    return normalized;
+  }
+
+  function todoWriteError(e, action){
+    var code = String((e && e.code) || '');
+    if(code.indexOf('permission-denied') > -1){
+      alert(action + ' 권한이 없습니다. parkshinje@gmail.com 계정으로 다시 로그인한 뒤 시도해주세요.');
+      setSaveStatus('error', '일정 저장 권한 없음');
+      return;
+    }
+    alert(action + '에 실패했습니다. 잠시 후 다시 시도해주세요. (' + (code || (e && e.message) || 'unknown') + ')');
+    setSaveStatus('error', code || '저장 오류');
+  }
+
   function addSchedule(){
     if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
     var dateEl = document.getElementById('tdScheduleDate');
     var timeEl = document.getElementById('tdScheduleTime');
     var textEl = document.getElementById('tdScheduleText');
     var dt = dateEl.value || localISO(new Date());
-    var tm = timeEl.value;
+    var tm = normalizeScheduleTime(timeEl, true);
     var tx = textEl.value.trim();
     if(!tm){ timeEl.focus(); return; }
     if(!tx){ textEl.focus(); return; }
     db.collection(TODOS).add({ type:'schedule', date:dt, time:tm, text:tx, done:false, createdAt:new Date().toISOString() })
-      .then(function(){ textEl.value=''; textEl.focus(); })
-      .catch(function(e){ alert('저장 실패 (' + (e.code || e.message) + ')'); });
+      .then(function(){ timeEl.value=''; textEl.value=''; timeEl.focus(); setSaveStatus('saved'); })
+      .catch(function(e){ todoWriteError(e, '일정 저장'); });
   }
 
   function addTask(){
@@ -2431,7 +2471,7 @@
     if(!tx){ textEl.focus(); return; }
     db.collection(TODOS).add({ type:'task', date:dt, priority:prEl.value || 'normal', text:tx, done:false, createdAt:new Date().toISOString() })
       .then(function(){ textEl.value=''; textEl.focus(); })
-      .catch(function(e){ alert('저장 실패 (' + (e.code || e.message) + ')'); });
+      .catch(function(e){ todoWriteError(e, '할 일 저장'); });
   }
 
   function toggleTodoBox(){
