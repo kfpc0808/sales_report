@@ -824,7 +824,7 @@
   .ge-item-track{ height:7px; border-radius:10px; overflow:hidden; background:#ECEFF3; }
   .ge-item-fill{ height:100%; border-radius:10px; background:var(--brass); }
   .ge-item-rate{ color:var(--muted); font-size:11px; font-weight:800; text-align:right; }
-  .ge-exec-add{ display:grid; grid-template-columns:135px minmax(180px,1.35fr) minmax(140px,1fr) 76px 64px 118px auto; gap:7px; padding:11px; margin-bottom:12px; border:1px solid #DED2B9; border-radius:11px; background:#FFFDF8; }
+  .ge-exec-add{ display:grid; grid-template-columns:135px minmax(180px,1.35fr) minmax(140px,1fr) 140px 118px auto; gap:7px; padding:11px; margin-bottom:12px; border:1px solid #DED2B9; border-radius:11px; background:#FFFDF8; }
   .ge-exec-add input,.ge-exec-add select{ min-width:0; width:100%; height:36px; box-sizing:border-box; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); padding:6px 8px; font-family:'Pretendard',sans-serif; font-size:11.5px; }
   .ge-exec-add input:focus,.ge-exec-add select:focus{ outline:none; border-color:var(--brass); box-shadow:0 0 0 3px rgba(176,141,87,.11); }
   .ge-exec-add button{ height:36px; border:0; border-radius:8px; background:var(--navy); color:#fff; padding:0 13px; font-family:'Pretendard',sans-serif; font-size:11.5px; font-weight:800; cursor:pointer; white-space:nowrap; }
@@ -833,9 +833,10 @@
   .ge-status-chip.doing{ background:#E7EEF8; color:var(--navy); }
   .ge-status-chip.done{ background:var(--green-bg); color:var(--green); }
   .ge-status-chip.late{ background:var(--red-bg); color:var(--red); }
-  .ge-exec-table{ min-width:940px; }
-  .ge-exec-head-row,.ge-exec-row{ display:grid; grid-template-columns:135px minmax(190px,1.4fr) minmax(135px,1fr) 155px 120px 100px 68px; align-items:stretch; }
+  .ge-exec-table{ min-width:1080px; }
+  .ge-exec-head-row,.ge-exec-row{ display:grid; grid-template-columns:135px minmax(190px,1.4fr) minmax(135px,1fr) 230px 120px 100px 68px; align-items:stretch; }
   .ge-exec-head-row > div{ padding:8px; background:#F8F6F1; border-bottom:1px solid var(--line); color:var(--muted); font-size:10.5px; font-weight:700; }
+  .ge-exec-head-row small{ display:block; margin-top:2px; color:#9A9388; font-size:9px; font-weight:600; }
   .ge-exec-row > div{ min-width:0; display:flex; align-items:center; padding:7px 8px; border-bottom:1px solid #F0EEE7; }
   .ge-exec-row.overdue > div:first-child{ box-shadow:inset 3px 0 0 var(--red); }
   .ge-exec-row.finished{ opacity:.68; }
@@ -844,8 +845,8 @@
   .ge-exec-row input:focus,.ge-exec-row select:focus,.ge-exec-row textarea:focus{ outline:none; border-color:var(--brass); background:#fff; }
   .ge-exec-row .s-item{ color:var(--navy); font-weight:800; }
   .ge-exec-row .s-name{ font-weight:700; }
-  .ge-lead-group{ display:grid !important; grid-template-columns:42px 10px 42px 51px; gap:2px; align-items:center; }
-  .ge-lead-group input{ text-align:center; font-variant-numeric:tabular-nums; }
+  .ge-lead-group{ display:grid !important; grid-template-columns:minmax(82px,1fr) 12px minmax(82px,1fr); gap:3px; align-items:center; }
+  .ge-lead-group input{ text-align:right; font-variant-numeric:tabular-nums; font-weight:700; }
   .ge-lead-slash{ color:var(--muted); text-align:center; }
   .ge-row-ops{ justify-content:flex-end; gap:2px; }
   .ge-detail-btn{ border:0; background:transparent; color:var(--brass); cursor:pointer; padding:3px 5px; font-size:11px; }
@@ -854,6 +855,72 @@
   .ge-memo-line textarea{ min-height:40px; resize:vertical; border-color:var(--line); background:#fff; }
   .ge-exec-empty{ padding:18px 8px; color:var(--muted); font-size:12.5px; text-align:center; }
   .ge-footnote{ margin-top:10px; color:var(--muted); font-size:11.5px; }
+  .ge-archive{ padding:0; overflow:hidden; }
+  .ge-archive > summary{ display:flex; align-items:center; gap:10px; padding:14px 17px; cursor:pointer; list-style:none; color:var(--navy); font-size:13px; font-weight:800; }
+  .ge-archive > summary::-webkit-details-marker{ display:none; }
+  .ge-archive > summary::before{ content:'＋'; color:var(--brass); }
+  .ge-archive[open] > summary::before{ content:'−'; }
+  .ge-archive > summary small{ margin-left:auto; color:var(--muted); font-size:10.5px; font-weight:600; }
+  .ge-archive-body{ padding:0 17px 17px; border-top:1px solid #ECE8DF; }
+  .archive-note{ margin:13px 0 10px; color:var(--muted); font-size:11.5px; }
+  .archive-memo{ margin-top:14px; }
+
+  /* ===== SALES LEDGER — confirmed records first ===== */
+  .ledger-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:14px; margin:2px 0 14px; }
+  .ledger-title{ margin:2px 0 0; color:var(--navy); font-family:'Noto Serif KR',serif; font-size:21px; font-weight:800; }
+  .ledger-sub{ margin-top:4px; color:var(--muted); font-size:12.5px; }
+  .ledger-quick-card{ margin-bottom:14px; padding:13px 14px; border:1px solid #DED2B9; border-radius:12px; background:#FFFDF8; }
+  .ledger-quick-head{ display:flex; align-items:baseline; gap:10px; margin-bottom:9px; color:var(--navy); font-size:12px; }
+  .ledger-quick-head span{ color:var(--muted); font-size:10.5px; }
+  .ledger-quick-form{ display:grid; grid-template-columns:128px 150px 150px 135px minmax(180px,1fr) auto; gap:7px; }
+  .ledger-quick-form input{ min-width:0; width:100%; height:36px; box-sizing:border-box; padding:6px 8px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); font-family:'Pretendard',sans-serif; font-size:11.5px; }
+  .ledger-quick-form input:focus{ outline:none; border-color:var(--brass); box-shadow:0 0 0 3px rgba(176,141,87,.11); }
+  .ledger-quick-form button{ height:36px; padding:0 14px; border:0; border-radius:8px; background:var(--navy); color:#fff; font-family:'Pretendard',sans-serif; font-size:11.5px; font-weight:800; cursor:pointer; white-space:nowrap; }
+  .ledger-view-tabs{ display:flex; gap:5px; margin-bottom:10px; padding:4px; border:1px solid #E2E6EC; border-radius:11px; background:#EDEFF2; }
+  .ledger-view-tabs button{ flex:1; min-height:38px; border:0; border-radius:8px; background:transparent; color:#707887; font-family:'Pretendard',sans-serif; font-size:12.5px; font-weight:800; cursor:pointer; }
+  .ledger-view-tabs button.active{ background:#fff; color:var(--navy); box-shadow:0 1px 5px rgba(16,30,54,.09); }
+  .ledger-view{ display:none; padding:16px 17px; border:1px solid #E2E6EC; border-radius:14px; background:#fff; box-shadow:0 2px 10px rgba(16,30,54,.035); }
+  .ledger-view.active{ display:block; }
+  .ledger-filterbar{ display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:10px; }
+  .ledger-filterbar input,.ledger-filterbar select{ height:34px; min-width:0; box-sizing:border-box; padding:5px 8px; border:1px solid var(--line); border-radius:8px; background:#FBFAF7; color:var(--ink); font-family:'Pretendard',sans-serif; font-size:11.5px; }
+  .ledger-filterbar input[type="search"]{ width:210px; }
+  .ledger-filterbar select{ width:145px; }
+  .ledger-filterbar button{ height:34px; padding:0 10px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--navy); font-family:'Pretendard',sans-serif; font-size:11px; font-weight:700; cursor:pointer; }
+  .ledger-filter-summary{ margin-left:auto; color:var(--green); font-size:11.5px; font-weight:800; }
+  table.ledger-log{ min-width:980px; }
+  table.ledger-log th:nth-child(1),table.ledger-log td:nth-child(1){ width:125px; }
+  table.ledger-log th:nth-child(2){ width:58px; }
+  table.ledger-log th:nth-child(3){ width:155px; }
+  table.ledger-log th:nth-child(4){ width:155px; text-align:left; padding-right:8px; }
+  table.ledger-log th:nth-child(5){ width:135px; text-align:right; padding-right:14px; }
+  table.ledger-log th:nth-child(6){ width:230px; }
+  table.ledger-log th:nth-child(7){ width:76px; }
+  .ledger-section-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:11px; }
+  .ledger-section-head > div:first-child{ display:flex; align-items:baseline; gap:9px; }
+  .ledger-section-head b{ color:var(--navy); font-family:'Noto Serif KR',serif; font-size:14.5px; }
+  .ledger-section-head span{ color:var(--muted); font-size:11px; }
+  .ledger-plan-actions{ display:flex; gap:6px; }
+  .ledger-plan-actions button{ min-height:32px; padding:0 10px; border:1px solid var(--brass); border-radius:8px; background:#fff; color:var(--brass); font-family:'Pretendard',sans-serif; font-size:11px; font-weight:800; cursor:pointer; }
+  .ledger-analysis-detail{ margin-top:12px; border-top:1px solid #ECEEF1; }
+  .ledger-analysis-detail > summary{ padding:12px 2px 2px; color:var(--brass); font-size:11.5px; font-weight:800; cursor:pointer; }
+  .ledger-item-analysis{ display:flex; flex-direction:column; border:1px solid var(--line); border-radius:11px; overflow:hidden; }
+  .ledger-item-row{ display:grid; grid-template-columns:minmax(130px,1fr) 135px 135px 135px 100px; align-items:center; min-height:46px; padding:0 12px; border-top:1px solid #EEECE6; cursor:pointer; }
+  .ledger-item-row:first-child{ border-top:0; }
+  .ledger-item-row:hover{ background:#FBF8F1; }
+  .ledger-item-row.head{ min-height:36px; background:#F8F6F1; cursor:default; color:var(--muted); font-size:10.5px; font-weight:700; }
+  .ledger-item-name{ color:var(--navy); font-weight:800; }
+  .ledger-item-num{ text-align:right; font-variant-numeric:tabular-nums; font-weight:700; }
+  .ledger-item-rate{ text-align:right; color:var(--green); font-weight:900; }
+  .ledger-empty{ padding:28px 12px; color:var(--muted); font-size:12.5px; text-align:center; }
+  @media (max-width:768px){
+    table.ledger-log{ min-width:650px; }
+    table.ledger-log th,table.ledger-log td{ display:table-cell; }
+    table.ledger-log th:nth-child(2),table.ledger-log td:nth-child(2),table.ledger-log th:nth-child(6),table.ledger-log td:nth-child(6){ display:none; }
+    table.ledger-log th:nth-child(1),table.ledger-log td:nth-child(1){ width:110px; }
+    table.ledger-log th:nth-child(3){ width:140px; }
+    table.ledger-log th:nth-child(4){ width:140px; }
+    table.ledger-log th:nth-child(5){ width:125px; }
+  }
   .today-command{ margin-bottom:14px; padding:0; overflow:hidden; }
   .today-command-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:15px 18px; border-bottom:1px solid #E8EBEF; }
   .today-command-title{ color:var(--navy); font-family:'Noto Serif KR',serif; font-size:16px; font-weight:800; }
@@ -913,6 +980,8 @@
     .goal-exec-kpis{ grid-template-columns:repeat(2,minmax(0,1fr)); }
     .ge-exec-add{ grid-template-columns:1fr 1fr; }
     .ge-exec-add input:nth-child(2),.ge-exec-add input:nth-child(3),.ge-exec-add button{ grid-column:1 / -1; }
+    .ledger-quick-form{ grid-template-columns:1fr 1fr; }
+    .ledger-quick-form input:nth-child(5),.ledger-quick-form button{ grid-column:1 / -1; }
   }
   @media (max-width:560px){
     .toolbar-right .ghost:nth-of-type(2){ display:none; }
@@ -948,6 +1017,13 @@
     .goal-exec-head{ align-items:flex-start; flex-direction:column; }
     .goal-exec-actions{ width:100%; }
     .goal-exec-actions button{ flex:1; }
+    .ledger-head{ align-items:flex-start; flex-direction:column; }
+    .ledger-quick-form{ grid-template-columns:1fr; }
+    .ledger-quick-form input:nth-child(5),.ledger-quick-form button{ grid-column:auto; }
+    .ledger-filterbar input[type="search"],.ledger-filterbar select{ width:100%; }
+    .ledger-filter-summary{ width:100%; margin-left:0; }
+    .ledger-section-head,.ledger-section-head > div:first-child{ align-items:flex-start; flex-direction:column; }
+    .ge-archive > summary small{ display:none; }
   }
   @media print{
     .dash-actions,.dashboard-mode-btn,.quick-entry-drawer,.detail-intro,.strategy-quick,.today-goal-quick,.td-add-toggle{ display:none !important; }
@@ -955,7 +1031,7 @@
     .dash-grid{ grid-template-columns:1.3fr .7fr; }
     .tower-strip{ grid-template-columns:repeat(3,1fr); }
     .today-quick-add,.today-all-toggle,.today-row-del{ display:none !important; }
-    .ge-exec-add,.goal-exec-actions,.ge-row-ops{ display:none !important; }
+    .ge-exec-add,.goal-exec-actions,.ge-row-ops,.ledger-quick-card,.ledger-view-tabs,.ledger-filterbar{ display:none !important; }
   }
 </style>
 </head>
@@ -1005,7 +1081,7 @@
   <nav class="tabs" id="tabBar">
     <button class="tab-btn" data-tab="1" onclick="showTab(1)"><span class="tab-no">1</span><span class="tab-lb">오늘의 현황</span></button>
     <button class="tab-btn" data-tab="2" onclick="showTab(2)"><span class="tab-no">2</span><span class="tab-lb">목표와 실행</span></button>
-    <button class="tab-btn" data-tab="3" onclick="showTab(3)"><span class="tab-no">3</span><span class="tab-lb">상세 기록</span></button>
+    <button class="tab-btn" data-tab="3" onclick="showTab(3)"><span class="tab-no">3</span><span class="tab-lb">매출 원장</span></button>
   </nav>
 
   <section class="tab-pane" data-pane="1">
@@ -1150,8 +1226,8 @@
                 <input type="text" id="sqTarget" placeholder="예: 정재원 추천자 외 2명" onkeydown="quickStrategyEnter(event)">
               </div>
               <div class="sq-field">
-                <label for="sqAmount">실행 목표량(건)</label>
-                <input type="number" min="0" class="sq-amount" id="sqAmount" placeholder="예: 5" onkeydown="quickStrategyEnter(event)">
+                <label for="sqAmount">목표금액</label>
+                <input type="text" inputmode="numeric" class="sq-amount" id="sqAmount" placeholder="예: 1,200,000" oninput="formatQuickAmount(this)" onkeydown="quickStrategyEnter(event)">
               </div>
               <input type="hidden" id="sqDue">
               <button class="sq-add" type="button" onclick="addQuickStrategy()">+ 추가</button>
@@ -1224,7 +1300,7 @@
     <section class="goal-exec-card">
       <div class="goal-exec-card-head">
         <span class="goal-exec-card-title">1. 아이템별 목표 구성</span>
-        <span class="goal-exec-card-hint">목표만 입력 · 실적은 상세 기록에서 자동 반영</span>
+        <span class="goal-exec-card-hint">목표만 입력 · 실적은 매출 원장에서 자동 반영</span>
       </div>
       <datalist id="itemGoalSuggest"></datalist>
       <div class="log-scroll">
@@ -1253,14 +1329,13 @@
     <section class="goal-exec-card">
       <div class="goal-exec-card-head">
         <span class="goal-exec-card-title">2. 목표를 움직이는 핵심 실행</span>
-        <span class="goal-exec-card-hint">예상금액 대신 실제 실행량과 상태를 관리합니다.</span>
+        <span class="goal-exec-card-hint">실행별 목표금액·달성금액과 상태를 관리합니다.</span>
       </div>
       <div class="ge-exec-add goal-edit-only" id="execQuickAdd">
         <input type="text" id="execItem" list="itemGoalSuggest" placeholder="연결 목표">
         <input type="text" id="execAction" placeholder="다음 행동 *" onkeydown="execQuickEnter(event)">
         <input type="text" id="execTarget" placeholder="대상">
-        <input type="number" min="0" id="execLeadTarget" placeholder="목표량">
-        <select id="execLeadUnit"><option value="명">명</option><option value="건">건</option><option value="회">회</option></select>
+        <input type="text" inputmode="numeric" id="execLeadTarget" placeholder="목표금액(원)" oninput="formatQuickAmount(this)">
         <input type="date" id="execDue">
         <button type="button" onclick="addExecPlan()">+ 추가</button>
       </div>
@@ -1268,209 +1343,137 @@
       <div class="log-scroll scroll-y" id="stratScrollBox">
         <div class="ge-exec-table" id="stratTable">
           <div class="ge-exec-head-row">
-            <div>연결 목표</div><div>다음 행동</div><div>대상</div><div>실행량</div><div>마감</div><div>상태</div><div></div>
+            <div>연결 목표</div><div>다음 행동</div><div>대상</div><div>실행금액<small>달성 / 목표 (원)</small></div><div>마감</div><div>상태</div><div></div>
           </div>
           <div id="stratBody"></div>
         </div>
       </div>
-      <div class="ge-footnote">행의 ▾를 누르면 메모와 기존 목표 기여액을 확인할 수 있습니다. 완료·보류된 계획은 아래로 자동 정렬됩니다.</div>
+      <div class="ge-footnote">행의 ▾를 누르면 메모를 확인할 수 있습니다. 완료·보류된 계획은 아래로 자동 정렬됩니다.</div>
+    </section>
+
+    <details class="goal-exec-card ge-archive">
+      <summary><span>잠재 대상 DB</span><small>기존 예상 대상 자료 보관 · 필요할 때만 열기</small></summary>
+      <div class="ge-archive-body" id="dbArchiveMount"></div>
+    </details>
+    <details class="goal-exec-card ge-archive">
+      <summary><span>과거 전략·메모 보관함</span><small>기존 기록은 유지되며 신규 실행은 위 실행계획에 입력</small></summary>
+      <div class="ge-archive-body" id="strategyArchiveMount"></div>
+    </details>
+  </section>
+
+  <section class="tab-pane" data-pane="3">
+    <div class="ledger-head">
+      <div>
+        <div class="dash-kicker">CONFIRMED SALES LEDGER</div>
+        <h2 class="ledger-title">매출 원장</h2>
+        <div class="ledger-sub">확정된 매출만 기록하고, 계획과 실제 결과를 검증합니다.</div>
+      </div>
+      <button class="dash-action-btn" type="button" onclick="copyLogTable(this)">표 복사</button>
+    </div>
+
+    <div class="goal-exec-kpis ledger-kpis">
+      <div class="kpi-card"><div class="kpi-label">이번 달 목표</div><div class="kpi-value" id="goalMonthTarget">0원</div><div class="kpi-sub">월간 기준</div></div>
+      <div class="kpi-card good"><div class="kpi-label">확정 실적</div><div class="kpi-value" id="goalMonthActual">0원</div><div class="kpi-sub">매출 원장 합계</div></div>
+      <div class="kpi-card bad"><div class="kpi-label">남은 금액</div><div class="kpi-value" id="goalMonthGap">0원</div><div class="kpi-sub">목표 − 확정 실적</div></div>
+      <div class="kpi-card primary"><div class="kpi-label">달성률</div><div class="kpi-value" id="goalMonthRate">0%</div><div class="kpi-sub">확정 실적 기준</div></div>
+    </div>
+
+    <section class="ledger-quick-card goal-edit-only">
+      <div class="ledger-quick-head"><b>+ 매출 빠른 입력</b><span>날짜는 오늘로 자동 입력됩니다.</span></div>
+      <div class="ledger-quick-form">
+        <input type="date" id="ledgerQuickDate">
+        <input type="text" id="ledgerQuickItem" list="itemGoalSuggest" placeholder="아이템 *" onkeydown="ledgerQuickEnter(event)">
+        <input type="text" id="ledgerQuickTarget" placeholder="대상" onkeydown="ledgerQuickEnter(event)">
+        <input type="text" inputmode="numeric" id="ledgerQuickAmount" placeholder="확정 금액 *" oninput="formatQuickAmount(this)" onkeydown="ledgerQuickEnter(event)">
+        <input type="text" id="ledgerQuickMemo" placeholder="메모 (선택)" onkeydown="ledgerQuickEnter(event)">
+        <button type="button" onclick="addLedgerSale()">기록 저장</button>
+      </div>
+    </section>
+
+    <div class="ledger-view-tabs" role="tablist">
+      <button class="active" type="button" data-ledger-view="records" onclick="showLedgerView('records')">매출 내역</button>
+      <button type="button" data-ledger-view="plan" onclick="showLedgerView('plan')">계획 대비</button>
+      <button type="button" data-ledger-view="items" onclick="showLedgerView('items')">아이템별 분석</button>
+    </div>
+
+    <section class="ledger-view active" id="ledgerViewRecords">
+      <div class="ledger-filterbar">
+        <input type="search" id="ledgerSearch" placeholder="아이템·대상·메모 검색" oninput="applyLedgerFilters()">
+        <select id="ledgerItemFilter" onchange="applyLedgerFilters()"><option value="">전체 아이템</option></select>
+        <input type="date" id="ledgerFrom" onchange="applyLedgerFilters()">
+        <span>~</span>
+        <input type="date" id="ledgerTo" onchange="applyLedgerFilters()">
+        <button type="button" onclick="resetLedgerFilters()">필터 초기화</button>
+        <span class="ledger-filter-summary" id="ledgerFilteredSummary"></span>
+      </div>
+      <div class="log-tools">
+        <button class="mini-toggle" id="logExpandBtn" onclick="toggleLogBox()">⤢ 전체 펼치기</button>
+        <span class="chip-cnt" id="logCount"></span>
+      </div>
+      <div class="log-scroll scroll-y" id="logScrollBox">
+        <table class="log ledger-log" id="logTable">
+          <thead><tr><th>날짜</th><th>주차</th><th>아이템</th><th>대상</th><th>확정 금액(원)</th><th>메모</th><th></th></tr></thead>
+          <tbody id="logBody"></tbody>
+          <tfoot><tr class="log-total"><td colspan="4">전체 합계</td><td id="logTotalCell" style="text-align:right;">0</td><td colspan="2"></td></tr></tfoot>
+        </table>
+      </div>
+      <button class="add-row goal-edit-only" onclick="addLogRowAndFocus()">+ 빈 매출 행 추가</button>
+    </section>
+
+    <section class="ledger-view" id="ledgerViewPlan">
+      <div class="ledger-section-head">
+        <div><b>계획 대비 확정 실적</b><span>계획이나 실적이 있는 날짜만 표시합니다.</span></div>
+        <div class="ledger-plan-actions goal-edit-only"><button onclick="addTodayGoal()">+ 오늘 계획</button><button onclick="openGoalSetup()">월 목표 설정</button></div>
+      </div>
+      <div class="log-tools">
+        <button class="mini-toggle goal-edit-only" onclick="addOtherGoal()">다른 날짜 계획</button>
+        <button class="mini-toggle" id="goalExpandBtn" onclick="toggleBoxById('goalScrollBox',this)">⤢ 전체 펼치기</button>
+        <button class="mini-toggle" onclick="copyGoalTable(this)">표 복사</button>
+        <span class="chip-cnt" id="goalCount"></span>
+        <label class="goal-view-toggle"><input type="checkbox" id="showPastGoals" checked onchange="togglePastGoals()"> 지난 기록 포함 <span id="pastGoalCount"></span></label>
+        <label class="goal-view-toggle"><input type="checkbox" id="showBlankGoals" onchange="toggleBlankGoals()"> 빈 날짜 포함</label>
+      </div>
+      <div class="log-scroll scroll-y" id="goalScrollBox">
+        <div class="gtable" id="goalTable">
+          <div class="grow ghead"><div>날짜</div><div class="g-mid">요일</div><div>핵심 목표</div><div>대상</div><div class="g-num">계획(원)</div><div class="g-num">실적(원)</div><div class="g-num">달성률</div><div></div></div>
+          <div id="goalBody"></div>
+          <div class="grow gfoot"><div>합계</div><div></div><div></div><div></div><div class="g-num" id="gSumCell">0</div><div class="g-num" id="gActualCell">0</div><div class="g-num" id="gRateCell">-</div><div></div></div>
+        </div>
+      </div>
+      <div class="goal-note" id="goalNote"></div>
+      <div class="undated-note" id="undatedNote"></div>
+      <details class="ledger-analysis-detail">
+        <summary>기간별·주간 분석 보기</summary>
+        <div class="range-box">
+          <div class="range-line"><span class="lbl2">구간 합계</span><input type="date" id="rgFrom" onchange="renderRange()"><span>~</span><input type="date" id="rgTo" onchange="renderRange()"><button class="add-row" style="margin-top:0;" onclick="setGoalRange('week')">이번 주</button><button class="add-row" style="margin-top:0;" onclick="setGoalRange('month')">이번 달</button></div>
+          <div class="range-out" id="rangeOut"></div>
+        </div>
+        <div class="sub-title">주별 목표 합계</div><div class="week-grid" id="goalWeekGrid"></div>
+      </details>
+    </section>
+
+    <section class="ledger-view" id="ledgerViewItems">
+      <div class="ledger-section-head"><div><b>아이템별 목표와 확정 실적</b><span>행을 누르면 해당 아이템의 매출 내역으로 이동합니다.</span></div></div>
+      <div class="ledger-item-analysis" id="ledgerItemAnalysis"></div>
     </section>
   </section>
 
-  <section class="tab-pane" data-pane="3">
-  <div class="detail-intro"><b>상세 근거가 필요할 때만 여는 화면입니다.</b> 일자별 목표·매출 원장·대상 DB·전략 일지를 한곳에 모았습니다.</div>
-  <!-- 일자별 매출 목표 -->
-  <div class="section-head">
-    <span class="section-num" contenteditable="true">04</span>
-    <h2 class="section-title" contenteditable="true">일자별 매출 목표</h2>
-    <button class="add-row goal-section-action" onclick="openGoalSetup()">이번 달 목표 설정</button>
-  </div>
-  <div class="section-desc" contenteditable="true">월 목표를 먼저 정하고, 실제로 실행할 날짜에만 핵심 목표·대상·주요 행동을 입력하세요. 실적과 달성률은 매출 기록에서 자동 집계됩니다.</div>
-
-  <div class="goal-month-card">
-    <div class="goal-month-kpi"><div class="k">이번 달 목표</div><div class="v" id="goalMonthTarget">0원</div></div>
-    <div class="goal-month-kpi"><div class="k">현재 실적</div><div class="v good" id="goalMonthActual">0원</div></div>
-    <div class="goal-month-kpi"><div class="k">남은 목표</div><div class="v bad" id="goalMonthGap">0원</div></div>
-    <div class="goal-month-kpi"><div class="k">달성률</div><div class="v" id="goalMonthRate">0%</div></div>
-    <div class="goal-month-edit"><button class="add-row" onclick="openGoalSetup()">목표 수정</button></div>
+  <div id="dbArchiveSource" class="archive-source" hidden>
+    <div class="archive-note">확정 매출이 아닌 잠재 대상 자료입니다. 신규 실행계획은 위 핵심 실행에서 관리하세요.</div>
+    <div class="db-tabs" id="dbTabs"></div><datalist id="dbItemSuggest"></datalist><datalist id="dbRefSuggest"></datalist>
+    <div class="log-tools"><button class="mini-toggle" id="dbExpandBtn" onclick="toggleBoxById('dbScrollBox',this)">⤢ 전체 펼치기</button><button class="mini-toggle" onclick="copyDbTable(this)">표 복사</button><span class="chip-cnt" id="dbCount"></span></div>
+    <div class="log-scroll scroll-y" id="dbScrollBox"><div class="dtable" id="dbTable"><div class="drow dhead"><div>등록일</div><div>아이템</div><div>대상</div><div>추천인</div><div>메모</div><div class="g-num">예상 금액(원)</div><div></div></div><div id="dbBody"></div><div class="drow dfoot"><div>합계</div><div></div><div></div><div></div><div></div><div class="g-num" id="dbSumCell">0</div><div></div></div></div></div>
+    <div class="db-note" id="dbNote"></div>
   </div>
 
-  <div class="log-tools">
-    <button class="add-row goal-primary" onclick="addTodayGoal()">+ 오늘 목표 입력</button>
-    <button class="mini-toggle goal-edit-only" onclick="addOtherGoal()">다른 날짜 목표 입력</button>
-    <button class="mini-toggle" id="goalExpandBtn" onclick="toggleBoxById('goalScrollBox',this)">⤢ 전체 펼치기</button>
-    <button class="mini-toggle" onclick="copyGoalTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
-    <span class="chip-cnt" id="goalCount"></span>
-    <label class="goal-view-toggle"><input type="checkbox" id="showPastGoals" onchange="togglePastGoals()"> 지난 기록 포함 <span id="pastGoalCount"></span></label>
-    <label class="goal-view-toggle"><input type="checkbox" id="showBlankGoals" onchange="toggleBlankGoals()"> 빈 날짜 포함</label>
+  <div id="strategyArchiveSource" class="archive-source" hidden>
+    <div class="archive-note">이전 전략 기록 보관용입니다. 새 전략과 다음 행동은 위 핵심 실행에 입력하세요.</div>
+    <div class="sl-bar"><span class="lbl2">날짜</span><button class="add-row" style="margin-top:0;" onclick="moveStratDay(-1)">◀ 이전</button><input type="date" id="slDate" onchange="onStratDateChange()"><button class="add-row" style="margin-top:0;" onclick="moveStratDay(1)">다음 ▶</button><button class="add-row" style="margin-top:0;" onclick="goStratToday()">오늘</button><span class="sl-status" id="slStatus"></span></div>
+    <div class="card sl-editor"><div class="sl-head"><span id="slTitle">오늘의 전략</span><span class="sl-sub" id="slSub"></span><button class="mini-toggle" id="slExpandBtn" style="margin-left:auto;" onclick="toggleStratBox()">⤢ 전체 펼치기</button><button class="mini-toggle" onclick="copyStratLog(this)">복사</button></div><textarea id="slText" class="sl-text" placeholder="기존 전략 기록" oninput="onStratInput()"></textarea></div>
+    <div class="sl-listbar"><span class="lbl2">지난 전략</span><select id="slRange" onchange="loadStratList()"><option value="recent">최근 30건</option><option value="month">이번 달</option><option value="lastmonth">지난 달</option><option value="year">올해 전체</option><option value="lastyear">작년 전체</option></select><span class="sl-status" id="slListCount"></span><button class="mini-toggle" id="slFoldBtn" style="margin-left:auto;" onclick="toggleStratList()">▾ 접기</button></div>
+    <div class="log-scroll scroll-y" id="slListBox"><div id="slList"></div></div>
+    <div class="card archive-memo"><div class="memo-tools"><button class="mini-toggle" id="memoToggleBtn" onclick="toggleMemoBox()">⤢ 전체 펼치기</button><span class="memo-hint" id="memoHint"></span></div><div class="memo-body" contenteditable="true" id="memoEl">부족 금액을 채우기 위한 판단 근거와 다음 액션을 기록하세요.</div></div>
   </div>
-  <div class="log-scroll scroll-y" id="goalScrollBox">
-    <div class="gtable" id="goalTable">
-      <div class="grow ghead">
-        <div>날짜</div>
-        <div class="g-mid">요일</div>
-        <div>핵심 목표</div>
-        <div>대상</div>
-        <div class="g-num">목표(원)</div>
-        <div class="g-num">실적(원)</div>
-        <div class="g-num">달성률</div>
-        <div></div>
-      </div>
-      <div id="goalBody"></div>
-      <div class="grow gfoot">
-        <div>합계</div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div class="g-num" id="gSumCell">0</div>
-        <div class="g-num" id="gActualCell">0</div>
-        <div class="g-num" id="gRateCell">-</div>
-        <div></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="range-box">
-    <div class="range-line">
-      <span class="lbl2">구간 합계</span>
-      <input type="date" id="rgFrom" onchange="renderRange()">
-      <span>~</span>
-      <input type="date" id="rgTo" onchange="renderRange()">
-      <button class="add-row" style="margin-top:0;" onclick="setGoalRange('rest')">오늘~말일</button>
-      <button class="add-row" style="margin-top:0;" onclick="setGoalRange('week')">이번 주</button>
-      <button class="add-row" style="margin-top:0;" onclick="setGoalRange('month')">이번 달</button>
-    </div>
-    <div class="range-out" id="rangeOut"></div>
-  </div>
-
-  <div class="sub-title">주별 목표 합계</div>
-  <div class="week-grid" id="goalWeekGrid"></div>
-
-  <div class="goal-note" id="goalNote"></div>
-  <div class="undated-note" id="undatedNote"></div>
-
-  <!-- 매출 기록 -->
-  <div class="section-head">
-    <span class="section-num" contenteditable="true">05</span>
-    <h2 class="section-title" contenteditable="true">매출 기록 (일자별 · 아이템별)</h2>
-  </div>
-  <div class="section-desc" contenteditable="true">날짜와 판매 아이템, 금액을 입력하세요. 주차는 날짜를 기준으로 자동 계산됩니다.</div>
-
-  <div class="log-tools">
-    <button class="mini-toggle" id="logExpandBtn" onclick="toggleLogBox()">⤢ 전체 펼치기</button>
-    <button class="mini-toggle" onclick="copyLogTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
-    <span class="chip-cnt" id="logCount"></span>
-  </div>
-  <div class="log-scroll scroll-y" id="logScrollBox">
-    <table class="log" id="logTable">
-      <thead>
-        <tr><th>날짜</th><th>주차</th><th>판매 아이템 / 대상</th><th>금액(원)</th><th>메모</th><th></th></tr>
-      </thead>
-      <tbody id="logBody"></tbody>
-      <tfoot>
-        <tr class="log-total"><td colspan="3">합계</td><td id="logTotalCell" style="text-align:right;">0</td><td colspan="2"></td></tr>
-      </tfoot>
-    </table>
-  </div>
-  <button class="add-row" onclick="addLogRow()">+ 매출 기록 추가</button>
-
-  <!-- 아이템별 대상 DB -->
-  <div class="section-head">
-    <span class="section-num" contenteditable="true">06</span>
-    <h2 class="section-title" contenteditable="true">아이템별 대상 DB</h2>
-  </div>
-  <div class="section-desc" contenteditable="true">이번 달 목표를 채울 대상을 아이템별로 적어둡니다. 아이템 단추를 눌러 전환하세요.</div>
-
-  <div class="db-tabs" id="dbTabs"></div>
-  <datalist id="dbItemSuggest"></datalist>
-  <datalist id="dbRefSuggest"></datalist>
-
-  <div class="log-tools">
-    <button class="mini-toggle" id="dbExpandBtn" onclick="toggleBoxById('dbScrollBox',this)">⤢ 전체 펼치기</button>
-    <button class="mini-toggle" onclick="copyDbTable(this)">⧉ 표 복사 (엑셀 붙여넣기용)</button>
-    <span class="chip-cnt" id="dbCount"></span>
-  </div>
-  <div class="log-scroll scroll-y" id="dbScrollBox">
-    <div class="dtable" id="dbTable">
-      <div class="drow dhead">
-        <div>등록일</div>
-        <div>아이템</div>
-        <div>대상</div>
-        <div>추천인</div>
-        <div>메모</div>
-        <div class="g-num">예상 금액(원)</div>
-        <div></div>
-      </div>
-      <div id="dbBody"></div>
-      <div class="drow dfoot">
-        <div>합계</div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div class="g-num" id="dbSumCell">0</div>
-        <div></div>
-      </div>
-    </div>
-  </div>
-  <div class="db-note" id="dbNote"></div>
-  </section>
-
-  <section class="tab-pane" data-pane="3">
-  <!-- 일자별 전략 일지 -->
-  <div class="section-head">
-    <span class="section-num" contenteditable="true">07</span>
-    <h2 class="section-title" contenteditable="true">일자별 전략 일지</h2>
-  </div>
-  <div class="section-desc" contenteditable="true">날짜별로 전략을 기록해 계속 쌓아둡니다. 달이 바뀌어도 지워지지 않고, 지난 주·지난 달·지난 해 전략을 그대로 찾아볼 수 있습니다.</div>
-
-  <div class="sl-bar">
-    <span class="lbl2">날짜</span>
-    <button class="add-row" style="margin-top:0;" onclick="moveStratDay(-1)">◀ 이전</button>
-    <input type="date" id="slDate" onchange="onStratDateChange()">
-    <button class="add-row" style="margin-top:0;" onclick="moveStratDay(1)">다음 ▶</button>
-    <button class="add-row" style="margin-top:0;" onclick="goStratToday()">오늘</button>
-    <span class="sl-status" id="slStatus"></span>
-  </div>
-
-  <div class="card sl-editor">
-    <div class="sl-head">
-      <span id="slTitle">오늘의 전략</span><span class="sl-sub" id="slSub"></span>
-      <button class="mini-toggle" id="slExpandBtn" style="margin-left:auto;" onclick="toggleStratBox()">⤢ 전체 펼치기</button>
-      <button class="mini-toggle" onclick="copyStratLog(this)">⧉ 복사</button>
-    </div>
-    <textarea id="slText" class="sl-text" placeholder="이 날의 전략을 적어주세요. 대상·활동·판단 근거를 남겨두면 다음 전략을 세울 때 그대로 참고가 됩니다." oninput="onStratInput()"></textarea>
-  </div>
-
-  <div class="sl-listbar">
-    <span class="lbl2">지난 전략</span>
-    <select id="slRange" onchange="loadStratList()">
-      <option value="recent">최근 30건</option>
-      <option value="month">이번 달</option>
-      <option value="lastmonth">지난 달</option>
-      <option value="year">올해 전체</option>
-      <option value="lastyear">작년 전체</option>
-    </select>
-    <span class="sl-status" id="slListCount"></span>
-    <button class="mini-toggle" id="slFoldBtn" style="margin-left:auto;" onclick="toggleStratList()">▾ 접기</button>
-  </div>
-  <div class="log-scroll scroll-y" id="slListBox">
-    <div id="slList"></div>
-  </div>
-
-  <!-- 메모 -->
-  <div class="section-head">
-    <span class="section-num" contenteditable="true">08</span>
-    <h2 class="section-title" contenteditable="true">전략 & 메모</h2>
-  </div>
-  <div class="card">
-    <div class="memo-tools">
-      <button class="mini-toggle" id="memoToggleBtn" onclick="toggleMemoBox()">⤢ 전체 펼치기</button>
-      <span class="memo-hint" id="memoHint"></span>
-    </div>
-    <div class="memo-body" contenteditable="true" id="memoEl">부족 금액을 채우기 위한 판단 근거와 다음 액션을 기록하세요.</div>
-  </div>
-  </section>
 
 </main>
 
@@ -1547,7 +1550,7 @@
   var isSnapshotFile = (document.documentElement.getAttribute('data-snapshot') === '1');
   var firebaseReady = false;
   var showBlankGoalRows = false;
-  var showPastGoalRows = false;
+  var showPastGoalRows = true;
   var dashboardReportMode = false;
 
   // ---------- number formatting ----------
@@ -1823,22 +1826,22 @@
     data = data || {};
     var memoVal = (data.memo !== undefined && data.memo !== null && data.memo !== '') ? data.memo : (data.count || '');
     var status = data.status || 'planned';
-    var leadTarget = Number(data.leadTarget || 0);
+    // 이전 버전의 예상금액은 새 실행 목표금액으로 이어받습니다.
+    var leadTarget = Number(data.leadUnit === '원' ? (data.leadTarget || 0) : (data.amount || data.leadTarget || 0));
     var leadDone = Number(data.leadDone || 0);
-    var leadUnit = data.leadUnit || '건';
     var row = document.createElement('div');
     row.className = 'ge-exec-row strat-row';
     row.innerHTML =
       '<div><input type="text" class="s-item" list="itemGoalSuggest" placeholder="목표 선택" value="'+escapeAttr(data.item||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><input type="text" class="s-name" placeholder="다음 행동" value="'+escapeAttr(data.name||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><input type="text" class="s-target" placeholder="대상" value="'+escapeAttr(data.target||'')+'" oninput="onRowChange(this)"></div>' +
-      '<div class="ge-lead-group"><input type="number" min="0" class="s-lead-done" aria-label="완료 실행량" value="'+leadDone+'" oninput="onRowChange(this)"><span class="ge-lead-slash">/</span><input type="number" min="0" class="s-lead-target" aria-label="목표 실행량" value="'+leadTarget+'" oninput="onRowChange(this)"><select class="s-lead-unit" aria-label="실행량 단위" onchange="onRowChange(this)"><option value="명"'+(leadUnit==='명'?' selected':'')+'>명</option><option value="건"'+(leadUnit==='건'?' selected':'')+'>건</option><option value="회"'+(leadUnit==='회'?' selected':'')+'>회</option></select></div>' +
+      '<div class="ge-lead-group"><input type="text" inputmode="numeric" class="s-lead-done amt" aria-label="달성금액" placeholder="달성" value="'+(leadDone?fmt(leadDone):'')+'" oninput="onAmountInput(this)"><span class="ge-lead-slash">/</span><input type="text" inputmode="numeric" class="s-lead-target amt" aria-label="목표금액" placeholder="목표" value="'+(leadTarget?fmt(leadTarget):'')+'" oninput="onAmountInput(this)"><input type="hidden" class="s-lead-unit" value="원"></div>' +
       '<div class="due-cell"><span class="due-chip"></span>' +
         '<input type="date" class="s-due" value="'+escapeAttr(data.due||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><select class="s-status" onchange="onRowChange(this)">'+strategyStatusOptions(status)+'</select></div>' +
       '<div class="ge-row-ops"><button class="ge-detail-btn" type="button" onclick="toggleStrategyDetail(this)" title="메모 보기">▾</button><button class="del-x" onclick="removeStratRow(this)">✕</button></div>' +
       '<div class="ge-memo-line"><textarea class="s-memo" rows="2" placeholder="판단 근거·특이사항·다음 확인 내용을 적어두세요." oninput="onMemoInput(this)">'+escapeHtml(memoVal)+'</textarea>'+
-        '<input type="text" inputmode="numeric" class="s-amt amt" aria-label="기존 목표 기여액" placeholder="기존 목표 기여액" value="'+(data.amount?fmt(data.amount):'')+'" oninput="onAmountInput(this)"></div>';
+        '<input type="hidden" class="s-amt amt" value="'+(data.amount?fmt(data.amount):'')+'"></div>';
     return row;
   }
 
@@ -1868,9 +1871,9 @@
       item: document.getElementById('execItem').value.trim(),
       name: action,
       target: document.getElementById('execTarget').value.trim(),
-      leadTarget: Number(document.getElementById('execLeadTarget').value || 0),
+      leadTarget: toNum(document.getElementById('execLeadTarget').value),
       leadDone: 0,
-      leadUnit: document.getElementById('execLeadUnit').value || '건',
+      leadUnit: '원',
       due: document.getElementById('execDue').value || localISO(new Date()),
       status: 'planned', memo: '', amount: 0
     });
@@ -1905,8 +1908,8 @@
       due: document.getElementById('sqDue').value || localISO(new Date()),
       amount: 0,
       leadDone: 0,
-      leadTarget: Number(document.getElementById('sqAmount').value || 0),
-      leadUnit: '건',
+      leadTarget: toNum(document.getElementById('sqAmount').value),
+      leadUnit: '원',
       status: 'doing',
       memo: document.getElementById('sqMemo').value.trim()
     };
@@ -2105,7 +2108,7 @@
       '<span class="'+cls+'">(커버율 '+cover.toFixed(0)+'%)</span>';
   }
 
-  // 새 실행 점수판: 예상금액 합산 대신 실행량·상태·지연 여부를 보여줍니다.
+  // 새 실행 점수판: 실행별 목표금액·달성금액과 상태·지연 여부를 보여줍니다.
   function recalcStrategy(gap){
     var body = document.getElementById('stratBody');
     if(!body) return;
@@ -2117,8 +2120,8 @@
       var statusEl = row.querySelector('.s-status');
       var status = statusEl ? statusEl.value : 'planned';
       var due = row.querySelector('.s-due').value;
-      var target = Number(row.querySelector('.s-lead-target').value || 0);
-      var done = Number(row.querySelector('.s-lead-done').value || 0);
+      var target = toNum(row.querySelector('.s-lead-target').value);
+      var done = toNum(row.querySelector('.s-lead-done').value);
       if(target > 0 && done >= target && status !== 'done'){
         status='done'; statusEl.value='done';
       }
@@ -2288,13 +2291,12 @@
   }
 
   function copyStratTable(btn){
-    var out = [['연결 목표','다음 행동','대상','완료 실행량','목표 실행량','단위','마감','상태','메모']];
+    var out = [['연결 목표','다음 행동','대상','달성금액(원)','목표금액(원)','마감','상태','메모']];
     document.querySelectorAll('#stratBody .strat-row').forEach(function(r){
       var status = {planned:'예정',doing:'진행',done:'완료',hold:'보류'}[r.querySelector('.s-status').value] || '예정';
       out.push([r.querySelector('.s-item').value, r.querySelector('.s-name').value,
-                r.querySelector('.s-target').value, r.querySelector('.s-lead-done').value,
-                r.querySelector('.s-lead-target').value, r.querySelector('.s-lead-unit').value,
-                r.querySelector('.s-due').value, status,
+                r.querySelector('.s-target').value, toNum(r.querySelector('.s-lead-done').value),
+                toNum(r.querySelector('.s-lead-target').value), r.querySelector('.s-due').value, status,
                 r.querySelector('.s-memo').value.replace(/\n/g,' / ')]);
     });
     copyTsv(out, btn);
@@ -2346,13 +2348,15 @@
   }
 
   function copyLogTable(btn){
-    var out = [['날짜','주차','판매 아이템 / 대상','금액(원)','메모']], total = 0;
+    var out = [['날짜','주차','아이템','대상','확정 금액(원)','메모']], total = 0;
     document.querySelectorAll('#logBody tr.log-row').forEach(function(row){
+      if(row.hidden) return;
       var amt = toNum(row.querySelector('.log-amt').value); total += amt;
       out.push([row.querySelector('.log-date').value, row.querySelector('.week-badge').textContent,
-                row.querySelector('.log-item').value, amt, row.querySelector('.log-memo').value]);
+                row.querySelector('.log-item').value, row.querySelector('.log-target') ? row.querySelector('.log-target').value : '',
+                amt, row.querySelector('.log-memo').value]);
     });
-    out.push(['합계','','',total,'']);
+    out.push(['합계','','','',total,'']);
     copyTsv(out, btn);
   }
 
@@ -3220,8 +3224,8 @@
     document.getElementById('goalMonthActual').textContent = fmt(total)+'원';
     document.getElementById('goalMonthGap').textContent = fmt(gap)+'원';
     document.getElementById('goalMonthRate').textContent = rate.toFixed(0)+'%';
-    document.getElementById('goalMonthGap').className = 'v '+(gap > 0 ? 'bad' : 'good');
-    document.getElementById('goalMonthRate').className = 'v '+(goal > 0 && rate >= 100 ? 'good' : '');
+    document.getElementById('goalMonthGap').className = 'kpi-value '+(gap > 0 ? 'bad' : 'good');
+    document.getElementById('goalMonthRate').className = 'kpi-value '+(goal > 0 && rate >= 100 ? 'good' : '');
   }
 
   // ---------- log rows ----------
@@ -3234,6 +3238,7 @@
       '<td><input type="date" class="log-date" value="'+(data.date||'')+'" oninput="onRowChange(this)"></td>' +
       '<td><span class="week-badge">-</span></td>' +
       '<td><input type="text" class="log-item" placeholder="예: 스타19 / 자비아 / 총판 등" value="'+escapeAttr(data.item||'')+'" oninput="onRowChange(this)"></td>' +
+      '<td><input type="text" class="log-target" placeholder="대상" value="'+escapeAttr(data.target||'')+'" oninput="onRowChange(this)"></td>' +
       '<td><input type="text" inputmode="numeric" class="log-amt amt" placeholder="0" value="'+(data.amount?fmt(data.amount):'')+'" oninput="onAmountInput(this)"></td>' +
       '<td><input type="text" class="log-memo" placeholder="메모" value="'+escapeAttr(data.memo||'')+'" oninput="onRowChange(this)"></td>' +
       '<td class="row-ops"><button class="ord" onclick="moveLogRow(this,-1)" title="위로">▲</button>' +
@@ -3250,6 +3255,36 @@
     recalcAll();
     scheduleSave();
     return row;
+  }
+
+  function addLogRowAndFocus(){
+    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    var row=addLogRow({date:localISO(new Date())});
+    if(row){ row.scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(function(){ row.querySelector('.log-item').focus(); },220); }
+  }
+
+  function ledgerQuickEnter(e){
+    if(e.key !== 'Enter') return;
+    e.preventDefault(); addLedgerSale();
+  }
+
+  function addLedgerSale(){
+    if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
+    var itemEl=document.getElementById('ledgerQuickItem');
+    var amountEl=document.getElementById('ledgerQuickAmount');
+    var item=itemEl.value.trim(), amount=toNum(amountEl.value);
+    if(!item){ itemEl.focus(); return; }
+    if(!amount){ amountEl.focus(); return; }
+    var row=buildLogRow({
+      date:document.getElementById('ledgerQuickDate').value || localISO(new Date()),
+      item:item,
+      target:document.getElementById('ledgerQuickTarget').value.trim(),
+      amount:amount,
+      memo:document.getElementById('ledgerQuickMemo').value.trim()
+    });
+    var body=document.getElementById('logBody'); body.insertBefore(row,body.firstChild);
+    itemEl.value=''; document.getElementById('ledgerQuickTarget').value=''; amountEl.value=''; document.getElementById('ledgerQuickMemo').value='';
+    recalcAll(); scheduleSave(); showLedgerView('records'); itemEl.focus();
   }
 
   // 행 순서 바꾸기 (-1 위로 / 1 아래로)
@@ -3271,6 +3306,85 @@
     btn.closest('tr').remove();
     recalcAll();
     scheduleSave();
+  }
+
+  function showLedgerView(name){
+    ['records','plan','items'].forEach(function(v){
+      var pane=document.getElementById('ledgerView'+v.charAt(0).toUpperCase()+v.slice(1));
+      if(pane) pane.classList.toggle('active',v===name);
+      var btn=document.querySelector('[data-ledger-view="'+v+'"]');
+      if(btn) btn.classList.toggle('active',v===name);
+    });
+    if(name==='records') applyLedgerFilters();
+    if(name==='items') renderLedgerItemAnalysis();
+  }
+
+  function resetLedgerFilters(){
+    var q=document.getElementById('ledgerSearch'), it=document.getElementById('ledgerItemFilter');
+    var from=document.getElementById('ledgerFrom'), to=document.getElementById('ledgerTo');
+    if(q) q.value=''; if(it) it.value=''; if(from) from.value=''; if(to) to.value='';
+    applyLedgerFilters();
+  }
+
+  function refreshLedgerItemFilter(){
+    var sel=document.getElementById('ledgerItemFilter'); if(!sel) return;
+    var keep=sel.value, names={}, list=[];
+    document.querySelectorAll('#logBody .log-row').forEach(function(row){
+      var n=row.querySelector('.log-item').value.trim(); if(n&&!names[n]){ names[n]=1; list.push(n); }
+    });
+    list.sort(function(a,b){ return a.localeCompare(b,'ko'); });
+    sel.innerHTML='<option value="">전체 아이템</option>'+list.map(function(n){ return '<option value="'+escapeAttr(n)+'">'+escapeHtml(n)+'</option>'; }).join('');
+    if(names[keep]) sel.value=keep;
+  }
+
+  function applyLedgerFilters(){
+    var qEl=document.getElementById('ledgerSearch'); if(!qEl) return;
+    refreshLedgerItemFilter();
+    var q=qEl.value.trim().toLowerCase(), item=document.getElementById('ledgerItemFilter').value;
+    var from=document.getElementById('ledgerFrom').value, to=document.getElementById('ledgerTo').value;
+    var shown=0,sum=0;
+    document.querySelectorAll('#logBody .log-row').forEach(function(row){
+      var date=row.querySelector('.log-date').value, itemVal=row.querySelector('.log-item').value.trim();
+      var target=row.querySelector('.log-target') ? row.querySelector('.log-target').value : '';
+      var memo=row.querySelector('.log-memo').value;
+      var hay=(itemVal+' '+target+' '+memo).toLowerCase();
+      var on=(!q||hay.indexOf(q)!==-1)&&(!item||itemVal===item)&&(!from||date>=from)&&(!to||date<=to);
+      row.hidden=!on;
+      if(on){ shown++; sum+=toNum(row.querySelector('.log-amt').value); }
+    });
+    var out=document.getElementById('ledgerFilteredSummary');
+    if(out) out.textContent=shown+'건 · '+fmt(sum)+'원';
+  }
+
+  function filterLedgerByItem(name){
+    showLedgerView('records');
+    refreshLedgerItemFilter();
+    var sel=document.getElementById('ledgerItemFilter'); if(sel) sel.value=name;
+    applyLedgerFilters();
+    var box=document.getElementById('logScrollBox'); if(box) box.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function renderLedgerItemAnalysis(){
+    var box=document.getElementById('ledgerItemAnalysis'); if(!box) return;
+    var rows=[];
+    document.querySelectorAll('#itemBody .item-row').forEach(function(row){
+      var name=row.querySelector('.i-name').value.trim(); if(!name) return;
+      var goal=toNum(row.querySelector('.i-goal').value), done=toNum(row.querySelector('.i-done').value);
+      rows.push({name:name,goal:goal,done:done,left:Math.max(goal-done,0),rate:goal>0?done/goal*100:0});
+    });
+    if(!rows.length){ box.innerHTML='<div class="ledger-empty">2번 목표와 실행에서 아이템별 목표를 등록해주세요.</div>'; return; }
+    box.innerHTML='<div class="ledger-item-row head"><div>아이템</div><div class="ledger-item-num">목표</div><div class="ledger-item-num">확정 실적</div><div class="ledger-item-num">남은 금액</div><div class="ledger-item-rate">달성률</div></div>'+rows.map(function(x){
+      return '<div class="ledger-item-row" role="button" tabindex="0" onclick="filterLedgerByItem(decodeURIComponent(this.dataset.item))" onkeydown="if(event.key===\'Enter\')this.click()" data-item="'+encodeURIComponent(x.name)+'"><div class="ledger-item-name">'+escapeHtml(x.name)+'</div><div class="ledger-item-num">'+fmt(x.goal)+'</div><div class="ledger-item-num">'+fmt(x.done)+'</div><div class="ledger-item-num">'+fmt(x.left)+'</div><div class="ledger-item-rate">'+x.rate.toFixed(0)+'%</div></div>';
+    }).join('');
+  }
+
+  function mountDetailArchives(){
+    [['dbArchiveSource','dbArchiveMount'],['strategyArchiveSource','strategyArchiveMount']].forEach(function(pair){
+      var src=document.getElementById(pair[0]), dst=document.getElementById(pair[1]);
+      if(!src||!dst||!src.childNodes.length) return;
+      while(src.firstChild) dst.appendChild(src.firstChild);
+      src.remove();
+    });
   }
 
   // 타이핑 중에는 재계산을 미뤄 입력이 밀리지 않게 함 (멈추면 곧바로 반영)
@@ -3336,12 +3450,11 @@
       var target = row.querySelector('.s-target').value.trim();
       var due = row.querySelector('.s-due').value;
       var status = row.querySelector('.s-status') ? row.querySelector('.s-status').value : 'planned';
-      var leadDone = Number(row.querySelector('.s-lead-done') ? row.querySelector('.s-lead-done').value : 0);
-      var leadTarget = Number(row.querySelector('.s-lead-target') ? row.querySelector('.s-lead-target').value : 0);
-      var leadUnit = row.querySelector('.s-lead-unit') ? row.querySelector('.s-lead-unit').value : '건';
+      var leadDone = toNum(row.querySelector('.s-lead-done') ? row.querySelector('.s-lead-done').value : 0);
+      var leadTarget = toNum(row.querySelector('.s-lead-target') ? row.querySelector('.s-lead-target').value : 0);
       if(status === 'done' || status === 'hold') return;
       if(!name && !target) return;
-      list.push({name:name || '실행 계획',item:item,target:target,due:due,status:status,leadDone:leadDone,leadTarget:leadTarget,leadUnit:leadUnit});
+      list.push({name:name || '실행 계획',item:item,target:target,due:due,status:status,leadDone:leadDone,leadTarget:leadTarget});
     });
     list.sort(function(a,b){
       var ad = a.due || '9999-12-31', bd = b.due || '9999-12-31';
@@ -3397,9 +3510,8 @@
         item: row.querySelector('.s-item') ? row.querySelector('.s-item').value.trim() : '',
         target: row.querySelector('.s-target').value.trim(),
         memo: row.querySelector('.s-memo').value.trim(),
-        leadDone: Number(row.querySelector('.s-lead-done') ? row.querySelector('.s-lead-done').value : 0),
-        leadTarget: Number(row.querySelector('.s-lead-target') ? row.querySelector('.s-lead-target').value : 0),
-        leadUnit: row.querySelector('.s-lead-unit') ? row.querySelector('.s-lead-unit').value : '건'
+        leadDone: toNum(row.querySelector('.s-lead-done') ? row.querySelector('.s-lead-done').value : 0),
+        leadTarget: toNum(row.querySelector('.s-lead-target') ? row.querySelector('.s-lead-target').value : 0)
       };
       todayStrategies.push(x);
     });
@@ -3411,7 +3523,7 @@
     } else {
       todayStrategyList.innerHTML = todayStrategies.slice(0,6).map(function(x){
         var detail = [x.item,x.target,x.memo].filter(Boolean).join(' · ') || '대상·메모 미정';
-        var progress = x.leadTarget ? (x.leadDone+'/'+x.leadTarget+x.leadUnit) : '실행량 미정';
+        var progress = x.leadTarget ? (compactWon(x.leadDone)+' / '+compactWon(x.leadTarget)) : '목표금액 미정';
         return '<div class="today-strategy-row"><div class="today-strategy-name">'+escapeHtml(x.name)+'</div>'+
           '<div class="today-strategy-detail">'+escapeHtml(detail)+'</div>'+
           '<div class="today-strategy-amount">'+escapeHtml(progress)+'</div></div>';
@@ -3445,7 +3557,7 @@
       execBox.innerHTML = execs.map(function(x){
         var due = x.due ? ddayLabel(x.due) : {txt:'일정 미정',cls:''};
         var meta = [x.item,x.target].filter(Boolean).map(escapeHtml).join(' · ') || '대상 미정';
-        var progress = x.leadTarget ? (x.leadDone+'/'+x.leadTarget+x.leadUnit) : (x.status==='doing'?'진행 중':'예정');
+        var progress = x.leadTarget ? (compactWon(x.leadDone)+' / '+compactWon(x.leadTarget)) : (x.status==='doing'?'진행 중':'예정');
         return '<div class="exec-row"><div class="exec-top"><div class="exec-name">'+escapeHtml(x.name)+'</div>'+
           '<div class="exec-amt">'+escapeHtml(progress)+'</div></div>'+
           '<div class="exec-meta"><span class="exec-chip '+escapeHtml(due.cls||'')+'">'+escapeHtml(due.txt)+'</span>'+meta+'</div></div>';
@@ -3528,6 +3640,8 @@
     // daily goal table
     recalcGoalTable(actualByDate, weeks, weekMap);
     updateGoalMonthCard(goal,total);
+    applyLedgerFilters();
+    renderLedgerItemAnalysis();
     var undated = document.getElementById('undatedNote');
     if(undatedCnt > 0){
       undated.textContent = '⚠ 날짜가 비어 있는 매출 기록 '+undatedCnt+'건 ('+fmt(undatedAmt)+'원)은 일자별 실적에 반영되지 않았습니다. 01 매출 기록에서 날짜를 지정해주세요.';
@@ -3547,6 +3661,7 @@
       rows.push({
         date: row.querySelector('.log-date').value,
         item: row.querySelector('.log-item').value,
+        target: row.querySelector('.log-target') ? row.querySelector('.log-target').value : '',
         amount: toNum(row.querySelector('.log-amt').value),
         memo: row.querySelector('.log-memo').value
       });
@@ -3572,9 +3687,9 @@
         memo: row.querySelector('.s-memo').value,
         due: row.querySelector('.s-due').value,
         amount: toNum(row.querySelector('.s-amt').value),
-        leadDone: Number(row.querySelector('.s-lead-done') ? row.querySelector('.s-lead-done').value : 0),
-        leadTarget: Number(row.querySelector('.s-lead-target') ? row.querySelector('.s-lead-target').value : 0),
-        leadUnit: row.querySelector('.s-lead-unit') ? row.querySelector('.s-lead-unit').value : '건',
+        leadDone: toNum(row.querySelector('.s-lead-done') ? row.querySelector('.s-lead-done').value : 0),
+        leadTarget: toNum(row.querySelector('.s-lead-target') ? row.querySelector('.s-lead-target').value : 0),
+        leadUnit: '원',
         status: row.querySelector('.s-status') ? row.querySelector('.s-status').value : 'planned'
       });
     });
@@ -3691,6 +3806,7 @@
   function onMonthChange(){
     var v = document.getElementById('monthPicker').value;
     if(!v || v === currentMonth) return;
+    resetLedgerFilters();
     openMonth(v);
   }
 
@@ -3766,7 +3882,7 @@
     var editable = canEdit && !isSnapshotFile;
     if(!editable) closeGoalSetup();
     document.querySelectorAll('[contenteditable]').forEach(function(el){ el.setAttribute('contenteditable', editable ? 'true' : 'false'); });
-    document.querySelectorAll('#goalInput, #stratBody input, #stratBody select, #dbBody input, #itemBody input, #logBody input, #goalBody input, #quickDate, #quickItem, #quickAmount, #quickMemo, .quick-add, .strategy-quick input, .strategy-quick button, .today-goal-quick input, .today-goal-quick button, .today-quick-add input, .today-quick-add select, .today-quick-add button, #execQuickAdd input, #execQuickAdd select, #execQuickAdd button').forEach(function(el){ el.disabled = !editable; });
+    document.querySelectorAll('#goalInput, #stratBody input, #stratBody select, #dbBody input, #itemBody input, #logBody input, #goalBody input, #quickDate, #quickItem, #quickAmount, #quickMemo, .quick-add, .strategy-quick input, .strategy-quick button, .today-goal-quick input, .today-goal-quick button, .today-quick-add input, .today-quick-add select, .today-quick-add button, #execQuickAdd input, #execQuickAdd select, #execQuickAdd button, .ledger-quick-form input, .ledger-quick-form button').forEach(function(el){ el.disabled = !editable; });
     // 메모는 잠그지 않고 '수정 불가'로 둠 — 읽기 전용으로 보는 사람도 눌러서 전체를 볼 수 있어야 함
     var slt = document.getElementById('slText');
     if(slt) slt.readOnly = !editable;
@@ -3786,12 +3902,14 @@
 
   // ---------- init ----------
   function loadInitial(){
+    mountDetailArchives();
     document.getElementById('monthPicker').value = monthFromUrl();
     document.getElementById('quickDate').value = localISO(new Date());
     document.getElementById('sqDue').value = localISO(new Date());
     document.getElementById('tdScheduleDate').value = localISO(new Date());
     document.getElementById('tdTaskDate').value = localISO(new Date());
     document.getElementById('execDue').value = localISO(new Date());
+    document.getElementById('ledgerQuickDate').value = localISO(new Date());
 
     if(isSnapshotFile){
       setSaveStatus('snapshot');
@@ -3916,10 +4034,10 @@
       dstStrat.innerHTML = '';
       srcStrat.querySelectorAll('.strat-row').forEach(function(row){
         var r = row.cloneNode(true);
-        ['.s-item','.s-name','.s-target','.s-lead-done','.s-lead-target','.s-due','.s-amt'].forEach(function(sel){
+        ['.s-item','.s-name','.s-target','.s-lead-done','.s-lead-target','.s-lead-unit','.s-due','.s-amt'].forEach(function(sel){
           var src=row.querySelector(sel), dst=r.querySelector(sel); if(src&&dst) dst.setAttribute('value',src.value);
         });
-        ['.s-lead-unit','.s-status'].forEach(function(sel){
+        ['.s-status'].forEach(function(sel){
           var src=row.querySelector(sel), dst=r.querySelector(sel); if(!src||!dst)return;
           Array.prototype.forEach.call(dst.options,function(op){ if(op.value===src.value) op.setAttribute('selected','selected'); else op.removeAttribute('selected'); });
         });
@@ -3951,6 +4069,7 @@
       srcBody.querySelectorAll('tr.log-row').forEach(function(row){
         var date = row.querySelector('.log-date').value;
         var item = row.querySelector('.log-item').value;
+        var target = row.querySelector('.log-target') ? row.querySelector('.log-target').value : '';
         var amt = row.querySelector('.log-amt').value;
         var memo = row.querySelector('.log-memo').value;
         var wk = row.querySelector('.week-badge').textContent;
@@ -3960,6 +4079,7 @@
           '<td><input type="date" class="log-date" value="'+date+'" oninput="onRowChange(this)"></td>' +
           '<td><span class="week-badge">'+wk+'</span></td>' +
           '<td><input type="text" class="log-item" value="'+escapeAttr(item)+'" oninput="onRowChange(this)"></td>' +
+          '<td><input type="text" class="log-target" value="'+escapeAttr(target)+'" oninput="onRowChange(this)"></td>' +
           '<td><input type="text" inputmode="numeric" class="log-amt amt" value="'+escapeAttr(amt)+'" oninput="onAmountInput(this)"></td>' +
           '<td><input type="text" class="log-memo" value="'+escapeAttr(memo)+'" oninput="onRowChange(this)"></td>' +
           '<td class="row-ops"><button class="ord" onclick="moveLogRow(this,-1)" title="위로">▲</button>' +
