@@ -710,7 +710,7 @@
   .pace-box .l{ font-size:10.5px; color:var(--muted); font-weight:700; }
   .pace-box .v{ margin-top:3px; color:var(--navy); font-size:15px; font-weight:800; }
   .today-strategy{ margin-top:13px; padding-top:12px; border-top:1px solid #ECEEF1; }
-  .today-strategy-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:5px; }
+  .today-strategy-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:9px; }
   .today-strategy-title{ color:var(--navy); font-size:12px; font-weight:800; }
   .today-strategy-count{ color:var(--brass); font-size:11px; font-weight:700; }
   .today-strategy-list{ display:flex; flex-direction:column; }
@@ -749,8 +749,15 @@
   .quick-entry-drawer[open] summary::before{ content:'− '; }
   .quick-entry-body{ padding:0 12px 12px; }
   .strategy-quick{ margin:14px 0 16px; padding:15px 16px; background:#FFFDF8; border:1px solid #DED2B9; border-radius:13px; box-shadow:0 2px 9px rgba(16,30,54,.025); }
-  .today-strategy-input{ margin:12px 0 0; padding:13px 14px; background:#F8FAFC; border-color:#E0E5EB; box-shadow:none; }
-  .today-strategy-input .sq-head{ margin-bottom:9px; }
+  .today-strategy-input{ margin:0 0 8px; padding:10px; background:#F7F8FA; border:1px solid #E2E6EC; border-radius:10px; box-shadow:none; }
+  .today-strategy-input .sq-head{ margin:0 0 7px; }
+  .today-strategy-input .sq-title{ font-family:'Pretendard',sans-serif; font-size:11.5px; }
+  .today-strategy-input .sq-hint{ font-size:10.5px; }
+  .today-strategy-input .sq-form{ grid-template-columns:minmax(125px,.9fr) minmax(145px,1.15fr) 96px auto; gap:6px; }
+  .today-strategy-input .sq-field input{ height:34px; padding:6px 8px; font-size:11.5px; }
+  .today-strategy-input .sq-add{ height:34px; padding:0 12px; font-size:11.5px; }
+  .today-strategy-input .sq-memo-field{ grid-column:1 / -1; }
+  .today-strategy-input .sq-memo-field input{ background:#fff; }
   .sq-head{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:11px; }
   .sq-title{ color:var(--navy); font-family:'Noto Serif KR',serif; font-size:14px; font-weight:700; }
   .sq-hint{ color:var(--muted); font-size:11.5px; }
@@ -781,6 +788,9 @@
     .sq-form{ grid-template-columns:1fr 1fr; }
     .sq-field:nth-child(5){ grid-column:1 / -1; }
     .sq-add{ grid-column:1 / -1; }
+    .today-strategy-input .sq-form{ grid-template-columns:1fr 1fr; }
+    .today-strategy-input .sq-memo-field{ grid-column:1 / -1; }
+    .today-strategy-input .sq-add{ grid-column:1 / -1; }
     .tower-strip{ grid-template-columns:1fr; }
     .tower-stat{ border-right:0; border-bottom:1px solid #E8EBEF; }
     .tower-stat:last-child{ border-bottom:0; }
@@ -804,10 +814,13 @@
     .today-strategy-row{ grid-template-columns:minmax(90px,.8fr) 1fr auto; gap:7px; }
     .today-strategy-detail{ font-size:11px; }
     .strategy-quick{ padding:13px; }
+    .today-strategy-input{ padding:9px; }
     .sq-head{ display:block; }
     .sq-hint{ display:block; margin-top:2px; }
     .sq-form{ grid-template-columns:1fr; }
     .sq-field:nth-child(5),.sq-add{ grid-column:auto; }
+    .today-strategy-input .sq-form{ grid-template-columns:1fr; }
+    .today-strategy-input .sq-memo-field,.today-strategy-input .sq-add{ grid-column:auto; }
   }
   @media print{
     .dash-actions,.quick-entry-drawer,.detail-intro,.strategy-quick,.td-add-toggle{ display:none !important; }
@@ -926,18 +939,15 @@
             <span class="today-strategy-title">오늘 반드시 추진할 전략</span>
             <span class="today-strategy-count" id="todayStrategyCount"></span>
           </div>
-          <div class="today-strategy-list" id="todayStrategyList">
-            <div class="today-strategy-empty">오늘로 등록된 전략이 없습니다.</div>
-          </div>
           <div class="strategy-quick today-strategy-input goal-edit-only">
             <div class="sq-head">
-              <span class="sq-title">오늘 전략 바로 입력</span>
-              <span class="sq-hint">등록하면 아래 목록과 ‘목표와 실행’에 함께 반영됩니다.</span>
+              <span class="sq-title">+ 오늘 전략 바로 입력</span>
+              <span class="sq-hint">실행일은 오늘로 자동 등록</span>
             </div>
             <div class="sq-form">
               <div class="sq-field">
-                <label for="sqName">전략 / 활동</label>
-                <input type="text" id="sqName" placeholder="예: 삼일 19기 마감 확인" onkeydown="quickStrategyEnter(event)">
+                <label for="sqName">전략 / 활동 *</label>
+                <input type="text" id="sqName" placeholder="예: 스타19 추천 마감" onkeydown="quickStrategyEnter(event)">
               </div>
               <div class="sq-field">
                 <label for="sqTarget">대상</label>
@@ -945,18 +955,18 @@
               </div>
               <div class="sq-field">
                 <label for="sqAmount">예상 금액</label>
-                <input type="text" inputmode="numeric" class="sq-amount" id="sqAmount" placeholder="0" oninput="formatQuickAmount(this)" onkeydown="quickStrategyEnter(event)">
+                <input type="text" inputmode="numeric" class="sq-amount" id="sqAmount" placeholder="예: 1,200,000" oninput="formatQuickAmount(this)" onkeydown="quickStrategyEnter(event)">
               </div>
-              <div class="sq-field">
-                <label for="sqDue">실행일</label>
-                <input type="date" id="sqDue" onkeydown="quickStrategyEnter(event)">
-              </div>
+              <input type="hidden" id="sqDue">
+              <button class="sq-add" type="button" onclick="addQuickStrategy()">+ 추가</button>
               <div class="sq-field sq-memo-field">
                 <label for="sqMemo">실행 메모</label>
-                <input type="text" id="sqMemo" placeholder="예: 오전 통화 후 신청 여부 확인" onkeydown="quickStrategyEnter(event)">
+                <input type="text" id="sqMemo" placeholder="예: 오전 통화 → 신청 여부 확인 (선택 입력)" onkeydown="quickStrategyEnter(event)">
               </div>
-              <button class="sq-add" type="button" onclick="addQuickStrategy()">+ 등록</button>
             </div>
+          </div>
+          <div class="today-strategy-list" id="todayStrategyList">
+            <div class="today-strategy-empty">오늘로 등록된 전략이 없습니다.</div>
           </div>
         </div>
       </div>
@@ -2936,7 +2946,7 @@
     var todayStrategyCount = document.getElementById('todayStrategyCount');
     todayStrategyCount.textContent = todayStrategies.length ? todayStrategies.length+'건 · '+compactWon(todayStrategyTotal) : '0건';
     if(!todayStrategies.length){
-      todayStrategyList.innerHTML = '<div class="today-strategy-empty">「목표와 실행」에서 예상일을 오늘로 등록하면 여기에 표시됩니다.</div>';
+      todayStrategyList.innerHTML = '<div class="today-strategy-empty">위 입력칸에서 오늘 추진할 전략을 바로 추가하세요.</div>';
     } else {
       todayStrategyList.innerHTML = todayStrategies.slice(0,6).map(function(x){
         var detail = [x.target,x.memo].filter(Boolean).join(' · ') || '대상·메모 미정';
