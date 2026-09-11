@@ -315,7 +315,7 @@
   .req-summary-facts .k{ font-size:10.5px; font-weight:700; color:var(--brass-light); letter-spacing:.06em; }
   .req-summary-facts .v{ font-size:16px; font-weight:800; margin-top:1px; }
   .req-summary-facts .v.late{ color:#F1A899; }
-  .req-add{ display:grid; grid-template-columns:140px minmax(260px,1fr) 116px 86px 110px 82px; gap:7px; margin-bottom:12px; }
+  .req-add{ display:grid; grid-template-columns:140px minmax(260px,1fr) 116px 86px 92px; gap:7px; margin-bottom:12px; }
   .req-add input,.req-add select,.req-card input,.req-card select{ width:100%; min-width:0; font:13px 'Pretendard'; color:var(--ink);
       border:1px solid var(--line); border-radius:9px; background:#FBFAF7; padding:8px 9px; }
   .req-add input:focus,.req-add select:focus,.req-card input:focus,.req-card select:focus{ outline:none; border-color:var(--brass); background:#fff; }
@@ -331,21 +331,26 @@
   .req-card.overdue{ border-color:#E8CFCB; background:#FDF7F5; box-shadow:inset 3px 0 0 var(--red); }
   .req-card.today{ border-color:#EAD9B8; background:#FFFCF7; box-shadow:inset 3px 0 0 var(--brass); }
   .req-card.completed{ background:#FAFAF8; opacity:.82; box-shadow:inset 3px 0 0 var(--green); }
+  .req-card.unhandled{ background:#FBF8F7; opacity:.88; box-shadow:inset 3px 0 0 var(--red); }
   .req-top{ display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:8px; }
   .req-due{ flex:0 0 auto; font-size:11px; font-weight:800; padding:2px 9px; border-radius:20px; background:#EFEAE0; color:#6B5122; }
   .req-due.late{ background:var(--red-bg); color:var(--red); }
   .req-due.done{ background:var(--green-bg); color:var(--green); }
   .req-who{ max-width:190px; font-weight:800 !important; color:var(--navy) !important; }
-  .req-kind{ max-width:100px; }
   .req-meta{ font-size:11px; color:var(--muted); white-space:nowrap; }
   .req-del{ margin-left:auto; border:none; background:none; color:#C4BFB4; cursor:pointer; font-size:15px; padding:4px; }
   .req-del:hover{ color:var(--red); }
   .req-content{ margin-bottom:8px; }
   .req-content input{ font-size:13.5px; background:#fff; }
-  .req-bottom{ display:grid; grid-template-columns:112px 122px 86px minmax(220px,1fr) 78px; gap:7px; align-items:center; }
-  .req-complete,.req-reopen{ height:36px; border-radius:9px; cursor:pointer; font:700 12px 'Pretendard'; }
+  .req-extra{ display:flex; align-items:center; gap:7px; margin:-1px 0 8px; padding:8px 10px; border-radius:9px; background:#F5F1E8; }
+  .req-extra label{ flex:0 0 auto; color:#6B5122; font-size:11px; font-weight:800; }
+  .req-extra input{ max-width:260px; background:#fff; }
+  .req-bottom{ display:grid; grid-template-columns:112px 122px 86px minmax(220px,1fr) auto; gap:7px; align-items:center; }
+  .req-actions{ display:flex; gap:5px; justify-content:flex-end; }
+  .req-complete,.req-reopen,.req-unhandled{ height:36px; border-radius:9px; cursor:pointer; font:700 11.5px 'Pretendard'; white-space:nowrap; padding:0 10px; }
   .req-complete{ border:1px solid #BFD9CB; background:var(--green-bg); color:var(--green); }
   .req-reopen{ border:1px solid var(--line); background:#fff; color:var(--muted); }
+  .req-unhandled{ border:1px solid #E2C8C3; background:#fff; color:var(--red); }
   .req-empty{ text-align:center; color:var(--muted); font-size:13px; padding:30px 0; }
   @media (max-width:900px){
     .req-add{ grid-template-columns:1fr 1fr; }
@@ -358,7 +363,11 @@
     .req-add #reqContent{ grid-column:auto; }
     .req-bottom{ grid-template-columns:1fr; }
     .req-bottom .req-result{ grid-column:auto; }
-    .req-who,.req-kind{ max-width:none; }
+    .req-who{ max-width:none; }
+    .req-extra{ align-items:stretch; flex-direction:column; }
+    .req-extra input{ max-width:none; }
+    .req-actions{ justify-content:stretch; }
+    .req-actions button{ flex:1; }
     .req-digest-go{ width:100%; margin-left:0; }
   }
 
@@ -775,17 +784,13 @@
       <input type="text" id="reqContent" placeholder="요청 내용" autocomplete="off">
       <input type="date" id="reqDue">
       <input type="time" id="reqDueTime" aria-label="처리 시간">
-      <select id="reqKind" aria-label="요청 분류">
-        <option value="확인">확인</option><option value="자료">자료</option><option value="일정">일정</option>
-        <option value="결제">결제</option><option value="연락">연락</option><option value="기타">기타</option>
-      </select>
       <button class="go" id="reqAddBtn" onclick="addRequest()">요청 등록</button>
     </div>
 
     <div class="req-tools">
-      <label class="chk"><input type="checkbox" id="reqShowDone" onchange="renderRequests()"> 완료 포함</label>
+      <label class="chk"><input type="checkbox" id="reqShowDone" onchange="renderRequests()"> 완료·종료 포함</label>
       <button class="mini" onclick="copyRequestTable(this)">⧉ 요청 목록 복사</button>
-      <span class="hint-sm">처리 결과를 남겨야 완료할 수 있습니다. 미완료 요청은 날짜가 지나도 계속 표시됩니다.</span>
+      <span class="hint-sm">새 요청은 ‘확인’으로 등록됩니다. 완료에는 결과, 미처리 종료에는 사유를 남겨야 합니다.</span>
     </div>
     <div id="reqList"></div>
   </div>
@@ -998,7 +1003,7 @@
       el.style.display = canEdit ? '' : 'none';
     });
     document.querySelectorAll('#reqList input, #reqList select').forEach(function(el){ el.disabled = !canEdit; });
-    document.querySelectorAll('#reqList .req-complete, #reqList .req-reopen, #reqList .req-del').forEach(function(el){
+    document.querySelectorAll('#reqList .req-complete, #reqList .req-unhandled, #reqList .req-reopen, #reqList .req-del').forEach(function(el){
       el.style.display = canEdit ? '' : 'none';
     });
     var ro=document.getElementById('roNote');
@@ -1350,7 +1355,19 @@
   }
 
   // ---------- 내부 업무 요청 ----------
-  function requestIsOpen(r){ return String(r.status||'접수') !== '완료'; }
+  function requestStatus(r){
+    var s=String(r.status||'확인');
+    if(s==='접수') return '확인';
+    if(s==='진행') return '진행 중';
+    return s;
+  }
+  function requestIsOpen(r){
+    var s=requestStatus(r);
+    return s!=='완료' && s!=='미처리·종료';
+  }
+  function requestEffectiveDate(r){
+    return requestStatus(r)==='보류' && r.reviewDate ? r.reviewDate : r.dueDate;
+  }
   function parseLocalDate(s){
     var p=String(s||'').split('-');
     return p.length===3 ? new Date(Number(p[0]),Number(p[1])-1,Number(p[2])) : null;
@@ -1361,27 +1378,33 @@
     return Math.round((d.getTime()-t.getTime())/86400000);
   }
   function requestGroup(r){
-    if(!requestIsOpen(r)) return 'completed';
-    var n=requestDayDiff(r.dueDate);
+    var status=requestStatus(r);
+    if(status==='완료') return 'completed';
+    if(status==='미처리·종료') return 'unhandled';
+    var n=requestDayDiff(requestEffectiveDate(r));
     if(n<0) return 'overdue';
     if(n===0) return 'today';
     return 'upcoming';
   }
   function requestDueLabel(r){
-    if(!requestIsOpen(r)) return '완료';
-    var n=requestDayDiff(r.dueDate), time=r.dueTime ? ' '+r.dueTime : '';
+    var status=requestStatus(r);
+    if(status==='완료') return '완료';
+    if(status==='미처리·종료') return '미처리·종료';
+    var review=status==='보류' && r.reviewDate;
+    var n=requestDayDiff(requestEffectiveDate(r)), time=review?'':(r.dueTime ? ' '+r.dueTime : '');
+    var prefix=review?'재확인 ':'';
     if(n===99999) return '기한 없음';
-    if(n<0) return '기한 '+Math.abs(n)+'일 지남';
-    if(n===0) return '오늘'+time;
-    if(n===1) return '내일'+time;
-    return 'D-'+n+time;
+    if(n<0) return prefix+Math.abs(n)+'일 지남';
+    if(n===0) return prefix+'오늘'+time;
+    if(n===1) return prefix+'내일'+time;
+    return prefix+'D-'+n+time;
   }
   function requestSort(a,b){
-    var order={overdue:0,today:1,upcoming:2,completed:3};
+    var order={overdue:0,today:1,upcoming:2,completed:3,unhandled:4};
     var ga=requestGroup(a), gb=requestGroup(b);
     if(order[ga]!==order[gb]) return order[ga]-order[gb];
-    if(ga==='completed') return String(b.completedAt||b.updatedAt||'').localeCompare(String(a.completedAt||a.updatedAt||''));
-    return String((a.dueDate||'9999-12-31')+(a.dueTime||'23:59')+(a.createdAt||'')).localeCompare(String((b.dueDate||'9999-12-31')+(b.dueTime||'23:59')+(b.createdAt||'')));
+    if(ga==='completed' || ga==='unhandled') return String(b.completedAt||b.updatedAt||'').localeCompare(String(a.completedAt||a.updatedAt||''));
+    return String((requestEffectiveDate(a)||'9999-12-31')+(a.dueTime||'23:59')+(a.createdAt||'')).localeCompare(String((requestEffectiveDate(b)||'9999-12-31')+(b.dueTime||'23:59')+(b.createdAt||'')));
   }
   function loadRequests(){
     if(unsubRequests) unsubRequests();
@@ -1395,16 +1418,20 @@
     });
   }
   function requestStats(){
-    var t=localISO(new Date()), open=0, overdue=0, today=0, waiting=0, completed=0;
+    var t=localISO(new Date()), open=0, overdue=0, today=0, delegated=0, waiting=0, onhold=0, completed=0, unhandled=0;
     requestRows.forEach(function(r){
       if(requestIsOpen(r)){
+        var effective=requestEffectiveDate(r), status=requestStatus(r);
         open++;
-        if(r.dueDate && r.dueDate<t) overdue++;
-        if(r.dueDate===t) today++;
-        if(r.status==='회신 대기') waiting++;
-      }else completed++;
+        if(effective && effective<t) overdue++;
+        if(effective===t) today++;
+        if(status==='위임') delegated++;
+        if(status==='회신 대기') waiting++;
+        if(status==='보류') onhold++;
+      }else if(requestStatus(r)==='완료') completed++;
+      else unhandled++;
     });
-    return {open:open,overdue:overdue,today:today,waiting:waiting,completed:completed};
+    return {open:open,overdue:overdue,today:today,delegated:delegated,waiting:waiting,onhold:onhold,completed:completed,unhandled:unhandled};
   }
   function renderRequestIndicators(){
     var s=requestStats(), badge=document.getElementById('reqBadge'), digest=document.getElementById('requestDigest');
@@ -1414,7 +1441,9 @@
       '<span class="req-digest-chip">미완 '+s.open+'</span>'+
       (s.today?'<span class="req-digest-chip">오늘 '+s.today+'</span>':'')+
       (s.overdue?'<span class="req-digest-chip late">기한 지남 '+s.overdue+'</span>':'')+
+      (s.delegated?'<span class="req-digest-chip wait">위임 '+s.delegated+'</span>':'')+
       (s.waiting?'<span class="req-digest-chip wait">회신 대기 '+s.waiting+'</span>':'')+
+      (s.onhold?'<span class="req-digest-chip wait">보류 '+s.onhold+'</span>':'')+
       '<span class="req-digest-go">요청 목록 보기 →</span>';
     digest.style.display='flex';
   }
@@ -1424,30 +1453,35 @@
       '<div><div class="k">미완료</div><div class="v">'+s.open+'건</div></div>'+
       '<div><div class="k">오늘 처리</div><div class="v">'+s.today+'건</div></div>'+
       '<div><div class="k">기한 지남</div><div class="v'+(s.overdue?' late':'')+'">'+s.overdue+'건</div></div>'+
-      '<div><div class="k">회신 대기</div><div class="v">'+s.waiting+'건</div></div>'+
+      '<div><div class="k">위임</div><div class="v">'+s.delegated+'건</div></div>'+
+      '<div><div class="k">대기·보류</div><div class="v">'+(s.waiting+s.onhold)+'건</div></div>'+
       '<div><div class="k">완료 누계</div><div class="v">'+s.completed+'건</div></div>'+
+      '<div><div class="k">미처리 종료</div><div class="v'+(s.unhandled?' late':'')+'">'+s.unhandled+'건</div></div>'+
       '</div>';
   }
   function requestCard(r){
-    var group=requestGroup(r), done=group==='completed';
-    var dueClass=done?' done':(group==='overdue'?' late':'');
+    var group=requestGroup(r), status=requestStatus(r), closed=!requestIsOpen(r), done=status==='완료', unhandled=status==='미처리·종료';
+    var dueClass=done?' done':(group==='overdue'||unhandled?' late':'');
     var requested=[r.requestDate||'',r.requestTime||''].filter(Boolean).join(' ');
-    var status=String(r.status||'접수');
+    var extra='';
+    if(status==='위임') extra='<div class="req-extra"><label>위임 담당자</label><input type="text" value="'+esc(r.assignee||'')+'" placeholder="누구에게 위임했는지 입력" onchange="saveRequestField(\''+r.id+'\',\'assignee\',this.value)"></div>';
+    if(status==='보류') extra='<div class="req-extra"><label>다시 확인할 날짜</label><input type="date" value="'+esc(r.reviewDate||'')+'" onchange="saveRequestField(\''+r.id+'\',\'reviewDate\',this.value)"></div>';
     var html='<div class="req-card '+group+'">'+
       '<div class="req-top">'+
         '<span class="req-due'+dueClass+'">'+esc(requestDueLabel(r))+'</span>'+
         '<input class="req-who" type="text" value="'+esc(r.requester||'')+'" placeholder="요청자" onchange="saveRequestField(\''+r.id+'\',\'requester\',this.value)">'+
-        '<select class="req-kind" onchange="saveRequestField(\''+r.id+'\',\'kind\',this.value)">'+choiceOptions(['확인','자료','일정','결제','연락','기타'],r.kind||'확인')+'</select>'+
+        '<span class="contact-pill '+(done?'done':unhandled?'plan':'try')+'" style="width:auto">'+esc(status)+'</span>'+
         (requested?'<span class="req-meta">요청 '+esc(requested)+'</span>':'')+
         '<button class="req-del" onclick="removeRequest(\''+r.id+'\')" aria-label="요청 삭제">×</button>'+
       '</div>'+
       '<div class="req-content"><input type="text" value="'+esc(r.content||'')+'" placeholder="요청 내용" onchange="saveRequestField(\''+r.id+'\',\'content\',this.value)"></div>'+
+      extra+
       '<div class="req-bottom">'+
-        (done?'<span class="contact-pill done">완료</span>':'<select onchange="saveRequestField(\''+r.id+'\',\'status\',this.value)">'+choiceOptions(['접수','진행','회신 대기'],status)+'</select>')+
+        (closed?'<span class="contact-pill '+(done?'done':'plan')+'">'+esc(status)+'</span>':'<select aria-label="처리 상태" onchange="changeRequestStatus(\''+r.id+'\',this.value)">'+choiceOptions(['확인','진행 중','위임','회신 대기','보류'],status)+'</select>')+
         '<input type="date" value="'+esc(r.dueDate||'')+'" aria-label="처리 기한" onchange="saveRequestField(\''+r.id+'\',\'dueDate\',this.value)">'+
         '<input type="time" value="'+esc(r.dueTime||'')+'" aria-label="처리 시간" onchange="saveRequestField(\''+r.id+'\',\'dueTime\',this.value)">'+
-        '<input class="req-result" id="reqResult-'+r.id+'" type="text" value="'+esc(r.result||'')+'" placeholder="처리 결과·요청자 전달 내용" onchange="saveRequestField(\''+r.id+'\',\'result\',this.value)">'+
-        (done?'<button class="req-reopen" onclick="reopenRequest(\''+r.id+'\')">다시 열기</button>':'<button class="req-complete" onclick="completeRequest(\''+r.id+'\')">✓ 완료</button>')+
+        '<input class="req-result" id="reqResult-'+r.id+'" type="text" value="'+esc(r.result||'')+'" placeholder="'+(unhandled?'미처리 사유':done?'처리 결과·전달 내용':'처리 메모·요청자 전달 내용')+'" onchange="saveRequestField(\''+r.id+'\',\'result\',this.value)">'+
+        (closed?'<button class="req-reopen" onclick="reopenRequest(\''+r.id+'\')">다시 열기</button>':'<div class="req-actions"><button class="req-unhandled" onclick="closeRequestUnhandled(\''+r.id+'\')">미처리 종료</button><button class="req-complete" onclick="completeRequest(\''+r.id+'\')">✓ 완료</button></div>')+
       '</div></div>';
     return html;
   }
@@ -1457,12 +1491,12 @@
     var rows=requestRows.filter(function(r){ return showDone || requestIsOpen(r); });
     var box=document.getElementById('reqList');
     if(!rows.length){ box.innerHTML='<div class="req-empty">등록된 미완료 업무 요청이 없습니다.</div>'; return; }
-    var labels={overdue:'기한 지남',today:'오늘 처리',upcoming:'이후 예정',completed:'완료'}, html='', last='';
+    var labels={overdue:'기한 지남',today:'오늘 처리',upcoming:'이후 예정',completed:'완료',unhandled:'미처리·종료'}, html='', last='';
     rows.forEach(function(r){
       var group=requestGroup(r);
       if(group!==last){
         var count=rows.filter(function(x){ return requestGroup(x)===group; }).length;
-        html+='<div class="req-sec"><span class="lb '+(group==='overdue'?'late':group==='completed'?'done':'')+'">'+labels[group]+'</span><span class="count">'+count+'건</span><span class="ln"></span></div>';
+        html+='<div class="req-sec"><span class="lb '+(group==='overdue'||group==='unhandled'?'late':group==='completed'?'done':'')+'">'+labels[group]+'</span><span class="count">'+count+'건</span><span class="ln"></span></div>';
         last=group;
       }
       html+=requestCard(r);
@@ -1480,14 +1514,14 @@
     if(!dueDate){ document.getElementById('reqDue').focus(); return; }
     if(requestSaving) return;
     var rec={requester:requester,content:content,dueDate:dueDate,dueTime:document.getElementById('reqDueTime').value,
-      kind:document.getElementById('reqKind').value,status:'접수',result:'',requestDate:localISO(new Date()),requestTime:nowHM(),
+      status:'확인',assignee:'',reviewDate:'',result:'',requestDate:localISO(new Date()),requestTime:nowHM(),
       createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),createdBy:myEmail,completedAt:''};
     requestSaving=true;
     var btn=document.getElementById('reqAddBtn'); btn.disabled=true; btn.textContent='등록 중'; setStatus('busy');
     db.collection(REQUESTS).add(rec).then(function(){
       setStatus('ok');
       document.getElementById('reqWho').value=''; document.getElementById('reqContent').value=''; document.getElementById('reqDueTime').value='';
-      document.getElementById('reqKind').value='확인'; document.getElementById('reqWho').focus();
+      document.getElementById('reqWho').focus();
     }).catch(function(e){ setStatus('err',e.code||e.message); })
       .then(function(){ requestSaving=false; btn.disabled=false; btn.textContent='요청 등록'; });
   }
@@ -1498,6 +1532,12 @@
     db.collection(REQUESTS).doc(id).update(patch).then(function(){ setStatus('ok'); })
       .catch(function(e){ setStatus('err',e.code||e.message); });
   }
+  function changeRequestStatus(id,status){
+    if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
+    setStatus('busy');
+    db.collection(REQUESTS).doc(id).update({status:status,completedAt:'',updatedAt:new Date().toISOString()})
+      .then(function(){ setStatus('ok'); }).catch(function(e){ setStatus('err',e.code||e.message); });
+  }
   function completeRequest(id){
     if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
     var input=document.getElementById('reqResult-'+id), result=input?input.value.trim():'';
@@ -1506,9 +1546,18 @@
     db.collection(REQUESTS).doc(id).update({status:'완료',result:result,completedAt:new Date().toISOString(),updatedAt:new Date().toISOString()})
       .then(function(){ setStatus('ok'); }).catch(function(e){ setStatus('err',e.code||e.message); });
   }
+  function closeRequestUnhandled(id){
+    if(!canEdit){ setStatus('err','열람 전용 계정입니다'); return; }
+    var input=document.getElementById('reqResult-'+id), result=input?input.value.trim():'';
+    if(!result){ alert('미처리로 종료하는 사유를 한 줄 남겨주세요.'); if(input) input.focus(); return; }
+    if(!confirm('이 요청을 미처리 상태로 종료할까요?')) return;
+    setStatus('busy');
+    db.collection(REQUESTS).doc(id).update({status:'미처리·종료',result:result,completedAt:new Date().toISOString(),updatedAt:new Date().toISOString()})
+      .then(function(){ setStatus('ok'); }).catch(function(e){ setStatus('err',e.code||e.message); });
+  }
   function reopenRequest(id){
     if(!canEdit) return;
-    db.collection(REQUESTS).doc(id).update({status:'진행',completedAt:'',updatedAt:new Date().toISOString()})
+    db.collection(REQUESTS).doc(id).update({status:'진행 중',completedAt:'',updatedAt:new Date().toISOString()})
       .then(function(){ setStatus('ok'); }).catch(function(e){ setStatus('err',e.code||e.message); });
   }
   function removeRequest(id){
@@ -1519,10 +1568,10 @@
   }
   function copyRequestTable(btn){
     var showDone=document.getElementById('reqShowDone').checked;
-    var out=[['요청일','요청자','분류','요청 내용','처리기한','상태','처리 결과','완료일']];
+    var out=[['요청일','요청자','요청 내용','상태','위임 담당자','처리기한','재확인일','처리 결과·미처리 사유','종료일']];
     requestRows.filter(function(r){ return showDone || requestIsOpen(r); }).forEach(function(r){
-      out.push([r.requestDate||'',r.requester||'',r.kind||'',(r.content||'').replace(/\n/g,' / '),
-        [r.dueDate||'',r.dueTime||''].filter(Boolean).join(' '),r.status||'접수',(r.result||'').replace(/\n/g,' / '),r.completedAt||'']);
+      out.push([r.requestDate||'',r.requester||'',(r.content||'').replace(/\n/g,' / '),requestStatus(r),r.assignee||'',
+        [r.dueDate||'',r.dueTime||''].filter(Boolean).join(' '),r.reviewDate||'',(r.result||'').replace(/\n/g,' / '),r.completedAt||'']);
     });
     copyTsv(out,btn);
   }
