@@ -1058,6 +1058,43 @@
     .today-quick-add,.today-all-toggle,.today-row-del{ display:none !important; }
     .ge-exec-add,.goal-exec-actions,.ge-row-ops,.ledger-quick-card,.ledger-view-tabs,.ledger-filterbar{ display:none !important; }
   }
+
+  [hidden]{display:none!important}
+  .report-top{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0}
+  .report-top h3,.report-week h3{margin:0 0 12px;font-size:16px;color:var(--navy)}
+  .report-week{margin:14px 0}
+  .report-nav{display:flex;gap:6px;flex-wrap:wrap}
+  .report-nav button{border:1px solid var(--line);background:#fff;color:var(--navy);padding:8px 12px;border-radius:8px;cursor:pointer}
+  .report-caption{font-size:12px;color:var(--muted);margin:10px 0;line-height:1.6}
+  .report-scroll{overflow-x:auto}
+  .report-table{border-collapse:collapse;width:100%;min-width:950px;font-size:13px}
+  .report-table th{background:#F5F3EE;color:var(--navy);text-align:left;padding:10px;border-bottom:1px solid var(--line)}
+  .report-table td{padding:10px;border-bottom:1px solid #E8EBEF;vertical-align:top;line-height:1.6;overflow-wrap:anywhere}
+  .report-table .money{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .report-table .subtotal{background:#F6F8FB;font-weight:700}
+  .report-table .total{background:var(--navy);color:white;font-weight:700}
+  .report-table .today-date{color:var(--brass);font-weight:800}
+  .report-line{border-top:1px solid #ECEEF1;padding:9px 0;font-size:13px;line-height:1.6;overflow-wrap:anywhere}
+  .report-line small{display:block;color:var(--muted)}
+  .report-callout{padding:12px;background:#FFF7E9;border-radius:9px;line-height:1.7;font-size:13px}
+  .brief-row{display:grid;grid-template-columns:130px 135px 1fr 1fr 1fr 120px 35px;gap:7px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .brief-row label{font-size:11px;color:var(--muted)}
+  .brief-row input,.brief-row textarea,.brief-row select{box-sizing:border-box;width:100%;padding:8px;border:1px solid var(--line);border-radius:7px;font:inherit;color:var(--ink);background:white}
+  .brief-row textarea{min-height:75px;resize:vertical}
+  #legacyGoalMount{padding:15px}
+  #todoEditorMount .today-command{box-shadow:none;border:0;margin:0}
+  #todoEditorMount .today-all{display:block}
+  #legacyGoalMount .ledger-plan-actions,#legacyGoalMount .goal-edit-only{display:none!important}
+  #legacyGoalMount input,#legacyGoalMount textarea{pointer-events:none}
+  #legacyGoalMount .del-x{display:none!important}
+  @media(max-width:1100px){.report-top{grid-template-columns:1fr}.brief-row{grid-template-columns:1fr 1fr}.report-week .dash-panel-head{align-items:flex-start;flex-direction:column}}
+  @media print{
+    [data-pane="2"],[data-pane="3"],#legacyDashboardMount,.report-nav,.toolbar,.tabs{display:none!important}
+    [data-pane="1"]{display:block!important}.report-scroll{overflow:visible}
+    .report-table{min-width:0;font-size:10px;table-layout:fixed}.report-table td,.report-table th{padding:5px}.report-table .money{white-space:normal}
+    .report-top{grid-template-columns:repeat(3,1fr)}.report-week{break-inside:auto}.report-table tr{break-inside:avoid}
+  }
+
 </style>
 </head>
 <body>
@@ -1105,11 +1142,29 @@
 
   <nav class="tabs" id="tabBar">
     <button class="tab-btn" data-tab="1" onclick="showTab(1)"><span class="tab-no">1</span><span class="tab-lb">오늘의 현황</span></button>
-    <button class="tab-btn" data-tab="2" onclick="showTab(2)"><span class="tab-no">2</span><span class="tab-lb">일자별 목표·실행</span></button>
+    <button class="tab-btn" data-tab="2" onclick="showTab(2)"><span class="tab-no">2</span><span class="tab-lb">계획·실행</span></button>
     <button class="tab-btn" data-tab="3" onclick="showTab(3)"><span class="tab-no">3</span><span class="tab-lb">매출 원장</span></button>
   </nav>
 
   <section class="tab-pane" data-pane="1">
+    <div class="dash-head"><div><div class="dash-kicker">SALES BRIEFING</div><h2 class="dash-title">영업 현황 · 대표님 보고판</h2></div><span id="reportDate" class="dash-date"></span></div>
+    <div class="report-top">
+      <section class="dash-panel"><h3>오늘 일정</h3><div id="reportSchedules"></div></section>
+      <section class="dash-panel"><h3>박신제 본부장 · 꼭 할 일</h3><div id="reportTasks"></div></section>
+      <section class="dash-panel"><h3>진행 보고 · 협의 필요</h3><div id="reportNotes"></div></section>
+    </div>
+    <section class="dash-panel report-week">
+      <div class="dash-panel-head"><h3>이번 주 일자별 매출 목표와 실적</h3><div class="report-nav"><button onclick="shiftReportWeek(-1)">← 이전 주</button><button onclick="resetReportWeek()">이번 주</button><button onclick="shiftReportWeek(1)">다음 주 →</button><button onclick="copyWeeklyReport(this)">표 복사</button></div></div>
+      <div id="reportWeekLabel" class="report-caption"></div><div id="reportWeekKpis" class="goal-exec-kpis"></div>
+      <div class="report-scroll" id="reportWeekTable"></div>
+      <p class="report-caption">목표는 해당일 계획 합계, 실적은 경로와 무관한 회사 장표 기준 당일 전체 매출입니다. 대상별 실적을 배분하지 않습니다.</p>
+    </section>
+    <section class="dash-panel report-week"><h3 id="reportMonthTitle">월 매출 현황</h3><div id="reportMonthKpis" class="goal-exec-kpis"></div><p id="reportGap" class="report-callout"></p><div id="reportMonthWeeks" class="report-scroll"></div></section>
+    <section class="dash-panel report-week"><h3>부족분 대응 전략 · 활용 자원 · 대표님 협의</h3><div id="reportRecovery"></div></section>
+  </section>
+
+  <section class="tab-pane" data-pane="2">
+    <div id="legacyDashboardMount" hidden><div id="legacyDashboard" hidden>
   <div class="dash-head">
     <div>
       <div class="dash-kicker">SALES CONTROL TOWER</div>
@@ -1282,13 +1337,11 @@
       </div>
     </div>
   </div>
-  </section>
-
-  <section class="tab-pane" data-pane="2">
+  </div></div>
     <div class="goal-exec-head">
       <div>
         <div class="dash-kicker">DAILY SALES GOAL &amp; EXECUTION</div>
-        <h2 class="goal-exec-title">일자별 매출 목표·실행</h2>
+        <h2 class="goal-exec-title">계획·실행 작성</h2>
         <div class="goal-exec-sub">언제 · 누구에게 · 무엇을 해서 · 어떤 결과를 만들지 한 줄로 계획하고 보고합니다.</div>
       </div>
       <div class="goal-exec-actions goal-edit-only">
@@ -1297,6 +1350,9 @@
       </div>
     </div>
 
+    <section class="goal-exec-card"><div class="goal-exec-card-head"><span class="goal-exec-card-title">일정 · 꼭 할 일</span><button class="dash-action-btn goal-edit-only" onclick="openGoalSetup()">이번 달 목표 설정</button></div><div id="todoEditorMount"></div></section>
+    <section class="goal-exec-card"><div class="goal-exec-card-head"><span class="goal-exec-card-title">진행 보고 · 협의 / 부족분 대응</span><button class="dash-action-btn goal-edit-only" onclick="addBriefNote()">+ 보고·전략 추가</button></div>
+    <p class="ge-footnote">보고는 진행상황과 판단 요청, 대응 전략은 활용할 자원과 다음 행동을 적습니다. 금액은 위·아래 계획에 중복해서 더하지 않습니다.</p><div id="briefEditor"></div></section>
     <div class="goal-exec-kpis">
       <div class="kpi-card"><div class="kpi-label">이번 달 목표</div><div class="kpi-value" id="geGoal">0원</div><div class="kpi-sub">월간 기준</div></div>
       <div class="kpi-card good"><div class="kpi-label">현재 실적</div><div class="kpi-value" id="geActual">0원</div><div class="kpi-sub">매출 기록 자동 집계</div></div>
@@ -1336,7 +1392,7 @@
     <section class="goal-exec-card">
       <div class="goal-exec-card-head">
         <span class="goal-exec-card-title">2. 일자별 매출 목표·실행</span>
-        <span class="goal-exec-card-hint">달성액은 매출 원장의 같은 날짜·아이템 기록에서 자동 집계됩니다.</span>
+        <span class="goal-exec-card-hint">대상별 목표를 작성하고, 실적 비교는 일자별 합계로 확인합니다.</span>
       </div>
       <div class="ge-exec-add goal-edit-only" id="execQuickAdd">
         <input type="date" id="execDue" aria-label="일자" oninput="recalcAll()">
@@ -1351,15 +1407,16 @@
       <div class="log-scroll scroll-y" id="stratScrollBox">
         <div class="ge-exec-table" id="stratTable">
           <div class="ge-exec-head-row">
-            <div>일자</div><div>대상</div><div>전략·행동</div><div>아이템</div><div>목표 수량·구성</div><div>목표금액(원)</div><div>달성액(원)<small>매출 원장 자동</small></div><div>결과·비고</div><div></div>
+            <div>일자</div><div>대상</div><div>전략·행동</div><div>아이템</div><div>목표 수량·구성</div><div>목표금액(원)</div><div>실행 상태<small>매출 달성과 별개</small></div><div>결과·비고</div><div></div>
           </div>
           <div id="stratBody"></div>
         </div>
       </div>
-      <div class="ge-footnote">매출 원장에 같은 날짜·아이템으로 실적을 등록하면 달성액과 상태가 자동 반영됩니다. 같은 날짜·아이템 계획이 여러 건이면 대상 이름도 같게 입력하세요.</div>
+      <div class="ge-footnote">실행 완료는 설명회·통화 등 행동의 완료입니다. 매출 달성은 경로와 관계없이 당일 전체 실적으로 평가합니다.</div>
       <div style="margin-top:10px;"><button class="dash-action-btn" type="button" onclick="copyStratTable(this)">▣ 일자별 보고 복사</button></div>
     </section>
 
+    <details class="goal-exec-card ge-archive"><summary>이전 일자별 목표 기록</summary><p class="ge-footnote">새 계획이 없는 날짜에만 이전 목표를 집계합니다. 같은 날짜에 새 계획을 작성하면 이전 목표는 중복 합산하지 않습니다.</p><div id="legacyGoalMount"></div></details>
     <details class="goal-exec-card ge-archive">
       <summary><span>잠재 대상 DB</span><small>기존 예상 대상 자료 보관 · 필요할 때만 열기</small></summary>
       <div class="ge-archive-body" id="dbArchiveMount"></div>
@@ -1388,7 +1445,7 @@
     </div>
 
     <section class="ledger-quick-card goal-edit-only">
-      <div class="ledger-quick-head"><b>+ 매출 빠른 입력</b><span>같은 날짜·아이템의 일자별 목표에 달성액이 자동 반영됩니다.</span></div>
+      <div class="ledger-quick-head"><b>+ 매출 빠른 입력</b><span>회사 장표와 동일한 날짜·금액으로 입력합니다. 모든 경로의 매출이 일·주·월 실적에 합산됩니다.</span></div>
       <div class="ledger-quick-form">
         <input type="date" id="ledgerQuickDate">
         <input type="text" id="ledgerQuickItem" list="itemGoalSuggest" placeholder="아이템 *" onkeydown="ledgerQuickEnter(event)">
@@ -1429,7 +1486,7 @@
       <button class="add-row goal-edit-only" onclick="addLogRowAndFocus()">+ 빈 매출 행 추가</button>
     </section>
 
-    <section class="ledger-view" id="ledgerViewPlan">
+    <section class="ledger-view" id="ledgerViewPlan"><div id="ledgerDailyComparison"></div><div id="legacyGoalSection">
       <div class="ledger-section-head">
         <div><b>계획 대비 확정 실적</b><span>계획이나 실적이 있는 날짜만 표시합니다.</span></div>
         <div class="ledger-plan-actions goal-edit-only"><button onclick="addTodayGoal()">+ 오늘 계획</button><button onclick="openGoalSetup()">월 목표 설정</button></div>
@@ -1459,6 +1516,7 @@
         </div>
         <div class="sub-title">주별 목표 합계</div><div class="week-grid" id="goalWeekGrid"></div>
       </details>
+    </div>
     </section>
 
     <section class="ledger-view" id="ledgerViewItems">
@@ -1828,33 +1886,7 @@
     return String(value||'').trim().toLowerCase().replace(/[\s·._\-\/()]+/g,'');
   }
 
-  function executionActualFromLogs(row){
-    var due = row.querySelector('.s-due').value;
-    var itemKey = execMatchKey(row.querySelector('.s-item').value);
-    var targetKey = execMatchKey(row.querySelector('.s-target').value);
-    var result = {amount:0,matched:false};
-    if(!due || !itemKey) return result;
-
-    var siblings = [];
-    document.querySelectorAll('#stratBody .strat-row').forEach(function(other){
-      if(other.querySelector('.s-due').value === due && execMatchKey(other.querySelector('.s-item').value) === itemKey) siblings.push(other);
-    });
-
-    document.querySelectorAll('#logBody tr.log-row').forEach(function(logRow){
-      if(logRow.querySelector('.log-date').value !== due) return;
-      var logItem = execMatchKey(logRow.querySelector('.log-item').value);
-      if(logItem !== itemKey) return;
-      var logTarget = execMatchKey(logRow.querySelector('.log-target').value);
-      var targetMatches = targetKey && logTarget && (logTarget.indexOf(targetKey) !== -1 || targetKey.indexOf(logTarget) !== -1);
-      if(siblings.length > 1){
-        if(targetKey && !targetMatches) return;
-        if(!targetKey && siblings[0] !== row) return;
-      }
-      result.amount += toNum(logRow.querySelector('.log-amt').value);
-      result.matched = true;
-    });
-    return result;
-  }
+  // 실적은 대상별로 배분하지 않으며 reportData에서 날짜별 원장 합계로 집계합니다.
 
   function autoExecutionState(due,target,done){
     var today = localISO(new Date());
@@ -1880,7 +1912,7 @@
       '<div><input type="text" class="s-item" list="itemGoalSuggest" placeholder="아이템" value="'+escapeAttr(data.item||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><input type="text" class="s-qty-plan" placeholder="예: 6명·연납 3명" value="'+escapeAttr(data.qtyPlan||'')+'" oninput="onRowChange(this)"></div>' +
       '<div><input type="text" inputmode="numeric" class="s-lead-target amt money-input" aria-label="목표금액" placeholder="0" value="'+(leadTarget?fmt(leadTarget):'')+'" oninput="onAmountInput(this)"><input type="hidden" class="s-lead-unit" value="원"></div>' +
-      '<div><input type="text" inputmode="numeric" class="s-lead-done amt money-input" data-manual="'+leadDone+'" aria-label="달성액" placeholder="0" value="'+(leadDone?fmt(leadDone):'')+'" readonly></div>' +
+      '<div><input type="hidden" class="s-lead-done" data-manual="'+leadDone+'" value="'+leadDone+'"><select class="s-execution" aria-label="실행 상태" onchange="onRowChange(this)">'+executionOptions(data.executionState||'planned')+'</select></div>' +
       '<div><input type="text" class="s-memo ge-result-input" placeholder="결과·특이사항·다음 조치" value="'+escapeAttr(memoVal)+'" oninput="onRowChange(this)"></div>'+
       '<div class="ge-row-ops"><input type="hidden" class="s-status" value="'+escapeAttr(data.status||'planned')+'"><input type="hidden" class="s-amt amt" value="'+(data.amount?fmt(data.amount):'')+'"><button class="del-x" onclick="removeStratRow(this)">✕</button></div>';
     return row;
@@ -2152,63 +2184,17 @@
   }
 
   // 일자별 목표·실행: 달성액은 매출 원장의 같은 날짜·아이템(필요 시 대상)에서 자동 집계합니다.
-  function recalcStrategy(gap){
-    var body = document.getElementById('stratBody');
-    if(!body) return;
-    var today = localISO(new Date());
-    var rows = Array.prototype.slice.call(body.querySelectorAll('.strat-row'));
-    var counts = {planned:0,today:0,partial:0,done:0,follow:0};
-    var selectedDate = (document.getElementById('execDue') && document.getElementById('execDue').value) || today;
-    var dayTarget = 0, dayDone = 0, followCount = 0;
-
-    rows.forEach(function(row){
-      var statusEl = row.querySelector('.s-status');
-      var due = row.querySelector('.s-due').value;
-      var target = toNum(row.querySelector('.s-lead-target').value);
-      var doneEl = row.querySelector('.s-lead-done');
-      var auto = executionActualFromLogs(row);
-      var legacy = Number(doneEl.getAttribute('data-manual') || 0);
-      var done = auto.matched ? auto.amount : legacy;
-      doneEl.value = done ? fmt(done) : '';
-      var state = autoExecutionState(due,target,done);
-      if(statusEl) statusEl.value = state.key === 'done' ? 'done' : (state.key === 'planned' ? 'planned' : 'doing');
-      counts[state.key] = (counts[state.key] || 0) + 1;
-      if(state.key === 'follow') followCount++;
-      row.classList.toggle('overdue',state.key === 'follow');
-      row.classList.toggle('finished',state.key === 'done');
-      var badge = row.querySelector('.exec-auto-badge');
-      if(badge){ badge.textContent=state.label; badge.className='exec-auto-badge '+state.cls; }
-      if(due === selectedDate){ dayTarget += target; dayDone += done; }
+  function recalcStrategy(){
+    var rows=Array.from(document.querySelectorAll('#stratBody .strat-row')),today=localISO(new Date());
+    rows.forEach(function(r){
+      var state=r.querySelector('.s-execution').value,d=r.querySelector('.s-due').value;
+      var late=d&&d<today&&state!=='done'&&state!=='hold';
+      r.querySelector('.s-status').value=state;
+      r.classList.toggle('overdue',!!late);r.classList.toggle('finished',state==='done');
+      var b=r.querySelector('.exec-auto-badge'); b.textContent=late?'실행 확인 필요':executionLabel(state);b.className='exec-auto-badge '+(late?'follow':state==='done'?'done':'');
     });
-
-    var active = document.activeElement && document.activeElement.closest && document.activeElement.closest('#stratBody');
-    if(!active){
-      var bucket = function(row){
-        var due=row.querySelector('.s-due').value;
-        var state=autoExecutionState(due,toNum(row.querySelector('.s-lead-target').value),toNum(row.querySelector('.s-lead-done').value));
-        if(state.key==='today') return 0;
-        if(state.key==='follow') return 1;
-        if(state.key==='partial') return 2;
-        if(state.key==='planned') return 3;
-        return 4;
-      };
-      rows.sort(function(a,b){ var ba=bucket(a),bb=bucket(b); if(ba!==bb)return ba-bb; return String(a.querySelector('.s-due').value||'9999-12-31').localeCompare(String(b.querySelector('.s-due').value||'9999-12-31')); });
-      rows.forEach(function(row){ body.appendChild(row); });
-    }
-
-    var summary = document.getElementById('execSummary');
-    if(summary){
-      if(!rows.length){ summary.innerHTML='등록된 일자별 목표가 없습니다. 위 입력칸에서 첫 계획을 추가하세요.'; }
-      else {
-        var dayRate = dayTarget > 0 ? dayDone/dayTarget*100 : 0;
-        summary.innerHTML='<div class="ge-day-stat"><small>'+escapeHtml(shortDate(selectedDate))+' 목표</small><b>'+compactWon(dayTarget)+'</b></div>'+
-          '<div class="ge-day-stat good"><small>달성액 · 매출 원장 자동</small><b>'+compactWon(dayDone)+'</b></div>'+
-          '<div class="ge-day-stat"><small>일 달성률</small><b>'+(dayTarget>0?dayRate.toFixed(0):'0')+'%</b></div>'+
-          '<div class="ge-day-stat '+(followCount?'late':'')+'"><small>후속 필요</small><b>'+followCount+'건</b></div>';
-      }
-    }
-    var sc=document.getElementById('stratCount');
-    if(sc) sc.textContent=rows.length+'건';
+    var d=document.getElementById('execDue').value||today, data=reportData(collectState()),g=(data.goals[d]||0),a=(data.actual[d]||0);
+    document.getElementById('execSummary').innerHTML=reportKpis([['선택일 '+shortDate(d)+' 목표',fmt(g)+'원'],['해당일 전체 실적',fmt(a)+'원'],['달성률',reportRate(g,a)],['목표 대비 차이',signedMoney(a-g)]]);
   }
 
   // ---------- item rows & chart ----------
@@ -2254,7 +2240,8 @@
     if(!key) return result;
     document.querySelectorAll('#logBody tr.log-row').forEach(function(row){
       var label = String(row.querySelector('.log-item').value||'').trim().toLowerCase().replace(/\s+/g,'');
-      if(label && label.indexOf(key) !== -1){ result.amount += toNum(row.querySelector('.log-amt').value); result.matched=true; }
+      var date=row.querySelector('.log-date').value;
+      if(label === key && date.slice(0,7)===(currentMonth||monthKeyNow())){ result.amount += toNum(row.querySelector('.log-amt').value); result.matched=true; }
     });
     return result;
   }
@@ -2279,7 +2266,7 @@
       var doneEl = row.querySelector('.i-done');
       var auto = itemActualFromLogs(name);
       var manual = Number(doneEl.getAttribute('data-manual') || 0);
-      var dn = auto.matched ? auto.amount : manual;
+      var dn = auto.amount;
       doneEl.value = dn ? fmt(dn) : '';
       sumGoal += g; sumDone += dn;
 
@@ -2338,16 +2325,9 @@
   }
 
   function copyStratTable(btn){
-    recalcAll();
-    var out = [['일자','대상','전략·행동','아이템','목표 수량·구성','목표금액(원)','달성액(원)','상태','결과·비고']];
-    document.querySelectorAll('#stratBody .strat-row').forEach(function(r){
-      var due=r.querySelector('.s-due').value, target=toNum(r.querySelector('.s-lead-target').value), done=toNum(r.querySelector('.s-lead-done').value);
-      var status=autoExecutionState(due,target,done).label;
-      out.push([due, r.querySelector('.s-target').value, r.querySelector('.s-name').value,
-                r.querySelector('.s-item').value, r.querySelector('.s-qty-plan').value,
-                target, done, status, r.querySelector('.s-memo').value.replace(/\n/g,' / ')]);
-    });
-    copyTsv(out, btn);
+    var out=[['일자','대상','전략·행동','아이템','목표 수량·구성','목표금액(원)','실행 상태','결과·비고']];
+    collectState().strategies.forEach(function(r){out.push([r.due,r.target,r.name,r.item,r.qtyPlan,r.leadTarget,executionLabel(r.executionState),r.memo]);});
+    copyTsv(out,btn);
   }
 
   function copyGoalTable(btn){
@@ -3606,110 +3586,7 @@
     return list.slice(0,4);
   }
 
-  function refreshSimpleDashboard(goal,total,gap,actualByDate){
-    if(!document.getElementById('dashRate')) return;
-    goal = (goal === undefined) ? toNum(document.getElementById('goalInput').value) : goal;
-    total = (total === undefined) ? toNum((document.getElementById('fsCur').textContent || '0')) : total;
-    gap = (gap === undefined) ? Math.max(goal-total,0) : gap;
-    actualByDate = actualByDate || simpleActualByDate || {};
-
-    var today = localISO(new Date());
-    var rate = goal > 0 ? total/goal*100 : 0;
-    var biz = remainingBusinessDays();
-    var dailyNeed = biz > 0 ? gap/biz : gap;
-
-    document.getElementById('dashDate').textContent = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
-    var monthNum = parseInt(String(currentMonth || monthKeyNow()).slice(5,7),10);
-    document.getElementById('dashTitle').textContent = monthNum+'월 영업 관제탑';
-    document.getElementById('dashGoal').textContent = compactWon(goal);
-    document.getElementById('dashActual').textContent = compactWon(total);
-    document.getElementById('dashForecastValue').textContent = compactWon(gap);
-    document.getElementById('dashRate').textContent = rate.toFixed(1)+'%';
-    document.getElementById('dashRateSub').textContent = goal ? '현재 실적 ÷ 월 목표' : '월 목표를 입력해주세요';
-    document.getElementById('dashGap').textContent = compactWon(gap);
-    document.getElementById('dashPipeline').textContent = biz+'일';
-    document.getElementById('dashForecast').textContent = goal ? '월 목표에서 현재 실적을 뺀 금액' : '월 목표를 입력해주세요';
-    document.getElementById('dashPace').textContent = gap > 0 ? '하루 '+compactWon(dailyNeed) : '목표 달성';
-    document.getElementById('dashGapStat').className = 'tower-stat ' + (gap > 0 ? 'alert' : 'good');
-    document.getElementById('dashRateCard').className = 'kpi-card primary';
-    var todayStrategies = [];
-    var todayGoal = 0, todayActual = 0, todayRemaining = 0;
-    document.querySelectorAll('#stratBody .strat-row').forEach(function(row){
-      if(row.querySelector('.s-due').value !== today) return;
-      var leadDone = toNum(row.querySelector('.s-lead-done') ? row.querySelector('.s-lead-done').value : 0);
-      var leadTarget = toNum(row.querySelector('.s-lead-target') ? row.querySelector('.s-lead-target').value : 0);
-      var state = autoExecutionState(today,leadTarget,leadDone);
-      var x = {
-        name: row.querySelector('.s-name').value.trim() || '전략 미지정',
-        item: row.querySelector('.s-item') ? row.querySelector('.s-item').value.trim() : '',
-        target: row.querySelector('.s-target').value.trim(),
-        qtyPlan: row.querySelector('.s-qty-plan') ? row.querySelector('.s-qty-plan').value.trim() : '',
-        memo: row.querySelector('.s-memo').value.trim(),
-        leadDone: leadDone,
-        leadTarget: leadTarget,
-        state: state
-      };
-      todayGoal += leadTarget;
-      todayActual += leadDone;
-      if(state.key !== 'done') todayRemaining++;
-      todayStrategies.push(x);
-    });
-    todayStrategies.sort(function(a,b){ return (a.state.key==='done'?1:0)-(b.state.key==='done'?1:0); });
-    var todayRate = todayGoal > 0 ? todayActual/todayGoal*100 : 0;
-    document.getElementById('todayGoal').textContent = compactWon(todayGoal);
-    document.getElementById('todayActual').textContent = compactWon(todayActual);
-    document.getElementById('todayRate').textContent = (todayGoal>0?todayRate.toFixed(0):'0')+'%';
-    document.getElementById('todayFollow').textContent = todayRemaining+'건';
-    document.getElementById('todayStatus').textContent = todayStrategies.length ? '오늘 계획 '+todayStrategies.length+'건 · 매출 원장 자동 반영' : '2번 탭에서 오늘 계획을 등록해주세요';
-    var todayStrategyList = document.getElementById('todayStrategyList');
-    var todayStrategyCount = document.getElementById('todayStrategyCount');
-    todayStrategyCount.textContent = todayStrategies.length ? '전체 '+todayStrategies.length+'건 · 남음 '+todayRemaining+'건' : '0건';
-    if(!todayStrategies.length){
-      todayStrategyList.innerHTML = '<div class="today-strategy-empty">위 입력칸에서 오늘 목표·실행을 바로 추가하세요.</div>';
-    } else {
-      todayStrategyList.innerHTML = todayStrategies.slice(0,8).map(function(x){
-        var detail = [x.name,x.qtyPlan,x.memo].filter(Boolean).join(' · ') || '전략·행동 미정';
-        var progress = x.leadTarget ? (compactWon(x.leadDone)+' / '+compactWon(x.leadTarget)) : '목표금액 미정';
-        return '<div class="today-strategy-row"><div class="today-strategy-name">'+escapeHtml(x.item||'아이템 미정')+'<span class="today-strategy-target">'+escapeHtml(x.target||'대상 미정')+'</span></div>'+
-          '<div class="today-strategy-detail">'+escapeHtml(detail)+'</div>'+
-          '<div class="today-strategy-amount">'+escapeHtml(progress)+'</div><span class="today-strategy-state '+escapeHtml(x.state.cls)+'">'+escapeHtml(x.state.label)+'</span></div>';
-      }).join('') + (todayStrategies.length > 8 ? '<div class="today-strategy-empty">외 '+(todayStrategies.length-8)+'건은 「일자별 목표·실행」에서 확인할 수 있습니다.</div>' : '');
-    }
-
-    var snap = document.getElementById('itemSnapshot');
-    var itemRows = [];
-    document.querySelectorAll('#itemBody .item-row').forEach(function(row){
-      var name = row.querySelector('.i-name').value.trim();
-      var g = toNum(row.querySelector('.i-goal').value);
-      var done = toNum(row.querySelector('.i-done').value);
-      if(name || g || done) itemRows.push({name:name || '미지정', goal:g, done:done});
-    });
-    if(!itemRows.length){
-      snap.innerHTML = '<div class="dash-empty">「일자별 목표·실행」에서 아이템별 목표를 등록해주세요.</div>';
-    } else {
-      snap.innerHTML = itemRows.slice(0,6).map(function(x){
-        var r = x.goal > 0 ? x.done/x.goal*100 : 0;
-        return '<div class="snap-row"><div class="snap-name">'+escapeHtml(x.name)+'</div>'+
-          '<div class="snap-track"><div class="snap-fill" style="width:'+Math.min(100,r)+'%"></div></div>'+
-          '<div class="snap-val">'+r.toFixed(0)+'%</div></div>';
-      }).join('');
-    }
-
-    var execBox = document.getElementById('execSnapshot');
-    var execs = dashboardStrategies();
-    if(!execs.length){
-      execBox.innerHTML = '<div class="dash-empty">「일자별 목표·실행」에서 계획을 등록해주세요.</div>';
-    } else {
-      execBox.innerHTML = execs.map(function(x){
-        var due = x.due ? ddayLabel(x.due) : {txt:'일정 미정',cls:''};
-        var meta = [x.item,x.target].filter(Boolean).map(escapeHtml).join(' · ') || '대상 미정';
-        var progress = x.leadTarget ? (compactWon(x.leadDone)+' / '+compactWon(x.leadTarget)) : (x.status==='doing'?'진행 중':'예정');
-        return '<div class="exec-row"><div class="exec-top"><div class="exec-name">'+escapeHtml(x.name)+'</div>'+
-          '<div class="exec-amt">'+escapeHtml(progress)+'</div></div>'+
-          '<div class="exec-meta"><span class="exec-chip '+escapeHtml(due.cls||'')+'">'+escapeHtml(due.txt)+'</span>'+meta+'</div></div>';
-      }).join('');
-    }
-  }
+  function refreshSimpleDashboard(){ renderExecutiveReport(); }
 
   function formatQuickAmount(el){
     var pos = el.selectionStart;
@@ -3746,17 +3623,17 @@
     rows.forEach(function(row){
       var dateVal = row.querySelector('.log-date').value;
       var amt = toNum(row.querySelector('.log-amt').value);
-      total += amt;
-      if(dateVal){ actualByDate[dateVal] = (actualByDate[dateVal] || 0) + amt; }
+      if(dateVal && dateVal.slice(0,7)===(currentMonth||monthKeyNow())) total += amt;
+      if(dateVal && dateVal.slice(0,7)===(currentMonth||monthKeyNow())){ actualByDate[dateVal] = (actualByDate[dateVal] || 0) + amt; }
       else if(amt !== 0){ undatedAmt += amt; undatedCnt += 1; }
-      var wkObj = weekMap[weekKeyForDate(dateVal)];
+      var wkObj = dateVal && dateVal.slice(0,7)===(currentMonth||monthKeyNow()) ? weekMap[weekKeyForDate(dateVal)] : null;
       row.querySelector('.week-badge').textContent = wkObj ? wkObj.label : '-';
       if(wkObj){ wkObj.total += amt; wkObj.count += 1; }
     });
 
     document.getElementById('logTotalCell').textContent = fmt(total);
     var lc = document.getElementById('logCount');
-    if(lc) lc.textContent = rows.length + '건 · 합계 ' + fmt(total) + '원';
+    if(lc) lc.textContent = rows.length + '건 · 선택 월 날짜 기준 합계 ' + fmt(total) + '원';
     document.getElementById('curTotalText').textContent = fmt(total);
     document.getElementById('goalText').textContent = fmt(goal);
     document.getElementById('fsCur').textContent = fmt(total);
@@ -3831,6 +3708,7 @@
         name: row.querySelector('.s-name').value,
         target: row.querySelector('.s-target').value,
         qtyPlan: row.querySelector('.s-qty-plan') ? row.querySelector('.s-qty-plan').value : '',
+        executionState: row.querySelector('.s-execution').value,
         memo: row.querySelector('.s-memo').value,
         due: row.querySelector('.s-due').value,
         amount: toNum(row.querySelector('.s-amt').value),
@@ -3871,12 +3749,15 @@
       items: items,
       rows: rows,
       goals: goals,
+      briefNotes: briefNotes,
       savedAt: new Date().toISOString()
     };
   }
 
   function applyState(state){
     if(!state) return;
+    briefNotes = Array.isArray(state.briefNotes) ? state.briefNotes : [];
+    renderBriefEditor();
     if(state.title) document.getElementById('titleEl').innerHTML = state.title;
     if(state.subtitle) document.getElementById('subtitleEl').innerHTML = state.subtitle;
     if(state.memo) document.getElementById('memoEl').innerHTML = state.memo;
@@ -3979,7 +3860,7 @@
 
   function isTyping(){
     var a = document.activeElement;
-    return !!(a && (a.tagName === 'INPUT' || a.isContentEditable));
+    return !!(a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.tagName === 'SELECT' || a.isContentEditable));
   }
 
   function manualSave(){
@@ -4034,6 +3915,7 @@
     var slt = document.getElementById('slText');
     if(slt) slt.readOnly = !editable;
     renderTodos();
+    document.querySelectorAll('#briefEditor input,#briefEditor textarea,#briefEditor select,#briefEditor button').forEach(function(el){el.disabled=!editable;});
     document.querySelectorAll('#goalBody textarea.g-memo, #stratBody textarea.s-memo, #dbBody textarea.d-memo').forEach(function(el){
       el.disabled = false;
       el.readOnly = !editable;
@@ -4049,6 +3931,7 @@
 
   // ---------- init ----------
   function loadInitial(){
+    mountExecutiveLayout();
     mountDetailArchives();
     document.getElementById('monthPicker').value = monthFromUrl();
     document.getElementById('quickDate').value = localISO(new Date());
@@ -4061,8 +3944,17 @@
     if(isSnapshotFile){
       setSaveStatus('snapshot');
       currentMonth = monthFromUrl();
+      var baked=document.getElementById('executiveSnapshot');
+      if(baked){
+        try{
+          var saved=JSON.parse(baked.textContent);
+          todoList=saved.todos||[];reportCache=saved.cache||{};reportWeekStart=saved.week||'';
+          applyState(saved.state);renderTodos();
+        }catch(e){setSaveStatus('error','보관용 데이터 읽기 실패');}
+      }
       applyEditMode();
       recalcAll();
+      showTab(1);
       return;
     }
 
@@ -4184,6 +4076,7 @@
         ['.s-item','.s-name','.s-target','.s-qty-plan','.s-lead-done','.s-lead-target','.s-lead-unit','.s-due','.s-amt','.s-status','.s-memo'].forEach(function(sel){
           var src=row.querySelector(sel), dst=r.querySelector(sel); if(src&&dst) dst.setAttribute('value',src.value);
         });
+        var ss=row.querySelector('.s-execution'), ds=r.querySelector('.s-execution'); if(ss&&ds) Array.from(ds.options).forEach(function(op){op.toggleAttribute('selected',op.value===ss.value);});
         dstStrat.appendChild(r);
       });
     }
@@ -4259,6 +4152,10 @@
       });
     }
 
+    var existing=clone.querySelector('#executiveSnapshot');if(existing)existing.remove();
+    var baked=document.createElement('script');baked.id='executiveSnapshot';baked.type='application/json';
+    baked.textContent=JSON.stringify({state:collectState(),todos:todoList,cache:reportCache,week:reportWeekStart}).replace(/</g,'\\u003c');
+    clone.querySelector('head').appendChild(baked);
     return '<!DOCTYPE html>\n' + clone.outerHTML;
   }
 
@@ -4288,6 +4185,154 @@
     }catch(e){
       alert('인쇄 창을 열지 못했습니다. 최신본을 다운로드해서 브라우저에서 열고 Ctrl/Cmd+P로 인쇄해주세요.');
     }
+  }
+
+
+  // ===== Executive report: company ledger date is the only actual-sales basis =====
+  var briefNotes=[];
+  var reportWeekStart='';
+  var reportCache={},reportLoads={},reportErrors={};
+  function executionLabel(v){return {planned:'예정',doing:'진행',done:'실행 완료',hold:'보류'}[v]||'예정';}
+  function executionOptions(v){return ['planned','doing','done','hold'].map(function(k){return '<option value="'+k+'"'+(v===k?' selected':'')+'>'+executionLabel(k)+'</option>';}).join('');}
+  function reportRate(g,a){return g>0?(a/g*100).toFixed(0)+'%':(a?'목표 미설정':'—');}
+  function signedMoney(n){return (n>0?'+':n<0?'−':'')+fmt(Math.abs(n))+'원';}
+  function reportKpis(values){return values.map(function(x){return '<div class="kpi-card"><div class="kpi-label">'+escapeHtml(x[0])+'</div><div class="kpi-value">'+escapeHtml(x[1])+'</div></div>';}).join('');}
+  function reportData(state){
+    var month=state.month||currentMonth||monthKeyNow(),goals={},actual={},plans={},legacy={};
+    (state.strategies||[]).forEach(function(p){
+      if(!p.due||p.due.slice(0,7)!==month)return;
+      if(!plans[p.due])plans[p.due]=[];
+      var amount=Number(p.leadUnit==='원'?p.leadTarget:(p.amount||p.leadTarget))||0;
+      plans[p.due].push({target:p.target||'',action:p.name||'',item:p.item||'',qty:p.qtyPlan||'',goal:amount,note:p.memo||'',status:executionLabel(p.executionState)});
+      goals[p.due]=(goals[p.due]||0)+amount;
+    });
+    (state.goals||[]).forEach(function(p){
+      if(!p.date||p.date.slice(0,7)!==month||plans[p.date]||(!p.goal&&!p.item&&!p.target&&!p.memo))return;
+      if(!legacy[p.date])legacy[p.date]=[];
+      legacy[p.date].push({target:p.target||'',action:p.memo||'',item:p.item||'',qty:'이전 목표',goal:Number(p.goal)||0,note:'',status:'이전 기록'});
+      goals[p.date]=(goals[p.date]||0)+(Number(p.goal)||0);
+    });
+    Object.keys(legacy).forEach(function(d){plans[d]=legacy[d];});
+    var total=0,undated=0;
+    (state.rows||[]).forEach(function(r){
+      var a=Number(r.amount)||0;
+      if(r.date&&r.date.slice(0,7)===month){actual[r.date]=(actual[r.date]||0)+a;total+=a;}
+      else if(!r.date){undated+=a;}
+    });
+    return {month:month,goals:goals,actual:actual,plans:plans,total:total,undated:undated,legacy:legacy};
+  }
+  function mondayISO(d){var p=d.split('-').map(Number),x=new Date(p[0],p[1]-1,p[2]);x.setDate(x.getDate()-(x.getDay()+6)%7);return localISO(x);}
+  function dayOffset(d,n){var p=d.split('-').map(Number),x=new Date(p[0],p[1]-1,p[2]);x.setDate(x.getDate()+n);return localISO(x);}
+  function shiftReportWeek(n){reportWeekStart=dayOffset(reportWeekStart||mondayISO(localISO(new Date())),n*7);renderExecutiveReport();}
+  function resetReportWeek(){reportWeekStart=mondayISO(localISO(new Date()));renderExecutiveReport();}
+  function mountExecutiveLayout(){
+    var legacy=document.getElementById('legacyDashboard');
+    if(legacy){
+      var todo=legacy.querySelector('.today-command');if(todo)document.getElementById('todoEditorMount').appendChild(todo);
+    }
+    var old=document.getElementById('legacyGoalSection');if(old)document.getElementById('legacyGoalMount').appendChild(old);
+    document.querySelectorAll('#legacyGoalMount input,#legacyGoalMount textarea').forEach(function(e){e.readOnly=true;});
+  }
+  function addBriefNote(){
+    if(!canEdit||isSnapshotFile)return;
+    briefNotes.push({kind:'report',date:localISO(new Date()),text:'',resource:'',next:'',status:'open'});
+    renderBriefEditor();
+    document.querySelector('#briefEditor .brief-row:last-child textarea').focus();
+  }
+  function saveBriefField(index,key,value){if(!canEdit||!briefNotes[index])return;briefNotes[index][key]=value;recalcSoon();scheduleSave();}
+  function removeBriefNote(i){if(!canEdit||!confirm('이 보고·전략 항목을 삭제할까요?'))return;briefNotes.splice(i,1);renderBriefEditor();recalcAll();scheduleSave();}
+  function renderBriefEditor(){
+    var box=document.getElementById('briefEditor');if(!box)return;
+    box.innerHTML=briefNotes.map(function(n,i){
+      function field(key,label,type){
+        var val=escapeHtml(n[key]||'');
+        return '<label>'+label+(type==='textarea'?'<textarea oninput="saveBriefField('+i+',\''+key+'\',this.value)">'+val+'</textarea>':'<input type="'+type+'" value="'+escapeAttr(n[key]||'')+'" oninput="saveBriefField('+i+',\''+key+'\',this.value)">')+'</label>';
+      }
+      return '<div class="brief-row"><label>구분<select onchange="saveBriefField('+i+',\'kind\',this.value)"><option value="report"'+(n.kind!=='recovery'?' selected':'')+'>보고·협의</option><option value="recovery"'+(n.kind==='recovery'?' selected':'')+'>부족분 대응</option></select></label>'+
+        field('date','보고일 / 확인 기한','date')+field('text','진행상황 / 대응 전략','textarea')+field('resource','대상·활용 자원','textarea')+field('next','다음 행동 / 대표님 요청','textarea')+
+        '<label>상태<select onchange="saveBriefField('+i+',\'status\',this.value)">'+[['open','진행'],['discuss','협의 필요'],['done','완료']].map(function(x){return '<option value="'+x[0]+'"'+(n.status===x[0]?' selected':'')+'>'+x[1]+'</option>';}).join('')+'</select></label><button onclick="removeBriefNote('+i+')" aria-label="삭제">×</button></div>';
+    }).join('')||'<p class="ge-footnote">진행상황이나 협의할 사항, 부족분 대응 전략을 추가해주세요.</p>';
+    box.querySelectorAll('input,textarea,select,button').forEach(function(e){e.disabled=!canEdit||isSnapshotFile;});
+  }
+  function reportNoteHTML(n){
+    return '<div class="report-line"><b>'+escapeHtml(n.status==='discuss'?'협의 필요':n.status==='done'?'완료':'진행')+'</b> · '+escapeHtml(n.text||'내용 미입력')+
+      '<small>'+escapeHtml([n.date,n.resource].filter(Boolean).join(' · '))+'</small>'+
+      (n.next?'<div>다음 조치·요청: '+escapeHtml(n.next)+'</div>':'')+'</div>';
+  }
+  function monthReportData(month){
+    if(month===(currentMonth||monthKeyNow()))return reportData(collectState());
+    if(reportCache[month])return reportData(reportCache[month]);
+    if(firebaseReady&&db&&!reportLoads[month]&&!reportErrors[month]&&!isSnapshotFile){
+      reportLoads[month]=true;
+      db.collection(COLLECTION).doc(month).get().then(function(snap){
+        reportCache[month]=Object.assign({},snap.exists?snap.data():{},{month:month});
+        delete reportLoads[month];renderExecutiveReport();
+      }).catch(function(e){delete reportLoads[month];reportErrors[month]=e.code||'연결 오류';renderExecutiveReport();});
+    }
+    return null;
+  }
+  function weekReportRows(start){
+    var rows=[];
+    for(var i=0;i<7;i++){
+      var d=dayOffset(start,i),data=monthReportData(d.slice(0,7));
+      rows.push({date:d,loaded:!!data,goal:data?(data.goals[d]||0):0,actual:data?(data.actual[d]||0):0,plans:data?(data.plans[d]||[]):[]});
+    }
+    return rows;
+  }
+  function periodTable(rows,details){
+    var out='<table class="report-table"><thead><tr><th>일자</th><th>대상</th><th>전략·행동 / 결과·비고</th><th>아이템·구성</th><th class="money">목표금액</th><th class="money">당일 전체 실적</th><th class="money">차이 / 달성률</th></tr></thead><tbody>',g=0,a=0,all=true;
+    rows.forEach(function(r){
+      var date=shortDate(r.date)+' '+dowLabel(r.date);
+      if(!r.loaded){all=false;out+='<tr><td>'+date+'</td><td colspan="6">해당 월 자료 '+(reportErrors[r.date.slice(0,7)]?'조회 실패':'미조회 / 불러오는 중')+' · '+r.date.slice(0,7)+'월을 선택해 확인해주세요.</td></tr>';return;}
+      g+=r.goal;a+=r.actual;
+      r.plans.forEach(function(p){
+        out+='<tr><td>'+date+'</td><td>'+escapeHtml(p.target||'대상 미입력')+'</td><td>'+escapeHtml(p.action||'행동 미입력')+(p.note?'<small class="report-caption"><br>'+escapeHtml(p.note)+'</small>':'')+'</td><td>'+escapeHtml(p.item)+'<br><small>'+escapeHtml(p.qty)+'</small></td><td class="money">'+fmt(p.goal)+'</td><td class="money">—</td><td>'+escapeHtml(p.status)+'</td></tr>';
+      });
+      if(!r.plans.length)out+='<tr><td>'+date+'</td><td colspan="6">계획 없음'+(r.actual?' · 계획 외 경로 매출 포함':'')+'</td></tr>';
+      out+='<tr class="subtotal"><td colspan="4">'+date+' 합계</td><td class="money">'+fmt(r.goal)+'</td><td class="money">'+fmt(r.actual)+'</td><td class="money">'+signedMoney(r.actual-r.goal)+' / '+reportRate(r.goal,r.actual)+'</td></tr>';
+    });
+    out+='<tr class="total"><td colspan="4">'+(all?'기간 합계':'조회된 날짜 소계')+'</td><td class="money">'+fmt(g)+'</td><td class="money">'+fmt(a)+'</td><td class="money">'+signedMoney(a-g)+' / '+reportRate(g,a)+'</td></tr></tbody></table>';
+    return {html:out,goal:g,actual:a,complete:all};
+  }
+  function renderExecutiveReport(){
+    if(!document.getElementById('reportWeekTable'))return;
+    var today=localISO(new Date()),state=collectState(),data=reportData(state),month=data.month;
+    document.getElementById('reportDate').textContent=today+' · 조회 월 '+month;
+    var schedules=(todoList||[]).filter(function(t){return todoType(t)==='schedule'&&t.date===today;}).sort(function(a,b){return String(a.time||'').localeCompare(String(b.time||''));});
+    var tasks=(todoList||[]).filter(function(t){return todoType(t)==='task'&&((!t.done&&(!t.date||t.date<=today))||t.date===today);}).sort(function(a,b){return Number(!!a.done)-Number(!!b.done)||String(a.date).localeCompare(String(b.date));});
+    document.getElementById('reportSchedules').innerHTML=schedules.map(function(t){return '<div class="report-line"><b>'+escapeHtml(t.time||'시간 미정')+'</b> '+escapeHtml(t.text)+'</div>';}).join('')||'<p class="report-caption">오늘 일정 없음</p>';
+    document.getElementById('reportTasks').innerHTML=tasks.map(function(t){return '<div class="report-line">'+(t.done?'✓ 완료 · ':t.date<today?'기한 지남 · ':'')+escapeHtml(t.text)+'</div>';}).join('')||'<p class="report-caption">오늘 할 일 없음</p>';
+    document.getElementById('reportNotes').innerHTML=briefNotes.filter(function(n){return n.kind!=='recovery'&&(n.status!=='done'||n.date===today);}).map(reportNoteHTML).join('')||'<p class="report-caption">등록된 보고·협의사항 없음</p>';
+    if(!reportWeekStart)reportWeekStart=mondayISO(month===today.slice(0,7)?today:month+'-01');
+    var rows=weekReportRows(reportWeekStart),table=periodTable(rows,true);
+    document.getElementById('reportWeekLabel').textContent=reportWeekStart+' ~ '+dayOffset(reportWeekStart,6)+' · 월요일~일요일 · 단위: 원'+(!table.complete?' · 일부 월 자료 미조회':'');
+    document.getElementById('reportWeekTable').innerHTML=table.html;
+    document.getElementById('reportWeekKpis').innerHTML=reportKpis([[table.complete?'주간 목표':'조회분 목표',fmt(table.goal)+'원'],['전체 실적',fmt(table.actual)+'원'],['목표 대비 차이',signedMoney(table.actual-table.goal)],['달성률',reportRate(table.goal,table.actual)]]);
+    var mg=Number(state.goal)||0,total=data.total;
+    document.getElementById('reportMonthTitle').textContent=month+' 월 매출·주차별 현황';
+    document.getElementById('reportMonthKpis').innerHTML=reportKpis([['이번 달 목표',fmt(mg)+'원'],['확정 실적',fmt(total)+'원'],['남은 목표',fmt(Math.max(0,mg-total))+'원'],['달성률',reportRate(mg,total)]]);
+    var planned=Object.keys(data.goals).reduce(function(n,d){return n+data.goals[d];},0);
+    var future=Object.keys(data.goals).filter(function(d){return d>=today;}).reduce(function(n,d){return n+data.goals[d];},0);
+    document.getElementById('reportGap').textContent='월 목표 중 일자별로 배정한 금액 '+fmt(planned)+'원 · 아직 계획하지 않은 금액 '+fmt(Math.max(0,mg-planned))+'원. 오늘 이후 등록된 목표 '+fmt(future)+'원 (확정 실적 아님).'+(data.undated?' 날짜 없는 매출 '+fmt(data.undated)+'원은 일·주·월 집계에서 제외: 원장에서 날짜를 지정해주세요.':'');
+    var groups={};Object.keys(data.goals).concat(Object.keys(data.actual)).forEach(function(d){groups[mondayISO(d)]=true;});
+    for(var day=month+'-01';day.slice(0,7)===month;day=dayOffset(day,1))groups[mondayISO(day)]=true;
+    var html='<table class="report-table"><thead><tr><th>주차 · 기간 (선택 월 기준)</th><th class="money">목표</th><th class="money">실적</th><th class="money">차이</th><th class="money">달성률</th></tr></thead><tbody>';
+    Object.keys(groups).sort().forEach(function(w,i){
+      var g=0,a=0,dates=[];for(var j=0;j<7;j++){var d=dayOffset(w,j);if(d.slice(0,7)!==month)continue;dates.push(d);g+=data.goals[d]||0;a+=data.actual[d]||0;}
+      html+='<tr><td>'+(i+1)+'주차 · '+shortDate(dates[0])+'~'+shortDate(dates[dates.length-1])+'</td><td class="money">'+fmt(g)+'</td><td class="money">'+fmt(a)+'</td><td class="money">'+signedMoney(a-g)+'</td><td class="money">'+reportRate(g,a)+'</td></tr>';
+    });
+    document.getElementById('reportMonthWeeks').innerHTML=html+'</tbody></table>';
+    var recovery=briefNotes.filter(function(n){return n.kind==='recovery'&&n.status!=='done';});
+    document.getElementById('reportRecovery').innerHTML=recovery.map(reportNoteHTML).join('')||'<p class="report-callout">'+(total<mg?'부족분 대응 전략·자원이 아직 등록되지 않았습니다. 2번에서 작성하거나 대표님과 협의할 사항을 남겨주세요.':'등록된 추가 대응 전략 없음')+'</p>';
+    var monthRows=[];for(var d=month+'-01';d.slice(0,7)===month;d=dayOffset(d,1)){if(data.plans[d]||data.actual[d])monthRows.push({date:d,loaded:true,goal:data.goals[d]||0,actual:data.actual[d]||0,plans:data.plans[d]||[]});}
+    document.getElementById('ledgerDailyComparison').innerHTML='<h3>일자별 목표 대비 실제 매출</h3><p class="report-caption">목표는 2번에서 작성합니다. 실제 매출은 회사 장표 날짜 기준입니다.</p><div class="report-scroll">'+periodTable(monthRows,true).html+'</div>';
+  }
+  function copyWeeklyReport(btn){
+    var rows=weekReportRows(reportWeekStart),out=[['일자','대상','전략·행동','아이템·구성','목표','당일 전체 실적','차이','달성률','결과·비고']];
+    rows.forEach(function(r){if(!r.loaded){out.push([r.date,'자료 미조회']);return;}
+      r.plans.forEach(function(p){out.push([r.date,p.target,p.action,[p.item,p.qty].join(' · '),p.goal,'','','',p.note]);});
+      out.push([r.date+' 합계','','','',r.goal,r.actual,r.actual-r.goal,reportRate(r.goal,r.actual),'']);
+    });copyTsv(out,btn);
   }
 
   loadInitial();
