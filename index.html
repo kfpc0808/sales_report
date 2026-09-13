@@ -948,7 +948,7 @@
   .today-lane-title{ color:var(--navy); font-size:13px; font-weight:800; }
   .today-lane-hint{ color:var(--muted); font-size:10.5px; }
   .today-quick-add{ display:grid; gap:6px; margin-bottom:9px; }
-  .schedule-add{ grid-template-columns:112px 104px minmax(150px,1fr) auto; }
+  .schedule-add{ grid-template-columns:112px 104px minmax(150px,1fr) auto auto; }
   .task-add{ grid-template-columns:112px 88px minmax(170px,1fr) auto; }
   .today-quick-add input,.today-quick-add select{ min-width:0; width:100%; height:34px; box-sizing:border-box; border:1px solid var(--line); border-radius:8px; background:#FBFAF7; color:var(--ink); padding:6px 8px; font-family:'Pretendard',sans-serif; font-size:11.5px; }
   .today-quick-add input:focus,.today-quick-add select:focus{ outline:none; border-color:var(--brass); background:#fff; }
@@ -973,6 +973,8 @@
   .today-check{ width:17px; height:17px; accent-color:var(--green); cursor:pointer; }
   .today-row-del{ border:0; background:transparent; color:#C2BCB0; cursor:pointer; padding:4px; }
   .today-row-del:hover{ color:var(--red); }
+  .today-row-edit{ border:1px solid var(--line); border-radius:7px; background:#fff; color:var(--navy); cursor:pointer; padding:3px 7px; font-size:10px; font-weight:800; }
+  .today-row-edit:hover{ border-color:var(--brass); color:var(--brass); }
   .today-more{ margin-top:7px; color:var(--brass); font-size:11px; font-weight:700; }
   .today-all-toggle{ border:1px solid var(--line); border-radius:20px; background:#fff; color:var(--navy); padding:5px 10px; font-family:'Pretendard',sans-serif; font-size:11px; font-weight:700; cursor:pointer; }
   .today-all{ display:none; padding:0 18px 15px; border-top:1px solid #E8EBEF; }
@@ -1055,7 +1057,7 @@
     .kpi-grid{ grid-template-columns:repeat(4,1fr); }
     .dash-grid{ grid-template-columns:1.3fr .7fr; }
     .tower-strip{ grid-template-columns:repeat(3,1fr); }
-    .today-quick-add,.today-all-toggle,.today-row-del{ display:none !important; }
+    .today-quick-add,.today-all-toggle,.today-row-del,.today-row-edit{ display:none !important; }
     .ge-exec-add,.goal-exec-actions,.ge-row-ops,.ledger-quick-card,.ledger-view-tabs,.ledger-filterbar{ display:none !important; }
   }
 
@@ -1199,6 +1201,7 @@
           <input type="text" id="tdScheduleTime" inputmode="numeric" maxlength="5" placeholder="13:00" autocomplete="off" aria-label="일정 시간(24시간제)" oninput="formatScheduleTime(this); clearScheduleStatus()" onblur="normalizeScheduleTime(this)">
           <input type="text" id="tdScheduleText" placeholder="일정 내용 입력" autocomplete="off" oninput="clearScheduleStatus()" onkeydown="todoQuickEnter(event,'schedule')">
           <button type="button" id="tdScheduleAddBtn" onclick="addSchedule()">+ 일정</button>
+          <button type="button" id="tdScheduleCancelBtn" onclick="cancelScheduleEdit()" hidden>취소</button>
         </div>
         <div class="today-quick-status" id="tdScheduleStatus" aria-live="polite">시간은 24시간제로 입력합니다. 예: 오후 1시 → 13:00</div>
         <div class="today-lane-list" id="tdScheduleList"></div>
@@ -2416,6 +2419,7 @@
   // ---------- 중요 일정 ----------
   var TODOS = 'todos';
   var todoList = [];
+  var scheduleEditingId = '';
 
   function initTodos(){
     if(!firebaseReady) return;
@@ -2482,7 +2486,30 @@
     var btn = document.getElementById('tdScheduleAddBtn');
     if(!btn) return;
     btn.disabled = !!saving;
-    btn.textContent = saving ? '저장 중…' : '+ 일정';
+    btn.textContent = saving ? '저장 중…' : (scheduleEditingId ? '일정 수정' : '+ 일정');
+  }
+
+  function editSchedule(id){
+    if(!canEdit) return;
+    var x=todoList.find(function(t){return t.id===id;});
+    if(!x) return;
+    scheduleEditingId=id;
+    document.getElementById('tdScheduleDate').value=x.date||localISO(new Date());
+    document.getElementById('tdScheduleTime').value=x.time||'';
+    document.getElementById('tdScheduleText').value=x.text||'';
+    document.getElementById('tdScheduleAddBtn').textContent='일정 수정';
+    document.getElementById('tdScheduleCancelBtn').hidden=false;
+    setScheduleStatus('일정을 수정한 뒤 ‘일정 수정’을 눌러주세요.', 'ok');
+    document.getElementById('tdScheduleText').focus();
+  }
+
+  function cancelScheduleEdit(){
+    scheduleEditingId='';
+    document.getElementById('tdScheduleTime').value='';
+    document.getElementById('tdScheduleText').value='';
+    document.getElementById('tdScheduleAddBtn').textContent='+ 일정';
+    document.getElementById('tdScheduleCancelBtn').hidden=true;
+    clearScheduleStatus();
   }
 
   function todoWriteError(e, action){
@@ -2522,22 +2549,27 @@
     }
     setScheduleSaving(true);
     setScheduleStatus('일정을 저장하고 있습니다.', '');
-    db.collection(TODOS).add({ type:'schedule', date:dt, time:tm, text:tx, done:false, createdAt:new Date().toISOString() })
+    var editingId=scheduleEditingId;
+    var write=editingId
+      ? db.collection(TODOS).doc(editingId).update({date:dt,time:tm,text:tx,updatedAt:new Date().toISOString()})
+      : db.collection(TODOS).add({ type:'schedule', date:dt, time:tm, text:tx, done:false, createdAt:new Date().toISOString() });
+    write
       .then(function(){
-        timeEl.value=''; textEl.value=''; timeEl.focus();
+        scheduleEditingId=''; timeEl.value=''; textEl.value=''; timeEl.focus();
+        document.getElementById('tdScheduleCancelBtn').hidden=true;
         setScheduleSaving(false);
-        setScheduleStatus('일정을 저장했습니다.', 'ok');
+        setScheduleStatus(editingId ? '일정을 수정했습니다.' : '일정을 저장했습니다.', 'ok');
         setSaveStatus('saved');
       })
       .catch(function(e){
         setScheduleSaving(false);
         var code = String((e && e.code) || '');
         if(code.indexOf('permission-denied') > -1){
-          setScheduleStatus('저장 권한이 없습니다. parkshinje@gmail.com 계정으로 다시 로그인해주세요.', 'error');
+          setScheduleStatus((editingId?'수정':'저장')+' 권한이 없습니다. parkshinje@gmail.com 계정으로 다시 로그인해주세요.', 'error');
         } else {
           setScheduleStatus('저장에 실패했습니다. 잠시 후 다시 시도해주세요. (' + (code || '연결 오류') + ')', 'error');
         }
-        todoWriteError(e, '일정 저장');
+        todoWriteError(e, editingId ? '일정 수정' : '일정 저장');
       });
   }
 
@@ -2646,8 +2678,11 @@
     var passed=x.date===localISO(now) && x.time && x.time < String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
     row.className='today-lane-row schedule-row';
     row.innerHTML='<span class="today-time '+(passed?'passed':'')+'">'+escapeHtml(x.time||'미정')+'</span><span class="today-work-text">'+escapeHtml(x.text||'')+'</span>'+
-      (canEdit?'<button class="today-row-del" title="삭제">✕</button>':'');
-    if(canEdit) row.querySelector('.today-row-del').onclick=function(){ removeTodo(x.id); };
+      (canEdit?'<span><button class="today-row-edit" title="일정 수정">수정</button><button class="today-row-del" title="삭제">✕</button></span>':'');
+    if(canEdit){
+      row.querySelector('.today-row-edit').onclick=function(){ editSchedule(x.id); };
+      row.querySelector('.today-row-del').onclick=function(){ removeTodo(x.id); };
+    }
     return row;
   }
 
