@@ -1084,6 +1084,9 @@
   .report-table .subtotal{background:#F6F8FB;font-weight:700}
   .report-table .total{background:var(--navy);color:white;font-weight:700}
   .report-table .today-date{color:var(--brass);font-weight:800}
+  .report-kpi-link{cursor:pointer;position:relative;transition:border-color .15s,transform .15s,box-shadow .15s}
+  .report-kpi-link:hover,.report-kpi-link:focus{outline:none;border-color:var(--brass);box-shadow:0 5px 16px rgba(16,30,54,.1);transform:translateY(-1px)}
+  .kpi-jump{display:block;margin-top:7px;color:var(--brass);font-size:11px;font-weight:800}
   .actual-details{margin-top:5px;font-weight:500}
   .actual-details summary{display:inline-block;cursor:pointer;color:var(--brass);font-size:11px;font-weight:800;list-style:none}
   .actual-details summary::-webkit-details-marker{display:none}
@@ -4370,6 +4373,22 @@
       return '<div class="actual-detail-row"><span>'+escapeHtml(label)+'</span><b>'+fmt(x.amount)+'원</b>'+(x.memo?'<small>'+escapeHtml(x.memo)+'</small>':'')+'</div>';
     }).join('')+'</div></details>';
   }
+  function openLedgerFromReport(){
+    showTab(3);
+    setTimeout(function(){
+      var target=canEdit ? document.getElementById('ledgerQuickDate') : document.getElementById('ledgerDailyComparison');
+      if(target){target.scrollIntoView({behavior:'smooth',block:'start'});if(canEdit&&target.focus)target.focus();}
+    },80);
+  }
+  function makeKpiLedgerLink(containerId,index){
+    var box=document.getElementById(containerId),card=box&&box.querySelectorAll('.kpi-card')[index];
+    if(!card)return;
+    card.classList.add('report-kpi-link');card.setAttribute('role','button');card.tabIndex=0;
+    card.setAttribute('aria-label',canEdit?'매출 원장에서 실적 입력':'매출 원장 보기');
+    card.onclick=openLedgerFromReport;
+    card.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openLedgerFromReport();}};
+    var jump=document.createElement('span');jump.className='kpi-jump';jump.textContent=canEdit?'매출 원장에서 입력 →':'매출 원장 보기 →';card.appendChild(jump);
+  }
   function periodTable(rows,details){
     var out='<table class="report-table"><thead><tr><th>일자</th><th>대상</th><th>전략·행동</th><th>아이템·구성</th><th class="money">목표금액</th><th>실행 상태</th><th>결과·비고</th></tr></thead><tbody>',g=0,a=0,all=true;
     rows.forEach(function(r){
@@ -4401,9 +4420,11 @@
     document.getElementById('reportWeekLabel').textContent=reportWeekStart+' ~ '+dayOffset(reportWeekStart,6)+' · 월요일~일요일 · 단위: 원'+(!table.complete?' · 일부 월 자료 미조회':'');
     document.getElementById('reportWeekTable').innerHTML=table.html;
     document.getElementById('reportWeekKpis').innerHTML=reportKpis([[table.complete?'주간 목표':'조회분 목표',fmt(table.goal)+'원'],['전체 실적',fmt(table.actual)+'원'],['목표 대비 차이',signedMoney(table.actual-table.goal)],['달성률',reportRate(table.goal,table.actual)]]);
+    makeKpiLedgerLink('reportWeekKpis',1);
     var mg=Number(state.goal)||0,total=data.total;
     document.getElementById('reportMonthTitle').textContent=month+' 월 매출·주차별 현황';
     document.getElementById('reportMonthKpis').innerHTML=reportKpis([['이번 달 목표',fmt(mg)+'원'],['확정 실적',fmt(total)+'원'],['남은 목표',fmt(Math.max(0,mg-total))+'원'],['달성률',reportRate(mg,total)]]);
+    makeKpiLedgerLink('reportMonthKpis',1);
     var planned=Object.keys(data.goals).reduce(function(n,d){return n+data.goals[d];},0);
     var future=Object.keys(data.goals).filter(function(d){return d>=today;}).reduce(function(n,d){return n+data.goals[d];},0);
     document.getElementById('reportGap').textContent='월 목표 중 일자별로 배정한 금액 '+fmt(planned)+'원 · 아직 계획하지 않은 금액 '+fmt(Math.max(0,mg-planned))+'원. 오늘 이후 등록된 목표 '+fmt(future)+'원 (확정 실적 아님).'+(data.undated?' 날짜 없는 매출 '+fmt(data.undated)+'원은 일·주·월 집계에서 제외: 원장에서 날짜를 지정해주세요.':'');
