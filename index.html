@@ -1064,6 +1064,14 @@
   [hidden]{display:none!important}
   .report-top{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0}
   .report-top h3,.report-week h3{margin:0 0 12px;font-size:16px;color:var(--navy)}
+  .report-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+  .report-card-head h3{margin:0}
+  .calendar-open-btn{border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--navy);padding:6px 9px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}
+  .calendar-open-btn:hover{border-color:var(--brass);color:var(--brass)}
+  .calendar-link-editor{display:grid;grid-template-columns:auto minmax(240px,1fr) auto;align-items:center;gap:8px;padding:11px 16px;border-bottom:1px solid #E8EBEF;background:#FBFAF7}
+  .calendar-link-editor label{font-size:11px;font-weight:800;color:var(--navy)}
+  .calendar-link-editor input{height:34px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:6px 9px;font-size:11.5px}
+  .calendar-link-editor button{height:34px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--navy);padding:0 11px;font-weight:800;cursor:pointer}
   .report-week{margin:14px 0}
   .report-nav{display:flex;gap:6px;flex-wrap:wrap}
   .report-nav button{border:1px solid var(--line);background:#fff;color:var(--navy);padding:8px 12px;border-radius:8px;cursor:pointer}
@@ -1076,6 +1084,14 @@
   .report-table .subtotal{background:#F6F8FB;font-weight:700}
   .report-table .total{background:var(--navy);color:white;font-weight:700}
   .report-table .today-date{color:var(--brass);font-weight:800}
+  .actual-details{margin-top:5px;font-weight:500}
+  .actual-details summary{display:inline-block;cursor:pointer;color:var(--brass);font-size:11px;font-weight:800;list-style:none}
+  .actual-details summary::-webkit-details-marker{display:none}
+  .actual-detail-list{margin-top:7px;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+  .actual-detail-row{display:grid;grid-template-columns:minmax(180px,1fr) auto;gap:12px;padding:5px 0;border-top:1px solid #EEF0F2;font-size:11px;font-weight:500}
+  .actual-detail-row:first-child{border-top:0}
+  .actual-detail-row b{white-space:nowrap;color:var(--green)}
+  .actual-detail-row small{grid-column:1/-1;color:var(--muted)}
   .report-line{border-top:1px solid #ECEEF1;padding:9px 0;font-size:13px;line-height:1.6;overflow-wrap:anywhere}
   .report-line small{display:block;color:var(--muted)}
   .report-callout{padding:12px;background:#FFF7E9;border-radius:9px;line-height:1.7;font-size:13px}
@@ -1089,9 +1105,9 @@
   #legacyGoalMount .ledger-plan-actions,#legacyGoalMount .goal-edit-only{display:none!important}
   #legacyGoalMount input,#legacyGoalMount textarea{pointer-events:none}
   #legacyGoalMount .del-x{display:none!important}
-  @media(max-width:1100px){.report-top{grid-template-columns:1fr}.brief-row{grid-template-columns:1fr 1fr}.report-week .dash-panel-head{align-items:flex-start;flex-direction:column}}
+  @media(max-width:1100px){.report-top{grid-template-columns:1fr}.brief-row{grid-template-columns:1fr 1fr}.report-week .dash-panel-head{align-items:flex-start;flex-direction:column}.calendar-link-editor{grid-template-columns:1fr}.calendar-link-editor button{width:100%}}
   @media print{
-    [data-pane="2"],[data-pane="3"],#legacyDashboardMount,.report-nav,.toolbar,.tabs{display:none!important}
+    [data-pane="2"],[data-pane="3"],#legacyDashboardMount,.report-nav,.toolbar,.tabs,.calendar-open-btn{display:none!important}
     [data-pane="1"]{display:block!important}.report-scroll{overflow:visible}
     .report-table{min-width:0;font-size:10px;table-layout:fixed}.report-table td,.report-table th{padding:5px}.report-table .money{white-space:normal}
     .report-top{grid-template-columns:repeat(3,1fr)}.report-week{break-inside:auto}.report-table tr{break-inside:avoid}
@@ -1151,7 +1167,7 @@
   <section class="tab-pane" data-pane="1">
     <div class="dash-head"><div><div class="dash-kicker">SALES BRIEFING</div><h2 class="dash-title">영업 현황 · 대표님 보고판</h2></div><span id="reportDate" class="dash-date"></span></div>
     <div class="report-top">
-      <section class="dash-panel"><h3>오늘 일정</h3><div id="reportSchedules"></div></section>
+      <section class="dash-panel"><div class="report-card-head"><h3>오늘 일정</h3><button type="button" id="centerCalendarOpen" class="calendar-open-btn" onclick="openCenterCalendar()" hidden>센터 전체 일정표 ↗</button></div><div id="reportSchedules"></div></section>
       <section class="dash-panel"><h3>박신제 본부장 · 꼭 할 일</h3><div id="reportTasks"></div></section>
       <section class="dash-panel"><h3>진행 보고 · 협의 필요</h3><div id="reportNotes"></div></section>
     </div>
@@ -1353,7 +1369,7 @@
       </div>
     </div>
 
-    <section class="goal-exec-card"><div class="goal-exec-card-head"><span class="goal-exec-card-title">일정 · 꼭 할 일</span><button class="dash-action-btn goal-edit-only" onclick="openGoalSetup()">이번 달 목표 설정</button></div><div id="todoEditorMount"></div></section>
+    <section class="goal-exec-card"><div class="goal-exec-card-head"><span class="goal-exec-card-title">일정 · 꼭 할 일</span><button class="dash-action-btn goal-edit-only" onclick="openGoalSetup()">이번 달 목표 설정</button></div><div class="calendar-link-editor goal-edit-only"><label for="centerCalendarUrl">센터 전체 일정표</label><input type="url" id="centerCalendarUrl" placeholder="구글 일정표 공유 링크를 붙여넣으세요" oninput="onCenterCalendarUrlInput()"><button type="button" onclick="openCenterCalendar()">링크 열기</button></div><div id="todoEditorMount"></div></section>
     <section class="goal-exec-card"><div class="goal-exec-card-head"><span class="goal-exec-card-title">진행 보고 · 협의 / 부족분 대응</span><button class="dash-action-btn goal-edit-only" onclick="addBriefNote()">+ 보고·전략 추가</button></div>
     <p class="ge-footnote">보고는 진행상황과 판단 요청, 대응 전략은 활용할 자원과 다음 행동을 적습니다. 금액은 위·아래 계획에 중복해서 더하지 않습니다.</p><div id="briefEditor"></div></section>
     <div class="goal-exec-kpis">
@@ -3785,6 +3801,7 @@
       rows: rows,
       goals: goals,
       briefNotes: briefNotes,
+      calendarUrl: document.getElementById('centerCalendarUrl') ? document.getElementById('centerCalendarUrl').value.trim() : '',
       savedAt: new Date().toISOString()
     };
   }
@@ -3793,6 +3810,12 @@
     if(!state) return;
     briefNotes = Array.isArray(state.briefNotes) ? state.briefNotes : [];
     renderBriefEditor();
+    var calendarInput=document.getElementById('centerCalendarUrl');
+    if(calendarInput){
+      var remembered='';try{remembered=localStorage.getItem('centerCalendarUrl')||'';}catch(e){}
+      calendarInput.value=state.calendarUrl||remembered||CENTER_CALENDAR_URL;
+      if(state.calendarUrl){try{localStorage.setItem('centerCalendarUrl',state.calendarUrl);}catch(e){}}
+    }
     if(state.title) document.getElementById('titleEl').innerHTML = state.title;
     if(state.subtitle) document.getElementById('subtitleEl').innerHTML = state.subtitle;
     if(state.memo) document.getElementById('memoEl').innerHTML = state.memo;
@@ -3863,7 +3886,8 @@
       title: mm+'월 매출 진행 현황',
       subtitle: '목표 대비 진행률과, 남은 기간 동안 달성에 필요한 페이스를 실시간으로 확인합니다.',
       memo: '부족 금액을 채우기 위한 판단 근거와 다음 액션을 기록하세요.',
-      goal: 0, targets: [], strategies: [], items: [], rows: [], goals: []
+      goal: 0, targets: [], strategies: [], items: [], rows: [], goals: [],
+      calendarUrl: (function(){try{return localStorage.getItem('centerCalendarUrl')||CENTER_CALENDAR_URL;}catch(e){return CENTER_CALENDAR_URL;}})()
     };
   }
   function onMonthChange(){
@@ -4224,6 +4248,7 @@
 
 
   // ===== Executive report: company ledger date is the only actual-sales basis =====
+  var CENTER_CALENDAR_URL='https://docs.google.com/spreadsheets/d/1fUdBppPRzn3j-iqNkDeASEeATJyYv8qtx6QYu1E7Ld0/edit?gid=82079490#gid=82079490';
   var briefNotes=[];
   var reportWeekStart='';
   var reportCache={},reportLoads={},reportErrors={};
@@ -4233,7 +4258,7 @@
   function signedMoney(n){return (n>0?'+':n<0?'−':'')+fmt(Math.abs(n))+'원';}
   function reportKpis(values){return values.map(function(x){return '<div class="kpi-card"><div class="kpi-label">'+escapeHtml(x[0])+'</div><div class="kpi-value">'+escapeHtml(x[1])+'</div></div>';}).join('');}
   function reportData(state){
-    var month=state.month||currentMonth||monthKeyNow(),goals={},actual={},plans={},legacy={};
+    var month=state.month||currentMonth||monthKeyNow(),goals={},actual={},actualRows={},plans={},legacy={};
     (state.strategies||[]).forEach(function(p){
       if(!p.due||p.due.slice(0,7)!==month)return;
       if(!plans[p.due])plans[p.due]=[];
@@ -4251,10 +4276,13 @@
     var total=0,undated=0;
     (state.rows||[]).forEach(function(r){
       var a=Number(r.amount)||0;
-      if(r.date&&r.date.slice(0,7)===month){actual[r.date]=(actual[r.date]||0)+a;total+=a;}
+      if(r.date&&r.date.slice(0,7)===month){
+        actual[r.date]=(actual[r.date]||0)+a;total+=a;
+        if(a){if(!actualRows[r.date])actualRows[r.date]=[];actualRows[r.date].push({target:r.target||'',item:r.item||'',amount:a,memo:r.memo||''});}
+      }
       else if(!r.date){undated+=a;}
     });
-    return {month:month,goals:goals,actual:actual,plans:plans,total:total,undated:undated,legacy:legacy};
+    return {month:month,goals:goals,actual:actual,actualRows:actualRows,plans:plans,total:total,undated:undated,legacy:legacy};
   }
   function mondayISO(d){var p=d.split('-').map(Number),x=new Date(p[0],p[1]-1,p[2]);x.setDate(x.getDate()-(x.getDay()+6)%7);return localISO(x);}
   function dayOffset(d,n){var p=d.split('-').map(Number),x=new Date(p[0],p[1]-1,p[2]);x.setDate(x.getDate()+n);return localISO(x);}
@@ -4267,6 +4295,26 @@
     }
     var old=document.getElementById('legacyGoalSection');if(old)document.getElementById('legacyGoalMount').appendChild(old);
     document.querySelectorAll('#legacyGoalMount input,#legacyGoalMount textarea').forEach(function(e){e.readOnly=true;});
+  }
+  function getCenterCalendarUrl(){
+    var el=document.getElementById('centerCalendarUrl');
+    return (el&&el.value.trim())||CENTER_CALENDAR_URL;
+  }
+  function onCenterCalendarUrlInput(){
+    var url=getCenterCalendarUrl();
+    try{if(url)localStorage.setItem('centerCalendarUrl',url);else localStorage.removeItem('centerCalendarUrl');}catch(e){}
+    renderExecutiveReport();
+    scheduleSave();
+  }
+  function openCenterCalendar(){
+    var url=getCenterCalendarUrl();
+    if(!url){
+      if(canEdit){showTab(2);document.getElementById('centerCalendarUrl').focus();}
+      else alert('센터 전체 일정표 링크가 아직 등록되지 않았습니다.');
+      return;
+    }
+    if(!/^https?:\/\//i.test(url)){alert('구글 일정표의 전체 공유 링크를 http:// 또는 https://부터 입력해주세요.');return;}
+    window.location.href=url;
   }
   function addBriefNote(){
     if(!canEdit||isSnapshotFile)return;
@@ -4310,29 +4358,39 @@
     var rows=[];
     for(var i=0;i<7;i++){
       var d=dayOffset(start,i),data=monthReportData(d.slice(0,7));
-      rows.push({date:d,loaded:!!data,goal:data?(data.goals[d]||0):0,actual:data?(data.actual[d]||0):0,plans:data?(data.plans[d]||[]):[]});
+      rows.push({date:d,loaded:!!data,goal:data?(data.goals[d]||0):0,actual:data?(data.actual[d]||0):0,actualRows:data?(data.actualRows[d]||[]):[],plans:data?(data.plans[d]||[]):[]});
     }
     return rows;
   }
+  function actualDetailsHTML(rows){
+    rows=rows||[];
+    if(!rows.length)return '<span class="report-caption">매출 기록 없음</span>';
+    return '<details class="actual-details"><summary>실적 내역 보기 '+rows.length+'건 ▾</summary><div class="actual-detail-list">'+rows.map(function(x){
+      var label=[x.target||'대상 미입력',x.item||'아이템 미입력'].join(' · ');
+      return '<div class="actual-detail-row"><span>'+escapeHtml(label)+'</span><b>'+fmt(x.amount)+'원</b>'+(x.memo?'<small>'+escapeHtml(x.memo)+'</small>':'')+'</div>';
+    }).join('')+'</div></details>';
+  }
   function periodTable(rows,details){
-    var out='<table class="report-table"><thead><tr><th>일자</th><th>대상</th><th>전략·행동 / 결과·비고</th><th>아이템·구성</th><th class="money">목표금액</th><th class="money">당일 전체 실적</th><th class="money">차이 / 달성률</th></tr></thead><tbody>',g=0,a=0,all=true;
+    var out='<table class="report-table"><thead><tr><th>일자</th><th>대상</th><th>전략·행동</th><th>아이템·구성</th><th class="money">목표금액</th><th>실행 상태</th><th>결과·비고</th></tr></thead><tbody>',g=0,a=0,all=true;
     rows.forEach(function(r){
       var date=shortDate(r.date)+' '+dowLabel(r.date);
       if(!r.loaded){all=false;out+='<tr><td>'+date+'</td><td colspan="6">해당 월 자료 '+(reportErrors[r.date.slice(0,7)]?'조회 실패':'미조회 / 불러오는 중')+' · '+r.date.slice(0,7)+'월을 선택해 확인해주세요.</td></tr>';return;}
       g+=r.goal;a+=r.actual;
       r.plans.forEach(function(p){
-        out+='<tr><td>'+date+'</td><td>'+escapeHtml(p.target||'대상 미입력')+'</td><td>'+escapeHtml(p.action||'행동 미입력')+(p.note?'<small class="report-caption"><br>'+escapeHtml(p.note)+'</small>':'')+'</td><td>'+escapeHtml(p.item)+'<br><small>'+escapeHtml(p.qty)+'</small></td><td class="money">'+fmt(p.goal)+'</td><td class="money">—</td><td>'+escapeHtml(p.status)+'</td></tr>';
+        out+='<tr><td>'+date+'</td><td>'+escapeHtml(p.target||'대상 미입력')+'</td><td>'+escapeHtml(p.action||'행동 미입력')+'</td><td>'+escapeHtml(p.item)+'<br><small>'+escapeHtml(p.qty)+'</small></td><td class="money">'+fmt(p.goal)+'</td><td>'+escapeHtml(p.status)+'</td><td>'+(p.note?escapeHtml(p.note):'—')+'</td></tr>';
       });
       if(!r.plans.length)out+='<tr><td>'+date+'</td><td colspan="6">계획 없음'+(r.actual?' · 계획 외 경로 매출 포함':'')+'</td></tr>';
-      out+='<tr class="subtotal"><td colspan="4">'+date+' 합계</td><td class="money">'+fmt(r.goal)+'</td><td class="money">'+fmt(r.actual)+'</td><td class="money">'+signedMoney(r.actual-r.goal)+' / '+reportRate(r.goal,r.actual)+'</td></tr>';
+      out+='<tr class="subtotal"><td colspan="4">'+date+' 합계'+actualDetailsHTML(r.actualRows)+'</td><td class="money">목표 '+fmt(r.goal)+'</td><td colspan="2" class="money">실적 '+fmt(r.actual)+'원 · 차이 '+signedMoney(r.actual-r.goal)+' · '+reportRate(r.goal,r.actual)+'</td></tr>';
     });
-    out+='<tr class="total"><td colspan="4">'+(all?'기간 합계':'조회된 날짜 소계')+'</td><td class="money">'+fmt(g)+'</td><td class="money">'+fmt(a)+'</td><td class="money">'+signedMoney(a-g)+' / '+reportRate(g,a)+'</td></tr></tbody></table>';
+    out+='<tr class="total"><td colspan="4">'+(all?'기간 합계':'조회된 날짜 소계')+'</td><td class="money">목표 '+fmt(g)+'</td><td colspan="2" class="money">실적 '+fmt(a)+'원 · 차이 '+signedMoney(a-g)+' · '+reportRate(g,a)+'</td></tr></tbody></table>';
     return {html:out,goal:g,actual:a,complete:all};
   }
   function renderExecutiveReport(){
     if(!document.getElementById('reportWeekTable'))return;
     var today=localISO(new Date()),state=collectState(),data=reportData(state),month=data.month;
     document.getElementById('reportDate').textContent=today+' · 조회 월 '+month;
+    var calendarBtn=document.getElementById('centerCalendarOpen');
+    if(calendarBtn)calendarBtn.hidden=!getCenterCalendarUrl();
     var schedules=(todoList||[]).filter(function(t){return todoType(t)==='schedule'&&t.date===today;}).sort(function(a,b){return String(a.time||'').localeCompare(String(b.time||''));});
     var tasks=(todoList||[]).filter(function(t){return todoType(t)==='task'&&((!t.done&&(!t.date||t.date<=today))||t.date===today);}).sort(function(a,b){return Number(!!a.done)-Number(!!b.done)||String(a.date).localeCompare(String(b.date));});
     document.getElementById('reportSchedules').innerHTML=schedules.map(function(t){return '<div class="report-line"><b>'+escapeHtml(t.time||'시간 미정')+'</b> '+escapeHtml(t.text)+'</div>';}).join('')||'<p class="report-caption">오늘 일정 없음</p>';
@@ -4359,14 +4417,14 @@
     document.getElementById('reportMonthWeeks').innerHTML=html+'</tbody></table>';
     var recovery=briefNotes.filter(function(n){return n.kind==='recovery'&&n.status!=='done';});
     document.getElementById('reportRecovery').innerHTML=recovery.map(reportNoteHTML).join('')||'<p class="report-callout">'+(total<mg?'부족분 대응 전략·자원이 아직 등록되지 않았습니다. 2번에서 작성하거나 대표님과 협의할 사항을 남겨주세요.':'등록된 추가 대응 전략 없음')+'</p>';
-    var monthRows=[];for(var d=month+'-01';d.slice(0,7)===month;d=dayOffset(d,1)){if(data.plans[d]||data.actual[d])monthRows.push({date:d,loaded:true,goal:data.goals[d]||0,actual:data.actual[d]||0,plans:data.plans[d]||[]});}
+    var monthRows=[];for(var d=month+'-01';d.slice(0,7)===month;d=dayOffset(d,1)){if(data.plans[d]||data.actual[d])monthRows.push({date:d,loaded:true,goal:data.goals[d]||0,actual:data.actual[d]||0,actualRows:data.actualRows[d]||[],plans:data.plans[d]||[]});}
     document.getElementById('ledgerDailyComparison').innerHTML='<h3>일자별 목표 대비 실제 매출</h3><p class="report-caption">목표는 2번에서 작성합니다. 실제 매출은 회사 장표 날짜 기준입니다.</p><div class="report-scroll">'+periodTable(monthRows,true).html+'</div>';
   }
   function copyWeeklyReport(btn){
-    var rows=weekReportRows(reportWeekStart),out=[['일자','대상','전략·행동','아이템·구성','목표','당일 전체 실적','차이','달성률','결과·비고']];
+    var rows=weekReportRows(reportWeekStart),out=[['일자','대상','전략·행동','아이템·구성','목표','실행 상태','결과·비고','당일 전체 실적','차이','달성률']];
     rows.forEach(function(r){if(!r.loaded){out.push([r.date,'자료 미조회']);return;}
-      r.plans.forEach(function(p){out.push([r.date,p.target,p.action,[p.item,p.qty].join(' · '),p.goal,'','','',p.note]);});
-      out.push([r.date+' 합계','','','',r.goal,r.actual,r.actual-r.goal,reportRate(r.goal,r.actual),'']);
+      r.plans.forEach(function(p){out.push([r.date,p.target,p.action,[p.item,p.qty].join(' · '),p.goal,p.status,p.note,'','','']);});
+      out.push([r.date+' 합계','','','',r.goal,'','',r.actual,r.actual-r.goal,reportRate(r.goal,r.actual)]);
     });copyTsv(out,btn);
   }
 
