@@ -1116,6 +1116,41 @@
     .report-top{grid-template-columns:repeat(3,1fr)}.report-week{break-inside:auto}.report-table tr{break-inside:avoid}
   }
 
+  /* 오늘의 관제 — 월간 현황과 오늘 실행을 한 화면에서 입력·조회 */
+  .command-pane{display:grid;gap:14px}
+  .command-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .command-head h2{margin:0;font-family:'Noto Serif KR',serif;color:var(--navy);font-size:23px}
+  .command-head-actions{display:flex;gap:7px;flex-wrap:wrap}
+  .command-head-actions button,.command-quick-types button,.command-submit,.command-more{border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--navy);font-weight:800;padding:8px 11px;cursor:pointer}
+  .command-head-actions button.active,.command-quick-types button.active,.command-submit{background:var(--navy);border-color:var(--navy);color:#fff}
+  .command-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+  .command-kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 14px;min-width:0}
+  .command-kpi small{display:block;color:var(--muted);font-size:11px;font-weight:700;margin-bottom:4px}
+  .command-kpi b{display:block;color:var(--navy);font-family:'Noto Serif KR',serif;font-size:18px;line-height:1.35;overflow-wrap:anywhere}
+  .command-kpi.bad b{color:var(--red)}.command-kpi.good b{color:var(--green)}
+  .command-quick{background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden}
+  .command-quick-types{display:flex;gap:6px;padding:10px 12px;border-bottom:1px solid #ECE8DF;overflow-x:auto}
+  .command-quick-types button{white-space:nowrap;flex:0 0 auto}
+  .command-form{display:none;grid-template-columns:repeat(12,minmax(0,1fr));gap:8px;padding:12px}
+  .command-form.active{display:grid}.command-form input,.command-form select,.command-form textarea{width:100%;min-width:0;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);padding:9px;font:inherit}
+  .command-form textarea{min-height:42px;resize:vertical}.command-form .span-2{grid-column:span 2}.command-form .span-3{grid-column:span 3}.command-form .span-4{grid-column:span 4}.command-form .span-5{grid-column:span 5}.command-form .span-6{grid-column:span 6}.command-form .command-submit{grid-column:span 2}
+  .command-form-status{grid-column:1/-1;color:var(--muted);font-size:11px;min-height:16px}
+  .command-grid{display:grid;grid-template-columns:30fr 42fr 28fr;gap:12px;align-items:start}
+  .command-stack{display:grid;gap:12px}.command-card{background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden;min-width:0}
+  .command-card-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid #ECE8DF;background:#FBFAF7}
+  .command-card-head h3{margin:0;color:var(--navy);font-size:14px}.command-card-head span{font-size:11px;color:var(--muted)}
+  .command-list{max-height:300px;overflow:auto}.command-empty{padding:22px 14px;text-align:center;color:var(--muted);font-size:12px}
+  .command-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:9px;align-items:start;padding:10px 12px;border-bottom:1px solid #EEF0F2;font-size:12.5px}
+  .command-row:last-child{border-bottom:0}.command-row-time{font-weight:900;color:var(--navy);white-space:nowrap}.command-row-main{min-width:0;overflow-wrap:anywhere}.command-row-main b{display:block;color:var(--ink)}.command-row-main small{display:block;color:var(--muted);margin-top:2px}
+  .command-badge{display:inline-block;padding:2px 7px;border-radius:20px;background:#EEF1F5;color:var(--navy);font-size:10.5px;font-weight:800;white-space:nowrap}
+  .command-check{width:18px;height:18px}.command-card-foot{padding:9px 12px;border-top:1px solid #ECE8DF;text-align:right}
+  .command-card-foot button{font-size:11px}.command-text{padding:13px;white-space:pre-wrap;font-size:12.5px;line-height:1.65;min-height:74px}.command-text strong{color:var(--navy)}
+  .command-bottom{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}.command-table-wrap{overflow:auto}.command-table{border-collapse:collapse;width:100%;min-width:760px;font-size:12px}.command-table th,.command-table td{padding:9px;border-bottom:1px solid #E8EBEF;text-align:left}.command-table th{background:#F5F3EE;color:var(--navy)}.command-table .money{text-align:right;white-space:nowrap}.command-table .total{font-weight:900;background:#F7F8FA}
+  .command-report-mode .command-input-only{display:none!important}.command-report-mode .command-list{max-height:none}
+  @media print{body.print-command .tab-pane{display:none!important}body.print-command [data-pane="0"]{display:block!important}body.print-command .command-input-only,body.print-command .command-head-actions,body.print-command .toolbar,body.print-command .tabs{display:none!important}body.print-command .command-list{max-height:none;overflow:visible}body.print-command .command-table-wrap{overflow:visible}body.print-command .command-table{min-width:0;font-size:10px}}
+  @media(max-width:1050px){.command-kpis{grid-template-columns:repeat(3,1fr)}.command-grid{grid-template-columns:1fr 1fr}.command-grid>.command-stack:last-child{grid-column:1/-1}.command-form{grid-template-columns:repeat(6,minmax(0,1fr))}}
+  @media(max-width:800px){.command-pane input,.command-pane select,.command-pane textarea,.command-pane button{font-size:16px}.command-kpis{grid-template-columns:1fr 1fr}.command-grid{grid-template-columns:1fr}.command-grid>.command-stack:last-child{grid-column:auto}.command-form{grid-template-columns:1fr 1fr}.command-form>*{grid-column:1/-1!important}.command-form .command-submit{grid-column:2!important}.command-head{align-items:flex-start;flex-direction:column}.command-head-actions{width:100%}.command-head-actions button{flex:1}.command-list{max-height:none}}
+
 </style>
 </head>
 <body>
@@ -1162,10 +1197,32 @@
 <main>
 
   <nav class="tabs" id="tabBar">
+    <button class="tab-btn" data-tab="0" onclick="showTab(0)"><span class="tab-no">0</span><span class="tab-lb">오늘의 관제</span></button>
     <button class="tab-btn" data-tab="1" onclick="showTab(1)"><span class="tab-no">1</span><span class="tab-lb">오늘의 현황</span></button>
     <button class="tab-btn" data-tab="2" onclick="showTab(2)"><span class="tab-no">2</span><span class="tab-lb">계획·실행</span></button>
     <button class="tab-btn" data-tab="3" onclick="showTab(3)"><span class="tab-no">3</span><span class="tab-lb">매출 원장</span></button>
   </nav>
+
+  <section class="tab-pane" data-pane="0">
+    <div id="commandPane" class="command-pane">
+      <div class="command-head"><div><div class="dash-kicker">SALES COMMAND CENTER</div><h2>오늘의 관제</h2></div><div class="command-head-actions"><button id="commandInputMode" class="active" type="button" onclick="setCommandMode('input')">입력 화면</button><button id="commandReportMode" type="button" onclick="setCommandMode('report')">대표 보고</button><button type="button" onclick="copyCommandReport(this)">보고 복사</button><button type="button" onclick="printCommandCenter()">인쇄</button></div></div>
+      <div id="commandKpis" class="command-kpis"></div>
+      <section class="command-quick command-input-only">
+        <div id="commandQuickBar" class="command-quick-types"><button class="active" type="button" data-command-type="schedule" onclick="setCommandQuickType('schedule')">+ 일정</button><button type="button" data-command-type="task" onclick="setCommandQuickType('task')">+ 할 일</button><button type="button" data-command-type="activity" onclick="setCommandQuickType('activity')">+ 업무기록</button><button type="button" data-command-type="sale" onclick="setCommandQuickType('sale')">+ 매출</button><button type="button" data-command-type="brief" onclick="setCommandQuickType('brief')">+ 보고·전략</button></div>
+        <form id="commandScheduleForm" class="command-form active" data-command-form="schedule" onsubmit="saveCommandSchedule(event)"><input id="commandScheduleDate" class="span-2" type="date" aria-label="일정 날짜"><input id="commandScheduleTime" class="span-2" type="text" inputmode="numeric" placeholder="시간 13:00"><input id="commandScheduleText" class="span-6" type="text" placeholder="일정 내용"><button class="command-submit" type="submit">일정 저장</button><div class="command-form-status" id="commandScheduleStatus"></div></form>
+        <form id="commandTaskForm" class="command-form" data-command-form="task" onsubmit="saveCommandTask(event)"><input id="commandTaskDate" class="span-2" type="date" aria-label="할 일 날짜"><input id="commandTaskText" class="span-8" type="text" placeholder="오늘 꼭 끝낼 일"><button class="command-submit" type="submit">할 일 저장</button><div class="command-form-status" id="commandTaskStatus"></div></form>
+        <form id="commandActivityForm" class="command-form" data-command-form="activity" onsubmit="saveCommandWorkLog(event)"><input id="commandActivityTime" class="span-2" type="text" inputmode="numeric" placeholder="시간 13:00"><select id="commandActivityMethod" class="span-2"><option>전화</option><option>문자</option><option>카톡</option><option>대면</option><option>이메일</option><option>기타</option></select><select id="commandActivityStatus" class="span-2"><option>연락 전</option><option>접촉 시도</option><option>소통 완료</option></select><input id="commandActivityName" class="span-3" type="text" placeholder="대상"><input id="commandActivityContent" class="span-5" type="text" placeholder="한 일·결과"><input id="commandActivityNext" class="span-5" type="text" placeholder="다음 행동"><button class="command-submit" type="submit">기록 저장</button><div class="command-form-status" id="commandActivityFormStatus"></div></form>
+        <form id="commandSaleForm" class="command-form" data-command-form="sale" onsubmit="saveCommandSale(event)"><input id="commandSaleDate" class="span-2" type="date"><input id="commandSaleTarget" class="span-3" type="text" placeholder="대상"><input id="commandSaleItem" class="span-3" type="text" placeholder="아이템"><input id="commandSaleAmount" class="span-2" type="text" inputmode="numeric" placeholder="확정 금액"><input id="commandSaleMemo" class="span-4" type="text" placeholder="비고"><button class="command-submit" type="submit">매출 저장</button><div class="command-form-status" id="commandSaleStatus"></div></form>
+        <form id="commandBriefForm" class="command-form" data-command-form="brief" onsubmit="saveCommandBrief(event)"><select id="commandBriefKind" class="span-2"><option value="report">보고·협의</option><option value="recovery">전략</option></select><input id="commandBriefText" class="span-5" type="text" placeholder="진행상황 또는 전략"><input id="commandBriefResource" class="span-3" type="text" placeholder="대상·활용 자원"><input id="commandBriefNext" class="span-4" type="text" placeholder="다음 행동·대표님 요청"><button class="command-submit" type="submit">내용 저장</button><div class="command-form-status" id="commandBriefStatus"></div></form>
+      </section>
+      <div class="command-grid">
+        <div class="command-stack"><section class="command-card"><div class="command-card-head"><h3>오늘 일정</h3><span id="commandScheduleCount">0건</span></div><div id="commandSchedules" class="command-list"></div></section><section class="command-card"><div class="command-card-head"><h3>오늘 꼭 할 일</h3><span id="commandTaskCount">0건</span></div><div id="commandTasks" class="command-list"></div></section></div>
+        <div class="command-stack"><section class="command-card"><div class="command-card-head"><h3>오늘의 실제 업무 기록</h3><span>최신 7건</span></div><div id="commandActivities" class="command-list"></div><div class="command-card-foot"><button class="command-more" type="button" onclick="location.href='worklog.html'">업무 히스토리 전체 보기 →</button></div></section></div>
+        <div class="command-stack"><section class="command-card"><div class="command-card-head"><h3>오늘의 전략</h3></div><div id="commandStrategy" class="command-text"></div></section><section class="command-card"><div class="command-card-head"><h3>대표님 보고·협의</h3></div><div id="commandBriefs" class="command-list"></div></section></div>
+      </div>
+      <div class="command-bottom"><section class="command-card"><div class="command-card-head"><h3>오늘 매출</h3><span id="commandSalesSummary">0건 · 0원</span></div><div id="commandSales" class="command-table-wrap"></div></section><section class="command-card"><div class="command-card-head"><h3>이번 주 일자별 목표와 실적</h3><span id="commandWeekLabel"></span></div><div id="commandWeek" class="command-table-wrap"></div></section></div>
+    </div>
+  </section>
 
   <section class="tab-pane" data-pane="1">
     <div class="dash-head"><div><div class="dash-kicker">SALES BRIEFING</div><h2 class="dash-title">영업 현황 · 대표님 보고판</h2></div><span id="reportDate" class="dash-date"></span></div>
@@ -2420,18 +2477,24 @@
 
   // ---------- 탭 ----------
   function showTab(n){
-    n = parseInt(n, 10) || 1;
+    n = Number.isFinite(Number(n)) ? Number(n) : 0;
     document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-tab') == n); });
     document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.toggle('active', p.getAttribute('data-pane') == n); });
     try{ localStorage.setItem('salesTab', String(n)); }catch(e){}
+    if(n===0 && firebaseReady && currentMonth && currentMonth!==monthKeyNow()){
+      var todayMonth=monthKeyNow();
+      if(canEdit&&saveTimer){clearTimeout(saveTimer);saveTimer=null;manualSave().then(function(ok){if(ok)openMonth(todayMonth);});}
+      else openMonth(todayMonth);
+    }
+    if(n===0 && typeof renderCommandCenter==='function') renderCommandCenter();
     // 숨겨져 있던 동안 높이 계산이 안 된 펼침 영역 재계산
     growStratIfExpanded();
     document.querySelectorAll('.tab-pane.active .g-memoline.open .g-memo').forEach(function(ta){ autoGrowMemo(ta); });
   }
   function initTabs(){
-    var saved = '1';
-    try{ saved = localStorage.getItem('salesTab') || '1'; }catch(e){}
-    if(['1','2','3'].indexOf(String(saved)) === -1) saved = '1';
+    var saved = '0';
+    try{ saved = localStorage.getItem('salesTab') || '0'; }catch(e){}
+    if(['0','1','2','3'].indexOf(String(saved)) === -1) saved = '0';
     showTab(saved);
   }
 
@@ -2446,6 +2509,7 @@
       todoList = [];
       snap.forEach(function(doc){ var v = doc.data(); v.id = doc.id; todoList.push(v); });
       renderTodos();
+      if(typeof renderCommandPlans==='function') renderCommandPlans();
     }, function(){ /* 조회 실패 시 조용히 넘어감 */ });
   }
 
@@ -3459,6 +3523,7 @@
     var body=document.getElementById('logBody'); body.insertBefore(row,body.firstChild);
     itemEl.value=''; document.getElementById('ledgerQuickTarget').value=''; amountEl.value=''; document.getElementById('ledgerQuickMemo').value='';
     recalcAll(); scheduleSave(); showLedgerView('records'); itemEl.focus();
+    return row;
   }
 
   // 행 순서 바꾸기 (-1 위로 / 1 아래로)
@@ -3727,6 +3792,7 @@
     }
 
     refreshSimpleDashboard(goal,total,gap,actualByDate);
+    if(document.querySelector('[data-pane="0"].active')&&typeof renderCommandCenter==='function') renderCommandCenter();
 
   }
 
@@ -3927,13 +3993,13 @@
 
   function manualSave(){
     if(recalcTimer){ clearTimeout(recalcTimer); recalcTimer = null; recalcAll(); }  // 미뤄둔 계산 먼저 반영
-    if(isSnapshotFile){ setSaveStatus('snapshot'); return; }
-    if(!firebaseReady){ setSaveStatus('error', '서버 미연결'); return; }
-    if(!canEdit){ setSaveStatus('readonly', myEmail); return; }
+    if(isSnapshotFile){ setSaveStatus('snapshot'); return Promise.resolve(false); }
+    if(!firebaseReady){ setSaveStatus('error', '서버 미연결'); return Promise.resolve(false); }
+    if(!canEdit){ setSaveStatus('readonly', myEmail); return Promise.resolve(false); }
     setSaveStatus('saving');
-    db.collection(COLLECTION).doc(currentMonth).set(collectState())
-      .then(function(){ pendingRemote = null; setSaveStatus('saved'); })
-      .catch(function(e){ setSaveStatus('error', e.code || e.message); });
+    return db.collection(COLLECTION).doc(currentMonth).set(collectState())
+      .then(function(){ pendingRemote = null; setSaveStatus('saved'); return true; })
+      .catch(function(e){ setSaveStatus('error', e.code || e.message); return false; });
   }
 
   // ---------- auth ----------
@@ -3972,7 +4038,7 @@
     var editable = canEdit && !isSnapshotFile;
     if(!editable) closeGoalSetup();
     document.querySelectorAll('[contenteditable]').forEach(function(el){ el.setAttribute('contenteditable', editable ? 'true' : 'false'); });
-    document.querySelectorAll('#goalInput, #stratBody input, #stratBody select, #dbBody input, #itemBody input, #logBody input, #goalBody input, #quickDate, #quickItem, #quickAmount, #quickMemo, .quick-add, .strategy-quick input, .strategy-quick button, .today-goal-quick input, .today-goal-quick button, .today-quick-add input, .today-quick-add select, .today-quick-add button, #execQuickAdd input, #execQuickAdd select, #execQuickAdd button, .ledger-quick-form input, .ledger-quick-form button').forEach(function(el){ el.disabled = !editable; });
+    document.querySelectorAll('#goalInput, #stratBody input, #stratBody select, #dbBody input, #itemBody input, #logBody input, #goalBody input, #quickDate, #quickItem, #quickAmount, #quickMemo, .quick-add, .strategy-quick input, .strategy-quick button, .today-goal-quick input, .today-goal-quick button, .today-quick-add input, .today-quick-add select, .today-quick-add button, #execQuickAdd input, #execQuickAdd select, #execQuickAdd button, .ledger-quick-form input, .ledger-quick-form button, #commandPane .command-form input, #commandPane .command-form select, #commandPane .command-form textarea, #commandPane .command-form button').forEach(function(el){ el.disabled = !editable; });
     // 메모는 잠그지 않고 '수정 불가'로 둠 — 읽기 전용으로 보는 사람도 눌러서 전체를 볼 수 있어야 함
     var slt = document.getElementById('slText');
     if(slt) slt.readOnly = !editable;
@@ -3988,6 +4054,7 @@
     var btn = document.getElementById('authBtn');
     if(isSnapshotFile){ btn.style.display = 'none'; }
     else { btn.textContent = myEmail ? '🔓 로그아웃' : '🔑 편집 로그인'; }
+    if(document.querySelector('[data-pane="0"].active')&&typeof renderCommandCenter==='function') renderCommandCenter();
 
   }
 
@@ -4011,12 +4078,12 @@
         try{
           var saved=JSON.parse(baked.textContent);
           todoList=saved.todos||[];reportCache=saved.cache||{};reportWeekStart=saved.week||'';
-          applyState(saved.state);renderTodos();
+      applyState(saved.state);renderTodos();
         }catch(e){setSaveStatus('error','보관용 데이터 읽기 실패');}
       }
       applyEditMode();
       recalcAll();
-      showTab(1);
+      showTab(0);
       return;
     }
 
@@ -4353,7 +4420,8 @@
       db.collection(COLLECTION).doc(month).get().then(function(snap){
         reportCache[month]=Object.assign({},snap.exists?snap.data():{},{month:month});
         delete reportLoads[month];renderExecutiveReport();
-      }).catch(function(e){delete reportLoads[month];reportErrors[month]=e.code||'연결 오류';renderExecutiveReport();});
+        if(document.querySelector('[data-pane="0"].active')&&typeof renderCommandCenter==='function')renderCommandCenter();
+      }).catch(function(e){delete reportLoads[month];reportErrors[month]=e.code||'연결 오류';renderExecutiveReport();if(document.querySelector('[data-pane="0"].active')&&typeof renderCommandCenter==='function')renderCommandCenter();});
     }
     return null;
   }
@@ -4440,6 +4508,179 @@
     document.getElementById('reportRecovery').innerHTML=recovery.map(reportNoteHTML).join('')||'<p class="report-callout">'+(total<mg?'부족분 대응 전략·자원이 아직 등록되지 않았습니다. 2번에서 작성하거나 대표님과 협의할 사항을 남겨주세요.':'등록된 추가 대응 전략 없음')+'</p>';
     var monthRows=[];for(var d=month+'-01';d.slice(0,7)===month;d=dayOffset(d,1)){if(data.plans[d]||data.actual[d])monthRows.push({date:d,loaded:true,goal:data.goals[d]||0,actual:data.actual[d]||0,actualRows:data.actualRows[d]||[],plans:data.plans[d]||[]});}
     document.getElementById('ledgerDailyComparison').innerHTML='<h3>일자별 목표 대비 실제 매출</h3><p class="report-caption">목표는 2번에서 작성합니다. 실제 매출은 회사 장표 날짜 기준입니다.</p><div class="report-scroll">'+periodTable(monthRows,true).html+'</div>';
+  }
+
+  /* COMMAND_CORE_START */
+  function commandSnapshot(today,input){
+    input=input||{};
+    var dailyGoals=input.dailyGoals||{},dailyActual=input.dailyActual||{};
+    var parts=String(today).split('-').map(Number),base=new Date(parts[0],parts[1]-1,parts[2],12),weekday=base.getDay(),back=weekday===0?6:weekday-1;
+    var monday=new Date(base);monday.setDate(base.getDate()-back);
+    function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+    var weekDates=[];for(var i=0;i<7;i++){var d=new Date(monday);d.setDate(monday.getDate()+i);weekDates.push(iso(d));}
+    var month=String(today).slice(0,7),monthActual=Object.keys(dailyActual).filter(function(k){return k.slice(0,7)===month;}).reduce(function(n,k){return n+(Number(dailyActual[k])||0);},0);
+    var monthGoal=Number(input.monthGoal)||0,weekGoal=weekDates.reduce(function(n,k){return n+(Number(dailyGoals[k])||0);},0),weekActual=weekDates.reduce(function(n,k){return n+(Number(dailyActual[k])||0);},0);
+    return {monthGoal:monthGoal,monthActual:monthActual,monthGap:Math.max(0,monthGoal-monthActual),monthRate:monthGoal?Math.round(monthActual/monthGoal*100):0,todayGoal:Number(dailyGoals[today])||0,todayActual:Number(dailyActual[today])||0,weekGoal:weekGoal,weekActual:weekActual};
+  }
+  /* COMMAND_CORE_END */
+
+  var commandQuickType='schedule';
+  var COMMAND_LOGS='workLogs',commandWorkLogs=[],commandLogsUnsub=null,commandLogsDate='';
+  function commandCanWrite(statusId){
+    if(canEdit)return true;
+    var el=statusId&&document.getElementById(statusId);if(el)el.textContent='편집 권한이 있는 계정으로 로그인해주세요.';
+    setSaveStatus('readonly',myEmail);return false;
+  }
+  function commandEmpty(text){return '<div class="command-empty">'+escapeHtml(text)+'</div>';}
+  function commandMoney(n){return fmt(Number(n)||0)+'원';}
+  function commandNameKey(name){return String(name||'').trim().replace(/\s+/g,'').toLowerCase();}
+  function setCommandQuickType(type){
+    commandQuickType=type;
+    document.querySelectorAll('[data-command-type]').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-command-type')===type);});
+    document.querySelectorAll('[data-command-form]').forEach(function(f){f.classList.toggle('active',f.getAttribute('data-command-form')===type);});
+    var form=document.querySelector('[data-command-form="'+type+'"]');if(form){var input=form.querySelector('input:not([type="date"])');if(input)input.focus();}
+  }
+  function commandSetDefaults(){
+    var today=localISO(new Date()),hm=String(new Date().getHours()).padStart(2,'0')+':'+String(new Date().getMinutes()).padStart(2,'0');
+    ['commandScheduleDate','commandTaskDate','commandSaleDate'].forEach(function(id){var el=document.getElementById(id);if(el&&!el.value)el.value=today;});
+    ['commandScheduleTime','commandActivityTime'].forEach(function(id){var el=document.getElementById(id);if(el&&!el.value)el.value=hm;});
+  }
+  function renderCommandKpis(){
+    var box=document.getElementById('commandKpis');if(!box)return;
+    var today=localISO(new Date()),state=collectState(),data=reportData(state),dailyGoals=Object.assign({},data.goals),dailyActual=Object.assign({},data.actual);
+    weekReportRows(mondayISO(today)).forEach(function(r){if(r.loaded){dailyGoals[r.date]=r.goal;dailyActual[r.date]=r.actual;}});
+    var s=commandSnapshot(today,{monthGoal:state.goal,dailyGoals:dailyGoals,dailyActual:dailyActual});
+    box.innerHTML=[['이번 달 목표',commandMoney(s.monthGoal),''],['현재 실적',commandMoney(s.monthActual),'good'],['남은 금액',commandMoney(s.monthGap),s.monthGap?'bad':'good'],['달성률',s.monthRate+'%',''],['이번 주 목표 / 실적',commandMoney(s.weekGoal)+' / '+commandMoney(s.weekActual),'']].map(function(x){return '<div class="command-kpi '+x[2]+'"><small>'+x[0]+'</small><b>'+x[1]+'</b></div>';}).join('');
+  }
+  function renderCommandPlans(){
+    var today=localISO(new Date()),schedules=(todoList||[]).filter(function(x){return todoType(x)==='schedule'&&x.date===today;}).sort(function(a,b){return String(a.time||'99:99').localeCompare(String(b.time||'99:99'));});
+    var reportMode=document.getElementById('commandPane').classList.contains('command-report-mode');
+    var tasks=(todoList||[]).filter(function(x){return todoType(x)==='task'&&((!x.done&&(x.date===today||x.date<today))||(!reportMode&&x.done&&x.date===today));}).sort(function(a,b){return Number(!!a.done)-Number(!!b.done)||String(a.date||'').localeCompare(String(b.date||''));});
+    var sb=document.getElementById('commandSchedules'),tb=document.getElementById('commandTasks');if(!sb||!tb)return;
+    document.getElementById('commandScheduleCount').textContent=schedules.length+'건';document.getElementById('commandTaskCount').textContent=tasks.filter(function(x){return !x.done;}).length+'건';
+    sb.innerHTML=schedules.length?schedules.map(function(x){return '<div class="command-row"><span class="command-row-time">'+escapeHtml(x.time||'미정')+'</span><div class="command-row-main"><b>'+escapeHtml(x.text||'')+'</b></div><span class="command-badge">일정</span></div>';}).join(''):commandEmpty('오늘 일정이 없습니다.');
+    tb.innerHTML=tasks.length?tasks.map(function(x){return '<div class="command-row"><input class="command-check command-input-only" type="checkbox" '+(x.done?'checked':'')+' onchange="toggleTodo(\''+escapeAttr(x.id)+'\','+(x.done?'true':'false')+')"><div class="command-row-main"><b style="'+(x.done?'text-decoration:line-through;color:#8B909B':'')+'">'+escapeHtml(x.text||'')+'</b><small>'+(x.date<today?'기한 지남 · ':'')+escapeHtml(x.date||'')+'</small></div><span class="command-badge">'+(x.done?'완료':x.priority==='important'?'중요':'할 일')+'</span></div>';}).join(''):commandEmpty('오늘 꼭 할 일이 없습니다.');
+  }
+  function renderCommandBriefs(){
+    var today=localISO(new Date()),ordered=(briefNotes||[]).map(function(x,i){return {note:x,index:i};}).sort(function(a,b){var ak=a.note.createdAt||a.note.date||'',bk=b.note.createdAt||b.note.date||'';return String(bk).localeCompare(String(ak))||(b.index-a.index);}).map(function(x){return x.note;}),strategies=ordered.filter(function(x){return x.kind==='recovery'&&x.status!=='done';}),reports=ordered.filter(function(x){return x.kind!=='recovery'&&(x.status!=='done'||x.date===today);});
+    var st=document.getElementById('commandStrategy'),br=document.getElementById('commandBriefs');if(!st||!br)return;
+    st.innerHTML=strategies.length?strategies.slice(0,3).map(function(x){return '<div><strong>'+escapeHtml(x.text||'전략 내용 미입력')+'</strong>'+(x.resource?'<br>'+escapeHtml(x.resource):'')+(x.next?'<br><small>다음 행동 · '+escapeHtml(x.next)+'</small>':'')+'</div>';}).join('<hr>'):commandEmpty('등록된 오늘의 전략이 없습니다.');
+    br.innerHTML=reports.length?reports.slice(0,5).map(function(x){return '<div class="command-row"><span class="command-badge">'+escapeHtml(x.status==='discuss'?'협의 필요':x.status==='done'?'완료':'진행')+'</span><div class="command-row-main"><b>'+escapeHtml(x.text||'내용 미입력')+'</b><small>'+escapeHtml([x.resource,x.next].filter(Boolean).join(' · '))+'</small></div></div>';}).join(''):commandEmpty('등록된 보고·협의사항이 없습니다.');
+  }
+  function renderCommandCenter(){
+    commandSetDefaults();renderCommandKpis();renderCommandPlans();renderCommandBriefs();
+    if(typeof renderCommandActivities==='function')renderCommandActivities();
+    if(typeof renderCommandSales==='function')renderCommandSales();
+    if(typeof renderCommandWeek==='function')renderCommandWeek();
+    if(typeof initCommandWorkLogs==='function')initCommandWorkLogs();
+    var saved='input';try{saved=localStorage.getItem('commandMode')||'input';}catch(err){}
+    setCommandMode(canEdit?saved:'report',canEdit);
+  }
+  function initCommandWorkLogs(){
+    if(!firebaseReady||!db)return;
+    var today=localISO(new Date());if(commandLogsDate===today&&commandLogsUnsub)return;
+    if(commandLogsUnsub){commandLogsUnsub();commandLogsUnsub=null;}
+    commandLogsDate=today;
+    commandLogsUnsub=db.collection(COMMAND_LOGS).where('date','==',today).onSnapshot(function(snap){
+      commandWorkLogs=[];snap.forEach(function(doc){var v=doc.data();v.id=doc.id;commandWorkLogs.push(v);});
+      commandWorkLogs.sort(function(a,b){return String((b.time||'')+(b.createdAt||'')).localeCompare(String((a.time||'')+(a.createdAt||'')));});
+      renderCommandActivities();
+    },function(err){var box=document.getElementById('commandActivities');if(box)box.innerHTML=commandEmpty(err&&err.code==='permission-denied'?'업무기록 조회 권한이 없습니다.':'업무기록을 불러오지 못했습니다.');});
+  }
+  function renderCommandActivities(){
+    var box=document.getElementById('commandActivities');if(!box)return;
+    var rows=commandWorkLogs.slice(0,7);
+    box.innerHTML=rows.length?rows.map(function(x){return '<div class="command-row"><span class="command-row-time">'+escapeHtml(x.time||'')+'</span><div class="command-row-main"><b>'+escapeHtml(x.memberName||'대상 미입력')+' · '+escapeHtml(x.content||'내용 미입력')+'</b><small>'+escapeHtml([x.contactMethod,x.contactStatus,x.followUp?('다음 '+x.followUp):''].filter(Boolean).join(' · '))+'</small></div><span class="command-badge">'+escapeHtml(x.contactMethod||'업무')+'</span></div>';}).join(''):commandEmpty('오늘 기록된 업무가 없습니다.');
+  }
+  function saveCommandWorkLog(e){
+    e.preventDefault();var statusEl=document.getElementById('commandActivityFormStatus');
+    if(!canEdit){statusEl.textContent='편집 권한이 있는 계정으로 로그인해주세요.';return;}
+    var name=document.getElementById('commandActivityName').value.trim(),time=document.getElementById('commandActivityTime').value.trim();
+    if(!name){statusEl.textContent='대상을 입력해주세요.';document.getElementById('commandActivityName').focus();return;}
+    if(!/^\d{2}:\d{2}$/.test(time)||Number(time.slice(0,2))>23||Number(time.slice(3))>59){statusEl.textContent='시간을 24시간제로 입력해주세요. 예: 13:00';document.getElementById('commandActivityTime').focus();return;}
+    if(!firebaseReady||!db){statusEl.textContent='서버에 연결되지 않았습니다.';return;}
+    var content=document.getElementById('commandActivityContent').value.trim(),followUp=document.getElementById('commandActivityNext').value.trim();
+    var rec={date:localISO(new Date()),time:time,memberKey:commandNameKey(name),memberName:name,refKey:'',refName:'',isConsult:false,csStatus:'',csField:'',csWay:'',csExpert:'',csResult:'',csDoneAt:'',contactMethod:document.getElementById('commandActivityMethod').value,contactStatus:document.getElementById('commandActivityStatus').value,product:'',content:content,followUp:followUp,done:!followUp,gradeAt:'',createdAt:new Date().toISOString()};
+    statusEl.textContent='저장 중…';setSaveStatus('saving');
+    db.collection(COMMAND_LOGS).add(rec).then(function(){document.getElementById('commandActivityName').value='';document.getElementById('commandActivityContent').value='';document.getElementById('commandActivityNext').value='';statusEl.textContent='업무기록을 저장했습니다.';setSaveStatus('saved');}).catch(function(err){var denied=String(err&&err.code||'').indexOf('permission-denied')>-1;statusEl.textContent=denied?'업무기록 저장 권한이 없습니다.':'업무기록 저장에 실패했습니다.';setSaveStatus('error',denied?'permission-denied':(err.code||'연결 오류'));});
+  }
+  function saveCommandSchedule(e){
+    e.preventDefault();var status=document.getElementById('commandScheduleStatus');if(!commandCanWrite('commandScheduleStatus'))return;
+    var date=document.getElementById('commandScheduleDate').value||localISO(new Date()),time=document.getElementById('commandScheduleTime').value.trim(),text=document.getElementById('commandScheduleText').value.trim();
+    if(!/^\d{2}:\d{2}$/.test(time)||Number(time.slice(0,2))>23||Number(time.slice(3))>59){status.textContent='시간을 24시간제로 입력해주세요. 예: 13:00';document.getElementById('commandScheduleTime').focus();return;}
+    if(!text){status.textContent='일정 내용을 입력해주세요.';document.getElementById('commandScheduleText').focus();return;}
+    if(!firebaseReady||!db){status.textContent='서버에 연결되지 않았습니다.';return;}
+    status.textContent='저장 중…';db.collection(TODOS).add({type:'schedule',date:date,time:time,text:text,done:false,createdAt:new Date().toISOString()}).then(function(){document.getElementById('commandScheduleText').value='';status.textContent='일정을 저장했습니다.';setSaveStatus('saved');}).catch(function(err){status.textContent=String(err&&err.code||'').indexOf('permission-denied')>-1?'일정 저장 권한이 없습니다.':'일정 저장에 실패했습니다.';setSaveStatus('error',err.code||'연결 오류');});
+  }
+  function saveCommandTask(e){
+    e.preventDefault();var status=document.getElementById('commandTaskStatus');if(!commandCanWrite('commandTaskStatus'))return;
+    var date=document.getElementById('commandTaskDate').value||localISO(new Date()),text=document.getElementById('commandTaskText').value.trim();
+    if(!text){status.textContent='할 일을 입력해주세요.';document.getElementById('commandTaskText').focus();return;}
+    if(!firebaseReady||!db){status.textContent='서버에 연결되지 않았습니다.';return;}
+    status.textContent='저장 중…';db.collection(TODOS).add({type:'task',date:date,priority:'important',text:text,done:false,createdAt:new Date().toISOString()}).then(function(){document.getElementById('commandTaskText').value='';status.textContent='할 일을 저장했습니다.';setSaveStatus('saved');}).catch(function(err){status.textContent=String(err&&err.code||'').indexOf('permission-denied')>-1?'할 일 저장 권한이 없습니다.':'할 일 저장에 실패했습니다.';setSaveStatus('error',err.code||'연결 오류');});
+  }
+  function commandSetFormSaving(form,saving){
+    if(!form)return;form.dataset.saving=saving?'1':'';
+    form.querySelectorAll('input,select,textarea,button').forEach(function(el){el.disabled=!!saving||!canEdit;});
+  }
+  function saveCommandBrief(e){
+    e.preventDefault();var form=e.currentTarget;if(form.dataset.saving==='1'||!commandCanWrite('commandBriefStatus'))return;
+    var text=document.getElementById('commandBriefText').value.trim();if(!text){document.getElementById('commandBriefStatus').textContent='진행상황 또는 전략을 입력해주세요.';return;}
+    var note={kind:document.getElementById('commandBriefKind').value,date:localISO(new Date()),text:text,resource:document.getElementById('commandBriefResource').value.trim(),next:document.getElementById('commandBriefNext').value.trim(),status:'open',createdAt:new Date().toISOString()};
+    commandSetFormSaving(form,true);briefNotes.push(note);renderBriefEditor();renderCommandBriefs();scheduleSave();if(saveTimer){clearTimeout(saveTimer);saveTimer=null;}
+    document.getElementById('commandBriefStatus').textContent='저장 중…';manualSave().then(function(ok){commandSetFormSaving(form,false);if(ok){document.getElementById('commandBriefText').value='';document.getElementById('commandBriefResource').value='';document.getElementById('commandBriefNext').value='';document.getElementById('commandBriefStatus').textContent='저장했습니다.';}else{briefNotes=briefNotes.filter(function(x){return x!==note;});renderBriefEditor();renderCommandBriefs();document.getElementById('commandBriefStatus').textContent='저장하지 못했습니다. 입력 내용은 그대로 남아 있습니다.';}});
+  }
+  function saveCommandSale(e){
+    e.preventDefault();var form=e.currentTarget,status=document.getElementById('commandSaleStatus');
+    if(form.dataset.saving==='1'||!commandCanWrite('commandSaleStatus'))return;
+    var item=document.getElementById('commandSaleItem').value.trim(),amount=toNum(document.getElementById('commandSaleAmount').value);
+    if(!item){status.textContent='아이템을 입력해주세요.';document.getElementById('commandSaleItem').focus();return;}
+    if(!amount){status.textContent='확정 금액을 입력해주세요.';document.getElementById('commandSaleAmount').focus();return;}
+    document.getElementById('ledgerQuickDate').value=document.getElementById('commandSaleDate').value||localISO(new Date());
+    document.getElementById('ledgerQuickTarget').value=document.getElementById('commandSaleTarget').value.trim();
+    document.getElementById('ledgerQuickItem').value=item;
+    document.getElementById('ledgerQuickAmount').value=String(amount);
+    document.getElementById('ledgerQuickMemo').value=document.getElementById('commandSaleMemo').value.trim();
+    commandSetFormSaving(form,true);var row=addLedgerSale();if(!row){commandSetFormSaving(form,false);return;}if(saveTimer){clearTimeout(saveTimer);saveTimer=null;}status.textContent='저장 중…';
+    manualSave().then(function(ok){commandSetFormSaving(form,false);if(ok){document.getElementById('commandSaleTarget').value='';document.getElementById('commandSaleItem').value='';document.getElementById('commandSaleAmount').value='';document.getElementById('commandSaleMemo').value='';status.textContent='매출 원장에 기록했습니다.';}else{row.remove();recalcAll();status.textContent='저장하지 못했습니다. 입력 내용은 그대로 남아 있습니다.';}renderCommandSales();renderCommandWeek();renderCommandKpis();});
+  }
+  function renderCommandSales(){
+    var box=document.getElementById('commandSales'),summary=document.getElementById('commandSalesSummary');if(!box||!summary)return;
+    var today=localISO(new Date()),state=collectState(),data=reportData(state),rows=(state.rows||[]).filter(function(x){return x.date===today&&Number(x.amount);}),total=rows.reduce(function(n,x){return n+(Number(x.amount)||0);},0),goal=Number(data.goals[today])||0,diff=total-goal,rate=reportRate(goal,total);
+    summary.textContent=rows.length+'건 · 목표 '+commandMoney(goal)+' · 실적 '+commandMoney(total)+' · 차이 '+signedMoney(diff)+' · '+rate;
+    if(!rows.length){box.innerHTML=commandEmpty('오늘 기록된 매출이 없습니다.');return;}
+    box.innerHTML='<table class="command-table"><thead><tr><th>대상</th><th>아이템</th><th class="money">확정 금액</th><th>비고</th></tr></thead><tbody>'+rows.map(function(x){return '<tr><td>'+escapeHtml(x.target||'—')+'</td><td>'+escapeHtml(x.item||'—')+'</td><td class="money">'+commandMoney(x.amount)+'</td><td>'+escapeHtml(x.memo||'')+'</td></tr>';}).join('')+'<tr class="total"><td colspan="2">오늘 합계</td><td class="money">'+commandMoney(total)+'</td><td></td></tr></tbody></table>';
+  }
+  function renderCommandWeek(){
+    var box=document.getElementById('commandWeek'),label=document.getElementById('commandWeekLabel');if(!box||!label)return;
+    var start=mondayISO(localISO(new Date())),rows=weekReportRows(start),totals=periodTable(rows,true);
+    label.textContent=start+' ~ '+dayOffset(start,6)+' · 목표 '+commandMoney(totals.goal)+' / 실적 '+commandMoney(totals.actual);
+    box.innerHTML=totals.html;
+  }
+  function setCommandMode(mode,persist){
+    mode=mode==='report'?'report':'input';if(mode==='input'&&!canEdit)mode='report';var pane=document.getElementById('commandPane');if(!pane)return;
+    pane.classList.toggle('command-report-mode',mode==='report');
+    var input=document.getElementById('commandInputMode'),report=document.getElementById('commandReportMode');if(input)input.classList.toggle('active',mode==='input');if(report)report.classList.toggle('active',mode==='report');
+    if(persist!==false&&canEdit){try{localStorage.setItem('commandMode',mode);}catch(err){}}
+    renderCommandPlans();
+  }
+  function copyCommandReport(btn){
+    var today=localISO(new Date()),state=collectState(),data=reportData(state),dailyGoals=Object.assign({},data.goals),dailyActual=Object.assign({},data.actual),weekRows=weekReportRows(mondayISO(today));
+    if(weekRows.some(function(r){return !r.loaded;})){var old=btn&&btn.textContent;if(btn)btn.textContent='자료 불러오는 중…';setTimeout(function(){if(btn)btn.textContent=old||'보고 복사';},1800);return;}
+    weekRows.forEach(function(r){if(r.loaded){dailyGoals[r.date]=r.goal;dailyActual[r.date]=r.actual;}});
+    var s=commandSnapshot(today,{monthGoal:state.goal,dailyGoals:dailyGoals,dailyActual:dailyActual});
+    var out=[['오늘의 관제',today],['이번 달 목표',s.monthGoal],['현재 실적',s.monthActual],['남은 금액',s.monthGap],['달성률',s.monthRate+'%'],['이번 주 목표',s.weekGoal],['이번 주 실적',s.weekActual],[]];
+    out.push(['오늘 일정']);(todoList||[]).filter(function(x){return todoType(x)==='schedule'&&x.date===today;}).forEach(function(x){out.push([x.time||'',x.text||'']);});
+    out.push([],['오늘 꼭 할 일']);(todoList||[]).filter(function(x){return todoType(x)==='task'&&!x.done&&(x.date===today||x.date<today);}).forEach(function(x){out.push(['미완료',x.text||'']);});
+    out.push([],['오늘 업무기록']);commandWorkLogs.slice(0,7).forEach(function(x){out.push([x.time||'',x.memberName||'',x.contactMethod||'',x.content||'',x.followUp||'']);});
+    out.push([],['보고·전략']);(briefNotes||[]).filter(function(x){return x.status!=='done'||x.date===today;}).forEach(function(x){out.push([x.kind==='recovery'?'전략':'보고',x.text||'',x.resource||'',x.next||'']);});
+    out.push([],['오늘 매출']);(state.rows||[]).filter(function(x){return x.date===today&&Number(x.amount);}).forEach(function(x){out.push([x.target||'',x.item||'',Number(x.amount)||0,x.memo||'']);});
+    copyTsv(out,btn);
+  }
+  function printCommandCenter(){
+    setCommandMode('report');document.body.classList.add('print-command');
+    var cleanup=function(){document.body.classList.remove('print-command');window.removeEventListener('afterprint',cleanup);};
+    window.addEventListener('afterprint',cleanup);window.print();setTimeout(cleanup,1500);
   }
   function copyWeeklyReport(btn){
     var rows=weekReportRows(reportWeekStart),out=[['일자','대상','전략·행동','아이템·구성','목표','실행 상태','결과·비고','당일 전체 실적','차이','달성률']];
