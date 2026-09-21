@@ -1098,17 +1098,32 @@
   .report-line{border-top:1px solid #ECEEF1;padding:9px 0;font-size:13px;line-height:1.6;overflow-wrap:anywhere}
   .report-line small{display:block;color:var(--muted)}
   .report-callout{padding:12px;background:#FFF7E9;border-radius:9px;line-height:1.7;font-size:13px}
-  .brief-row{display:grid;grid-template-columns:130px 135px 1fr 1fr 1fr 120px 35px;gap:7px;padding:12px 0;border-bottom:1px solid var(--line)}
-  .brief-row label{font-size:11px;color:var(--muted)}
-  .brief-row input,.brief-row textarea,.brief-row select{box-sizing:border-box;width:100%;padding:8px;border:1px solid var(--line);border-radius:7px;font:inherit;color:var(--ink);background:white}
-  .brief-row textarea{min-height:75px;resize:vertical}
+  .brief-summary{display:flex;gap:7px;flex-wrap:wrap;margin:4px 0 13px}
+  .brief-summary-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:#F1F2F4;color:var(--muted);font-size:11px;font-weight:800}
+  .brief-summary-chip b{color:var(--navy);font-size:12px}
+  .brief-list{display:grid;gap:8px}
+  .brief-item{border:1px solid var(--line);border-radius:11px;background:#fff;overflow:hidden}
+  .brief-item.kind-recovery{border-left:4px solid var(--brass)}.brief-item.kind-report{border-left:4px solid #7890AF}
+  .brief-item-summary{display:grid;grid-template-columns:auto 90px minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:11px 12px}
+  .brief-kind,.brief-status{display:inline-flex;align-items:center;justify-content:center;width:max-content;padding:3px 8px;border-radius:20px;font-size:10.5px;font-weight:800;white-space:nowrap}
+  .brief-kind.report{background:#EAF0F8;color:#36577C}.brief-kind.recovery{background:#FFF1D8;color:#805C1F}
+  .brief-status.open{background:#EEF1F5;color:#33445D}.brief-status.discuss{background:#FCEBD8;color:#935D18}.brief-status.done{background:#E7F3EC;color:#347154}
+  .brief-date{font-size:11px;color:var(--muted);white-space:nowrap}.brief-main{min-width:0}.brief-main strong{display:block;color:var(--ink);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brief-main small{display:block;color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+  .brief-toggle{border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:7px;padding:6px 9px;font-weight:800;font-size:11px;cursor:pointer}
+  .brief-item-editor{display:none;grid-template-columns:140px 150px 1fr;gap:9px;padding:13px;background:#FAFAF8;border-top:1px solid #ECE8DF}
+  .brief-item.open .brief-item-editor{display:grid}
+  .brief-field{font-size:11px;color:var(--muted)}.brief-field.wide{grid-column:span 1}.brief-field.full{grid-column:1/-1}
+  .brief-field input,.brief-field textarea,.brief-field select{display:block;box-sizing:border-box;width:100%;margin-top:4px;padding:8px;border:1px solid var(--line);border-radius:7px;font:inherit;color:var(--ink);background:white}
+  .brief-field textarea{min-height:68px;resize:vertical}.brief-editor-actions{grid-column:1/-1;display:flex;justify-content:flex-end;gap:7px}
+  .brief-delete{border:1px solid #E6C7C2;background:#fff;color:var(--red);border-radius:7px;padding:7px 10px;font-weight:800;cursor:pointer}
   #legacyGoalMount{padding:15px}
   #todoEditorMount .today-command{box-shadow:none;border:0;margin:0}
   #todoEditorMount .today-all{display:block}
   #legacyGoalMount .ledger-plan-actions,#legacyGoalMount .goal-edit-only{display:none!important}
   #legacyGoalMount input,#legacyGoalMount textarea{pointer-events:none}
   #legacyGoalMount .del-x{display:none!important}
-  @media(max-width:1100px){.report-top{grid-template-columns:1fr}.brief-row{grid-template-columns:1fr 1fr}.report-week .dash-panel-head{align-items:flex-start;flex-direction:column}.calendar-link-editor{grid-template-columns:1fr}.calendar-link-editor button{width:100%}}
+  @media(max-width:1100px){.report-top{grid-template-columns:1fr}.brief-item-editor{grid-template-columns:1fr 1fr}.report-week .dash-panel-head{align-items:flex-start;flex-direction:column}.calendar-link-editor{grid-template-columns:1fr}.calendar-link-editor button{width:100%}}
+  @media(max-width:700px){.brief-item-summary{grid-template-columns:auto 1fr auto}.brief-date{display:none}.brief-status{grid-column:1}.brief-main{grid-column:2/4;grid-row:1/3}.brief-toggle{grid-column:3;grid-row:1}.brief-item-editor{grid-template-columns:1fr}.brief-field,.brief-field.full,.brief-editor-actions{grid-column:1}}
   @media print{
     [data-pane="2"],[data-pane="3"],#legacyDashboardMount,.report-nav,.toolbar,.tabs,.calendar-open-btn{display:none!important}
     [data-pane="1"]{display:block!important}.report-scroll{overflow:visible}
@@ -1431,7 +1446,7 @@
 
     <section class="goal-exec-card"><div class="goal-exec-card-head"><span class="goal-exec-card-title">일정 · 꼭 할 일</span><button class="dash-action-btn goal-edit-only" onclick="openGoalSetup()">이번 달 목표 설정</button></div><div class="calendar-link-editor goal-edit-only"><label for="centerCalendarUrl">센터 전체 일정표</label><input type="url" id="centerCalendarUrl" placeholder="구글 일정표 공유 링크를 붙여넣으세요" oninput="onCenterCalendarUrlInput()"><button type="button" onclick="openCenterCalendar()">링크 열기</button></div><div id="todoEditorMount"></div></section>
     <section class="goal-exec-card"><div class="goal-exec-card-head"><span class="goal-exec-card-title">진행 보고 · 협의 / 부족분 대응</span><button class="dash-action-btn goal-edit-only" onclick="addBriefNote()">+ 보고·전략 추가</button></div>
-    <p class="ge-footnote">보고는 진행상황과 판단 요청, 대응 전략은 활용할 자원과 다음 행동을 적습니다. 금액은 위·아래 계획에 중복해서 더하지 않습니다.</p><div id="briefEditor"></div></section>
+    <div id="briefSummary" class="brief-summary"></div><div id="briefEditor" class="brief-list"></div></section>
     <div class="goal-exec-kpis">
       <div class="kpi-card"><div class="kpi-label">이번 달 목표</div><div class="kpi-value" id="geGoal">0원</div><div class="kpi-sub">월간 기준</div></div>
       <div class="kpi-card good"><div class="kpi-label">현재 실적</div><div class="kpi-value" id="geActual">0원</div><div class="kpi-sub">매출 기록 자동 집계</div></div>
@@ -4320,6 +4335,7 @@
   // ===== Executive report: company ledger date is the only actual-sales basis =====
   var CENTER_CALENDAR_URL='https://docs.google.com/spreadsheets/d/1fUdBppPRzn3j-iqNkDeASEeATJyYv8qtx6QYu1E7Ld0/edit?gid=82079490#gid=82079490';
   var briefNotes=[];
+  var briefEditingIndex=-1;
   var reportWeekStart='';
   var reportCache={},reportLoads={},reportErrors={};
   function executionLabel(v){return {planned:'예정',doing:'진행',done:'실행 완료',hold:'보류'}[v]||'예정';}
@@ -4388,24 +4404,37 @@
   }
   function addBriefNote(){
     if(!canEdit||isSnapshotFile)return;
-    briefNotes.push({kind:'report',date:localISO(new Date()),text:'',resource:'',next:'',status:'open'});
+    briefNotes.push({kind:'report',date:localISO(new Date()),text:'',resource:'',next:'',status:'open',createdAt:new Date().toISOString()});
+    briefEditingIndex=briefNotes.length-1;
     renderBriefEditor();
-    document.querySelector('#briefEditor .brief-row:last-child textarea').focus();
+    var target=document.querySelector('#briefEditor [data-brief-index="'+briefEditingIndex+'"] textarea');if(target)target.focus();
   }
-  function saveBriefField(index,key,value){if(!canEdit||!briefNotes[index])return;briefNotes[index][key]=value;recalcSoon();scheduleSave();}
-  function removeBriefNote(i){if(!canEdit||!confirm('이 보고·전략 항목을 삭제할까요?'))return;briefNotes.splice(i,1);renderBriefEditor();recalcAll();scheduleSave();}
+  function saveBriefField(index,key,value,rerender){if(!canEdit||!briefNotes[index])return;briefNotes[index][key]=value;recalcSoon();scheduleSave();if(rerender)renderBriefEditor();}
+  function removeBriefNote(i){if(!canEdit||!confirm('이 보고·전략 항목을 삭제할까요?'))return;briefNotes.splice(i,1);briefEditingIndex=-1;renderBriefEditor();recalcAll();scheduleSave();}
+  function toggleBriefEdit(i){briefEditingIndex=briefEditingIndex===i?-1:i;renderBriefEditor();}
+  function briefStatusLabel(status){return status==='discuss'?'협의 필요':status==='done'?'완료':'진행';}
+  function renderBriefSummary(){
+    var box=document.getElementById('briefSummary');if(!box)return;
+    var counts={all:briefNotes.length,open:0,discuss:0,done:0};briefNotes.forEach(function(n){counts[n.status]===undefined?counts.open++:counts[n.status]++;});
+    box.innerHTML=[['전체',counts.all],['진행',counts.open],['협의 필요',counts.discuss],['완료',counts.done]].map(function(x){return '<span class="brief-summary-chip">'+x[0]+' <b>'+x[1]+'</b></span>';}).join('');
+  }
   function renderBriefEditor(){
     var box=document.getElementById('briefEditor');if(!box)return;
-    box.innerHTML=briefNotes.map(function(n,i){
+    renderBriefSummary();
+    var ordered=briefNotes.map(function(n,i){return {note:n,index:i};}).sort(function(a,b){var ak=a.note.createdAt||a.note.date||'',bk=b.note.createdAt||b.note.date||'';return String(bk).localeCompare(String(ak))||(b.index-a.index);});
+    box.innerHTML=ordered.map(function(entry){var n=entry.note,i=entry.index,isOpen=briefEditingIndex===i;
       function field(key,label,type){
         var val=escapeHtml(n[key]||'');
-        return '<label>'+label+(type==='textarea'?'<textarea oninput="saveBriefField('+i+',\''+key+'\',this.value)">'+val+'</textarea>':'<input type="'+type+'" value="'+escapeAttr(n[key]||'')+'" oninput="saveBriefField('+i+',\''+key+'\',this.value)">')+'</label>';
+        return '<label class="brief-field '+(type==='textarea'?'wide':'')+'">'+label+(type==='textarea'?'<textarea oninput="saveBriefField('+i+',\''+key+'\',this.value)">'+val+'</textarea>':'<input type="'+type+'" value="'+escapeAttr(n[key]||'')+'" onchange="saveBriefField('+i+',\''+key+'\',this.value,true)">')+'</label>';
       }
-      return '<div class="brief-row"><label>구분<select onchange="saveBriefField('+i+',\'kind\',this.value)"><option value="report"'+(n.kind!=='recovery'?' selected':'')+'>보고·협의</option><option value="recovery"'+(n.kind==='recovery'?' selected':'')+'>부족분 대응</option></select></label>'+
-        field('date','보고일 / 확인 기한','date')+field('text','진행상황 / 대응 전략','textarea')+field('resource','대상·활용 자원','textarea')+field('next','다음 행동 / 대표님 요청','textarea')+
-        '<label>상태<select onchange="saveBriefField('+i+',\'status\',this.value)">'+[['open','진행'],['discuss','협의 필요'],['done','완료']].map(function(x){return '<option value="'+x[0]+'"'+(n.status===x[0]?' selected':'')+'>'+x[1]+'</option>';}).join('')+'</select></label><button onclick="removeBriefNote('+i+')" aria-label="삭제">×</button></div>';
+      var kind=n.kind==='recovery'?'recovery':'report',kindLabel=kind==='recovery'?'부족분 대응':'보고·협의',meta=[];if(n.resource)meta.push('자원: '+n.resource);if(n.next)meta.push('다음: '+n.next);
+      return '<div class="brief-item kind-'+kind+(isOpen?' open':'')+'" data-brief-index="'+i+'"><div class="brief-item-summary">'+
+        '<span class="brief-kind '+kind+'">'+kindLabel+'</span><span class="brief-date">'+escapeHtml(n.date||'기한 미정')+'</span><div class="brief-main"><strong>'+escapeHtml(n.text||'내용을 입력해주세요')+'</strong><small>'+escapeHtml(meta.join(' · ')||'대상·자원 또는 다음 행동 미입력')+'</small></div><span class="brief-status '+escapeAttr(n.status||'open')+'">'+briefStatusLabel(n.status)+'</span><button type="button" class="brief-toggle" onclick="toggleBriefEdit('+i+')">'+(isOpen?'접기':'수정')+'</button></div><div class="brief-item-editor">'+
+        '<label class="brief-field">구분<select onchange="saveBriefField('+i+',\'kind\',this.value,true)"><option value="report"'+(kind==='report'?' selected':'')+'>보고·협의</option><option value="recovery"'+(kind==='recovery'?' selected':'')+'>부족분 대응</option></select></label>'+field('date','보고일 / 확인 기한','date')+
+        '<label class="brief-field">상태<select onchange="saveBriefField('+i+',\'status\',this.value,true)">'+[['open','진행'],['discuss','협의 필요'],['done','완료']].map(function(x){return '<option value="'+x[0]+'"'+(n.status===x[0]?' selected':'')+'>'+x[1]+'</option>';}).join('')+'</select></label>'+field('text','진행상황 / 대응 전략','textarea')+field('resource','대상·활용 자원','textarea')+field('next','다음 행동 / 대표님 요청','textarea')+'<div class="brief-editor-actions"><button type="button" class="brief-delete" onclick="removeBriefNote('+i+')">삭제</button><button type="button" class="brief-toggle" onclick="toggleBriefEdit('+i+')">수정 완료</button></div></div></div>';
     }).join('')||'<p class="ge-footnote">진행상황이나 협의할 사항, 부족분 대응 전략을 추가해주세요.</p>';
     box.querySelectorAll('input,textarea,select,button').forEach(function(e){e.disabled=!canEdit||isSnapshotFile;});
+    box.querySelectorAll('.brief-toggle').forEach(function(e){e.disabled=false;});
   }
   function reportNoteHTML(n){
     return '<div class="report-line"><b>'+escapeHtml(n.status==='discuss'?'협의 필요':n.status==='done'?'완료':'진행')+'</b> · '+escapeHtml(n.text||'내용 미입력')+
