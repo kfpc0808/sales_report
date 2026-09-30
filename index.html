@@ -1160,6 +1160,8 @@
   .command-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:9px;align-items:start;padding:10px 12px;border-bottom:1px solid #EEF0F2;font-size:12.5px}
   .command-row:last-child{border-bottom:0}.command-row-time{font-weight:900;color:var(--navy);white-space:nowrap}.command-row-main{min-width:0;overflow-wrap:anywhere}.command-row-main b{display:block;color:var(--ink)}.command-row-main small{display:block;color:var(--muted);margin-top:2px}
   .command-badge{display:inline-block;padding:2px 7px;border-radius:20px;background:#EEF1F5;color:var(--navy);font-size:10.5px;font-weight:800;white-space:nowrap}
+  .command-task-actions{display:flex;align-items:center;gap:5px}.command-edit-btn{border:1px solid #D9D4CA;background:#FFF;color:var(--navy);border-radius:7px;padding:3px 7px;font-size:10.5px;font-weight:800;cursor:pointer}.command-edit-btn:hover{border-color:var(--gold);background:#FBF7EE}
+  .command-task-editor{grid-column:1/-1;display:grid;grid-template-columns:135px minmax(0,1fr) auto auto;gap:7px;align-items:center;width:100%}.command-task-editor input{min-width:0;border:1px solid #D9D4CA;border-radius:8px;background:#FFF;padding:8px 9px;font:inherit}.command-task-editor .command-edit-save{border:0;border-radius:8px;background:var(--navy);color:#FFF;padding:8px 11px;font-weight:800;cursor:pointer}.command-task-editor .command-edit-cancel{border:1px solid #D9D4CA;border-radius:8px;background:#FFF;color:var(--ink);padding:8px 10px;font-weight:700;cursor:pointer}.command-task-edit-status{grid-column:2/-1;color:var(--red);font-size:11px;min-height:14px}
   .command-check{width:18px;height:18px}.command-card-foot{padding:9px 12px;border-top:1px solid #ECE8DF;text-align:right}
   .command-card-foot button{font-size:11px}.command-text{padding:13px;white-space:pre-wrap;font-size:12.5px;line-height:1.65;min-height:74px}.command-text strong{color:var(--navy)}
   .command-primary-grid .command-card{height:596px}
@@ -1172,7 +1174,7 @@
   .command-report-mode .command-input-only{display:none!important}.command-report-mode .command-list{max-height:none}
   @media print{body.print-command .tab-pane{display:none!important}body.print-command [data-pane="0"]{display:block!important}body.print-command .command-input-only,body.print-command .command-head-actions,body.print-command .toolbar,body.print-command .tabs{display:none!important}body.print-command .command-list{max-height:none;overflow:visible}body.print-command .command-important-list,body.print-command .command-schedule-list,body.print-command .command-notes-body,body.print-command .command-primary-grid .command-card{height:auto!important;overflow:visible!important}body.print-command .command-table-wrap{overflow:visible}body.print-command .command-table{min-width:0;font-size:10px}}
   @media(max-width:1050px){.command-kpis{grid-template-columns:repeat(3,1fr)}.command-grid{grid-template-columns:1fr 1fr}.command-primary-grid>.command-card:last-child{grid-column:1/-1}.command-form{grid-template-columns:repeat(6,minmax(0,1fr))}}
-  @media(max-width:800px){.command-pane input,.command-pane select,.command-pane textarea,.command-pane button{font-size:16px}.command-kpis{grid-template-columns:1fr 1fr}.command-grid{grid-template-columns:1fr}.command-primary-grid>.command-card:last-child{grid-column:auto}.command-primary-grid .command-card,.command-schedule-list,.command-important-list,.command-notes-body{height:auto;max-height:none}.command-form{grid-template-columns:1fr 1fr}.command-form>*{grid-column:1/-1!important}.command-form .command-submit{grid-column:2!important}.command-head{align-items:flex-start;flex-direction:column}.command-head-actions{width:100%}.command-head-actions button{flex:1}.command-list{max-height:none}}
+  @media(max-width:800px){.command-pane input,.command-pane select,.command-pane textarea,.command-pane button{font-size:16px}.command-kpis{grid-template-columns:1fr 1fr}.command-grid{grid-template-columns:1fr}.command-primary-grid>.command-card:last-child{grid-column:auto}.command-primary-grid .command-card,.command-schedule-list,.command-important-list,.command-notes-body{height:auto;max-height:none}.command-form{grid-template-columns:1fr 1fr}.command-form>*{grid-column:1/-1!important}.command-form .command-submit{grid-column:2!important}.command-head{align-items:flex-start;flex-direction:column}.command-head-actions{width:100%}.command-head-actions button{flex:1}.command-list{max-height:none}.command-task-editor{grid-template-columns:1fr 1fr}.command-task-editor input{grid-column:1/-1}.command-task-edit-status{grid-column:1/-1}}
 
 </style>
 </head>
@@ -4571,9 +4573,16 @@
     var monthGoal=Number(input.monthGoal)||0,weekGoal=weekDates.reduce(function(n,k){return n+(Number(dailyGoals[k])||0);},0),weekActual=weekDates.reduce(function(n,k){return n+(Number(dailyActual[k])||0);},0);
     return {monthGoal:monthGoal,monthActual:monthActual,monthGap:Math.max(0,monthGoal-monthActual),monthRate:monthGoal?Math.round(monthActual/monthGoal*100):0,todayGoal:Number(dailyGoals[today])||0,todayActual:Number(dailyActual[today])||0,weekGoal:weekGoal,weekActual:weekActual};
   }
+  function commandTaskEditPatch(date,text,updatedAt){
+    date=String(date||'').trim();text=String(text||'').trim();
+    if(!date)throw new Error('날짜를 입력해주세요.');
+    if(!text)throw new Error('업무 내용을 입력해주세요.');
+    return {date:date,text:text,updatedAt:updatedAt};
+  }
   /* COMMAND_CORE_END */
 
   var commandQuickType='schedule';
+  var commandTaskEditingId='';
   var COMMAND_LOGS='workLogs',commandWorkLogs=[],commandLogsUnsub=null,commandLogsDate='';
   function commandCanWrite(statusId){
     if(canEdit)return true;
@@ -4607,7 +4616,25 @@
     var sb=document.getElementById('commandSchedules'),tb=document.getElementById('commandTasks');if(!sb||!tb)return;
     document.getElementById('commandScheduleCount').textContent=schedules.length+'건';document.getElementById('commandTaskCount').textContent=tasks.length+'건 · 미완료';
     sb.innerHTML=schedules.length?schedules.map(function(x){return '<div class="command-row"><span class="command-row-time">'+escapeHtml(x.time||'미정')+'</span><div class="command-row-main"><b>'+escapeHtml(x.text||'')+'</b></div><span class="command-badge">일정</span></div>';}).join(''):commandEmpty('오늘 일정이 없습니다.');
-    tb.innerHTML=tasks.length?tasks.map(function(x){return '<div class="command-row"><input class="command-check command-input-only" type="checkbox" onchange="toggleTodo(\''+escapeAttr(x.id)+'\',false)"><div class="command-row-main"><b>'+escapeHtml(x.text||'')+'</b><small>'+(x.date<today?'기한 지남 · ':'')+escapeHtml(x.date||'')+'</small></div><span class="command-badge">'+(x.priority==='important'?'중요':'할 일')+'</span></div>';}).join(''):commandEmpty('미완료 중요업무가 없습니다.');
+    tb.innerHTML=tasks.length?tasks.map(function(x){
+      if(commandTaskEditingId===x.id){return '<div class="command-row command-task-edit-row"><form class="command-task-editor" onsubmit="saveCommandTaskEdit(event,\''+escapeAttr(x.id)+'\')"><input id="commandTaskEditDate" type="date" value="'+escapeAttr(x.date||today)+'" aria-label="중요업무 날짜"><input id="commandTaskEditText" type="text" value="'+escapeAttr(x.text||'')+'" aria-label="중요업무 내용"><button class="command-edit-save" type="submit">저장</button><button class="command-edit-cancel" type="button" onclick="cancelCommandTaskEdit()">취소</button><div id="commandTaskEditStatus" class="command-task-edit-status"></div></form></div>';}
+      return '<div class="command-row"><input class="command-check command-input-only" type="checkbox" onchange="toggleTodo(\''+escapeAttr(x.id)+'\',false)"><div class="command-row-main"><b>'+escapeHtml(x.text||'')+'</b><small>'+(x.date<today?'기한 지남 · ':'')+escapeHtml(x.date||'')+'</small></div><div class="command-task-actions"><span class="command-badge">'+(x.priority==='important'?'중요':'할 일')+'</span><button class="command-edit-btn command-input-only" type="button" onclick="startCommandTaskEdit(\''+escapeAttr(x.id)+'\')" aria-label="'+escapeAttr(x.text||'중요업무')+' 수정">수정</button></div></div>';
+    }).join(''):commandEmpty('미완료 중요업무가 없습니다.');
+  }
+  function startCommandTaskEdit(id){
+    if(!commandCanWrite('commandTaskStatus'))return;
+    commandTaskEditingId=id;renderCommandPlans();
+    requestAnimationFrame(function(){var input=document.getElementById('commandTaskEditText');if(input){input.focus();input.setSelectionRange(input.value.length,input.value.length);}});
+  }
+  function cancelCommandTaskEdit(){commandTaskEditingId='';renderCommandPlans();}
+  function saveCommandTaskEdit(e,id){
+    e.preventDefault();var status=document.getElementById('commandTaskEditStatus');if(!commandCanWrite('commandTaskEditStatus'))return;
+    if(!firebaseReady||!db){if(status)status.textContent='서버에 연결되지 않았습니다.';return;}
+    var form=e.currentTarget,patch;
+    try{patch=commandTaskEditPatch(document.getElementById('commandTaskEditDate').value,document.getElementById('commandTaskEditText').value,new Date().toISOString());}
+    catch(err){if(status)status.textContent=err.message;return;}
+    form.querySelectorAll('input,button').forEach(function(el){el.disabled=true;});if(status)status.textContent='저장 중…';
+    db.collection(TODOS).doc(id).update(patch).then(function(){commandTaskEditingId='';document.getElementById('commandTaskStatus').textContent='중요업무를 수정했습니다.';setSaveStatus('saved');renderCommandPlans();}).catch(function(err){form.querySelectorAll('input,button').forEach(function(el){el.disabled=false;});var denied=String(err&&err.code||'').indexOf('permission-denied')>-1;if(status)status.textContent=denied?'수정 권한이 없습니다.':'수정에 실패했습니다.';setSaveStatus('error',denied?'permission-denied':(err.code||'연결 오류'));});
   }
   function renderCommandBriefs(){
     var today=localISO(new Date()),ordered=(briefNotes||[]).map(function(x,i){return {note:x,index:i};}).sort(function(a,b){var ak=a.note.createdAt||a.note.date||'',bk=b.note.createdAt||b.note.date||'';return String(bk).localeCompare(String(ak))||(b.index-a.index);}).map(function(x){return x.note;}),strategies=ordered.filter(function(x){return x.kind==='recovery'&&x.status!=='done';}),reports=ordered.filter(function(x){return x.kind!=='recovery'&&(x.status!=='done'||x.date===today);});
