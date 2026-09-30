@@ -824,6 +824,8 @@
   .goal-exec-card-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:11px; }
   .goal-exec-card-title{ color:var(--navy); font-family:'Noto Serif KR',serif; font-size:15px; font-weight:800; }
   .goal-exec-card-hint{ color:var(--muted); font-size:11.5px; }
+  .goal-exec-card-tools{ display:flex; align-items:center; justify-content:flex-end; gap:9px; flex-wrap:wrap; }
+  .item-add-btn{ white-space:nowrap; }
   .ge-item-table{ grid-template-columns:minmax(150px,1.5fr) 135px 135px 135px 150px 42px; min-width:760px; }
   .ge-auto-tag{ margin-left:5px; padding:1px 6px; border-radius:20px; background:var(--green-bg); color:var(--green); font-size:9.5px; font-weight:800; white-space:nowrap; }
   .ge-item-table input.i-done[readonly]{ color:var(--green); background:#F5FAF7; cursor:default; }
@@ -1457,7 +1459,10 @@
     <section class="goal-exec-card">
       <div class="goal-exec-card-head">
         <span class="goal-exec-card-title">1. 아이템별 목표 구성</span>
-        <span class="goal-exec-card-hint">목표만 입력 · 실적은 매출 원장에서 자동 반영</span>
+        <div class="goal-exec-card-tools">
+          <span class="goal-exec-card-hint">목표만 입력 · 실적은 매출 원장에서 자동 반영</span>
+          <button class="dash-action-btn item-add-btn goal-edit-only" type="button" onclick="addItemRowAndFocus()">+ 아이템 추가</button>
+        </div>
       </div>
       <datalist id="itemGoalSuggest"></datalist>
       <div class="log-scroll">
@@ -3934,6 +3939,8 @@
 
   function scheduleSave(){
     if(!canEdit) return;
+    // 로컬 입력 이후에는 입력 전에 도착해 대기 중이던 서버 화면으로 되돌리지 않습니다.
+    pendingRemote = null;
     setSaveStatus('editing');
     if(saveTimer) clearTimeout(saveTimer);
     saveTimer = setTimeout(function(){ manualSave(); }, 900);
