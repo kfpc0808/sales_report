@@ -2318,7 +2318,13 @@
   function addItemRowAndFocus(){
     if(!canEdit){ alert('편집 권한이 있는 계정으로 로그인해주세요.'); return; }
     var last = addItemRow({});
-    if(last){ last.scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(function(){ last.querySelector('.i-name').focus(); },250); }
+    if(last){
+      requestAnimationFrame(function(){
+        var input = last.querySelector('.i-name');
+        if(input) input.focus({preventScroll:true});
+        last.scrollIntoView({behavior:'smooth',block:'center'});
+      });
+    }
     return last;
   }
 
