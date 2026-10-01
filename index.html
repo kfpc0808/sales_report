@@ -4569,7 +4569,8 @@
     var monday=new Date(base);monday.setDate(base.getDate()-back);
     function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
     var weekDates=[];for(var i=0;i<7;i++){var d=new Date(monday);d.setDate(monday.getDate()+i);weekDates.push(iso(d));}
-    var month=String(today).slice(0,7),monthActual=Object.keys(dailyActual).filter(function(k){return k.slice(0,7)===month;}).reduce(function(n,k){return n+(Number(dailyActual[k])||0);},0);
+    var month=String(today).slice(0,7);weekDates=weekDates.filter(function(k){return k.slice(0,7)===month;});
+    var monthActual=Object.keys(dailyActual).filter(function(k){return k.slice(0,7)===month;}).reduce(function(n,k){return n+(Number(dailyActual[k])||0);},0);
     var monthGoal=Number(input.monthGoal)||0,weekGoal=weekDates.reduce(function(n,k){return n+(Number(dailyGoals[k])||0);},0),weekActual=weekDates.reduce(function(n,k){return n+(Number(dailyActual[k])||0);},0);
     return {monthGoal:monthGoal,monthActual:monthActual,monthGap:Math.max(0,monthGoal-monthActual),monthRate:monthGoal?Math.round(monthActual/monthGoal*100):0,todayGoal:Number(dailyGoals[today])||0,todayActual:Number(dailyActual[today])||0,weekGoal:weekGoal,weekActual:weekActual};
   }
