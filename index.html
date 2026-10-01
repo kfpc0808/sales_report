@@ -4579,6 +4579,10 @@
     if(!text)throw new Error('업무 내용을 입력해주세요.');
     return {date:date,text:text,updatedAt:updatedAt};
   }
+  function commandMonthWeekRows(today,rows){
+    var month=String(today||'').slice(0,7);
+    return (rows||[]).filter(function(row){return String(row&&row.date||'').slice(0,7)===month;});
+  }
   /* COMMAND_CORE_END */
 
   var commandQuickType='schedule';
@@ -4728,8 +4732,9 @@
   }
   function renderCommandWeek(){
     var box=document.getElementById('commandWeek'),label=document.getElementById('commandWeekLabel');if(!box||!label)return;
-    var start=mondayISO(localISO(new Date())),rows=weekReportRows(start),totals=periodTable(rows,true);
-    label.textContent=start+' ~ '+dayOffset(start,6)+' · 목표 '+commandMoney(totals.goal)+' / 실적 '+commandMoney(totals.actual);
+    var today=localISO(new Date()),start=mondayISO(today),rows=commandMonthWeekRows(today,weekReportRows(start)),totals=periodTable(rows,true);
+    var from=rows.length?rows[0].date:today,to=rows.length?rows[rows.length-1].date:today;
+    label.textContent=from+' ~ '+to+' · 목표 '+commandMoney(totals.goal)+' / 실적 '+commandMoney(totals.actual);
     box.innerHTML=totals.html;
   }
   function setCommandMode(mode,persist){
