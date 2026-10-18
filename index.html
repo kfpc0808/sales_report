@@ -1553,7 +1553,7 @@
         <div class="pipeline-panel-head"><h3>영업 대상 목록</h3><span class="report-caption">셀을 클릭해 바로 입력 · Tab 키로 다음 칸 이동</span></div>
         <div id="pipelinePasteBox" class="pipeline-paste" hidden><textarea id="pipelinePasteText" placeholder="엑셀에서 대상부터 실제매출까지 복사한 뒤 여기에 붙여넣으세요.&#10;열 순서: 대상 / 아이템 / 콜 일자 / 진행상태 / 결과·메모 / 다음 액션 / 다음 일자 / 예상매출 / 실제매출"></textarea><button class="pipeline-action-btn" type="button" onclick="importPipelinePaste()">목록에 추가</button><span id="pipelinePasteStatus"></span></div>
         <div class="pipeline-filters"><input id="pipelineFilterDate" type="date" onchange="renderPipeline()"><input id="pipelineFilterSearch" placeholder="대상·아이템·메모 검색" oninput="renderPipeline()"><select id="pipelineFilterItem" onchange="renderPipeline()"><option value="">모든 아이템</option></select><select id="pipelineFilterProgress" onchange="renderPipeline()"><option value="">모든 진행상태</option></select><select id="pipelineFilterRange" onchange="renderPipeline()"><option value="all">전체</option><option value="today">오늘 콜</option><option value="week">이번 주</option><option value="overdue">기한 경과</option></select><button class="pipeline-action-btn" type="button" onclick="resetPipelineFilters()">초기화</button></div>
-        <div class="pipeline-table-wrap"><table class="pipeline-table pipeline-sheet"><thead><tr><th>No</th><th>대상</th><th>아이템</th><th>콜 일자</th><th>진행상태</th><th>결과·메모</th><th>다음 액션</th><th>다음 일자</th><th>예상매출</th><th>실제매출</th><th>관리</th></tr></thead><tbody id="pipelineBody"></tbody></table></div>
+        <div class="pipeline-table-wrap"><table class="pipeline-table pipeline-sheet"><thead><tr><th>No</th><th>대상</th><th>아이템</th><th>콜 일자</th><th>진행상태</th><th>결과·메모</th><th>다음 액션</th><th>다음 일자</th><th>예상매출</th><th>실제매출</th><th>관리</th></tr></thead><tbody id="pipelineBody" onkeydown="pipelineCellEnter(event)"></tbody></table></div>
       </section>
     </div>
   </section>
@@ -1793,6 +1793,11 @@
     var labels={'콜 예정':'call','부재·재통화':'recall','통화 완료':'connected','PC상담':'pc','Zoom':'zoom','대면미팅':'meeting','제안·결정':'decision','결제 예정':'payment','완료':'complete','장기가망':'long_term','제외':'excluded'};
     function amount(v){var n=String(v||'').replace(/[^0-9-]/g,'');return n?parseInt(n,10)||0:0;}
     return String(text||'').split(/\r?\n/).filter(function(line){return line.trim();}).map(function(line){var c=line.split('\t');return {name:String(c[0]||'').trim(),item:String(c[1]||'').trim(),callDate:String(c[2]||'').trim(),progressStatus:labels[String(c[3]||'').trim()]||'call',resultMemo:String(c[4]||'').trim(),nextActionText:String(c[5]||'').trim(),nextDate:String(c[6]||'').trim(),forecastAmount:amount(c[7]),actualAmount:amount(c[8])};}).filter(function(x){return x.name||x.item;});
+  }
+  function pipelineNextCellPosition(rowIndex,colIndex,rowCount,colCount){
+    if(colIndex+1<colCount)return {row:rowIndex,col:colIndex+1};
+    if(rowIndex+1<rowCount)return {row:rowIndex+1,col:0};
+    return null;
   }
   /* SALES_PIPELINE_CORE_END */
 
@@ -4789,7 +4794,12 @@
     rows=rows.map(function(r){var x=normalizePipelineTarget(Object.assign({id:pipelineId(),createdAt:new Date().toISOString()},r));syncPipelineLegacy(x);return x;});pipelineTargets=rows.concat(pipelineTargets);document.getElementById('pipelinePasteText').value='';status.textContent=rows.length+'명을 목록에 추가했습니다.';renderPipeline();renderCommandPipelineSummary();scheduleSave();
   }
   function updatePipelineTarget(id,field,value){
-    var x=pipelineFind(id);if(!x||!canEdit)return;if(field==='forecastAmount'||field==='actualAmount')value=toNum(value);if(field==='actualAmount'&&Number(value)!==Number(x.actualAmount))x.ledgerReflected=false;x[field]=value;if(field==='resultMemo')x.memo=value;if(field==='progressStatus')syncPipelineLegacy(x);renderPipeline();renderCommandPipelineSummary();scheduleSave();
+    var x=pipelineFind(id);if(!x||!canEdit)return;if(field==='forecastAmount'||field==='actualAmount')value=toNum(value);if(field==='actualAmount'&&Number(value)!==Number(x.actualAmount))x.ledgerReflected=false;x[field]=value;if(field==='resultMemo')x.memo=value;if(field==='progressStatus')syncPipelineLegacy(x);renderPipelineKpis();renderCommandPipelineSummary();scheduleSave();
+  }
+  function pipelineCellEnter(event){
+    if(event.key!=='Enter')return;var current=event.target;if(!current||!current.matches('input,select'))return;var body=document.getElementById('pipelineBody'),row=current.closest('tr.pipeline-main');if(!body||!row)return;
+    var rows=Array.prototype.slice.call(body.querySelectorAll('tr.pipeline-main')),rowIndex=rows.indexOf(row),cells=Array.prototype.slice.call(row.querySelectorAll('input,select')),colIndex=cells.indexOf(current),pos=pipelineNextCellPosition(rowIndex,colIndex,rows.length,cells.length);event.preventDefault();
+    if(!pos){current.blur();return;}var nextCells=Array.prototype.slice.call(rows[pos.row].querySelectorAll('input,select')),next=nextCells[pos.col];if(next){next.focus();if(next.tagName==='INPUT'&&next.type==='text')next.select();}
   }
   function pipelineFiltered(){
     var date=(document.getElementById('pipelineFilterDate')||{}).value||'',q=((document.getElementById('pipelineFilterSearch')||{}).value||'').trim().toLowerCase(),item=(document.getElementById('pipelineFilterItem')||{}).value||'',progress=(document.getElementById('pipelineFilterProgress')||{}).value||'',range=(document.getElementById('pipelineFilterRange')||{}).value||'all',today=localISO(new Date());
