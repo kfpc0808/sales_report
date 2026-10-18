@@ -1127,7 +1127,7 @@
   @media(max-width:1100px){.report-top{grid-template-columns:1fr}.brief-item-editor{grid-template-columns:1fr 1fr}.report-week .dash-panel-head{align-items:flex-start;flex-direction:column}.calendar-link-editor{grid-template-columns:1fr}.calendar-link-editor button{width:100%}}
   @media(max-width:700px){.brief-item-summary{grid-template-columns:auto 1fr auto}.brief-date{display:none}.brief-status{grid-column:1}.brief-main{grid-column:2/4;grid-row:1/3}.brief-toggle{grid-column:3;grid-row:1}.brief-item-editor{grid-template-columns:1fr}.brief-field,.brief-field.full,.brief-editor-actions{grid-column:1}}
   @media print{
-    [data-pane="2"],[data-pane="3"],#legacyDashboardMount,.report-nav,.toolbar,.tabs,.calendar-open-btn{display:none!important}
+    [data-pane="2"],[data-pane="3"],[data-pane="4"],#legacyDashboardMount,.report-nav,.toolbar,.tabs,.calendar-open-btn{display:none!important}
     [data-pane="1"]{display:block!important}.report-scroll{overflow:visible}
     .report-table{min-width:0;font-size:10px;table-layout:fixed}.report-table td,.report-table th{padding:5px}.report-table .money{white-space:normal}
     .report-top{grid-template-columns:repeat(3,1fr)}.report-week{break-inside:auto}.report-table tr{break-inside:avoid}
@@ -1179,6 +1179,12 @@
   @media(max-width:1050px){.command-kpis{grid-template-columns:repeat(3,1fr)}.command-grid{grid-template-columns:1fr 1fr}.command-primary-grid>.command-card:last-child{grid-column:1/-1}.command-form{grid-template-columns:repeat(6,minmax(0,1fr))}}
   @media(max-width:800px){.command-pane input,.command-pane select,.command-pane textarea,.command-pane button{font-size:16px}.command-kpis{grid-template-columns:1fr 1fr}.command-grid{grid-template-columns:1fr}.command-primary-grid>.command-card:last-child{grid-column:auto}.command-primary-grid .command-card,.command-schedule-list,.command-important-list,.command-notes-body{height:auto;max-height:none}.command-form{grid-template-columns:1fr 1fr}.command-form>*{grid-column:1/-1!important}.command-form .command-submit{grid-column:2!important}#commandTaskForm{grid-template-columns:1fr}#commandTaskForm>*{grid-column:1!important}.command-head{align-items:flex-start;flex-direction:column}.command-head-actions{width:100%}.command-head-actions button{flex:1}.command-list{max-height:none}.command-task-editor{grid-template-columns:1fr 1fr}.command-task-editor input{grid-column:1/-1}.command-task-edit-status{grid-column:1/-1}}
 
+  /* 대상별 영업 진행관리 */
+  .pipeline-page{display:grid;gap:16px}.pipeline-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px}.pipeline-head h2{margin:4px 0 5px;font-family:'Noto Serif KR',serif;font-size:27px;color:var(--navy)}.pipeline-head p{margin:0;color:#6d7685;font-size:13px}.pipeline-kpis{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px}.pipeline-kpi{padding:13px 14px;border:1px solid #e1e5eb;border-radius:13px;background:#fff}.pipeline-kpi span{display:block;color:#798293;font-size:11px}.pipeline-kpi b{display:block;margin-top:5px;color:var(--navy);font-size:18px}.pipeline-kpi.money b{font-size:15px}.pipeline-panel{border:1px solid #dde2e9;border-radius:15px;background:#fff;overflow:hidden}.pipeline-panel-head{display:flex;justify-content:space-between;align-items:center;padding:15px 17px;border-bottom:1px solid #e9e5dc}.pipeline-panel-head h3{margin:0;font-size:16px;color:var(--navy)}.pipeline-add,.pipeline-filters{display:grid;grid-template-columns:1.15fr 1fr 145px 150px minmax(220px,2fr) auto;gap:8px;padding:14px 16px}.pipeline-filters{grid-template-columns:145px minmax(180px,1.4fr) 1fr 1fr 1fr 1fr auto;border-top:1px solid #eee}.pipeline-add input,.pipeline-add select,.pipeline-filters input,.pipeline-filters select,.pipeline-detail input,.pipeline-detail select,.pipeline-detail textarea,.pipeline-table input,.pipeline-table select{width:100%;min-height:38px;border:1px solid #ddd8ce;border-radius:9px;background:#fff;padding:8px 9px;font:inherit;color:var(--navy)}.pipeline-add button,.pipeline-action-btn{min-height:38px;border:0;border-radius:9px;background:var(--navy);color:#fff;font-weight:800;padding:0 15px;cursor:pointer}.pipeline-table-wrap{overflow:auto;max-height:640px;border-top:1px solid #e7e2d8}.pipeline-table{width:100%;min-width:1880px;border-collapse:collapse;font-size:12px}.pipeline-table th{position:sticky;top:0;z-index:2;padding:10px 8px;background:#f5f2eb;color:#5e6674;text-align:left;white-space:nowrap}.pipeline-table td{padding:8px;border-top:1px solid #ece8df;vertical-align:middle}.pipeline-table tr.pipeline-main:hover td{background:#fbfaf6}.pipeline-table .no{width:42px;text-align:center;color:#8b94a2}.pipeline-table .name{min-width:120px;font-weight:800}.pipeline-table .amount{width:115px}.pipeline-table .date{width:132px}.pipeline-table .compact{width:126px}.pipeline-table input,.pipeline-table select{min-height:34px;padding:6px 7px}.pipeline-table input[type="number"]{text-align:right}.pipeline-detail-row[hidden]{display:none}.pipeline-detail-row td{padding:0 12px 12px;background:#faf9f5}.pipeline-detail{display:grid;grid-template-columns:110px 130px 1.4fr 1fr 135px 135px auto;gap:8px;padding:12px;border:1px solid #e5dfd4;border-radius:11px}.pipeline-detail textarea{min-height:40px;resize:vertical}.pipeline-history{grid-column:1/-1;display:grid;gap:6px}.pipeline-history-item{display:grid;grid-template-columns:95px 105px 1fr 1fr 110px;gap:8px;padding:8px 10px;border-radius:8px;background:#fff;border:1px solid #ece8df}.pipeline-status{font-size:11px;font-weight:800;padding:5px 8px;border-radius:999px;background:#edf3f0;color:#2f7f62;white-space:nowrap}.pipeline-row-actions{display:flex;gap:5px}.pipeline-row-actions button{border:1px solid #d9d3c7;background:#fff;border-radius:7px;padding:6px 8px;cursor:pointer}.pipeline-empty{padding:38px;text-align:center;color:#8b94a2}.command-pipeline{margin:0 0 16px}.command-pipeline-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}.command-pipeline-stat{padding:11px 12px;border:1px solid #e5e1d8;border-radius:11px;background:#fbfaf7}.command-pipeline-stat span{display:block;font-size:11px;color:#788191}.command-pipeline-stat b{display:block;margin-top:4px;color:var(--navy);font-size:16px}.command-pipeline-link{border:0;background:none;color:#a97831;font-weight:800;cursor:pointer}
+  @media(max-width:1100px){.pipeline-kpis{grid-template-columns:repeat(4,1fr)}.pipeline-add{grid-template-columns:repeat(2,1fr)}.pipeline-add button{grid-column:1/-1}.pipeline-filters{grid-template-columns:repeat(2,1fr)}.command-pipeline-grid{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:680px){.pipeline-kpis{grid-template-columns:repeat(2,1fr)}.pipeline-head{align-items:flex-start;flex-direction:column}.pipeline-add,.pipeline-filters{grid-template-columns:1fr}.command-pipeline-grid{grid-template-columns:repeat(2,1fr)}}
+  .pipeline-head-actions{display:flex;gap:7px;flex-wrap:wrap}.pipeline-head-actions .dash-action-btn:first-child{background:var(--navy);color:#fff}.pipeline-paste{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;padding:13px 16px;background:#f8f6f1;border-bottom:1px solid #e6e0d5}.pipeline-paste[hidden]{display:none}.pipeline-paste textarea{width:100%;min-height:82px;border:1px solid #d8d2c7;border-radius:9px;padding:10px;resize:vertical;font:inherit}.pipeline-paste span{grid-column:1/-1;color:#6d7685;font-size:12px}.pipeline-filters{grid-template-columns:145px minmax(210px,1.5fr) 1fr 1fr 1fr auto;border-top:0}.pipeline-sheet{min-width:1420px}.pipeline-sheet th:nth-child(1){width:48px}.pipeline-sheet th:nth-child(2){width:145px}.pipeline-sheet th:nth-child(3){width:135px}.pipeline-sheet th:nth-child(4),.pipeline-sheet th:nth-child(8){width:135px}.pipeline-sheet th:nth-child(5){width:145px}.pipeline-sheet th:nth-child(6){width:260px}.pipeline-sheet th:nth-child(7){width:210px}.pipeline-sheet th:nth-child(9),.pipeline-sheet th:nth-child(10){width:130px}.pipeline-sheet th:nth-child(11){width:165px}.pipeline-sheet td{padding:4px}.pipeline-sheet input,.pipeline-sheet select{border-color:transparent;border-radius:5px;background:transparent;min-height:36px}.pipeline-sheet input:focus,.pipeline-sheet select:focus{outline:2px solid rgba(181,137,69,.35);border-color:var(--gold);background:#fff}.pipeline-sheet .pipeline-name-input{font-weight:800;color:var(--navy)}.pipeline-manage{display:flex;gap:4px;align-items:center}.pipeline-manage button{border:1px solid #d9d3c7;background:#fff;border-radius:6px;padding:6px 8px;cursor:pointer;white-space:nowrap}.pipeline-reflected{font-size:10px;color:#2f7f62;font-weight:800}.pipeline-detail.simple{grid-template-columns:110px 1fr auto}.pipeline-detail.simple .pipeline-history{grid-column:1/-1}.pipeline-history-item.simple{grid-template-columns:95px 1fr}.pipeline-table-wrap{max-height:690px}.pipeline-table th{top:0}
+  @media(max-width:800px){.pipeline-head-actions{width:100%}.pipeline-head-actions button{flex:1}.pipeline-paste,.pipeline-filters{grid-template-columns:1fr}.pipeline-paste button{min-height:44px}}
 </style>
 </head>
 <body>
@@ -1228,13 +1234,15 @@
     <button class="tab-btn" data-tab="0" onclick="showTab(0)"><span class="tab-no">0</span><span class="tab-lb">오늘의 관제</span></button>
     <button class="tab-btn" data-tab="1" onclick="showTab(1)"><span class="tab-no">1</span><span class="tab-lb">오늘의 현황</span></button>
     <button class="tab-btn" data-tab="2" onclick="showTab(2)"><span class="tab-no">2</span><span class="tab-lb">계획·실행</span></button>
-    <button class="tab-btn" data-tab="3" onclick="showTab(3)"><span class="tab-no">3</span><span class="tab-lb">매출 원장</span></button>
+    <button class="tab-btn" data-tab="3" onclick="showTab(3)"><span class="tab-no">3</span><span class="tab-lb">영업 진행</span></button>
+    <button class="tab-btn" data-tab="4" onclick="showTab(4)"><span class="tab-no">4</span><span class="tab-lb">매출 원장</span></button>
   </nav>
 
   <section class="tab-pane" data-pane="0">
     <div id="commandPane" class="command-pane">
       <div class="command-head"><div><div class="dash-kicker">SALES COMMAND CENTER</div><h2>오늘의 관제</h2></div><div class="command-head-actions"><button id="commandInputMode" class="active" type="button" onclick="setCommandMode('input')">입력 화면</button><button id="commandReportMode" type="button" onclick="setCommandMode('report')">대표 보고</button><button type="button" onclick="copyCommandReport(this)">보고 복사</button><button type="button" onclick="printCommandCenter()">인쇄</button></div></div>
       <div id="commandKpis" class="command-kpis"></div>
+      <section class="command-card command-pipeline"><div class="command-card-head"><h3>오늘 콜 진행</h3><button class="command-pipeline-link" type="button" onclick="showTab(3)">영업 진행 전체 보기 →</button></div><div id="commandPipelineSummary" class="command-pipeline-grid"></div></section>
       <section class="command-quick command-input-only">
         <div id="commandQuickBar" class="command-quick-types"><button class="active" type="button" data-command-type="schedule" onclick="setCommandQuickType('schedule')">+ 일정</button><button type="button" data-command-type="task" onclick="setCommandQuickType('task')">+ 할 일</button><button type="button" data-command-type="activity" onclick="setCommandQuickType('activity')">+ 업무기록</button><button type="button" data-command-type="sale" onclick="setCommandQuickType('sale')">+ 매출</button><button type="button" data-command-type="brief" onclick="setCommandQuickType('brief')">+ 보고·전략</button></div>
         <form id="commandScheduleForm" class="command-form active" data-command-form="schedule" onsubmit="saveCommandSchedule(event)"><input id="commandScheduleDate" class="span-2" type="date" aria-label="일정 날짜"><input id="commandScheduleTime" class="span-2" type="text" inputmode="numeric" placeholder="시간 13:00"><input id="commandScheduleText" class="span-6" type="text" placeholder="일정 내용"><button class="command-submit" type="submit">일정 저장</button><div class="command-form-status" id="commandScheduleStatus"></div></form>
@@ -1281,7 +1289,7 @@
       <button class="dashboard-mode-btn" id="dashboardModeBtn" type="button" onclick="toggleDashboardMode()" aria-pressed="false">보고 보기</button>
       <div class="dash-actions goal-edit-only">
         <button class="dash-action-btn" onclick="showTab(2)">목표·전략 입력</button>
-        <button class="dash-action-btn primary" onclick="showTab(3)">매출 기록 입력</button>
+        <button class="dash-action-btn primary" onclick="showTab(4)">매출 기록 입력</button>
       </div>
     </div>
   </div>
@@ -1538,6 +1546,19 @@
   </section>
 
   <section class="tab-pane" data-pane="3">
+    <div class="pipeline-page">
+      <div class="pipeline-head"><div><div class="dash-kicker">SALES PIPELINE</div><h2>대상별 영업 진행관리</h2><p>엑셀처럼 한 행에 한 대상을 기록하고, 바뀐 내용만 바로 수정합니다.</p></div><div class="pipeline-head-actions"><button class="dash-action-btn" type="button" onclick="addBlankPipelineRow()">+ 빈 행</button><button class="dash-action-btn" type="button" onclick="togglePipelinePaste()">명단 붙여넣기</button><button class="dash-action-btn" type="button" onclick="copyPipelineTable(this)">목록 복사</button></div></div>
+      <div id="pipelineKpis" class="pipeline-kpis"></div>
+      <section class="pipeline-panel">
+        <div class="pipeline-panel-head"><h3>영업 대상 목록</h3><span class="report-caption">셀을 클릭해 바로 입력 · Tab 키로 다음 칸 이동</span></div>
+        <div id="pipelinePasteBox" class="pipeline-paste" hidden><textarea id="pipelinePasteText" placeholder="엑셀에서 대상부터 실제매출까지 복사한 뒤 여기에 붙여넣으세요.&#10;열 순서: 대상 / 아이템 / 콜 일자 / 진행상태 / 결과·메모 / 다음 액션 / 다음 일자 / 예상매출 / 실제매출"></textarea><button class="pipeline-action-btn" type="button" onclick="importPipelinePaste()">목록에 추가</button><span id="pipelinePasteStatus"></span></div>
+        <div class="pipeline-filters"><input id="pipelineFilterDate" type="date" onchange="renderPipeline()"><input id="pipelineFilterSearch" placeholder="대상·아이템·메모 검색" oninput="renderPipeline()"><select id="pipelineFilterItem" onchange="renderPipeline()"><option value="">모든 아이템</option></select><select id="pipelineFilterProgress" onchange="renderPipeline()"><option value="">모든 진행상태</option></select><select id="pipelineFilterRange" onchange="renderPipeline()"><option value="all">전체</option><option value="today">오늘 콜</option><option value="week">이번 주</option><option value="overdue">기한 경과</option></select><button class="pipeline-action-btn" type="button" onclick="resetPipelineFilters()">초기화</button></div>
+        <div class="pipeline-table-wrap"><table class="pipeline-table pipeline-sheet"><thead><tr><th>No</th><th>대상</th><th>아이템</th><th>콜 일자</th><th>진행상태</th><th>결과·메모</th><th>다음 액션</th><th>다음 일자</th><th>예상매출</th><th>실제매출</th><th>관리</th></tr></thead><tbody id="pipelineBody"></tbody></table></div>
+      </section>
+    </div>
+  </section>
+
+  <section class="tab-pane" data-pane="4">
     <div class="ledger-head">
       <div>
         <div class="dash-kicker">CONFIRMED SALES LEDGER</div>
@@ -1729,6 +1750,8 @@
   var showBlankGoalRows = false;
   var showPastGoalRows = true;
   var dashboardReportMode = false;
+  var pipelineTargets = [];
+  var pipelineExpandedId = '';
 
   // ---------- number formatting ----------
   function toNum(str){
@@ -1737,6 +1760,41 @@
     return parseInt(digits, 10);
   }
   function fmt(n){ return Math.round(n || 0).toLocaleString('ko-KR'); }
+
+  /* SALES_PIPELINE_CORE_START */
+  function normalizePipelineTarget(target){
+    var x=Object.assign({},target||{});
+    var legacyStage={call:'call',recall:'recall',pc_scheduled:'pc',pc_done:'pc',zoom_scheduled:'zoom',zoom_done:'zoom',meeting_scheduled:'meeting',meeting_done:'meeting',proposal:'decision',decision:'decision',payment:'payment',won:'complete'};
+    x.id=String(x.id||'');x.name=String(x.name||'');x.item=String(x.item||'');x.callDate=String(x.callDate||'');
+    x.callResult=x.callResult||'before';x.stage=x.stage||'call';x.nextAction=x.nextAction||'';x.nextDate=String(x.nextDate||'');
+    x.probability=x.probability||'medium';x.forecastAmount=Number(x.forecastAmount)||0;x.actualAmount=Number(x.actualAmount)||0;
+    x.actualDate=String(x.actualDate||'');x.managementStatus=x.managementStatus||'active';x.memo=String(x.memo||'');
+    x.progressStatus=x.progressStatus||(x.managementStatus==='long_term'?'long_term':x.managementStatus==='excluded'?'excluded':legacyStage[x.stage]||'call');
+    x.resultMemo=String(x.resultMemo||x.memo||'');x.nextActionText=String(x.nextActionText||'');
+    if(x.progressStatus==='excluded')x.managementStatus='excluded';else if(x.progressStatus==='long_term')x.managementStatus='long_term';else if(x.progressStatus==='complete')x.managementStatus='complete';
+    x.ledgerReflected=!!x.ledgerReflected;x.history=Array.isArray(x.history)?x.history.slice():[];
+    return x;
+  }
+  function pipelineTargetsForDate(date,targets){
+    return (targets||[]).map(normalizePipelineTarget).filter(function(x){return x.callDate===date&&x.managementStatus!=='excluded';});
+  }
+  function pipelineSummary(date,targets){
+    var rows=pipelineTargetsForDate(date,targets),consultStages=['pc_scheduled','pc_done','zoom_scheduled','zoom_done','meeting_scheduled','meeting_done'];
+    return rows.reduce(function(out,x){var usesProgress=!!(x.progressStatus&&(!x.stage||x.progressStatus!=='call')),pending=usesProgress?['call','recall'].indexOf(x.progressStatus)>-1:['before','no_answer','recall'].indexOf(x.callResult)>-1,converted=usesProgress?['pc','zoom','meeting','decision','payment','complete'].indexOf(x.progressStatus)>-1:consultStages.indexOf(x.stage)>-1;out.total++;if(!pending)out.connected++;if(pending)out.pending++;if(converted)out.converted++;out.forecast+=x.forecastAmount;out.actual+=x.actualAmount;return out;},{total:0,connected:0,pending:0,converted:0,forecast:0,actual:0});
+  }
+  function appendPipelineHistory(target,entry){
+    var x=normalizePipelineTarget(target),e=Object.assign({},entry||{});x.history=[e].concat(x.history);return x;
+  }
+  function pipelineLedgerPayload(target,saleDate){
+    var x=normalizePipelineTarget(target);if(x.ledgerReflected)throw new Error('이미 매출 원장에 반영된 대상입니다.');if(x.actualAmount<=0)throw new Error('실제매출을 먼저 입력해주세요.');
+    return {date:saleDate||x.actualDate,item:x.item,target:x.name,amount:x.actualAmount,memo:'영업 진행 반영'+(x.memo?' · '+x.memo:''),pipelineId:x.id};
+  }
+  function parsePipelinePaste(text){
+    var labels={'콜 예정':'call','부재·재통화':'recall','통화 완료':'connected','PC상담':'pc','Zoom':'zoom','대면미팅':'meeting','제안·결정':'decision','결제 예정':'payment','완료':'complete','장기가망':'long_term','제외':'excluded'};
+    function amount(v){var n=String(v||'').replace(/[^0-9-]/g,'');return n?parseInt(n,10)||0:0;}
+    return String(text||'').split(/\r?\n/).filter(function(line){return line.trim();}).map(function(line){var c=line.split('\t');return {name:String(c[0]||'').trim(),item:String(c[1]||'').trim(),callDate:String(c[2]||'').trim(),progressStatus:labels[String(c[3]||'').trim()]||'call',resultMemo:String(c[4]||'').trim(),nextActionText:String(c[5]||'').trim(),nextDate:String(c[6]||'').trim(),forecastAmount:amount(c[7]),actualAmount:amount(c[8])};}).filter(function(x){return x.name||x.item;});
+  }
+  /* SALES_PIPELINE_CORE_END */
 
   function onAmountInput(el){
     var start = el.selectionStart;
@@ -2524,6 +2582,7 @@
       else openMonth(todayMonth);
     }
     if(n===0 && typeof renderCommandCenter==='function') renderCommandCenter();
+    if(n===3 && typeof renderPipeline==='function') renderPipeline();
     // 숨겨져 있던 동안 높이 계산이 안 된 펼침 영역 재계산
     growStratIfExpanded();
     document.querySelectorAll('.tab-pane.active .g-memoline.open .g-memo').forEach(function(ta){ autoGrowMemo(ta); });
@@ -2531,7 +2590,7 @@
   function initTabs(){
     var saved = '0';
     try{ saved = localStorage.getItem('salesTab') || '0'; }catch(e){}
-    if(['0','1','2','3'].indexOf(String(saved)) === -1) saved = '0';
+    if(['0','1','2','3','4'].indexOf(String(saved)) === -1) saved = '0';
     showTab(saved);
   }
 
@@ -3907,6 +3966,7 @@
       rows: rows,
       goals: goals,
       briefNotes: briefNotes,
+      pipelineTargets: pipelineTargets,
       calendarUrl: document.getElementById('centerCalendarUrl') ? document.getElementById('centerCalendarUrl').value.trim() : '',
       savedAt: new Date().toISOString()
     };
@@ -3915,6 +3975,7 @@
   function applyState(state){
     if(!state) return;
     briefNotes = Array.isArray(state.briefNotes) ? state.briefNotes : [];
+    pipelineTargets = Array.isArray(state.pipelineTargets) ? state.pipelineTargets.map(normalizePipelineTarget) : [];
     renderBriefEditor();
     var calendarInput=document.getElementById('centerCalendarUrl');
     if(calendarInput){
@@ -3946,6 +4007,8 @@
     applyEditMode();
     refreshMemoMarks();
     updateMemoHint();
+    renderPipeline();
+    renderCommandPipelineSummary();
   }
 
   function scheduleSave(){
@@ -3994,7 +4057,7 @@
       title: mm+'월 매출 진행 현황',
       subtitle: '목표 대비 진행률과, 남은 기간 동안 달성에 필요한 페이스를 실시간으로 확인합니다.',
       memo: '부족 금액을 채우기 위한 판단 근거와 다음 액션을 기록하세요.',
-      goal: 0, targets: [], strategies: [], items: [], rows: [], goals: [],
+      goal: 0, targets: [], strategies: [], items: [], rows: [], goals: [], briefNotes: [], pipelineTargets: [],
       calendarUrl: (function(){try{return localStorage.getItem('centerCalendarUrl')||CENTER_CALENDAR_URL;}catch(e){return CENTER_CALENDAR_URL;}})()
     };
   }
@@ -4077,7 +4140,7 @@
     var editable = canEdit && !isSnapshotFile;
     if(!editable) closeGoalSetup();
     document.querySelectorAll('[contenteditable]').forEach(function(el){ el.setAttribute('contenteditable', editable ? 'true' : 'false'); });
-    document.querySelectorAll('#goalInput, #stratBody input, #stratBody select, #dbBody input, #itemBody input, #logBody input, #goalBody input, #quickDate, #quickItem, #quickAmount, #quickMemo, .quick-add, .strategy-quick input, .strategy-quick button, .today-goal-quick input, .today-goal-quick button, .today-quick-add input, .today-quick-add select, .today-quick-add button, #execQuickAdd input, #execQuickAdd select, #execQuickAdd button, .ledger-quick-form input, .ledger-quick-form button, #commandPane .command-form input, #commandPane .command-form select, #commandPane .command-form textarea, #commandPane .command-form button').forEach(function(el){ el.disabled = !editable; });
+    document.querySelectorAll('#goalInput, #stratBody input, #stratBody select, #dbBody input, #itemBody input, #logBody input, #goalBody input, #quickDate, #quickItem, #quickAmount, #quickMemo, .quick-add, .strategy-quick input, .strategy-quick button, .today-goal-quick input, .today-goal-quick button, .today-quick-add input, .today-quick-add select, .today-quick-add button, #execQuickAdd input, #execQuickAdd select, #execQuickAdd button, .ledger-quick-form input, .ledger-quick-form button, #commandPane .command-form input, #commandPane .command-form select, #commandPane .command-form textarea, #commandPane .command-form button, .pipeline-add input, .pipeline-add select, .pipeline-add button, .pipeline-detail input, .pipeline-detail select, .pipeline-detail textarea, .pipeline-detail button, .pipeline-table input, .pipeline-table select').forEach(function(el){ el.disabled = !editable; });
     // 메모는 잠그지 않고 '수정 불가'로 둠 — 읽기 전용으로 보는 사람도 눌러서 전체를 볼 수 있어야 함
     var slt = document.getElementById('slText');
     if(slt) slt.readOnly = !editable;
@@ -4495,7 +4558,7 @@
     }).join('')+'</div></details>';
   }
   function openLedgerFromReport(){
-    showTab(3);
+    showTab(4);
     setTimeout(function(){
       var target=canEdit ? document.getElementById('ledgerQuickDate') : document.getElementById('ledgerDailyComparison');
       if(target){target.scrollIntoView({behavior:'smooth',block:'start'});if(canEdit&&target.focus)target.focus();}
@@ -4649,8 +4712,110 @@
     st.innerHTML=strategies.length?strategies.slice(0,3).map(function(x){return '<div><strong>'+escapeHtml(x.text||'전략 내용 미입력')+'</strong>'+(x.resource?'<br>'+escapeHtml(x.resource):'')+(x.next?'<br><small>다음 행동 · '+escapeHtml(x.next)+'</small>':'')+'</div>';}).join('<hr>'):commandEmpty('등록된 오늘의 전략이 없습니다.');
     br.innerHTML=reports.length?reports.slice(0,5).map(function(x){return '<div class="command-row"><span class="command-badge">'+escapeHtml(x.status==='discuss'?'협의 필요':x.status==='done'?'완료':'진행')+'</span><div class="command-row-main"><b>'+escapeHtml(x.text||'내용 미입력')+'</b><small>'+escapeHtml([x.resource,x.next].filter(Boolean).join(' · '))+'</small></div></div>';}).join(''):commandEmpty('등록된 보고·협의사항이 없습니다.');
   }
+  var PIPELINE_CALL_RESULTS={before:'통화 전',no_answer:'부재',recall:'재통화 요청',connected:'통화 완료',interested:'관심 있음',low_interest:'관심 낮음',rejected:'거절',unfit:'대상 부적합'};
+  var PIPELINE_STAGES={call:'콜 예정',recall:'재통화 예정',pc_scheduled:'PC상담 예정',pc_done:'PC상담 완료',zoom_scheduled:'Zoom 예정',zoom_done:'Zoom 완료',meeting_scheduled:'대면미팅 예정',meeting_done:'대면미팅 완료',proposal:'제안 완료',decision:'결정 대기',payment:'결제 예정',won:'매출 완료'};
+  var PIPELINE_ACTIONS={'':'선택','recall':'재통화','pc':'PC상담','zoom':'Zoom 설명','meeting':'대면미팅','visit':'센터 방문','send':'자료 발송','ceo':'대표님 설명','proposal':'제안서 전달','payment':'결제 확인','long_term':'장기가망 전환','complete':'완료 처리','exclude':'대상 제외'};
+  var PIPELINE_PROBABILITIES={low:'낮음',medium:'중간',high:'높음',confirmed:'확정',none:'없음'};
+  var PIPELINE_MANAGEMENT={active:'진행 중',decision:'결정 대기',long_term:'장기가망',complete:'완료',excluded:'제외'};
+  var PIPELINE_ACTIVITY={call:'콜',recall:'재통화',pc:'PC상담',zoom:'Zoom',meeting:'대면미팅',visit:'센터 방문',send:'자료 발송',proposal:'제안',payment:'결제'};
+  function pipelineOptions(map,value){return Object.keys(map).map(function(k){return '<option value="'+escapeAttr(k)+'"'+(k===value?' selected':'')+'>'+escapeHtml(map[k])+'</option>';}).join('');}
+  function pipelineId(){return 'pl-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);}
+  function pipelineAddDays(iso,days){var d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+days);return localISO(d);}
+  function pipelineFind(id){return pipelineTargets.find(function(x){return x.id===id;});}
+  function addPipelineTarget(e){
+    e.preventDefault();var status=document.getElementById('pipelineAddStatus');if(!canEdit){status.textContent='편집 권한이 있는 계정으로 로그인해주세요.';return;}
+    var name=document.getElementById('pipelineAddName').value.trim(),item=document.getElementById('pipelineAddItem').value.trim(),date=document.getElementById('pipelineAddDate').value||localISO(new Date());
+    if(!name||!item){status.textContent='대상과 아이템을 입력해주세요.';return;}
+    pipelineTargets.unshift(normalizePipelineTarget({id:pipelineId(),name:name,item:item,callDate:date,forecastAmount:toNum(document.getElementById('pipelineAddForecast').value),memo:document.getElementById('pipelineAddMemo').value.trim(),createdAt:new Date().toISOString()}));
+    ['pipelineAddName','pipelineAddItem','pipelineAddForecast','pipelineAddMemo'].forEach(function(id){document.getElementById(id).value='';});status.textContent='대상을 추가했습니다.';renderPipeline();renderCommandPipelineSummary();scheduleSave();
+  }
+  function updatePipelineTarget(id,field,value){
+    var x=pipelineFind(id);if(!x||!canEdit)return;if(field==='forecastAmount'||field==='actualAmount')value=toNum(value);if(field==='actualAmount'&&Number(value)!==Number(x.actualAmount))x.ledgerReflected=false;x[field]=value;renderPipeline();renderCommandPipelineSummary();scheduleSave();
+  }
+  function removePipelineTarget(id){if(!canEdit||!confirm('이 대상을 영업 진행 목록에서 삭제하시겠습니까?'))return;pipelineTargets=pipelineTargets.filter(function(x){return x.id!==id;});renderPipeline();renderCommandPipelineSummary();scheduleSave();}
+  function togglePipelineDetail(id){pipelineExpandedId=pipelineExpandedId===id?'':id;renderPipeline();}
+  function pipelineRangeMatch(x,kind,today){
+    if(kind==='today')return x.callDate===today;if(kind==='overdue')return x.callDate&&x.callDate<today&&['complete','excluded'].indexOf(x.managementStatus)===-1;
+    if(kind==='week'){var start=mondayISO(today),end=pipelineAddDays(start,6);return x.callDate>=start&&x.callDate<=end;}return true;
+  }
+  function pipelineFiltered(){
+    var date=(document.getElementById('pipelineFilterDate')||{}).value||'',q=((document.getElementById('pipelineFilterSearch')||{}).value||'').trim().toLowerCase(),item=(document.getElementById('pipelineFilterItem')||{}).value||'',stage=(document.getElementById('pipelineFilterStage')||{}).value||'',management=(document.getElementById('pipelineFilterManagement')||{}).value||'',range=(document.getElementById('pipelineFilterRange')||{}).value||'all',today=localISO(new Date());
+    return pipelineTargets.map(normalizePipelineTarget).filter(function(x){if(date&&x.callDate!==date)return false;if(q&&(x.name+' '+x.item+' '+x.memo).toLowerCase().indexOf(q)<0)return false;if(item&&x.item!==item)return false;if(stage&&x.stage!==stage)return false;if(management&&x.managementStatus!==management)return false;return pipelineRangeMatch(x,range,today);}).sort(function(a,b){return String(a.callDate||'9999').localeCompare(String(b.callDate||'9999'))||String(a.name).localeCompare(String(b.name),'ko');});
+  }
+  function resetPipelineFilters(){['pipelineFilterDate','pipelineFilterSearch'].forEach(function(id){document.getElementById(id).value='';});['pipelineFilterItem','pipelineFilterStage','pipelineFilterManagement'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('pipelineFilterRange').value='all';renderPipeline();}
+  function renderPipelineKpis(){
+    var box=document.getElementById('pipelineKpis');if(!box)return;var today=localISO(new Date()),active=pipelineTargets.map(normalizePipelineTarget).filter(function(x){return x.managementStatus!=='excluded';}),todayRows=pipelineTargetsForDate(today,active),forecast=active.filter(function(x){return x.managementStatus!=='complete';}).reduce(function(n,x){return n+x.forecastAmount;},0),actual=active.reduce(function(n,x){return n+x.actualAmount;},0);
+    var vals=[['전체 대상',active.length+'명'],['오늘 콜',todayRows.length+'명'],['미처리·재통화',active.filter(function(x){return ['call','recall'].indexOf(x.stage)>-1;}).length+'명'],['PC상담',active.filter(function(x){return x.stage.indexOf('pc_')===0;}).length+'명'],['Zoom',active.filter(function(x){return x.stage.indexOf('zoom_')===0;}).length+'명'],['대면미팅',active.filter(function(x){return x.stage.indexOf('meeting_')===0;}).length+'명'],['예상매출',fmt(forecast)+'원','money'],['실제매출',fmt(actual)+'원','money']];
+    box.innerHTML=vals.map(function(v){return '<div class="pipeline-kpi '+(v[2]||'')+'"><span>'+v[0]+'</span><b>'+v[1]+'</b></div>';}).join('');
+  }
+  function renderPipelineFilters(){
+    var item=document.getElementById('pipelineFilterItem'),stage=document.getElementById('pipelineFilterStage'),management=document.getElementById('pipelineFilterManagement');if(!item)return;
+    var old=item.value,items=Array.from(new Set(pipelineTargets.map(function(x){return x.item;}).filter(Boolean))).sort(function(a,b){return a.localeCompare(b,'ko');});item.innerHTML='<option value="">모든 아이템</option>'+items.map(function(x){return '<option'+(x===old?' selected':'')+'>'+escapeHtml(x)+'</option>';}).join('');
+    if(stage.options.length===1)stage.innerHTML='<option value="">모든 단계</option>'+pipelineOptions(PIPELINE_STAGES,'');if(management.options.length===1)management.innerHTML='<option value="">모든 관리상태</option>'+pipelineOptions(PIPELINE_MANAGEMENT,'');
+  }
+  function pipelineHistoryHtml(x){return x.history.length?x.history.map(function(h){return '<div class="pipeline-history-item"><span>'+escapeHtml(h.date||'')+'</span><b>'+escapeHtml(PIPELINE_ACTIVITY[h.type]||h.type||'활동')+'</b><span>'+escapeHtml(h.content||'')+'</span><span>'+escapeHtml(h.nextAction||'')+'</span><span class="money">'+(h.forecastAmount?fmt(h.forecastAmount)+'원':'—')+'</span></div>';}).join(''):'<div class="pipeline-empty">아직 진행이력이 없습니다.</div>';}
+  function pipelineRowHtml(x,no){
+    var open=pipelineExpandedId===x.id,disabled=canEdit?'':' disabled';
+    return '<tr class="pipeline-main"><td class="no">'+no+'</td><td class="name">'+escapeHtml(x.name)+'</td><td><input value="'+escapeAttr(x.item)+'" onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'item\',this.value)"'+disabled+'></td><td class="date"><input type="date" value="'+escapeAttr(x.callDate)+'" onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'callDate\',this.value)"'+disabled+'></td><td class="compact"><select onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'callResult\',this.value)"'+disabled+'>'+pipelineOptions(PIPELINE_CALL_RESULTS,x.callResult)+'</select></td><td class="compact"><select onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'stage\',this.value)"'+disabled+'>'+pipelineOptions(PIPELINE_STAGES,x.stage)+'</select></td><td class="compact"><select onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'nextAction\',this.value)"'+disabled+'>'+pipelineOptions(PIPELINE_ACTIONS,x.nextAction)+'</select></td><td class="date"><input type="date" value="'+escapeAttr(x.nextDate)+'" onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'nextDate\',this.value)"'+disabled+'></td><td class="compact"><select onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'probability\',this.value)"'+disabled+'>'+pipelineOptions(PIPELINE_PROBABILITIES,x.probability)+'</select></td><td class="amount"><input inputmode="numeric" value="'+(x.forecastAmount?fmt(x.forecastAmount):'')+'" onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'forecastAmount\',this.value)"'+disabled+'></td><td class="amount"><input inputmode="numeric" value="'+(x.actualAmount?fmt(x.actualAmount):'')+'" onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'actualAmount\',this.value)"'+disabled+'></td><td class="compact"><select onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'managementStatus\',this.value)"'+disabled+'>'+pipelineOptions(PIPELINE_MANAGEMENT,x.managementStatus)+'</select></td><td><div class="pipeline-row-actions"><button type="button" onclick="togglePipelineDetail(\''+escapeAttr(x.id)+'\')">'+(open?'접기':'상세·이력')+'</button><button type="button" onclick="removePipelineTarget(\''+escapeAttr(x.id)+'\')"'+disabled+'>삭제</button></div></td></tr>'+pipelineDetailHtml(x,open,disabled);
+  }
+  function pipelineDetailHtml(x,open,disabled){
+    return '<tr class="pipeline-detail-row"'+(open?'':' hidden')+'><td colspan="13"><div class="pipeline-detail"><input id="phDate-'+x.id+'" type="date" value="'+escapeAttr(localISO(new Date()))+'" aria-label="활동일"><select id="phType-'+x.id+'">'+pipelineOptions(PIPELINE_ACTIVITY,'call')+'</select><textarea id="phContent-'+x.id+'" placeholder="결과·내용"></textarea><input id="phNext-'+x.id+'" placeholder="다음 행동"><input id="phNextDate-'+x.id+'" type="date" aria-label="다음 일정"><input id="phForecast-'+x.id+'" inputmode="numeric" placeholder="예상금액"><button class="pipeline-action-btn" type="button" onclick="addPipelineHistory(\''+escapeAttr(x.id)+'\')"'+disabled+'>이력 추가</button><textarea placeholder="대상 메모" onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'memo\',this.value)"'+disabled+'>'+escapeHtml(x.memo)+'</textarea><input type="date" value="'+escapeAttr(x.actualDate||localISO(new Date()))+'" onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'actualDate\',this.value)"'+disabled+'><button class="pipeline-action-btn" type="button" onclick="reflectPipelineSale(\''+escapeAttr(x.id)+'\')"'+(x.ledgerReflected||!canEdit?' disabled':'')+'>'+(x.ledgerReflected?'원장 반영 완료':'매출 원장 반영')+'</button><span class="pipeline-status">'+escapeHtml(PIPELINE_MANAGEMENT[x.managementStatus]||'진행 중')+'</span><div class="pipeline-history">'+pipelineHistoryHtml(x)+'</div></div></td></tr>';
+  }
+  function renderPipeline(){var body=document.getElementById('pipelineBody');if(!body)return;renderPipelineKpis();renderPipelineFilters();var rows=pipelineFiltered();body.innerHTML=rows.length?rows.map(function(x,i){return pipelineRowHtml(x,i+1);}).join(''):'<tr><td colspan="13"><div class="pipeline-empty">조건에 맞는 영업 대상이 없습니다.</div></td></tr>';}
+  function addPipelineHistory(id){
+    if(!canEdit)return;var x=pipelineFind(id),content=document.getElementById('phContent-'+id).value.trim();if(!x||!content){alert('결과·내용을 입력해주세요.');return;}
+    var entry={date:document.getElementById('phDate-'+id).value||localISO(new Date()),type:document.getElementById('phType-'+id).value,content:content,nextAction:document.getElementById('phNext-'+id).value.trim(),nextDate:document.getElementById('phNextDate-'+id).value,forecastAmount:toNum(document.getElementById('phForecast-'+id).value),createdAt:new Date().toISOString()};
+    var updated=appendPipelineHistory(x,entry);Object.keys(updated).forEach(function(k){x[k]=updated[k];});if(Object.prototype.hasOwnProperty.call(PIPELINE_ACTIONS,entry.type))x.nextAction=entry.type;if(entry.nextDate)x.nextDate=entry.nextDate;if(entry.forecastAmount)x.forecastAmount=entry.forecastAmount;renderPipeline();renderCommandPipelineSummary();scheduleSave();
+  }
+  function reflectPipelineSale(id){
+    var x=pipelineFind(id);if(!x||!canEdit)return;var payload;try{payload=pipelineLedgerPayload(x,x.actualDate||localISO(new Date()));}catch(err){alert(err.message);return;}
+    var row=buildLogRow(payload),body=document.getElementById('logBody');body.insertBefore(row,body.firstChild);x.ledgerReflected=true;x.managementStatus='complete';x.stage='won';x.history=appendPipelineHistory(x,{date:payload.date,type:'payment',content:'매출 원장 반영',forecastAmount:x.actualAmount,createdAt:new Date().toISOString()}).history;recalcAll();renderPipeline();renderCommandPipelineSummary();if(saveTimer){clearTimeout(saveTimer);saveTimer=null;}manualSave();
+  }
+  function copyPipelineTable(btn){var out=[['No','대상','아이템','콜 일자','콜 결과','현재 단계','다음 액션','다음 일정','매출 가능성','예상매출','실제매출','관리상태','비고']];pipelineFiltered().forEach(function(x,i){out.push([i+1,x.name,x.item,x.callDate,PIPELINE_CALL_RESULTS[x.callResult],PIPELINE_STAGES[x.stage],PIPELINE_ACTIONS[x.nextAction],x.nextDate,PIPELINE_PROBABILITIES[x.probability],x.forecastAmount,x.actualAmount,PIPELINE_MANAGEMENT[x.managementStatus],x.memo]);});copyTsv(out,btn);}
+  function renderCommandPipelineSummary(){var box=document.getElementById('commandPipelineSummary');if(!box)return;var s=pipelineSummary(localISO(new Date()),pipelineTargets),vals=[['오늘 콜',s.total+'명'],['연결',s.connected+'명'],['미처리',s.pending+'명'],['상담·미팅 전환',s.converted+'명'],['오늘 예상',fmt(s.forecast)+'원'],['실제매출',fmt(s.actual)+'원']];box.innerHTML=vals.map(function(v){return '<div class="command-pipeline-stat"><span>'+v[0]+'</span><b>'+v[1]+'</b></div>';}).join('');}
+
+  /* 엑셀형 영업 진행표 */
+  var PIPELINE_PROGRESS={call:'콜 예정',recall:'부재·재통화',connected:'통화 완료',pc:'PC상담',zoom:'Zoom',meeting:'대면미팅',decision:'제안·결정',payment:'결제 예정',complete:'완료',long_term:'장기가망',excluded:'제외'};
+  function syncPipelineLegacy(x){
+    var stage={call:'call',recall:'recall',connected:'call',pc:'pc_scheduled',zoom:'zoom_scheduled',meeting:'meeting_scheduled',decision:'decision',payment:'payment',complete:'won',long_term:'decision',excluded:'call'};
+    x.stage=stage[x.progressStatus]||'call';x.callResult=x.progressStatus==='recall'?'no_answer':x.progressStatus==='call'?'before':'connected';x.managementStatus=x.progressStatus==='excluded'?'excluded':x.progressStatus==='long_term'?'long_term':x.progressStatus==='complete'?'complete':'active';
+  }
+  function addBlankPipelineRow(){
+    if(!canEdit){alert('편집 권한이 있는 계정으로 로그인해주세요.');return;}var x=normalizePipelineTarget({id:pipelineId(),callDate:localISO(new Date()),progressStatus:'call',createdAt:new Date().toISOString()});pipelineTargets.unshift(x);renderPipeline();scheduleSave();requestAnimationFrame(function(){var el=document.querySelector('[data-pipeline-id="'+x.id+'"] .pipeline-name-input');if(el)el.focus();});
+  }
+  function togglePipelinePaste(){var box=document.getElementById('pipelinePasteBox');box.hidden=!box.hidden;if(!box.hidden)document.getElementById('pipelinePasteText').focus();}
+  function importPipelinePaste(){
+    if(!canEdit){alert('편집 권한이 있는 계정으로 로그인해주세요.');return;}var text=document.getElementById('pipelinePasteText').value,rows=parsePipelinePaste(text),status=document.getElementById('pipelinePasteStatus');if(!rows.length){status.textContent='붙여넣은 내용을 확인해주세요.';return;}
+    rows=rows.map(function(r){var x=normalizePipelineTarget(Object.assign({id:pipelineId(),createdAt:new Date().toISOString()},r));syncPipelineLegacy(x);return x;});pipelineTargets=rows.concat(pipelineTargets);document.getElementById('pipelinePasteText').value='';status.textContent=rows.length+'명을 목록에 추가했습니다.';renderPipeline();renderCommandPipelineSummary();scheduleSave();
+  }
+  function updatePipelineTarget(id,field,value){
+    var x=pipelineFind(id);if(!x||!canEdit)return;if(field==='forecastAmount'||field==='actualAmount')value=toNum(value);if(field==='actualAmount'&&Number(value)!==Number(x.actualAmount))x.ledgerReflected=false;x[field]=value;if(field==='resultMemo')x.memo=value;if(field==='progressStatus')syncPipelineLegacy(x);renderPipeline();renderCommandPipelineSummary();scheduleSave();
+  }
+  function pipelineFiltered(){
+    var date=(document.getElementById('pipelineFilterDate')||{}).value||'',q=((document.getElementById('pipelineFilterSearch')||{}).value||'').trim().toLowerCase(),item=(document.getElementById('pipelineFilterItem')||{}).value||'',progress=(document.getElementById('pipelineFilterProgress')||{}).value||'',range=(document.getElementById('pipelineFilterRange')||{}).value||'all',today=localISO(new Date());
+    return pipelineTargets.map(normalizePipelineTarget).filter(function(x){if(date&&x.callDate!==date)return false;if(q&&(x.name+' '+x.item+' '+x.resultMemo+' '+x.nextActionText).toLowerCase().indexOf(q)<0)return false;if(item&&x.item!==item)return false;if(progress&&x.progressStatus!==progress)return false;return pipelineRangeMatch(x,range,today);}).sort(function(a,b){return String(a.callDate||'9999').localeCompare(String(b.callDate||'9999'))||String(a.name).localeCompare(String(b.name),'ko');});
+  }
+  function resetPipelineFilters(){['pipelineFilterDate','pipelineFilterSearch'].forEach(function(id){document.getElementById(id).value='';});['pipelineFilterItem','pipelineFilterProgress'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('pipelineFilterRange').value='all';renderPipeline();}
+  function renderPipelineKpis(){
+    var box=document.getElementById('pipelineKpis');if(!box)return;var today=localISO(new Date()),active=pipelineTargets.map(normalizePipelineTarget).filter(function(x){return x.progressStatus!=='excluded';}),todayRows=active.filter(function(x){return x.callDate===today;}),forecast=active.filter(function(x){return x.progressStatus!=='complete';}).reduce(function(n,x){return n+x.forecastAmount;},0),actual=active.reduce(function(n,x){return n+x.actualAmount;},0);
+    var vals=[['전체 대상',active.length+'명'],['오늘 콜',todayRows.length+'명'],['부재·재통화',active.filter(function(x){return x.progressStatus==='recall';}).length+'명'],['PC상담',active.filter(function(x){return x.progressStatus==='pc';}).length+'명'],['Zoom',active.filter(function(x){return x.progressStatus==='zoom';}).length+'명'],['대면미팅',active.filter(function(x){return x.progressStatus==='meeting';}).length+'명'],['예상매출',fmt(forecast)+'원','money'],['실제매출',fmt(actual)+'원','money']];box.innerHTML=vals.map(function(v){return '<div class="pipeline-kpi '+(v[2]||'')+'"><span>'+v[0]+'</span><b>'+v[1]+'</b></div>';}).join('');
+  }
+  function renderPipelineFilters(){
+    var item=document.getElementById('pipelineFilterItem'),progress=document.getElementById('pipelineFilterProgress');if(!item||!progress)return;var oldItem=item.value,oldProgress=progress.value,items=Array.from(new Set(pipelineTargets.map(function(x){return x.item;}).filter(Boolean))).sort(function(a,b){return a.localeCompare(b,'ko');});item.innerHTML='<option value="">모든 아이템</option>'+items.map(function(x){return '<option value="'+escapeAttr(x)+'"'+(x===oldItem?' selected':'')+'>'+escapeHtml(x)+'</option>';}).join('');progress.innerHTML='<option value="">모든 진행상태</option>'+pipelineOptions(PIPELINE_PROGRESS,oldProgress);
+  }
+  function pipelineHistoryHtml(x){return x.history.length?x.history.map(function(h){return '<div class="pipeline-history-item simple"><span>'+escapeHtml(h.date||'')+'</span><span>'+escapeHtml(h.content||'')+'</span></div>';}).join(''):'<div class="pipeline-empty">아직 진행이력이 없습니다.</div>';}
+  function pipelineRowHtml(x,no){
+    var open=pipelineExpandedId===x.id,disabled=canEdit?'':' disabled',reflected=x.ledgerReflected?'<span class="pipeline-reflected">원장 반영</span>':'';
+    return '<tr class="pipeline-main" data-pipeline-id="'+escapeAttr(x.id)+'"><td class="no">'+no+'</td><td><input class="pipeline-name-input" value="'+escapeAttr(x.name)+'" placeholder="대상" onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'name\',this.value)"'+disabled+'></td><td><input value="'+escapeAttr(x.item)+'" placeholder="아이템" onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'item\',this.value)"'+disabled+'></td><td><input type="date" value="'+escapeAttr(x.callDate)+'" onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'callDate\',this.value)"'+disabled+'></td><td><select onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'progressStatus\',this.value)"'+disabled+'>'+pipelineOptions(PIPELINE_PROGRESS,x.progressStatus)+'</select></td><td><input value="'+escapeAttr(x.resultMemo)+'" placeholder="통화·상담 결과" onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'resultMemo\',this.value)"'+disabled+'></td><td><input value="'+escapeAttr(x.nextActionText)+'" placeholder="다음에 할 일" onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'nextActionText\',this.value)"'+disabled+'></td><td><input type="date" value="'+escapeAttr(x.nextDate)+'" onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'nextDate\',this.value)"'+disabled+'></td><td><input inputmode="numeric" value="'+(x.forecastAmount?fmt(x.forecastAmount):'')+'" placeholder="0" onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'forecastAmount\',this.value)"'+disabled+'></td><td><input inputmode="numeric" value="'+(x.actualAmount?fmt(x.actualAmount):'')+'" placeholder="0" onchange="updatePipelineTarget(\''+escapeAttr(x.id)+'\',\'actualAmount\',this.value)"'+disabled+'></td><td><div class="pipeline-manage"><button type="button" onclick="togglePipelineDetail(\''+escapeAttr(x.id)+'\')">'+(open?'접기':'이력')+'</button><button type="button" onclick="reflectPipelineSale(\''+escapeAttr(x.id)+'\')"'+(x.ledgerReflected||!x.actualAmount||!canEdit?' disabled':'')+'>원장</button><button type="button" onclick="removePipelineTarget(\''+escapeAttr(x.id)+'\')"'+disabled+'>×</button>'+reflected+'</div></td></tr>'+pipelineDetailHtml(x,open,disabled);
+  }
+  function pipelineDetailHtml(x,open,disabled){return '<tr class="pipeline-detail-row"'+(open?'':' hidden')+'><td colspan="11"><div class="pipeline-detail simple"><input id="phSimpleDate-'+x.id+'" type="date" value="'+escapeAttr(localISO(new Date()))+'"><input id="phSimpleContent-'+x.id+'" placeholder="진행 내용을 간단히 기록"><button class="pipeline-action-btn" type="button" onclick="addPipelineHistory(\''+escapeAttr(x.id)+'\')"'+disabled+'>이력 추가</button><div class="pipeline-history">'+pipelineHistoryHtml(x)+'</div></div></td></tr>';}
+  function renderPipeline(){var body=document.getElementById('pipelineBody');if(!body)return;renderPipelineKpis();renderPipelineFilters();var rows=pipelineFiltered();body.innerHTML=rows.length?rows.map(function(x,i){return pipelineRowHtml(x,i+1);}).join(''):'<tr><td colspan="11"><div class="pipeline-empty">조건에 맞는 대상이 없습니다. 위의 ‘+ 빈 행’을 눌러 시작하세요.</div></td></tr>';applyEditMode();}
+  function addPipelineHistory(id){if(!canEdit)return;var x=pipelineFind(id),input=document.getElementById('phSimpleContent-'+id),content=input&&input.value.trim();if(!x||!content){alert('진행 내용을 입력해주세요.');return;}var updated=appendPipelineHistory(x,{date:document.getElementById('phSimpleDate-'+id).value||localISO(new Date()),content:content,createdAt:new Date().toISOString()});x.history=updated.history;renderPipeline();scheduleSave();}
+  function reflectPipelineSale(id){var x=pipelineFind(id);if(!x||!canEdit)return;var payload;try{payload=pipelineLedgerPayload(x,x.actualDate||localISO(new Date()));}catch(err){alert(err.message);return;}var row=buildLogRow(payload),body=document.getElementById('logBody');body.insertBefore(row,body.firstChild);x.ledgerReflected=true;x.progressStatus='complete';syncPipelineLegacy(x);x.history=appendPipelineHistory(x,{date:payload.date,content:'매출 원장 반영 · '+fmt(x.actualAmount)+'원',createdAt:new Date().toISOString()}).history;recalcAll();renderPipeline();renderCommandPipelineSummary();if(saveTimer){clearTimeout(saveTimer);saveTimer=null;}manualSave();}
+  function copyPipelineTable(btn){var out=[['No','대상','아이템','콜 일자','진행상태','결과·메모','다음 액션','다음 일자','예상매출','실제매출']];pipelineFiltered().forEach(function(x,i){out.push([i+1,x.name,x.item,x.callDate,PIPELINE_PROGRESS[x.progressStatus],x.resultMemo,x.nextActionText,x.nextDate,x.forecastAmount,x.actualAmount]);});copyTsv(out,btn);}
+
   function renderCommandCenter(){
-    commandSetDefaults();renderCommandKpis();renderCommandPlans();renderCommandBriefs();
+    commandSetDefaults();renderCommandKpis();renderCommandPipelineSummary();renderCommandPlans();renderCommandBriefs();
     if(typeof renderCommandActivities==='function')renderCommandActivities();
     if(typeof renderCommandSales==='function')renderCommandSales();
     if(typeof renderCommandWeek==='function')renderCommandWeek();
